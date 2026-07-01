@@ -138,6 +138,7 @@ pub struct CollectionState {
     /// identical backups.
     pub(crate) last_backup_modified: Option<TimestampMillis>,
     pub(crate) progress: Arc<Mutex<ProgressState>>,
+    pub(crate) brainlift: Option<crate::brainlift::storage::BrainliftStorage>,
 }
 
 pub struct Collection {

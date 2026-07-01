@@ -1311,6 +1311,11 @@ title="{}" {}>{}</button>""".format(
         else:
             aqt.dialogs.open("NewDeckStats", self)
 
+    def onBrainLift(self) -> None:
+        from aqt.brainlift import open_brainlift
+
+        open_brainlift(self)
+
     def onPrefs(self) -> None:
         aqt.dialogs.open("Preferences", self)
 
@@ -1447,6 +1452,10 @@ title="{}" {}>{}</button>""".format(
         qconnect(m.actionNoteTypes.triggered, self.onNoteTypes)
         qconnect(m.action_check_for_updates.triggered, self.on_check_for_updates)
         qconnect(m.actionPreferences.triggered, self.onPrefs)
+
+        brainlift_menu = self.menuBar().addMenu("BrainLift")
+        brainlift_action = brainlift_menu.addAction("Open BrainLift")
+        qconnect(brainlift_action.triggered, self.onBrainLift)
 
         # View
         qconnect(

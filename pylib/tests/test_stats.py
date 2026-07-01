@@ -37,3 +37,17 @@ def test_graphs():
     with open(os.path.join(dir, "test.html"), "w", encoding="UTF-8") as note:
         note.write(rep)
     return
+
+
+def test_topic_mastery():
+    col = getEmptyCol()
+    note = col.newNote()
+    note["Front"] = "hypothesis"
+    note.tags = ["gre::quant::algebra"]
+    col.addNote(note)
+    c = col.sched.getCard()
+    assert c is not None
+    col.sched.answerCard(c, 3)
+    resp = col.topic_mastery(search="deck:current")
+    assert resp.summary.topic_count >= 1
+    assert any(t.topic_id == "gre::quant::algebra" for t in resp.topics)

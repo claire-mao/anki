@@ -107,6 +107,22 @@ fn row_to_card_entry(row: &Row) -> Result<CardEntry> {
     })
 }
 
+pub(crate) struct CardWithTags {
+    pub card: Card,
+    pub tags: Vec<String>,
+}
+
+fn row_to_card_with_tags(row: &Row) -> result::Result<CardWithTags, rusqlite::Error> {
+    let card = row_to_card(row)?;
+    let tags_str: String = row.get(18)?;
+    Ok(CardWithTags {
+        card,
+        tags: crate::tags::split_tags(&tags_str)
+            .map(|s| s.to_string())
+            .collect(),
+    })
+}
+
 fn row_to_new_card(row: &Row) -> result::Result<NewCard, rusqlite::Error> {
     Ok(NewCard {
         id: row.get(0)?,
@@ -608,6 +624,13 @@ impl super::SqliteStorage {
                 ", search_cids where cards.id = search_cids.cid order by search_cids.rowid"
             ))?
             .query_and_then([], |r| row_to_card(r).map_err(Into::into))?
+            .collect()
+    }
+
+    pub(crate) fn cards_with_tags_for_searched_cards(&self) -> Result<Vec<CardWithTags>> {
+        self.db
+            .prepare_cached(include_str!("cards_with_tags_for_search.sql"))?
+            .query_and_then([], |r| row_to_card_with_tags(r).map_err(Into::into))?
             .collect()
     }
 

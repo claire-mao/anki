@@ -16,6 +16,7 @@ service StatsService {
   rpc Graphs(GraphsRequest) returns (GraphsResponse);
   rpc GetGraphPreferences(generic.Empty) returns (GraphPreferences);
   rpc SetGraphPreferences(GraphPreferences) returns (generic.Empty);
+  rpc TopicMastery(TopicMasteryRequest) returns (TopicMasteryResponse);
 }
 
 // Implicitly includes any of the above methods that are not listed in the
@@ -241,4 +242,46 @@ message Dataset {
   repeated CardEntry cards = 2;
   repeated DeckEntry decks = 3;
   int64 next_day_at = 4;
+}
+
+message TopicMasteryRequest {
+  // Same search syntax as GraphsRequest ("deck:current", "tag:gre::quant::*",
+  // etc.)
+  string search = 1;
+  // Tag prefix identifying GRE topics. Default in Rust if empty: "gre::"
+  string topic_tag_prefix = 2;
+  // Retrievability threshold for counting a card as mastered (0.0–1.0).
+  optional float mastery_threshold = 3;
+  // Minimum review count before a card contributes to avg recall (default: 1).
+  uint32 min_reviews = 4;
+}
+
+message TopicMasteryResponse {
+  repeated TopicMasteryEntry topics = 1;
+  TopicMasterySummary summary = 2;
+  int64 computed_at_millis = 3;
+  bool fsrs_enabled = 4;
+}
+
+message TopicMasteryEntry {
+  string topic_id = 1;
+  string display_name = 2;
+  uint32 total_cards = 3;
+  uint32 studied_cards = 4;
+  uint32 mastered_cards = 5;
+  float avg_retrievability = 6;
+  float avg_retrievability_low = 7;
+  float avg_retrievability_high = 8;
+  uint32 total_reviews = 9;
+}
+
+message TopicMasterySummary {
+  uint32 topic_count = 1;
+  uint32 total_cards = 2;
+  uint32 studied_cards = 3;
+  uint32 mastered_cards = 4;
+  float overall_avg_retrievability = 5;
+  float coverage_ratio = 6;
+  bool sufficient_data = 7;
+  string abstain_reason = 8;
 }

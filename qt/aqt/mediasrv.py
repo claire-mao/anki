@@ -21,7 +21,7 @@ from pathlib import Path
 import flask
 import stringcase
 import waitress.wasyncore
-from flask import Response, abort, request
+from flask import Response, abort, redirect, request
 from waitress.server import create_server
 
 import aqt
@@ -190,6 +190,20 @@ class MediaServer(threading.Thread):
 def favicon() -> Response:
     request = BundledFileRequest(os.path.join("imgs", "favicon.ico"))
     return _handle_builtin_file_request(request)
+
+
+@app.route("/readiness")
+@app.route("/readiness/<path:subpath>")
+def readiness_redirect(subpath: str = "") -> Response:
+    target = "/brainlift/readiness"
+    if subpath:
+        target = f"{target}/{subpath}"
+    return redirect(target, code=302)  # type: ignore[return-value]
+
+
+@app.route("/_anki/pages/readiness.html")
+def readiness_page_redirect() -> Response:
+    return redirect("/brainlift/readiness", code=302)  # type: ignore[return-value]
 
 
 def _mime_for_path(path: str) -> str:
@@ -413,7 +427,9 @@ def handle_request(pathin: str) -> Response:
 def is_sveltekit_page(path: str) -> bool:
     page_name = path.split("/")[0]
     return page_name in [
+        "brainlift",
         "graphs",
+        "readiness",
         "congrats",
         "card-info",
         "change-notetype",
@@ -744,8 +760,15 @@ exposed_backend_list = [
     "card_stats",
     "get_review_logs",
     "graphs",
+    "topic_mastery",
     "get_graph_preferences",
     "set_graph_preferences",
+    # BrainLiftService
+    "list_questions",
+    "record_attempt",
+    "get_scores",
+    "get_recent_attempts",
+    "get_gre_study_status",
     # TagsService
     "complete_tag",
     # ImageOcclusionService
@@ -832,6 +855,12 @@ def _check_dynamic_request_permissions():
         "/_anki/setSchedulingStates",
         "/_anki/i18nResources",
         "/_anki/congratsInfo",
+        "/_anki/topicMastery",
+        "/_anki/listQuestions",
+        "/_anki/recordAttempt",
+        "/_anki/getScores",
+        "/_anki/getRecentAttempts",
+        "/_anki/getGreStudyStatus",
     ):
         pass
     else:

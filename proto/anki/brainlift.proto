@@ -1,0 +1,90 @@
+// Copyright: Ankitects Pty Ltd and contributors
+// License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package anki.brainlift;
+
+import "anki/generic.proto";
+
+service BrainLiftService {
+  rpc ListQuestions(ListQuestionsRequest) returns (ListQuestionsResponse);
+  rpc RecordAttempt(RecordAttemptRequest) returns (RecordAttemptResponse);
+  rpc GetScores(generic.Empty) returns (GetScoresResponse);
+  rpc GetRecentAttempts(GetRecentAttemptsRequest)
+      returns (GetRecentAttemptsResponse);
+  rpc GetGreStudyStatus(generic.Empty) returns (GreStudyStatusResponse);
+}
+
+service BackendBrainLiftService {}
+
+message Question {
+  string id = 1;
+  string topic = 2;
+  string section = 3;
+  string format = 4;
+  string stem = 5;
+  repeated string choices = 6;
+}
+
+message ListQuestionsRequest {
+  uint32 limit = 1;
+}
+
+message ListQuestionsResponse {
+  repeated Question questions = 1;
+}
+
+message RecordAttemptRequest {
+  string question_id = 1;
+  string answer = 2;
+  uint32 response_time_ms = 3;
+  optional uint32 confidence = 4;
+  optional string session_id = 5;
+}
+
+message RecordAttemptResponse {
+  bool correct = 1;
+  string explanation = 2;
+  string topic = 3;
+}
+
+message ScoreSnapshot {
+  optional float value = 1;
+  bool sufficient_data = 2;
+  string detail = 3;
+}
+
+message GetScoresResponse {
+  ScoreSnapshot memory = 1;
+  ScoreSnapshot performance = 2;
+  ScoreSnapshot readiness = 3;
+}
+
+message PerformanceAttempt {
+  string question_id = 1;
+  string topic = 2;
+  int64 answered_at_secs = 3;
+  string answer = 4;
+  bool correct = 5;
+  uint32 response_time_ms = 6;
+  optional uint32 confidence = 7;
+}
+
+message GetRecentAttemptsRequest {
+  uint32 limit = 1;
+}
+
+message GetRecentAttemptsResponse {
+  repeated PerformanceAttempt attempts = 1;
+}
+
+message GreStudyStatusResponse {
+  string deck_name = 1;
+  bool deck_exists = 2;
+  uint32 new_count = 3;
+  uint32 learn_count = 4;
+  uint32 review_count = 5;
+}

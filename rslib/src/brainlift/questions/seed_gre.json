@@ -1,0 +1,57 @@
+[
+    {
+        "id": "gre-quant-pct-001",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A store marks down an $80 item by 25%. What is the sale price?",
+        "choices": ["$55", "$60", "$65", "$70"],
+        "correct_answer": "$60",
+        "explanation": "25% of $80 is $20, so the sale price is $80 − $20 = $60."
+    },
+    {
+        "id": "gre-quant-alg-001",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If 3x + 7 = 22, what is the value of x?",
+        "choices": ["3", "4", "5", "6"],
+        "correct_answer": "5",
+        "explanation": "Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5."
+    },
+    {
+        "id": "gre-verbal-tc-001",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
+        "choices": ["equivocal", "compelling", "peripheral", "tenuous"],
+        "correct_answer": "compelling",
+        "explanation": "Skeptics changing their minds implies the evidence was convincing — compelling."
+    },
+    {
+        "id": "gre-verbal-rc-001",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: Urban planners argue that mixed-use zoning reduces commute times because residents can access daily services near home. Critics counter that such policies raise housing costs. Which inference is best supported?",
+        "choices": [
+            "Mixed-use zoning always lowers housing costs.",
+            "Convenience may trade off with affordability.",
+            "Critics believe zoning has no effect on commutes.",
+            "Urban planners ignore housing prices entirely."
+        ],
+        "correct_answer": "Convenience may trade off with affordability.",
+        "explanation": "The passage contrasts reduced commutes with higher housing costs — a convenience vs. affordability tradeoff."
+    },
+    {
+        "id": "gre-quant-di-001",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "data_interpretation",
+        "stem": "A table shows Company A revenue of $40M in 2022 and $50M in 2023. Company B revenue was $30M in 2022 and $36M in 2023. Which company had the greater percent increase?",
+        "choices": ["Company A", "Company B", "They increased by the same percent", "Cannot be determined"],
+        "correct_answer": "Company A",
+        "explanation": "A: (50−40)/40 = 25%. B: (36−30)/30 = 20%. Company A increased more."
+    }
+]

@@ -29,6 +29,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const customStudyMsg = tr.schedulingHowToCustomStudy({
         customStudy,
     });
+    const brainliftPractice = bridgeLink(
+        "brainliftOpenPractice",
+        "Continue to BrainLift Practice",
+    );
 
     onMount(() => {
         if (refreshPeriodically) {
@@ -49,6 +53,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <h1>{congrats}</h1>
 
             <p>{nextLearnMsg}</p>
+
+            {#if info.bridgeCommandsSupported}
+                <p>{@html brainliftPractice}</p>
+            {/if}
 
             {#if info.reviewRemaining}
                 <p>{today_reviews}</p>

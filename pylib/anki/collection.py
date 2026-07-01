@@ -1020,6 +1020,24 @@ class Collection(DeprecatedNamesMixin):
         """
         return self._backend.card_stats(card_id)
 
+    def topic_mastery(
+        self,
+        search: str = "",
+        *,
+        topic_tag_prefix: str = "gre::",
+        mastery_threshold: float | None = None,
+        min_reviews: int = 1,
+    ) -> stats_pb2.TopicMasteryResponse:
+        """Aggregate FSRS retrievability by GRE topic tags (BrainLift)."""
+        req = stats_pb2.TopicMasteryRequest(
+            search=search,
+            topic_tag_prefix=topic_tag_prefix,
+            min_reviews=min_reviews,
+        )
+        if mastery_threshold is not None:
+            req.mastery_threshold = mastery_threshold
+        return self._backend.topic_mastery(req)
+
     def get_review_logs(
         self, card_id: CardId
     ) -> Sequence[stats_pb2.CardStatsResponse.StatsRevlogEntry]:

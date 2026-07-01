@@ -1,0 +1,78 @@
+.brainlift-shell {
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--fg);
+}
+
+.brainlift-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--canvas-code);
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.brainlift-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.nav-link {
+    color: var(--fg-link);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.brainlift-main {
+    padding: 1.25rem;
+    max-width: 52rem;
+}
+
+.brainlift-panel {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--canvas);
+}
+
+.brainlift-panel + .brainlift-panel {
+    margin-top: 1rem;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1rem;
+}
+
+.score-card {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.muted {
+    color: var(--fg-subtle);
+}
+
+.primary-button {
+    margin-top: 1rem;
+}

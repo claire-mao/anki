@@ -119,6 +119,14 @@ class Overview:
             self.on_unbury()
         elif url == "description":
             self.edit_description()
+        elif url == "brainliftOpenPractice":
+            from aqt.brainlift import open_brainlift
+
+            open_brainlift(self.mw, path="brainlift/practice")
+        elif url == "brainliftStartReview":
+            from aqt.brainlift import start_gre_review
+
+            start_gre_review(self.mw)
         elif url.lower().startswith("http"):
             openLink(url)
         return False
