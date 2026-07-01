@@ -192,20 +192,6 @@ def favicon() -> Response:
     return _handle_builtin_file_request(request)
 
 
-@app.route("/readiness")
-@app.route("/readiness/<path:subpath>")
-def readiness_redirect(subpath: str = "") -> Response:
-    target = "/brainlift/readiness"
-    if subpath:
-        target = f"{target}/{subpath}"
-    return redirect(target, code=302)  # type: ignore[return-value]
-
-
-@app.route("/_anki/pages/readiness.html")
-def readiness_page_redirect() -> Response:
-    return redirect("/brainlift/readiness", code=302)  # type: ignore[return-value]
-
-
 def _mime_for_path(path: str) -> str:
     "Mime type for provided path/filename."
 
@@ -427,7 +413,10 @@ def handle_request(pathin: str) -> Response:
 def is_sveltekit_page(path: str) -> bool:
     page_name = path.split("/")[0]
     return page_name in [
-        "brainlift",
+        "dashboard",
+        "review",
+        "practice",
+        "study-plan",
         "graphs",
         "readiness",
         "congrats",
@@ -765,10 +754,15 @@ exposed_backend_list = [
     "set_graph_preferences",
     # BrainLiftService
     "list_questions",
+    "get_question",
+    "create_session",
     "record_attempt",
     "get_scores",
+    "get_dashboard",
     "get_recent_attempts",
     "get_gre_study_status",
+    "get_study_plan",
+    "get_readiness_calibration",
     # TagsService
     "complete_tag",
     # ImageOcclusionService
@@ -857,8 +851,13 @@ def _check_dynamic_request_permissions():
         "/_anki/congratsInfo",
         "/_anki/topicMastery",
         "/_anki/listQuestions",
+        "/_anki/getQuestion",
+        "/_anki/createSession",
         "/_anki/recordAttempt",
         "/_anki/getScores",
+        "/_anki/getDashboard",
+        "/_anki/getStudyPlan",
+        "/_anki/getReadinessCalibration",
         "/_anki/getRecentAttempts",
         "/_anki/getGreStudyStatus",
     ):

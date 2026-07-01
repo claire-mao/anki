@@ -11,6 +11,7 @@ target
 /windows.bazelrc
 /out
 node_modules
+rslib/brainlift-memory.db
 .n2_db
 .ninja_log
 .ninja_deps

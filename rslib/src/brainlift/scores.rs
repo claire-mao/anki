@@ -2,71 +2,116 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 use anki_proto::brainlift::GetScoresResponse;
-use anki_proto::brainlift::ScoreSnapshot;
-use anki_proto::stats::TopicMasteryRequest;
 
-use crate::brainlift::brainlift_storage;
-use crate::brainlift::TOPIC_TAG_PREFIX;
 use crate::collection::Collection;
 use crate::error::Result;
 
 impl Collection {
     pub fn brainlift_get_scores(&mut self) -> Result<GetScoresResponse> {
-        let memory = self.brainlift_memory_score()?;
-        let performance = self.brainlift_performance_score()?;
-        let readiness = ScoreSnapshot {
-            sufficient_data: false,
-            detail: "Readiness model coming in Phase 2.".into(),
-            value: None,
-        };
+        let signals = self.load_brainlift_signals(10)?;
         Ok(GetScoresResponse {
-            memory: Some(memory),
-            performance: Some(performance),
-            readiness: Some(readiness),
+            memory: Some(signals.memory),
+            performance: Some(signals.performance),
+            readiness: Some(signals.readiness),
         })
     }
+}
 
-    fn brainlift_memory_score(&mut self) -> Result<ScoreSnapshot> {
-        let resp = self.compute_topic_mastery(TopicMasteryRequest {
-            search: format!("deck:\"{}\"", super::GRE_DECK_NAME),
-            topic_tag_prefix: TOPIC_TAG_PREFIX.into(),
-            mastery_threshold: None,
-            min_reviews: 1,
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::brainlift::brainlift_storage;
+    use crate::collection::Collection;
+    use crate::collection::CollectionBuilder;
+    use crate::config::BoolKey;
+
+    fn isolated_col() -> Result<(Collection, tempfile::TempDir)> {
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
         })?;
-        let summary = resp.summary.unwrap_or_default();
-        if summary.sufficient_data {
-            Ok(ScoreSnapshot {
-                value: Some(summary.overall_avg_retrievability * 100.0),
-                sufficient_data: true,
-                detail: format!(
-                    "{} studied cards · {}% topic coverage",
-                    summary.studied_cards,
-                    (summary.coverage_ratio * 100.0).round() as u32
-                ),
-            })
-        } else {
-            Ok(ScoreSnapshot {
-                value: None,
-                sufficient_data: false,
-                detail: summary.abstain_reason,
-            })
-        }
+        let col = CollectionBuilder::new(dir.path().join("test.anki2")).build()?;
+        Ok((col, dir))
     }
 
-    fn brainlift_performance_score(&mut self) -> Result<ScoreSnapshot> {
-        let storage = brainlift_storage(self)?;
-        let (correct, total) = storage.performance_summary()?;
-        if total == 0 {
-            return Ok(ScoreSnapshot {
-                value: None,
-                sufficient_data: false,
-                detail: "No GRE practice attempts yet.".into(),
-            });
+    #[test]
+    fn get_scores_abstains_readiness_with_sparse_data() -> Result<()> {
+        let (mut col, _dir) = isolated_col()?;
+        let scores = col.brainlift_get_scores()?;
+        let memory = scores.memory.unwrap();
+        let performance = scores.performance.unwrap();
+        let readiness = scores.readiness.unwrap();
+        assert!(!memory.sufficient_data);
+        assert!(!performance.sufficient_data);
+        assert!(!readiness.sufficient_data);
+        assert!(readiness.projected_score.is_none());
+        assert!(!readiness.abstain_reason.is_empty());
+        assert_eq!(memory.abstention_requirements.len(), 3);
+        assert_eq!(performance.abstention_requirements.len(), 1);
+        assert_eq!(readiness.abstention_requirements.len(), 4);
+        for req in readiness
+            .abstention_requirements
+            .iter()
+            .filter(|req| !req.met)
+        {
+            assert!(!req.next_step.is_empty());
         }
-        Ok(ScoreSnapshot {
-            value: Some(correct as f32 / total as f32 * 100.0),
-            sufficient_data: true,
-            detail: format!("{correct}/{total} practice questions correct"),
-        })
+        Ok(())
+    }
+
+    #[test]
+    fn get_scores_readiness_with_practice_attempts_only() -> Result<()> {
+        let (mut col, _dir) = isolated_col()?;
+        let storage = brainlift_storage(&mut col)?;
+        let q = storage.list_questions("", 1)?.pop().unwrap();
+        let session = storage.create_session("practice")?;
+        for _ in 0..20 {
+            storage.record_attempt(
+                &q.id,
+                &q.topic,
+                q.difficulty,
+                &q.correct_answer,
+                true,
+                1000,
+                None,
+                Some(&session.id),
+            )?;
+        }
+        let scores = col.brainlift_get_scores()?;
+        assert!(scores.performance.unwrap().sufficient_data);
+        let readiness = scores.readiness.unwrap();
+        assert!(!readiness.sufficient_data);
+        assert!(readiness.projected_score.is_none());
+        assert!(readiness.abstain_reason.contains("studied cards")
+            || readiness.abstain_reason.contains("FSRS")
+            || readiness.abstain_reason.contains("coverage"));
+        assert!(readiness
+            .abstention_requirements
+            .iter()
+            .any(|req| !req.met && !req.next_step.is_empty()));
+        Ok(())
+    }
+
+    #[test]
+    fn get_scores_includes_evidence_summary_when_abstaining() -> Result<()> {
+        let (mut col, _dir) = isolated_col()?;
+        col.set_config_bool(BoolKey::Fsrs, true, false)?;
+        let storage = brainlift_storage(&mut col)?;
+        let q = storage.list_questions("", 1)?.pop().unwrap();
+        let session = storage.create_session("practice")?;
+        storage.record_attempt(
+            &q.id,
+            &q.topic,
+            q.difficulty,
+            &q.correct_answer,
+            true,
+            1000,
+            None,
+            Some(&session.id),
+        )?;
+        let scores = col.brainlift_get_scores()?;
+        let readiness = scores.readiness.unwrap();
+        assert!(!readiness.evidence_summary.is_empty());
+        assert!(readiness.last_updated_millis > 0);
+        Ok(())
     }
 }

@@ -4022,6 +4022,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "mobile_bridge"
+version = "0.0.0"
+dependencies = [
+ "anki",
+ "anki_proto",
+ "anki_proto_gen",
+ "prost",
+ "prost-reflect",
+ "tempfile",
+]
+
+[[package]]
 name = "moddef"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

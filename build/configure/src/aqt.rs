@@ -126,7 +126,11 @@ fn copy_sveltekit(build: &mut Build) -> Result<()> {
             strip_prefix: "$builddir/",
             extra_args: "-a --delete",
         },
-    )
+    )?;
+    // Anki serves SvelteKit from out/qt/_aqt/data/web/sveltekit at runtime, not
+    // directly from out/sveltekit. Ensure `./ninja sveltekit` also deploys assets.
+    build.add_dependency("sveltekit", inputs![":qt:aqt:data:web:sveltekit"]);
+    Ok(())
 }
 
 fn build_css(build: &mut Build) -> Result<()> {

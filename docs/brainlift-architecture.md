@@ -1,8 +1,10 @@
 # BrainLift: Anki Codebase Architecture Guide
 
-This document implements the architecture learning plan for modifying Anki in-place for GRE prep. It covers all nine subsystems, with detailed walkthroughs from the codebase. **No code has been changed** — this is a read-only map.
+Architecture map for the GRE BrainLift product built in-place on Anki. Covers subsystems, data flows, and where GRE code lives.
 
 **Exam:** GRE (Verbal 130–170, Quant 130–170, section-adaptive)
+
+**Release / build:** See [brainlift-release.md](./brainlift-release.md).
 
 ---
 
@@ -415,12 +417,15 @@ Incremental builds via Ninja. Configure generates `build.ninja`; runner executes
 
 | Command                        | Effect                                 |
 | ------------------------------ | -------------------------------------- |
-| `./ninja pylib qt`             | Build Rust bridge + Python + Qt assets |
-| `./run`                        | Build if needed, launch Anki dev mode  |
+| `./ninja pylib qt` / `just build` | Build Rust bridge + Python + Qt assets |
+| `./run` / `just run`           | Build if needed, launch Anki dev mode  |
 | `./ninja check` / `just check` | Full format + build + tests            |
 | `./ninja rslib:proto`          | Regenerate protobuf bindings only      |
+| `tools/build-installer`        | Desktop installer → `out/installer/dist/` |
 
 Outputs in `out/` — never edit generated files by hand.
+
+GRE Svelte pages live in `ts/routes/(gre)/` and deploy to `out/qt/_aqt/data/web/sveltekit/`. The configure step ensures the `sveltekit` target copies web assets into the Qt bundle.
 
 ---
 
@@ -463,36 +468,35 @@ Existing `retrievability` graph (`stats/graphs/retrievability.rs`) already aggre
 
 ---
 
-## 11. TypeScript / Readiness Dashboard Pattern
+## 11. GRE Dashboard (implemented)
 
-### Existing pattern: stats graphs page
+### Pattern
 
-| File                                    | Role                                  |
-| --------------------------------------- | ------------------------------------- |
-| `ts/routes/graphs/+page.svelte`         | Registers graph components            |
-| `ts/routes/graphs/GraphsPage.svelte`    | Layout, search/days controls          |
-| `ts/routes/graphs/WithGraphData.svelte` | Fetches data via `@generated/backend` |
-| `ts/routes/graphs/GraphsPage.svelte`    | Grid of child graph components        |
+Same as stats graphs: SvelteKit page + `@generated/backend` RPC calls over mediasrv.
 
-Data fetch pattern in `WithGraphData.svelte`:
+| File | Role |
+| ---- | ---- |
+| `ts/routes/(gre)/+layout.svelte` | GRE shell + navigation |
+| `ts/routes/(gre)/dashboard/+page.svelte` | Memory, Performance, Readiness cards |
+| `ts/routes/(gre)/practice/+page.svelte` | MCQ practice sessions |
+| `ts/routes/(gre)/study-plan/+page.svelte` | Ranked study recommendations |
+| `ts/routes/(gre)/readiness/+page.svelte` | Readiness score + calibration stats |
+| `qt/aqt/brainlift.py` | `BrainLiftDialog` loads SvelteKit pages |
+| `rslib/src/brainlift/` | Scores, dashboard, calibration, storage |
 
-```typescript
-import { graphs } from "@generated/backend";
-sourceData = await graphs({ search, days });
-```
+Routes (no `/brainlift` prefix):
 
-Served at `http://127.0.0.1:40000/_anki/pages/graphs.html` during dev.
+| URL | Page |
+| --- | ---- |
+| `/dashboard` | Main GRE dashboard |
+| `/review` | Hand off to Anki reviewer |
+| `/practice` | GRE MCQ practice |
+| `/study-plan` | Study recommendations |
+| `/readiness` | Readiness + calibration |
 
-### BrainLift readiness dashboard (future)
+`BrainLiftService` RPCs (see `proto/anki/brainlift.proto`): `GetDashboard`, `GetScores`, `GetStudyPlan`, `GetReadinessCalibration`, `ListQuestions`, `RecordAttempt`, etc.
 
-Follow the same pattern:
-
-1. Add `ts/routes/readiness/+page.svelte` (or extend graphs)
-2. Add `StatsService.GetReadiness` or similar RPC returning memory, performance, readiness each with range + abstain flag
-3. Create `WithReadinessData.svelte` calling `@generated/backend`
-4. Register page in Qt web routing (build system picks up `ts/routes/` automatically)
-
-Show three scores separately — never one blended number. Include give-up rule message when data insufficient.
+Three scores are shown separately. Readiness **abstains** with structured missing-requirement lists when FSRS, studied cards, coverage, or practice attempts are insufficient.
 
 ---
 
@@ -518,13 +522,17 @@ Show three scores separately — never one blended number. Include give-up rule 
 
 ---
 
-## 13. Suggested Next Steps
+## 13. Implementation status
 
-1. Pick Rust change: **mastery query** in `stats.proto` + `rslib/src/stats/`
-2. Add 3 Rust unit tests + 1 Python test calling the RPC
-3. Scaffold GRE topic coverage from official outline → note tags
-4. Prototype readiness dashboard as new `ts/routes/readiness/` page
-5. Start iOS companion using protobuf-over-bytes into rslib
+Implemented (desktop):
+
+1. **Topic mastery** — `StatsService.TopicMastery` in `rslib/src/stats/mastery.rs`
+2. **BrainLift engine** — `rslib/src/brainlift/` (storage, scores, dashboard, study plan, calibration, abstention)
+3. **GRE UI** — `ts/routes/(gre)/` with dashboard, practice, study plan, readiness
+4. **Qt integration** — GRE menu, dialog, review handoff, congrats CTAs
+5. **Tests** — Rust unit tests under `brainlift::`, pylib tests in `test_brainlift.py`
+
+Not yet implemented: iOS companion, AI question generation, BrainLift sync, FTL strings for GRE menu (currently English in Qt).
 
 ---
 

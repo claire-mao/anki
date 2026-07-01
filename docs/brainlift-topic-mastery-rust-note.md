@@ -31,7 +31,7 @@ FSRS remains the memory model; this layer only **reads** scheduling state.
 | `pylib/anki/collection.py`                              | `topic_mastery()` wrapper | Low              |
 | `pylib/tests/test_stats.py`                             | One test                  | Low              |
 | `qt/aqt/mediasrv.py`                                    | Expose RPC + Svelte page  | Low              |
-| `ts/routes/readiness/*`                                 | Dashboard page            | None — new files |
+| `ts/routes/(gre)/dashboard/*`                           | GRE dashboard page        | None — new files |
 
 **Overall merge difficulty: low–medium.** All changes are additive. The only shared hot path is `stats.proto` service ordering (append-only RPC).
 

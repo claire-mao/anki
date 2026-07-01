@@ -119,11 +119,15 @@ class Overview:
             self.on_unbury()
         elif url == "description":
             self.edit_description()
-        elif url == "brainliftOpenPractice":
+        elif url == "greOpenPractice":
             from aqt.brainlift import open_brainlift
 
-            open_brainlift(self.mw, path="brainlift/practice")
-        elif url == "brainliftStartReview":
+            open_brainlift(self.mw, path="practice")
+        elif url == "greOpenDashboard":
+            from aqt.brainlift import open_brainlift
+
+            open_brainlift(self.mw, path="dashboard")
+        elif url == "greStartReview":
             from aqt.brainlift import start_gre_review
 
             start_gre_review(self.mw)

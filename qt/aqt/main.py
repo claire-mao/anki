@@ -1311,10 +1311,10 @@ title="{}" {}>{}</button>""".format(
         else:
             aqt.dialogs.open("NewDeckStats", self)
 
-    def onBrainLift(self) -> None:
+    def onOpenGreDashboard(self) -> None:
         from aqt.brainlift import open_brainlift
 
-        open_brainlift(self)
+        open_brainlift(self, path="dashboard")
 
     def onPrefs(self) -> None:
         aqt.dialogs.open("Preferences", self)
@@ -1453,9 +1453,9 @@ title="{}" {}>{}</button>""".format(
         qconnect(m.action_check_for_updates.triggered, self.on_check_for_updates)
         qconnect(m.actionPreferences.triggered, self.onPrefs)
 
-        brainlift_menu = self.menuBar().addMenu("BrainLift")
-        brainlift_action = brainlift_menu.addAction("Open BrainLift")
-        qconnect(brainlift_action.triggered, self.onBrainLift)
+        gre_menu = self.menuBar().addMenu("GRE")
+        gre_dashboard_action = gre_menu.addAction("Open Dashboard")
+        qconnect(gre_dashboard_action.triggered, self.onOpenGreDashboard)
 
         # View
         qconnect(

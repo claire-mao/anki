@@ -10,6 +10,8 @@ This repo contains the source code for the computer version of
 
 Anki is a spaced repetition program. Please see the [website](https://apps.ankiweb.net) to learn more.
 
+This fork additionally ships **BrainLift GRE** — a graduate-exam study layer with practice questions, readiness scoring, and study planning. See [BrainLift release guide](./docs/brainlift-release.md) and [development](./docs/development.md#brainlift-gre).
+
 ## Getting Started
 
 ### Contributing

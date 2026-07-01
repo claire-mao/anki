@@ -11,11 +11,20 @@ import "anki/generic.proto";
 
 service BrainLiftService {
   rpc ListQuestions(ListQuestionsRequest) returns (ListQuestionsResponse);
+  rpc GetQuestion(GetQuestionRequest) returns (Question);
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
   rpc RecordAttempt(RecordAttemptRequest) returns (RecordAttemptResponse);
   rpc GetScores(generic.Empty) returns (GetScoresResponse);
+  rpc GetDashboard(GetDashboardRequest) returns (DashboardState);
   rpc GetRecentAttempts(GetRecentAttemptsRequest)
       returns (GetRecentAttemptsResponse);
   rpc GetGreStudyStatus(generic.Empty) returns (GreStudyStatusResponse);
+  rpc GetStudyPlan(GetStudyPlanRequest) returns (StudyPlanResponse);
+  rpc GetReadinessCalibration(generic.Empty) returns (ReadinessCalibrationResponse);
+  // Incremental sync for brainlift.db (practice attempts). Collection sync uses SyncService.
+  rpc GetBrainLiftSyncStatus(generic.Empty) returns (BrainLiftSyncStatus);
+  rpc PullBrainLiftChanges(BrainLiftSyncPullRequest) returns (BrainLiftSyncPullResponse);
+  rpc PushBrainLiftChanges(BrainLiftSyncPushRequest) returns (BrainLiftSyncPushResponse);
 }
 
 service BackendBrainLiftService {}
@@ -31,10 +40,28 @@ message Question {
 
 message ListQuestionsRequest {
   uint32 limit = 1;
+  // When set, return questions whose topic equals or extends this prefix
+  // (e.g. "gre::quant" matches "gre::quant::algebra::linear").
+  string topic_prefix = 2;
 }
 
 message ListQuestionsResponse {
   repeated Question questions = 1;
+}
+
+message GetQuestionRequest {
+  string question_id = 1;
+}
+
+message CreateSessionRequest {
+  // e.g. "practice" or "post_review". Defaults to "practice" when empty.
+  string source = 1;
+}
+
+message CreateSessionResponse {
+  string session_id = 1;
+  int64 started_at_secs = 2;
+  string source = 3;
 }
 
 message RecordAttemptRequest {
@@ -52,15 +79,107 @@ message RecordAttemptResponse {
 }
 
 message ScoreSnapshot {
+  option deprecated = true;
   optional float value = 1;
   bool sufficient_data = 2;
   string detail = 3;
 }
 
+// One evidence gate for memory, performance, or readiness scores.
+message AbstentionRequirement {
+  // Stable id, e.g. "fsrs_enabled", "studied_cards", "topic_coverage",
+  // "practice_attempts".
+  string id = 1;
+  string label = 2;
+  // Current progress when unmet, e.g. "150 of 200 studied cards".
+  string status = 3;
+  // What the student should do next when this requirement is unmet.
+  string next_step = 4;
+  bool met = 5;
+}
+
+message MemoryScore {
+  optional float value = 1;
+  optional float value_low = 2;
+  optional float value_high = 3;
+  bool sufficient_data = 4;
+  string detail = 5;
+  float coverage_ratio = 6;
+  string abstain_reason = 7;
+  uint32 studied_cards = 8;
+  repeated AbstentionRequirement abstention_requirements = 9;
+}
+
+message PerformanceScore {
+  optional float value = 1;
+  optional float value_low = 2;
+  optional float value_high = 3;
+  bool sufficient_data = 4;
+  string detail = 5;
+  uint32 attempt_count = 6;
+  string abstain_reason = 7;
+  repeated AbstentionRequirement abstention_requirements = 8;
+}
+
+message ReadinessScore {
+  // Projected GRE readiness index (0–100). Omitted when sufficient_data is false.
+  optional float projected_score = 1;
+  optional float projected_score_low = 2;
+  optional float projected_score_high = 3;
+  string confidence_level = 4;
+  float coverage_ratio = 5;
+  int64 last_updated_millis = 6;
+  string evidence_summary = 7;
+  bool sufficient_data = 8;
+  string abstain_reason = 9;
+  // Honest calibration summary from held-out prediction/outcome pairs. Empty when
+  // insufficient calibration history.
+  string calibration_note = 10;
+  optional float calibration_brier_score = 11;
+  bool calibration_sufficient_data = 12;
+  bool calibration_well_calibrated = 13;
+  repeated AbstentionRequirement abstention_requirements = 14;
+}
+
 message GetScoresResponse {
-  ScoreSnapshot memory = 1;
-  ScoreSnapshot performance = 2;
-  ScoreSnapshot readiness = 3;
+  MemoryScore memory = 1;
+  PerformanceScore performance = 2;
+  ReadinessScore readiness = 3;
+}
+
+message DashboardCoverage {
+  float weighted_ratio = 1;
+  float unweighted_ratio = 2;
+  uint32 catalog_leaf_count = 3;
+  uint32 covered_leaf_count = 4;
+}
+
+message DashboardTopicInsight {
+  string topic_id = 1;
+  string display_name = 2;
+  string section = 3;
+  float exam_weight = 4;
+  optional float memory_score = 5;
+  optional float practice_accuracy = 6;
+  uint32 studied_cards = 7;
+  bool covered = 8;
+  string reason = 9;
+}
+
+message GetDashboardRequest {
+  uint32 recent_activity_limit = 1;
+  uint32 topic_insight_limit = 2;
+}
+
+message DashboardState {
+  MemoryScore memory = 1;
+  PerformanceScore performance = 2;
+  ReadinessScore readiness = 3;
+  DashboardCoverage coverage = 4;
+  repeated DashboardTopicInsight weak_topics = 5;
+  repeated DashboardTopicInsight recommended_topics = 6;
+  repeated PerformanceAttempt recent_activity = 7;
+  int64 computed_at_millis = 8;
 }
 
 message PerformanceAttempt {
@@ -71,10 +190,15 @@ message PerformanceAttempt {
   bool correct = 5;
   uint32 response_time_ms = 6;
   optional uint32 confidence = 7;
+  optional float difficulty = 8;
+  optional string session_id = 9;
 }
 
 message GetRecentAttemptsRequest {
   uint32 limit = 1;
+  // When set, only return attempts for matching topics (same rules as
+  // ListQuestionsRequest.topic_prefix).
+  string topic_prefix = 2;
 }
 
 message GetRecentAttemptsResponse {
@@ -87,4 +211,104 @@ message GreStudyStatusResponse {
   uint32 new_count = 3;
   uint32 learn_count = 4;
   uint32 review_count = 5;
+}
+
+message GetStudyPlanRequest {
+  uint32 limit = 1;
+}
+
+message StudyPlanRecommendation {
+  string topic_id = 1;
+  string display_name = 2;
+  string section = 3;
+  float exam_weight = 4;
+  optional float memory_score = 5;
+  optional float practice_accuracy = 6;
+  uint32 studied_cards = 7;
+  bool covered = 8;
+  float priority_score = 9;
+  string explanation = 10;
+  repeated string factors = 11;
+}
+
+message StudyPlanResponse {
+  DashboardCoverage coverage = 1;
+  repeated StudyPlanRecommendation recommendations = 2;
+  int64 computed_at_millis = 3;
+  string summary = 4;
+}
+
+message ReadinessCalibrationBin {
+  float bin_low = 1;
+  float bin_high = 2;
+  float predicted_mean = 3;
+  float outcome_mean = 4;
+  uint32 count = 5;
+}
+
+message ReadinessCalibrationStats {
+  uint32 total_predictions = 1;
+  uint32 resolved_outcomes = 2;
+  uint32 held_out_count = 3;
+  optional float brier_score = 4;
+  optional float mean_absolute_error = 5;
+  repeated ReadinessCalibrationBin calibration_curve = 6;
+  bool sufficient_data = 7;
+  bool well_calibrated = 8;
+  string assessment = 9;
+}
+
+message ReadinessCalibrationResponse {
+  ReadinessScore readiness = 1;
+  ReadinessCalibrationStats calibration = 2;
+  int64 computed_at_millis = 3;
+}
+
+// Syncable practice attempt row from brainlift.db.
+message BrainLiftSyncAttempt {
+  int64 id = 1;
+  string question_id = 2;
+  string topic = 3;
+  optional float difficulty = 4;
+  int64 answered_at_secs = 5;
+  string answer = 6;
+  bool correct = 7;
+  uint32 response_time_ms = 8;
+  optional uint32 confidence = 9;
+  optional string session_id = 10;
+  int32 usn = 11;
+  int64 mtime_secs = 12;
+}
+
+message BrainLiftSyncStatus {
+  int32 current_usn = 1;
+  uint32 pending_upload_count = 2;
+  int64 last_modified_secs = 3;
+}
+
+message BrainLiftSyncPullRequest {
+  int32 after_usn = 1;
+  uint32 limit = 2;
+}
+
+message BrainLiftSyncPullResponse {
+  repeated BrainLiftSyncAttempt attempts = 1;
+  int32 current_usn = 2;
+}
+
+message BrainLiftSyncConflict {
+  int64 attempt_id = 1;
+  string reason = 2;
+  BrainLiftSyncAttempt kept = 3;
+  BrainLiftSyncAttempt rejected = 4;
+}
+
+message BrainLiftSyncPushRequest {
+  repeated BrainLiftSyncAttempt attempts = 1;
+}
+
+message BrainLiftSyncPushResponse {
+  int32 current_usn = 1;
+  repeated BrainLiftSyncConflict conflicts = 2;
+  uint32 applied_count = 3;
 }

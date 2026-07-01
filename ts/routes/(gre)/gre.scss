@@ -1,0 +1,312 @@
+.gre-shell {
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--fg);
+}
+
+.gre-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--canvas-code);
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.gre-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.nav-link {
+    color: var(--fg-link);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.gre-main {
+    padding: 1.25rem;
+    max-width: 52rem;
+}
+
+.gre-panel {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--canvas);
+}
+
+.gre-panel + .gre-panel {
+    margin-top: 1rem;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1rem;
+}
+
+.score-card {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.muted {
+    color: var(--fg-subtle);
+}
+
+.muted-small {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.dashboard-updated {
+    margin: -0.5rem 0 1rem;
+}
+
+.score-range {
+    color: var(--fg-subtle);
+    font-size: 0.95rem;
+    margin: 0.25rem 0 0.5rem;
+}
+
+.score-abstain {
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.coverage-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1rem;
+    margin: 0;
+}
+
+.coverage-stats div {
+    margin: 0;
+}
+
+.coverage-stats dt {
+    color: var(--fg-subtle);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.coverage-stats dd {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.topic-list,
+.activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.topic-list li + li,
+.activity-list li + li {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+}
+
+.topic-list strong,
+.activity-list strong {
+    display: block;
+}
+
+.topic-list .muted,
+.activity-list .muted {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.primary-button {
+    margin-top: 1rem;
+}
+
+.practice-intro {
+    margin: -0.25rem 0 1rem;
+}
+
+.performance-panel h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.question-stem {
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.result-heading {
+    margin: 1rem 0 0.5rem;
+}
+
+.practice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.choices {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.choice {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.confidence {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.study-plan-summary {
+    margin: -0.25rem 0 0.5rem;
+}
+
+.study-plan-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.study-plan-list li {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.study-plan-list li + li {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.study-plan-rank {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--fg-subtle);
+    min-width: 1.5rem;
+}
+
+.study-plan-body strong {
+    display: block;
+}
+
+.study-plan-body .muted {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.study-plan-body p {
+    margin: 0.5rem 0 0;
+}
+
+.factor-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.factor-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.25rem;
+    background: var(--canvas-code);
+    color: var(--fg-subtle);
+}
+
+.study-plan-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.calibration-note {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border-left: 3px solid var(--border);
+    background: var(--canvas-code);
+}
+
+.calibration-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calibration-table th,
+.calibration-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.calibration-table th {
+    color: var(--fg-subtle);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.abstention-panel {
+    margin-top: 0.75rem;
+}
+
+.abstention-panel h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem;
+}
+
+.abstention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.abstention-list li + li {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+}
+
+.abstention-list strong {
+    display: block;
+}
+
+.abstention-list .muted {
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.abstention-next {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+}

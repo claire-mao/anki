@@ -13,18 +13,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     function startReview(): void {
         if (bridgeCommandsAvailable()) {
-            bridgeCommand("brainliftStartReview");
+            bridgeCommand("greStartReview");
         }
     }
 </script>
 
 <h1>GRE memory review</h1>
 
-<div class="brainlift-panel">
+<div class="gre-panel">
     <p>
-        BrainLift always reviews the <strong>{status.deckName}</strong>
-         deck using Anki's FSRS scheduler. Your flashcard ratings stay separate from GRE practice
-        questions.
+        GRE review always uses the <strong>{status.deckName}</strong>
+         deck with Anki's FSRS scheduler. Each rating updates topic mastery from FSRS
+        retrievability; the dashboard reloads when you finish. Flashcard ratings stay
+        separate from GRE practice questions.
     </p>
 
     {#if !status.deckExists}

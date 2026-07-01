@@ -1,8 +1,26 @@
 # BrainLift Product Architecture
 
-**Status:** Design proposal (Phase 1 not yet implemented)\
+**Status:** Phase 1 implemented on desktop (GRE shell, practice, dashboard, study plan, readiness + calibration)\
 **Exam:** GRE\
 **Positioning:** BrainLift is an AI-powered GRE study product. Anki’s scheduler and FSRS are the **memory engine** underneath. BrainLift is not “Anki with extra stats.”
+
+**Build & release:** [brainlift-release.md](./brainlift-release.md)
+
+### Implemented vs planned
+
+| Area | Status |
+| ---- | ------ |
+| GRE Svelte shell (`ts/routes/(gre)/`) | Done — `/dashboard`, `/practice`, `/study-plan`, `/readiness`, `/review` |
+| `BrainLiftService` RPCs | Done — see `proto/anki/brainlift.proto` |
+| `brainlift.db` sidecar storage | Done — schema v3 |
+| Memory / Performance / Readiness scores | Done — with abstention gates |
+| Study plan ranking | Done |
+| Readiness calibration (Brier, curve) | Done |
+| Qt GRE menu + dialog | Done |
+| Congrats → Practice / Dashboard CTAs | Done |
+| FTL / localized GRE strings | Planned |
+| AI question generation | Phase 3 |
+| iOS companion + sync | Phase 4 |
 
 ---
 
@@ -23,12 +41,12 @@
 
 ```mermaid
 flowchart TB
-    subgraph brainlift_ui [BrainLift UI — product layer]
-        BLNav["SvelteKit /brainlift/* shell"]
-        Practice["Practice"]
-        Readiness["Readiness dashboard"]
-        StudyPlan["Study Plan placeholder"]
-        ReviewEntry["Review entry / handoff"]
+    subgraph brainlift_ui [GRE UI — product layer]
+        BLNav["SvelteKit /dashboard shell"]
+        Practice["/practice"]
+        Readiness["/readiness + calibration"]
+        StudyPlan["/study-plan"]
+        ReviewEntry["/review → Anki handoff"]
     end
 
     subgraph anki_ui [Anki UI — unchanged review]
@@ -46,7 +64,7 @@ flowchart TB
         BLService["BrainLiftService protobuf"]
         BLStorage["brainlift.db SQLite"]
         BLQuestions["Question bank static → AI later"]
-        ReadinessModel["Readiness predictor placeholder"]
+        ReadinessModel["Readiness + calibration engine"]
     end
 
     subgraph anki_engine [Anki engine — read-only for BrainLift]
@@ -95,15 +113,15 @@ The repo already contains a **Topic Mastery Engine** prototype:
 - `BrainLiftService.GetScores` (performance + readiness + coverage)
 - `StatsService.TopicMastery` (memory), or a thin wrapper in `BrainLiftService` that delegates
 
-The old `/readiness` dev route becomes `/brainlift/readiness` inside the BrainLift shell.
+The old standalone `/readiness` dev route was replaced by `/readiness` inside the GRE shell (`ts/routes/(gre)/readiness/`).
 
 ### 1.5 Desktop integration model
 
 BrainLift runs **inside the same Anki process** (forked repo) but presents as its own section:
 
-1. **Qt:** New menu item **BrainLift → Open BrainLift** opens a dedicated dialog/webview loading `/brainlift`.
-2. **Review handoff:** Only touch the **congrats** finished screen — add a primary button “Continue to BrainLift Practice” that navigates to `/brainlift/practice`. No reviewer template/CSS/shortcut changes.
-3. **Review tab inside BrainLift:** “Review” nav item calls existing Anki flow (`deckBrowser` → study) via bridge command, same as today’s “Study” — BrainLift does not reimplement card review.
+1. **Qt:** Menu item **GRE → Open GRE** opens `BrainLiftDialog` loading `/dashboard`.
+2. **Review handoff:** Congrats screen adds **Continue to GRE Practice** and **View GRE Dashboard**. Reviewer is unchanged.
+3. **Review tab inside GRE:** “Review” nav starts Anki review for the **BrainLift GRE** deck via bridge command.
 
 ---
 

@@ -207,10 +207,27 @@ Depending on your operating system, this produces a file under `out/installer/di
 - A .dmg file on macOS.
 - A tarball on Linux.
 
+The installer includes the standard Anki desktop app and embedded GRE web UI. After installing, use **GRE → Open GRE** to open the BrainLift dashboard.
+
 ### Issues During Building
 
 If you are experiencing issues building the installer, make sure that all dependencies
 are installed. See [Building from source](#building-from-source) for more info.
+
+## BrainLift GRE
+
+GRE study features (dashboard, practice, study plan, readiness) are documented in:
+
+- [BrainLift release & build guide](./brainlift-release.md) — clean checkout build, installer verification, release checklist
+- [BrainLift architecture](./brainlift-architecture.md) — codebase map
+- [BrainLift product architecture](./brainlift-product-architecture.md) — product design
+
+Quick start after building:
+
+```bash
+just check      # format, build, test
+just run        # launch dev Anki → GRE → Open GRE
+```
 
 ## Releasing
 

@@ -29,10 +29,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const customStudyMsg = tr.schedulingHowToCustomStudy({
         customStudy,
     });
-    const brainliftPractice = bridgeLink(
-        "brainliftOpenPractice",
-        "Continue to BrainLift Practice",
-    );
+    const grePractice = bridgeLink("greOpenPractice", "Continue to GRE Practice");
+    const greDashboard = bridgeLink("greOpenDashboard", "View GRE Dashboard");
 
     onMount(() => {
         if (refreshPeriodically) {
@@ -40,7 +38,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 try {
                     info = await congratsInfo({}, { alertOnError: false });
                 } catch {
-                    console.log("congrats fetch failed");
+                    // ignore periodic refresh failures
                 }
             }, 60000);
         }
@@ -55,7 +53,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <p>{nextLearnMsg}</p>
 
             {#if info.bridgeCommandsSupported}
-                <p>{@html brainliftPractice}</p>
+                <p>{@html greDashboard}</p>
+                <p>{@html grePractice}</p>
             {/if}
 
             {#if info.reviewRemaining}

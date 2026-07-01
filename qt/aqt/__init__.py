@@ -123,7 +123,7 @@ class DialogManager:
         "FilteredDeckConfigDialog": [filtered_deck.FilteredDeckConfigDialog, None],
         "DeckStats": [stats.DeckStats, None],
         "NewDeckStats": [stats.NewDeckStats, None],
-        "BrainLift": [brainlift.BrainLiftDialog, None],
+        "GRE": [brainlift.BrainLiftDialog, None],
         "About": [about.show, None],
         "Preferences": [preferences.Preferences, None],
         "sync_log": [mediasync.MediaSyncDialog, None],

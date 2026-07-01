@@ -7,7 +7,19 @@
         "stem": "A store marks down an $80 item by 25%. What is the sale price?",
         "choices": ["$55", "$60", "$65", "$70"],
         "correct_answer": "$60",
-        "explanation": "25% of $80 is $20, so the sale price is $80 − $20 = $60."
+        "explanation": "25% of $80 is $20, so the sale price is $80 − $20 = $60.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-rat-001",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If the ratio of boys to girls in a class is 3:5 and there are 24 boys, how many girls are there?",
+        "choices": ["30", "32", "40", "45"],
+        "correct_answer": "40",
+        "explanation": "24 boys represent 3 parts, so one part is 8. Five parts of girls gives 40.",
+        "difficulty": 0.4
     },
     {
         "id": "gre-quant-alg-001",
@@ -17,7 +29,19 @@
         "stem": "If 3x + 7 = 22, what is the value of x?",
         "choices": ["3", "4", "5", "6"],
         "correct_answer": "5",
-        "explanation": "Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5."
+        "explanation": "Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-geo-001",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
+        "choices": ["9", "10", "12", "14"],
+        "correct_answer": "10",
+        "explanation": "By the Pythagorean theorem, √(6² + 8²) = √100 = 10.",
+        "difficulty": 0.45
     },
     {
         "id": "gre-verbal-tc-001",
@@ -27,7 +51,19 @@
         "stem": "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
         "choices": ["equivocal", "compelling", "peripheral", "tenuous"],
         "correct_answer": "compelling",
-        "explanation": "Skeptics changing their minds implies the evidence was convincing — compelling."
+        "explanation": "Skeptics changing their minds implies the evidence was convincing — compelling.",
+        "difficulty": 0.5
+    },
+    {
+        "id": "gre-verbal-se-001",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "stem": "Although the CEO's apology was ______, many employees remained skeptical of the company's reforms.",
+        "choices": ["heartfelt", "perfunctory", "sincere", "grudging", "elaborate", "cursory"],
+        "correct_answer": "heartfelt",
+        "explanation": "The contrast with continued skepticism suggests the apology seemed genuine — heartfelt (or sincere).",
+        "difficulty": 0.55
     },
     {
         "id": "gre-verbal-rc-001",
@@ -42,7 +78,8 @@
             "Urban planners ignore housing prices entirely."
         ],
         "correct_answer": "Convenience may trade off with affordability.",
-        "explanation": "The passage contrasts reduced commutes with higher housing costs — a convenience vs. affordability tradeoff."
+        "explanation": "The passage contrasts reduced commutes with higher housing costs — a convenience vs. affordability tradeoff.",
+        "difficulty": 0.6
     },
     {
         "id": "gre-quant-di-001",
@@ -52,6 +89,23 @@
         "stem": "A table shows Company A revenue of $40M in 2022 and $50M in 2023. Company B revenue was $30M in 2022 and $36M in 2023. Which company had the greater percent increase?",
         "choices": ["Company A", "Company B", "They increased by the same percent", "Cannot be determined"],
         "correct_answer": "Company A",
-        "explanation": "A: (50−40)/40 = 25%. B: (36−30)/30 = 20%. Company A increased more."
+        "explanation": "A: (50−40)/40 = 25%. B: (36−30)/30 = 20%. Company A increased more.",
+        "difficulty": 0.5
+    },
+    {
+        "id": "gre-awa-issue-001",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "stem": "Issue prompt: \"Governments should focus more on preventing environmental problems than on developing new technologies to fix them.\" What is the strongest critique of this claim?",
+        "choices": [
+            "Prevention and technological innovation can complement each other.",
+            "Environmental problems are impossible to prevent.",
+            "Technology always harms the environment.",
+            "Governments should ignore environmental issues."
+        ],
+        "correct_answer": "Prevention and technological innovation can complement each other.",
+        "explanation": "The best critique notes a false dichotomy — prevention and tech fixes are not mutually exclusive.",
+        "difficulty": 0.65
     }
 ]
