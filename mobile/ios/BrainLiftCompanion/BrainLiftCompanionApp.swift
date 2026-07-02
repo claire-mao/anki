@@ -21,14 +21,15 @@ struct RootTabView: View {
     var body: some View {
         TabView {
             DashboardView()
-                .tabItem { Label("Dashboard", systemImage: "gauge") }
-            ReadinessView()
-                .tabItem { Label("Readiness", systemImage: "chart.line.uptrend.xyaxis") }
-            ReviewView()
-                .tabItem { Label("Review", systemImage: "rectangle.stack") }
-            SyncView()
-                .tabItem { Label("Sync", systemImage: "arrow.triangle.2.circlepath") }
+                .tabItem { Label("Dashboard", systemImage: "gauge.with.dots.needle.67percent") }
+            StudyView()
+                .tabItem { Label("Study", systemImage: "rectangle.stack") }
+            PracticeView()
+                .tabItem { Label("Practice", systemImage: "checkmark.circle") }
+            GreProgressScreen()
+                .tabItem { Label("Progress", systemImage: "chart.line.uptrend.xyaxis") }
         }
+        .tint(.accentColor)
         .task {
             await engine.bootstrapIfNeeded()
         }

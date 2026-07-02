@@ -8,6 +8,7 @@ use anki_proto::brainlift::GreStudyStatusResponse;
 use anki_proto::brainlift::ListQuestionsResponse;
 use anki_proto::brainlift::RecordAttemptResponse;
 use anki_proto::brainlift::StudyPlanResponse;
+use anki_proto::brainlift::TopicDetailsResponse;
 
 use crate::brainlift::brainlift_storage;
 use crate::brainlift::questions::stored_question_to_proto;
@@ -142,6 +143,13 @@ impl crate::services::BrainLiftService for Collection {
         &mut self,
     ) -> error::Result<anki_proto::brainlift::ReadinessCalibrationResponse> {
         self.brainlift_get_readiness_calibration()
+    }
+
+    fn get_topic_details(
+        &mut self,
+        input: anki_proto::brainlift::GetTopicDetailsRequest,
+    ) -> error::Result<TopicDetailsResponse> {
+        self.brainlift_get_topic_details(input)
     }
 
     fn get_brain_lift_sync_status(

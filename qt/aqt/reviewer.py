@@ -173,7 +173,7 @@ class Reviewer:
 
     def show(self) -> None:
         if self.mw.col.sched_ver() == 1 or not self.mw.col.v3_scheduler():
-            self.mw.moveToState("deckBrowser")
+            self.mw.moveToState("greDashboard")
             show_warning(tr.scheduling_update_required().replace("V2", "v3"))
             return
         self.mw.setStateShortcuts(self._shortcutKeys())  # type: ignore
@@ -254,7 +254,15 @@ class Reviewer:
         self._card_info.set_card(self.card)
 
         if not self.card:
-            self.mw.moveToState("overview")
+            from anki.brainlift import GRE_DECK_NAME
+
+            deck = self.mw.col.decks.current()
+            if deck.get("name") == GRE_DECK_NAME or getattr(
+                self.mw, "gre_review_pending_dashboard_refresh", False
+            ):
+                self.mw.moveToState("greDashboard")
+            else:
+                self.mw.moveToState("overview")
             return
 
         if self._reps is None:
@@ -332,10 +340,14 @@ class Reviewer:
         if self.mw.pm.video_driver() == VideoDriver.Software:
             fade = "<script>qFade=0;</script>"
         return f"""
+<div class="gre-review-shell">
 <div id="_mark" hidden>&#x2605;</div>
 <div id="_flag" hidden>&#x2691;</div>
 {fade}
+<article class="gre-review-card">
 <div id="qa" dir="auto"></div>
+</article>
+</div>
 {extra}
 """
 
@@ -811,17 +823,17 @@ class Reviewer:
 
     def _bottomHTML(self) -> str:
         return """
-<center id=outer>
+<center id=outer class="gre-review-bottom">
 <table id=innertable width=100%% cellspacing=0 cellpadding=0>
 <tr>
-<td align=start valign=top class=stat>
-<button title="%(editkey)s" onclick="pycmd('edit');">%(edit)s</button></td>
-<td align=center valign=top id=middle>
+<td align=start valign=top class="stat gre-review-side">
+<button class="gre-toolbar-btn" title="%(editkey)s" onclick="pycmd('edit');">%(edit)s</button></td>
+<td align=center valign=top id=middle class="gre-review-middle">
 </td>
-<td align=end valign=top class=stat>
-<button title="%(morekey)s" onclick="pycmd('more');">
+<td align=end valign=top class="stat gre-review-side">
+<button class="gre-toolbar-btn" title="%(morekey)s" onclick="pycmd('more');">
 %(more)s %(downArrow)s
-<span id=time class=stattxt></span>
+<span id=time class="stattxt gre-review-timer"></span>
 </button>
 </td>
 </tr>
@@ -842,7 +854,7 @@ timerStopped = false;
 
     def _showAnswerButton(self) -> None:
         middle = """
-<button title="{}" id="ansbut" onclick='pycmd("ans");'>{}<span class=stattxt>{}</span></button>""".format(
+<button class="gre-show-answer" title="{}" id="ansbut" onclick='pycmd("ans");'>{}<span class="stattxt gre-show-answer-meta">{}</span></button>""".format(
             tr.actions_shortcut_key(val=tr.studying_space()),
             tr.studying_show_answer(),
             self._remaining(),
@@ -929,7 +941,7 @@ timerStopped = false;
                 else ""
             )
             return """
-<td align=center><button %s title="%s" data-ease="%s" onclick='pycmd("ease%d");'>\
+<td align=center><button class="gre-ease-btn" %s title="%s" data-ease="%s" onclick='pycmd("ease%d");'>\
 %s%s</button></td>""" % (
                 extra,
                 key,
@@ -981,7 +993,7 @@ timerStopped = false;
             diag = askUserDialog(message, [tr.studying_continue(), fin])
             diag.setIcon(QMessageBox.Icon.Information)
             if diag.run() == fin:
-                self.mw.moveToState("deckBrowser")
+                self.mw.moveToState("greDashboard")
                 return True
             self.mw.col.startTimebox()
         return False

@@ -14,7 +14,8 @@ Both call `Backend::run_service_method(service, method, input_bytes)` with **Bac
 
 Verification:
 
-- `mobile/mobile_bridge` tests compare FFI output to direct `Backend` calls for `get_scores` and `get_dashboard`.
+- `mobile/mobile_bridge` parity tests compare FFI output to direct `Backend` calls for every GRE page RPC bundle (Dashboard, Progress, Practice bootstrap, Study) plus individual RPCs (`get_scores`, `get_dashboard`, `get_study_plan`, `get_gre_study_status`, `topic_mastery`, `get_readiness_calibration`, `create_session`, `list_questions`).
+- iOS loads the same JSON view structs via `anki_mobile_gre_*_json` FFI functions (`mobile/ios/BrainLiftCompanion/Engine/MobileBridgeClient.swift`).
 - `rslib/src/brainlift/sync.rs` tests cover BrainLift pull/push and mtime conflicts.
 
 ## Features
@@ -39,17 +40,27 @@ Practice rows receive monotonic `usn` on each local change in `brainlift.db`.
 
 ### Dashboard & readiness (offline)
 
-- `GetDashboard` — memory, performance, readiness, coverage, weak topics
-- `GetReadinessCalibration` — Brier score, calibration curve, abstention requirements
+GRE tabs use page loaders in `mobile/mobile_bridge/src/gre_pages.rs`:
 
-Identical protobuf messages as desktop GRE Svelte pages (`ts/routes/(gre)/`).
+| Tab | FFI | RPC bundle (same as desktop `+page.ts`) |
+| --- | --- | --- |
+| Dashboard | `anki_mobile_gre_dashboard_json` | `getDashboard(5,1)`, `getStudyPlan(3)`, `getGreStudyStatus` |
+| Progress | `anki_mobile_gre_progress_json` | `getScores`, `getDashboard(5,8)`, `topicMastery`, `getReadinessCalibration` |
+| Practice | `anki_mobile_gre_practice_bootstrap_json` | `createSession`, `listQuestions(200)`, `getScores` |
+| Study | `anki_mobile_gre_study_json` | `getGreStudyStatus` |
+
+Underlying messages include `GetDashboard`, `GetReadinessCalibration`, etc. — identical protobuf as desktop GRE Svelte pages (`ts/routes/(gre)/`).
 
 ## Repository layout
 
 ```
 mobile/
   mobile_bridge/          # C FFI → Backend (link into iOS/Android)
+    include/anki_mobile.h # backend create, open collection, gre_*_json loaders
   ios/BrainLiftCompanion/ # SwiftUI shell
+    Engine/MobileBridgeClient.swift
+    Engine/GrePageModels.swift
+    Views/GREViews.swift    # Dashboard, Study, Practice, Progress tabs
 docs/brainlift-mobile.md  # this file
 ```
 

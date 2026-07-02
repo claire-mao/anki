@@ -1,0 +1,165 @@
+@use "tokens" as *;
+
+@mixin gre-motion-tokens {
+    --gre-motion-fast: 120ms;
+    --gre-motion-base: 160ms;
+    --gre-motion-enter: 180ms;
+    --gre-motion-progress: 180ms;
+    --gre-stagger-step: 30ms;
+}
+
+@keyframes gre-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gre-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes gre-skeleton-shimmer {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes gre-success-in {
+    from {
+        background: color-mix(in srgb, var(--state-new) 16%, var(--gre-surface-bg-muted));
+    }
+
+    to {
+        background: var(--gre-surface-bg-muted);
+    }
+}
+
+@keyframes gre-success-in-incorrect {
+    from {
+        background: color-mix(in srgb, var(--state-review) 12%, var(--gre-surface-bg-muted));
+    }
+
+    to {
+        background: var(--gre-surface-bg-muted);
+    }
+}
+
+.gre-animate-in {
+    animation: gre-fade-up var(--gre-motion-enter) ease both;
+}
+
+.gre-animate-fade {
+    animation: gre-fade-in var(--gre-motion-enter) ease both;
+}
+
+.gre-stagger > :global(*) {
+    animation: gre-fade-up var(--gre-motion-enter) ease both;
+}
+
+.gre-stagger > :global(*:nth-child(1)) {
+    animation-delay: 0ms;
+}
+
+.gre-stagger > :global(*:nth-child(2)) {
+    animation-delay: var(--gre-stagger-step);
+}
+
+.gre-stagger > :global(*:nth-child(3)) {
+    animation-delay: calc(var(--gre-stagger-step) * 2);
+}
+
+.gre-stagger > :global(*:nth-child(4)) {
+    animation-delay: calc(var(--gre-stagger-step) * 3);
+}
+
+.gre-stagger > :global(*:nth-child(5)) {
+    animation-delay: calc(var(--gre-stagger-step) * 4);
+}
+
+.gre-stagger > :global(*:nth-child(n + 6)) {
+    animation-delay: calc(var(--gre-stagger-step) * 5);
+}
+
+.gre-skeleton {
+    display: block;
+    border-radius: var(--gre-radius-sm);
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--border) 35%, transparent) 0%,
+        color-mix(in srgb, var(--border) 18%, transparent) 45%,
+        color-mix(in srgb, var(--border) 35%, transparent) 90%
+    );
+    background-size: 200% 100%;
+    animation: gre-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.gre-skeleton-md {
+    border-radius: var(--gre-radius-md);
+}
+
+.gre-skeleton-lg {
+    border-radius: var(--gre-radius-lg);
+}
+
+.gre-skeleton-pill {
+    border-radius: var(--gre-radius-full);
+}
+
+.gre-page-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-4);
+    animation: gre-fade-in var(--gre-motion-fast) ease both;
+}
+
+.gre-page-skeleton-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+}
+
+.gre-page-skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: var(--gre-space-3);
+}
+
+.gre-page-skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    padding: var(--gre-card-padding-compact);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+    box-shadow: var(--gre-shadow-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gre-animate-in,
+    .gre-animate-fade,
+    .gre-stagger > :global(*),
+    .gre-page-skeleton,
+    .gre-skeleton {
+        animation: none !important;
+    }
+
+    .gre-skeleton {
+        background: color-mix(in srgb, var(--border) 28%, transparent);
+    }
+}

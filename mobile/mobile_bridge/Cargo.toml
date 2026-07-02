@@ -15,10 +15,12 @@ path = "src/lib.rs"
 
 [dependencies]
 anki = { workspace = true, features = ["rustls"] }
+anki_proto.workspace = true
+anki_proto_gen.workspace = true
+prost.workspace = true
+prost-reflect.workspace = true
+serde.workspace = true
+serde_json.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true
-anki_proto.workspace = true
-anki_proto_gen.workspace = true
-prost-reflect.workspace = true
-prost.workspace = true

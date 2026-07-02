@@ -3,18 +3,79 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { DashboardTopicInsight, PerformanceAttempt } from "@generated/anki/brainlift_pb";
+    import { onMount } from "svelte";
+    import { browser } from "$app/environment";
+    import type { PerformanceAttempt } from "@generated/anki/brainlift_pb";
 
-    import AbstentionRequirements from "../AbstentionRequirements.svelte";
+    import GrePageHeader from "../GrePageHeader.svelte";
+    import { commitMetricSnapshot, type MetricChanges } from "../metric-change";
+    import { presentOnboarding } from "../onboarding-presentation";
+    import { emptyStateContent } from "../empty-states";
+    import MemorySummary from "../summaries/MemorySummary.svelte";
+    import PerformanceSummary from "../summaries/PerformanceSummary.svelte";
+    import EstimatedGreSummary from "../summaries/EstimatedGreSummary.svelte";
+    import ReadinessSummary from "../summaries/ReadinessSummary.svelte";
+    import { checklistRequirementsForEstimatedGre } from "../summary-metrics";
+    import GrePanel from "../ui/GrePanel.svelte";
+    import GreOnboardingPanel from "../ui/GreOnboardingPanel.svelte";
+    import GreEmptyState from "../ui/GreEmptyState.svelte";
+    import GreScoreCard from "../ui/GreScoreCard.svelte";
+    import GreSection from "../ui/GreSection.svelte";
+    import GreCoverageBars from "../ui/GreCoverageBars.svelte";
+    import GreSparkline from "../ui/GreSparkline.svelte";
+    import GreTopicMasteryBar from "../ui/GreTopicMasteryBar.svelte";
+    import { presentTopicInsights } from "../recommendation-presentation";
+    import GreStudyRecommendationList from "../ui/GreStudyRecommendationList.svelte";
+    import { rollingAccuracySeries } from "../indicator-utils";
+    import { topicDetailsPath } from "../topic-link";
     import type { PageData } from "./$types";
 
     export let data: PageData;
 
     const dashboard = data.dashboard;
+    const status = data.status;
+    const readinessCalibration = data.readinessCalibration;
     const memory = dashboard.memory!;
     const performance = dashboard.performance!;
     const readiness = dashboard.readiness!;
+    const estimatedGre = dashboard.estimatedGre!;
     const coverage = dashboard.coverage!;
+    const estimatedGreChecklist = checklistRequirementsForEstimatedGre(
+        memory,
+        performance,
+        readiness,
+    );
+    const recommendedFocus = presentTopicInsights(dashboard.recommendedTopics);
+
+    $: onboarding = presentOnboarding({
+        deckExists: status.deckExists,
+        deckName: status.deckName,
+        memory,
+        performance,
+        readiness,
+        estimatedGre,
+        calibration: readinessCalibration.calibration,
+        dueTotal: status.newCount + status.learnCount + status.reviewCount,
+        weakestTopicId: dashboard.weakTopics[0]?.topicId,
+        weakestTopicName: dashboard.weakTopics[0]?.displayName,
+        context: "dashboard",
+    });
+
+    let metricChanges: MetricChanges = {};
+
+    onMount(() => {
+        if (!browser) {
+            return;
+        }
+        metricChanges = commitMetricSnapshot({
+            memory,
+            performance,
+            readiness,
+            estimatedGre,
+            topicInsights: [...dashboard.weakTopics, ...dashboard.recommendedTopics],
+            recentActivity: dashboard.recentActivity,
+        });
+    });
 
     function formatPercent(value: number): string {
         return `${Math.round(value)}%`;
@@ -24,181 +85,135 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         return formatPercent(ratio * 100);
     }
 
-    function formatRange(low: number | undefined, high: number | undefined): string | null {
-        if (low === undefined || high === undefined) {
-            return null;
-        }
-        return `${formatPercent(low)}–${formatPercent(high)}`;
-    }
-
     function formatTimestampMillis(millis: bigint): string {
-        return new Date(Number(millis)).toLocaleString();
+        return new Date(Number(millis)).toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+        });
     }
 
     function formatAnsweredAt(secs: bigint): string {
-        return new Date(Number(secs) * 1000).toLocaleString();
-    }
-
-    function topicInsightMeta(topic: DashboardTopicInsight): string {
-        const parts: string[] = [topic.section];
-        parts.push(formatRatio(topic.examWeight));
-        parts.push(topic.covered ? "covered" : "not covered");
-        if (topic.studiedCards > 0) {
-            parts.push(`${topic.studiedCards} studied cards`);
-        }
-        if (topic.memoryScore !== undefined) {
-            parts.push(`memory ${formatPercent(topic.memoryScore)}`);
-        }
-        if (topic.practiceAccuracy !== undefined) {
-            parts.push(`practice ${formatPercent(topic.practiceAccuracy)}`);
-        }
-        return parts.join(" · ");
+        return new Date(Number(secs) * 1000).toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+        });
     }
 
     function attemptSummary(attempt: PerformanceAttempt): string {
         const parts = [
-            attempt.topic,
-            attempt.correct ? "correct" : "incorrect",
+            attempt.correct ? "Correct" : "Incorrect",
             `${(attempt.responseTimeMs / 1000).toFixed(1)}s`,
             formatAnsweredAt(attempt.answeredAtSecs),
         ];
-        if (attempt.confidence !== undefined) {
-            parts.push(`confidence ${attempt.confidence}`);
-        }
         return parts.join(" · ");
     }
 </script>
 
-<h1>Dashboard</h1>
+<GrePageHeader
+    title="Dashboard"
+    icon="dashboard"
+    subtitle={onboarding.active
+        ? "Study, practice, and track your GRE progress"
+        : "Scores, coverage, and focus topics"}
+    meta="Last updated {formatTimestampMillis(dashboard.computedAtMillis)}"
+/>
 
-<p class="dashboard-updated muted">
-    Last updated {formatTimestampMillis(dashboard.computedAtMillis)}
-</p>
+<GreSection>
+    {#if onboarding.active}
+        <GreOnboardingPanel model={onboarding} />
+    {:else}
+    <div class="score-grid gre-stagger">
+        <GreScoreCard title="Memory" icon="memory">
+            <MemorySummary {memory} />
+        </GreScoreCard>
 
-<div class="score-grid">
-    <div class="score-card">
-        <h2>Memory</h2>
-        {#if memory.sufficientData && memory.value !== undefined}
-            <div class="score-value">{formatPercent(memory.value)}</div>
-            {#if formatRange(memory.valueLow, memory.valueHigh)}
-                <p class="score-range">{formatRange(memory.valueLow, memory.valueHigh)}</p>
-            {/if}
-            <p class="muted">{memory.detail}</p>
-            <p class="muted">{formatRatio(memory.coverageRatio)} catalog coverage</p>
-        {:else}
-            <p class="score-abstain">{memory.abstainReason}</p>
-            <AbstentionRequirements requirements={memory.abstentionRequirements} />
-            <p class="muted">{formatRatio(memory.coverageRatio)} catalog coverage</p>
-            <p class="muted">{memory.studiedCards} studied cards</p>
-        {/if}
-    </div>
+        <GreScoreCard title="Performance" icon="performance">
+            <PerformanceSummary {performance} recentAttempts={dashboard.recentActivity} />
+        </GreScoreCard>
 
-    <div class="score-card">
-        <h2>Performance</h2>
-        {#if performance.sufficientData && performance.value !== undefined}
-            <div class="score-value">{formatPercent(performance.value)}</div>
-            {#if formatRange(performance.valueLow, performance.valueHigh)}
-                <p class="score-range">{formatRange(performance.valueLow, performance.valueHigh)}</p>
-            {/if}
-            <p class="muted">{performance.detail}</p>
-        {:else}
-            <p class="score-abstain">{performance.abstainReason}</p>
-            <AbstentionRequirements requirements={performance.abstentionRequirements} />
-            <p class="muted">{performance.attemptCount} attempts</p>
-        {/if}
-    </div>
-
-    <div class="score-card">
-        <h2>Readiness</h2>
-        {#if readiness.sufficientData && readiness.projectedScore !== undefined}
-            <div class="score-value">{formatPercent(readiness.projectedScore)}</div>
-            {#if formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh)}
-                <p class="score-range">
-                    {formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh)}
-                </p>
-            {/if}
-            <p class="muted">{readiness.evidenceSummary}</p>
-            {#if readiness.confidenceLevel}
-                <p class="muted">
-                    {readiness.confidenceLevel} confidence · {formatRatio(readiness.coverageRatio)}
-                    coverage
-                </p>
-            {/if}
-        {:else}
-            <p class="score-abstain">{readiness.abstainReason}</p>
-            <AbstentionRequirements
-                requirements={readiness.abstentionRequirements}
-                heading="Readiness requires more evidence"
+        <GreScoreCard title="Estimated GRE" icon="score">
+            <EstimatedGreSummary
+                estimate={estimatedGre}
+                {readiness}
+                {memory}
+                {performance}
+                weakTopics={dashboard.weakTopics}
+                checklistRequirements={estimatedGreChecklist}
+                metricChange={metricChanges.estimatedGre ?? null}
             />
-            <p class="muted">{readiness.evidenceSummary}</p>
-        {/if}
-        {#if readiness.calibrationNote}
-            <p class="calibration-note">{readiness.calibrationNote}</p>
-        {/if}
-        <p class="muted muted-small">
-            Readiness data from {formatTimestampMillis(readiness.lastUpdatedMillis)}
-        </p>
+        </GreScoreCard>
+
+        <GreScoreCard title="Readiness score" icon="readiness">
+            <ReadinessSummary
+                {readiness}
+                {memory}
+                {performance}
+                weakTopics={dashboard.weakTopics}
+                metricChange={metricChanges.readiness ?? null}
+                confidenceChange={metricChanges.confidence ?? null}
+            />
+        </GreScoreCard>
     </div>
-</div>
 
-<div class="gre-panel">
-    <h2>Topic coverage</h2>
-    <dl class="coverage-stats">
-        <div>
-            <dt>Weighted coverage</dt>
-            <dd>{formatRatio(coverage.weightedRatio)}</dd>
-        </div>
-        <div>
-            <dt>Unweighted coverage</dt>
-            <dd>{formatRatio(coverage.unweightedRatio)}</dd>
-        </div>
-        <div>
-            <dt>Covered leaves</dt>
-            <dd>{coverage.coveredLeafCount} / {coverage.catalogLeafCount}</dd>
-        </div>
-    </dl>
-</div>
+    <GrePanel title="Topic coverage">
+        <GreCoverageBars
+            weightedRatio={coverage.weightedRatio}
+            unweightedRatio={coverage.unweightedRatio}
+            coveredLeafCount={coverage.coveredLeafCount}
+            catalogLeafCount={coverage.catalogLeafCount}
+        />
+    </GrePanel>
 
-<div class="gre-panel">
-    <h2>Weak topics</h2>
-    {#if dashboard.weakTopics.length > 0}
-        <ul class="topic-list">
-            {#each dashboard.weakTopics as topic}
-                <li>
-                    <strong>{topic.displayName}</strong>
-                    <span class="muted">{topicInsightMeta(topic)}</span>
-                    <p class="muted">{topic.reason}</p>
-                </li>
-            {/each}
-        </ul>
+    <GrePanel title="Weak topics">
+        {#if dashboard.weakTopics.length > 0}
+            <ul class="topic-list">
+                {#each dashboard.weakTopics as topic}
+                    <li>
+                        <a href={topicDetailsPath(topic.topicId)}>
+                            <strong>{topic.displayName}</strong>
+                        </a>
+                        <span class="muted">{topic.section} · {formatRatio(topic.examWeight)}</span>
+                        <div class="topic-insight-bars">
+                            {#if topic.memoryScore !== undefined}
+                                <GreTopicMasteryBar label="Memory" value={topic.memoryScore} />
+                            {/if}
+                            {#if topic.practiceAccuracy !== undefined}
+                                <GreTopicMasteryBar label="Practice" value={topic.practiceAccuracy} />
+                            {/if}
+                        </div>
+                    </li>
+                {/each}
+            </ul>
+        {:else}
+            <GreEmptyState content={emptyStateContent("weakTopics")} />
+        {/if}
+    </GrePanel>
+
+    <GrePanel title="Recommended focus">
+        {#if recommendedFocus.length > 0}
+            <GreStudyRecommendationList recommendations={recommendedFocus} />
+        {:else}
+            <GreEmptyState content={emptyStateContent("recommendations")} />
+        {/if}
+    </GrePanel>
+
+    <GrePanel title="Recent practice">
+        {#if dashboard.recentActivity.length > 0}
+            {@const trend = rollingAccuracySeries(dashboard.recentActivity)}
+            {#if trend.length >= 2}
+                <GreSparkline points={trend} label="Recent accuracy trend" />
+            {/if}
+            <ul class="activity-list">
+                {#each dashboard.recentActivity as attempt}
+                    <li>
+                        <strong>{attempt.topic}</strong>
+                        <span class="muted">{attemptSummary(attempt)}</span>
+                    </li>
+                {/each}
+            </ul>
+        {:else}
+            <GreEmptyState content={emptyStateContent("recentPractice")} />
+        {/if}
+    </GrePanel>
     {/if}
-</div>
-
-<div class="gre-panel">
-    <h2>Study recommendations</h2>
-    {#if dashboard.recommendedTopics.length > 0}
-        <ul class="topic-list">
-            {#each dashboard.recommendedTopics as topic}
-                <li>
-                    <strong>{topic.displayName}</strong>
-                    <span class="muted">{topicInsightMeta(topic)}</span>
-                    <p class="muted">{topic.reason}</p>
-                </li>
-            {/each}
-        </ul>
-    {/if}
-</div>
-
-<div class="gre-panel">
-    <h2>Recent practice</h2>
-    {#if dashboard.recentActivity.length > 0}
-        <ul class="activity-list">
-            {#each dashboard.recentActivity as attempt}
-                <li>
-                    <strong>{attempt.questionId}</strong>
-                    <span class="muted">{attemptSummary(attempt)}</span>
-                </li>
-            {/each}
-        </ul>
-    {/if}
-</div>
+</GreSection>

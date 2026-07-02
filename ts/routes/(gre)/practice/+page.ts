@@ -3,32 +3,29 @@
 
 import { createSession, getScores, listQuestions } from "@generated/backend";
 
-import type { PageLoad } from "./$types";
+import { buildQuestionQueue } from "./practice-session";
 
-function shuffle<T>(items: T[]): T[] {
-    const copy = [...items];
-    for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy;
-}
+import type { PageLoad } from "./$types";
 
 export const load = (async () => {
     const [session, questionsResponse, scoresResponse] = await Promise.all([
         createSession({ source: "practice" }),
-        listQuestions({ limit: 100, topicPrefix: "" }),
+        listQuestions({ limit: 200, topicPrefix: "" }),
         getScores({}),
     ]);
 
-    const questions = shuffle(questionsResponse.questions);
+    const questions = questionsResponse.questions;
     if (questions.length === 0) {
-        throw new Error("No GRE practice questions available.");
+        throw new Error("No GRE practice questions in the performance database.");
     }
+
+    const queue = buildQuestionQueue(questions, "all");
 
     return {
         sessionId: session.sessionId,
         questions,
+        queue,
+        memory: scoresResponse.memory!,
         performance: scoresResponse.performance!,
     };
 }) satisfies PageLoad;

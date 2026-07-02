@@ -29,12 +29,38 @@ int anki_mobile_backend_create(
 
 void anki_mobile_backend_destroy(AnkiMobileBackend *backend);
 
+int anki_mobile_open_collection(
+    AnkiMobileBackend *backend,
+    const char *collection_path,
+    const char *media_folder_path,
+    const char *media_db_path);
+
 int anki_mobile_backend_command(
     AnkiMobileBackend *backend,
     uint32_t service,
     uint32_t method,
     const uint8_t *input,
     size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_dashboard_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_progress_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_practice_bootstrap_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_study_json(
+    AnkiMobileBackend *backend,
     uint8_t **out_bytes,
     size_t *out_len);
 

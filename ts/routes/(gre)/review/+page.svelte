@@ -4,44 +4,77 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
     import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
+    import { fade } from "svelte/transition";
 
+    import GrePageHeader from "../GrePageHeader.svelte";
+    import { runGreNavAction, settingsNavAction } from "../gre-navigation";
+    import GreButton from "../ui/GreButton.svelte";
+    import GrePanel from "../ui/GrePanel.svelte";
+    import GreText from "../ui/GreText.svelte";
     import type { PageData } from "./$types";
+
+    import { onMount } from "svelte";
 
     export let data: PageData;
 
     const status = data.status;
+    let launched = false;
 
     function startReview(): void {
         if (bridgeCommandsAvailable()) {
             bridgeCommand("greStartReview");
         }
     }
+
+    onMount(() => {
+        if (bridgeCommandsAvailable()) {
+            launched = true;
+            startReview();
+        }
+    });
 </script>
 
-<h1>GRE memory review</h1>
+<GrePageHeader
+    title="Study"
+    icon="study"
+    subtitle="Flashcard review for the BrainLift GRE deck."
+/>
 
-<div class="gre-panel">
-    <p>
-        GRE review always uses the <strong>{status.deckName}</strong>
-         deck with Anki's FSRS scheduler. Each rating updates topic mastery from FSRS
-        retrievability; the dashboard reloads when you finish. Flashcard ratings stay
-        separate from GRE practice questions.
-    </p>
-
-    {#if !status.deckExists}
-        <p class="muted">
+<GrePanel>
+    {#if launched}
+        <div class="gre-loading" role="status" aria-live="polite" transition:fade={{ duration: 180 }}>
+            <div class="gre-loading-spinner" aria-hidden="true"></div>
+            <GreText variant="caption" muted className="gre-loading-caption">
+                Opening your GRE review session…
+            </GreText>
+        </div>
+    {:else if !status.deckExists}
+        <GreText variant="body" muted>
             Create a deck named "{status.deckName}" and add GRE flashcards tagged with
             <code>gre::</code>
-             topics.
-        </p>
+            topics.
+        </GreText>
+        <GreButton variant="primary" className="primary-button" on:click={() => runGreNavAction(settingsNavAction())}>
+            Set up deck
+        </GreButton>
     {:else}
-        <p>
-            Due now: {status.newCount} new · {status.learnCount} learning ·
-            {status.reviewCount} review
-        </p>
+        <GreText variant="body">Due now across your GRE deck:</GreText>
+        <div class="study-due-grid gre-stagger" aria-label="Due card counts">
+            <div class="study-due-stat">
+                <strong>{status.newCount}</strong>
+                <span>New</span>
+            </div>
+            <div class="study-due-stat">
+                <strong>{status.learnCount}</strong>
+                <span>Learning</span>
+            </div>
+            <div class="study-due-stat">
+                <strong>{status.reviewCount}</strong>
+                <span>Review</span>
+            </div>
+        </div>
+        <GreButton variant="primary" className="primary-button" on:click={startReview}>
+            Start review
+        </GreButton>
     {/if}
-
-    <button class="btn btn-primary primary-button" on:click={startReview}>
-        Start GRE review
-    </button>
-</div>
+</GrePanel>

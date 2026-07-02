@@ -1,0 +1,248 @@
+@use "../design-system/progress" as *;
+
+.practice-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-section-gap);
+    max-width: var(--gre-content-max);
+    margin: 0 auto;
+    min-height: calc(100dvh - var(--gre-header-height) - var(--gre-space-8));
+}
+
+.practice-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+    width: 100%;
+}
+
+.practice-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+}
+
+.practice-progress-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+}
+
+.practice-progress-label {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.practice-progress-count {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    font-variant-numeric: tabular-nums;
+}
+
+.practice-progress-track {
+    @include gre-progress-track;
+}
+
+.practice-progress-fill {
+    @include gre-progress-fill;
+}
+
+.practice-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-2);
+}
+
+.practice-question-wrap {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.practice-question-stage {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--gre-space-4);
+    min-height: min(100%, 24rem);
+    padding: var(--gre-space-2) 0 var(--gre-space-6);
+}
+
+.question-meta {
+    margin: 0;
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h3);
+    line-height: var(--gre-lh-h3);
+    color: var(--fg-subtle);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.practice-question-stage :global(.question-stem) {
+    margin: 0;
+    font-size: clamp(1.125rem, 2.8vw, 1.4rem);
+    font-weight: var(--gre-weight-h2);
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+}
+
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+    margin: var(--gre-space-2) 0 0;
+}
+
+.choice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gre-space-3);
+    padding: var(--gre-card-padding-compact);
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg);
+    box-shadow: var(--gre-shadow-sm);
+    cursor: pointer;
+    transition:
+        border-color var(--gre-motion-fast) ease,
+        background var(--gre-motion-fast) ease,
+        box-shadow var(--gre-motion-fast) ease,
+        transform var(--gre-motion-fast) ease;
+
+    &:hover {
+        border-color: color-mix(in srgb, var(--fg-link) 50%, var(--border));
+        box-shadow: var(--gre-shadow-md);
+    }
+
+    &:active {
+        transform: scale(0.995);
+    }
+}
+
+.choice-selected {
+    border-color: var(--fg-link);
+    background: color-mix(in srgb, var(--fg-link) 8%, var(--canvas));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg-link) 20%, transparent);
+}
+
+.choice input {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    accent-color: var(--fg-link);
+}
+
+.choice-text {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+    word-break: break-word;
+}
+
+.practice-submit,
+.practice-continue {
+    align-self: stretch;
+    width: 100%;
+    max-width: none;
+    margin-top: var(--gre-space-2);
+}
+
+.result-panel {
+    padding: var(--gre-card-padding-compact);
+    border: none;
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+    border-left: 4px solid var(--border);
+    animation: gre-fade-up var(--gre-motion-enter) ease both;
+}
+
+.result-panel.correct {
+    border-left-color: var(--state-new);
+    animation:
+        gre-fade-up var(--gre-motion-enter) ease both,
+        gre-success-in var(--gre-motion-enter) ease both;
+}
+
+.result-panel.incorrect {
+    border-left-color: var(--state-review);
+    animation:
+        gre-fade-up var(--gre-motion-enter) ease both,
+        gre-success-in-incorrect var(--gre-motion-enter) ease both;
+}
+
+.result-heading {
+    margin: 0 0 var(--gre-space-2);
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-label);
+}
+
+.result-status {
+    display: inline-block;
+    animation: gre-fade-in var(--gre-motion-fast) ease both;
+}
+
+.result-panel.correct .result-status {
+    color: var(--state-new);
+}
+
+.result-panel.incorrect .result-status {
+    color: var(--state-review);
+}
+
+.result-explanation {
+    margin: 0 0 var(--gre-space-2);
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+}
+
+.result-topic {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.practice-complete {
+    margin-top: var(--gre-space-4);
+}
+
+.practice-actions {
+    margin-top: var(--gre-space-4);
+}
+
+.practice-error {
+    margin: var(--gre-space-2) 0 0;
+    color: var(--state-review);
+}
+
+@media (max-width: 767px) {
+    .practice-page {
+        min-height: calc(100dvh - var(--gre-header-height) - var(--gre-space-4));
+    }
+
+    .practice-question-stage {
+        min-height: 0;
+        padding-bottom: var(--gre-space-4);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .result-panel,
+    .result-panel.correct,
+    .result-panel.incorrect {
+        transition: none;
+        animation: none !important;
+    }
+
+    .choice:active {
+        transform: none;
+    }
+}

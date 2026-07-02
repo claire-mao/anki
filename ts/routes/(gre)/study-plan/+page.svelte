@@ -3,100 +3,67 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { StudyPlanRecommendation } from "@generated/anki/brainlift_pb";
-
-    import { formatPercent, formatRatio } from "../score-format";
+    import DailyStudyPlan from "../DailyStudyPlan.svelte";
+    import { emptyStateContent } from "../empty-states";
+    import { presentStudyPlanRecommendations } from "../recommendation-presentation";
+    import GrePageHeader from "../GrePageHeader.svelte";
+    import GrePanel from "../ui/GrePanel.svelte";
+    import GreEmptyState from "../ui/GreEmptyState.svelte";
+    import GreSection from "../ui/GreSection.svelte";
+    import GreCoverageBars from "../ui/GreCoverageBars.svelte";
+    import GreStudyRecommendationList from "../ui/GreStudyRecommendationList.svelte";
     import type { PageData } from "./$types";
 
     export let data: PageData;
 
     const plan = data.plan;
     const coverage = plan.coverage!;
-
-    const factorLabels: Record<string, string> = {
-        coverage_gap: "Coverage gap",
-        low_mastery: "Low mastery",
-        low_performance: "Low performance",
-        no_practice: "No practice",
-        high_importance: "High importance",
-    };
-
-    function factorLabel(factor: string): string {
-        return factorLabels[factor] ?? factor;
-    }
-
-    function topicMeta(topic: StudyPlanRecommendation): string {
-        const parts = [topic.section, `${formatRatio(topic.examWeight)} exam weight`];
-        parts.push(topic.covered ? "covered" : "not covered");
-        if (topic.studiedCards > 0) {
-            parts.push(`${topic.studiedCards} studied cards`);
-        }
-        if (topic.memoryScore !== undefined) {
-            parts.push(`memory ${formatPercent(topic.memoryScore)}`);
-        }
-        if (topic.practiceAccuracy !== undefined) {
-            parts.push(`practice ${formatPercent(topic.practiceAccuracy)}`);
-        }
-        return parts.join(" · ");
-    }
+    const dailyPlan = plan.dailyPlan!;
+    const status = data.status;
+    const recommendations = presentStudyPlanRecommendations(plan.recommendations);
 
     function formatTimestampMillis(millis: bigint): string {
-        return new Date(Number(millis)).toLocaleString();
+        return new Date(Number(millis)).toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+        });
     }
 </script>
 
-<h1>Study Plan</h1>
+<GrePageHeader
+    title="Study plan"
+    icon="calendar"
+    subtitle={plan.summary}
+    meta="Last updated {formatTimestampMillis(plan.computedAtMillis)}"
+/>
 
-<p class="muted study-plan-summary">{plan.summary}</p>
-<p class="muted dashboard-updated">
-    Last updated {formatTimestampMillis(plan.computedAtMillis)}
-</p>
+<GreSection>
+    <DailyStudyPlan plan={dailyPlan} studyStatus={status} />
 
-<div class="gre-panel">
-    <h2>Coverage</h2>
-    <dl class="coverage-stats">
-        <div>
-            <dt>Weighted coverage</dt>
-            <dd>{formatRatio(coverage.weightedRatio)}</dd>
-        </div>
-        <div>
-            <dt>Unweighted coverage</dt>
-            <dd>{formatRatio(coverage.unweightedRatio)}</dd>
-        </div>
-        <div>
-            <dt>Covered leaves</dt>
-            <dd>{coverage.coveredLeafCount} / {coverage.catalogLeafCount}</dd>
-        </div>
-    </dl>
-</div>
+    <GrePanel title="Coverage">
+        <GreCoverageBars
+            weightedRatio={coverage.weightedRatio}
+            unweightedRatio={coverage.unweightedRatio}
+            coveredLeafCount={coverage.coveredLeafCount}
+            catalogLeafCount={coverage.catalogLeafCount}
+        />
+    </GrePanel>
 
-<div class="gre-panel">
-    <h2>Recommended topics</h2>
-    {#if plan.recommendations.length === 0}
-        <p class="muted">{plan.summary}</p>
-    {:else}
-        <ol class="study-plan-list">
-            {#each plan.recommendations as topic, index}
-                <li>
-                    <div class="study-plan-rank">{index + 1}</div>
-                    <div class="study-plan-body">
-                        <strong>{topic.displayName}</strong>
-                        <span class="muted">{topicMeta(topic)}</span>
-                        <p>{topic.explanation}</p>
-                        <div class="factor-tags">
-                            {#each topic.factors as factor}
-                                <span class="factor-tag">{factorLabel(factor)}</span>
-                            {/each}
-                        </div>
-                    </div>
-                </li>
-            {/each}
-        </ol>
-    {/if}
-</div>
+    <GrePanel title="Impact-ranked topics">
+        {#if recommendations.length === 0}
+            <GreEmptyState content={emptyStateContent("studyPlanRecommendations")} />
+        {:else}
+            <p class="study-plan-ranked-intro">Sorted by expected GRE impact, not study order.</p>
+            <GreStudyRecommendationList {recommendations} />
+        {/if}
+    </GrePanel>
+</GreSection>
 
-<div class="gre-panel study-plan-actions">
-    <a class="btn btn-primary" href="/review">GRE review</a>
-    <a class="btn" href="/practice">Practice</a>
-    <a class="btn" href="/dashboard">Dashboard</a>
-</div>
+<style lang="scss">
+    .study-plan-ranked-intro {
+        margin: 0 0 var(--gre-space-3);
+        font-size: var(--gre-font-caption);
+        line-height: var(--gre-lh-caption);
+        color: var(--fg-subtle);
+    }
+</style>

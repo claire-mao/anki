@@ -73,6 +73,7 @@ impl Collection {
                 .map(attempt_row_to_proto)
                 .collect(),
             computed_at_millis: signals.computed_at_millis,
+            estimated_gre: Some(signals.estimated_gre),
         })
     }
 }

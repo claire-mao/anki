@@ -4,12 +4,14 @@
 pub(crate) mod abstention;
 mod calibration;
 mod dashboard;
+mod estimated_gre;
 mod readiness;
 mod scores;
 mod service;
 mod signals;
 mod study_plan;
 mod sync;
+mod topic_details;
 mod topic_insights;
 pub mod domain;
 pub mod questions;

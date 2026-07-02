@@ -7,43 +7,111 @@
 
 :root {
     --focus-color: #{palette-of(border-focus)};
+    --gre-bottom-bg: rgb(255 255 255 / 0.92);
+    --gre-bottom-border: rgb(30 58 95 / 0.12);
+    --gre-bottom-shadow: 0 -10px 30px rgb(15 23 42 / 0.08);
+    --gre-toolbar-btn-bg: rgb(241 245 249 / 0.95);
+    --gre-toolbar-btn-border: rgb(148 163 184 / 0.35);
+    --gre-show-answer-bg: #1e3a5f;
+    --gre-show-answer-hover: #2d5a87;
+    --gre-ease-again: #dc2626;
+    --gre-ease-hard: #d97706;
+    --gre-ease-good: #0f766e;
+    --gre-ease-easy: #2563eb;
 
     .isMac {
         --focus-color: rgba(0 103 244 / 0.247);
     }
 }
 
+body.nightMode {
+    --gre-bottom-bg: rgb(15 23 42 / 0.94);
+    --gre-bottom-border: rgb(148 163 184 / 0.18);
+    --gre-bottom-shadow: 0 -10px 30px rgb(0 0 0 / 0.35);
+    --gre-toolbar-btn-bg: rgb(30 41 59 / 0.95);
+    --gre-toolbar-btn-border: rgb(100 116 139 / 0.35);
+    --gre-show-answer-bg: #2563eb;
+    --gre-show-answer-hover: #3b82f6;
+    --gre-ease-again: #f87171;
+    --gre-ease-hard: #fbbf24;
+    --gre-ease-good: #34d399;
+    --gre-ease-easy: #60a5fa;
+}
+
 body {
     margin: 0;
     padding: 0;
+    font-family:
+        "Segoe UI",
+        system-ui,
+        sans-serif;
 }
 
 #middle td[align="center"] {
-    padding-top: 10px;
+    padding-top: 0;
     position: relative;
 }
 
-button {
-    min-width: 60px;
+.gre-review-bottom {
+    display: block;
+    width: 100%;
+}
+
+#outer.gre-review-bottom {
+    border-top: 1px solid var(--gre-bottom-border);
+    background: var(--gre-bottom-bg);
+    box-shadow: var(--gre-bottom-shadow);
+    backdrop-filter: blur(16px);
+    padding: 0.85rem 1rem 1rem;
+}
+
+#innertable {
+    max-width: 56rem;
+    margin: 0 auto;
+}
+
+.gre-review-side {
+    width: 8rem;
+    vertical-align: middle !important;
+}
+
+.gre-review-middle {
+    vertical-align: middle !important;
+}
+
+.gre-toolbar-btn {
+    min-width: 4.5rem;
     white-space: nowrap;
-    margin: 9px;
+    margin: 0;
     position: relative;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--gre-toolbar-btn-border);
+    background: var(--gre-toolbar-btn-bg);
+    color: var(--fg);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.gre-toolbar-btn:hover {
+    border-color: var(--gre-show-answer-bg);
+}
+
+.gre-review-timer {
+    margin-left: 0.35rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .hitem {
     margin-top: 2px;
 }
 
-.stat {
-    padding-top: 10px;
-
-    @media (max-width: 583px) {
-        display: none;
-    }
+.stat,
+.stat2 {
+    padding-top: 0;
 }
 
 .stat2 {
-    padding-top: 10px;
     font-weight: normal;
 }
 
@@ -55,12 +123,22 @@ button {
 .stattxt {
     position: absolute;
     white-space: nowrap;
-    font-size: small;
-    top: -3px;
+    font-size: 0.72rem;
+    top: -0.35rem;
     left: 50%;
     transform: translate(-50%, -100%);
-    font-weight: normal;
+    font-weight: 600;
     display: inline-block;
+    color: var(--fg-subtle);
+    letter-spacing: 0.02em;
+}
+
+.gre-show-answer-meta {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    opacity: 0.85;
 }
 
 .spacer {
@@ -71,14 +149,111 @@ button {
     height: 16px;
 }
 
-#outer {
-    border-top: 1px solid color(border);
-    /* Better compatibility with graphics pad/touchscreen */
-    -webkit-user-select: none;
+#middle table {
+    margin: 0 auto;
+}
+
+#middle button {
+    margin: 0;
+}
+
+.gre-show-answer {
+    min-width: 12rem;
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--gre-show-answer-hover), var(--gre-show-answer-bg));
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 10px 24px rgb(30 58 95 / 0.22);
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.gre-show-answer:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgb(30 58 95 / 0.28);
+}
+
+.gre-ease-btn {
+    min-width: 5.5rem;
+    white-space: nowrap;
+    margin: 0 0.35rem;
+    position: relative;
+    padding: 0.8rem 1rem 1.35rem;
+    border: 1px solid transparent;
+    border-radius: 1rem;
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    box-shadow: 0 8px 18px rgb(15 23 42 / 0.12);
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.gre-ease-btn:hover {
+    transform: translateY(-1px);
+}
+
+.gre-ease-btn[data-ease="1"] {
+    background: linear-gradient(180deg, #ef4444, var(--gre-ease-again));
+}
+
+.gre-ease-btn[data-ease="2"] {
+    background: linear-gradient(180deg, #f59e0b, var(--gre-ease-hard));
+}
+
+.gre-ease-btn[data-ease="3"] {
+    background: linear-gradient(180deg, #14b8a6, var(--gre-ease-good));
+}
+
+.gre-ease-btn[data-ease="4"] {
+    background: linear-gradient(180deg, #3b82f6, var(--gre-ease-easy));
+}
+
+#defease.gre-ease-btn {
+    box-shadow:
+        0 0 0 3px rgb(255 255 255 / 0.95),
+        0 10px 24px rgb(15 23 42 / 0.18);
+}
+
+body.nightMode #defease.gre-ease-btn {
+    box-shadow:
+        0 0 0 3px rgb(15 23 42 / 0.95),
+        0 10px 24px rgb(0 0 0 / 0.35);
+}
+
+@media (max-width: 640px) {
+    .gre-review-side {
+        width: auto;
+    }
+
+    .gre-toolbar-btn {
+        min-width: auto;
+        padding-inline: 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .gre-ease-btn {
+        min-width: 4.5rem;
+        margin-inline: 0.15rem;
+        padding-inline: 0.65rem;
+        font-size: 0.82rem;
+    }
+
+    .gre-show-answer {
+        min-width: 10rem;
+        padding-inline: 1rem;
+    }
 }
 
 .nightMode {
     #outer {
-        border-top-color: color(border-subtle);
+        border-top-color: var(--gre-bottom-border);
     }
 }

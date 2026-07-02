@@ -1,0 +1,183 @@
+.settings-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-section-gap);
+    max-width: var(--gre-content-max);
+    margin: 0 auto;
+}
+
+.settings-section-header {
+    margin-bottom: var(--gre-space-3);
+}
+
+.settings-section-title {
+    margin: 0;
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: var(--gre-lh-h2);
+    letter-spacing: -0.01em;
+}
+
+.settings-section-description {
+    margin: var(--gre-space-1) 0 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.settings-section-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+}
+
+.settings-section-body :global(.settings-section) {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.settings-section-body :global(.settings-section + .settings-section) {
+    padding-top: var(--gre-space-3);
+    border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+}
+
+.settings-toggle,
+.settings-number,
+.settings-text,
+.settings-select {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--gre-space-3);
+    padding: var(--gre-space-3) 0;
+}
+
+.settings-toggle + .settings-toggle,
+.settings-number + .settings-number,
+.settings-text + .settings-text,
+.settings-select + .settings-select,
+.settings-toggle + .settings-number,
+.settings-number + .settings-toggle,
+.settings-select + .settings-toggle,
+.settings-toggle + .settings-select {
+    border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+}
+
+.settings-toggle-copy,
+.settings-number-copy,
+.settings-text-copy,
+.settings-select-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    min-width: 0;
+}
+
+.settings-toggle-label,
+.settings-number-label,
+.settings-text-label,
+.settings-select-label {
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-body);
+}
+
+.settings-toggle-description,
+.settings-number-description,
+.settings-text-description,
+.settings-select-description {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.settings-toggle input {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.15rem;
+    accent-color: var(--fg-link);
+}
+
+.settings-number-input {
+    display: flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+    flex-shrink: 0;
+}
+
+.settings-number-input input,
+.settings-text input,
+.settings-select select {
+    width: 6rem;
+    padding: var(--gre-space-2);
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    border-radius: var(--gre-radius-sm);
+    background: var(--gre-surface-bg-inset);
+    color: var(--fg);
+    font: inherit;
+}
+
+.settings-text input {
+    width: min(100%, 14rem);
+}
+
+.settings-number-suffix {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    white-space: nowrap;
+}
+
+.settings-page :global(.settings-actions) {
+    margin-top: var(--gre-space-1);
+}
+
+.settings-advanced.gre-ds-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.settings-advanced-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    padding: var(--gre-card-padding);
+    cursor: pointer;
+    list-style: none;
+}
+
+.settings-advanced-summary::-webkit-details-marker {
+    display: none;
+}
+
+.settings-advanced-title {
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: var(--gre-lh-h2);
+}
+
+.settings-advanced-hint {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.settings-advanced-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-4);
+    padding: 0 var(--gre-card-padding-x) var(--gre-card-padding-y);
+    border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+}
+
+.settings-advanced[open] .settings-advanced-summary {
+    padding-bottom: var(--gre-space-3);
+}
+
+.settings-select select {
+    min-width: 10rem;
+}

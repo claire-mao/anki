@@ -343,42 +343,56 @@ class Toolbar:
         )
 
     def _centerLinks(self) -> str:
+        self._register_hidden_toolbar_handlers()
+
+        if self.mw.state == "greDashboard":
+            return ""
+
         links = [
             self.create_link(
-                "decks",
-                tr.actions_decks(),
-                self._deckLinkHandler,
-                tip=tr.actions_shortcut_key(val="D"),
-                id="decks",
+                "greDashboard",
+                "Dashboard",
+                self._greDashboardLinkHandler,
+                id="greDashboard",
             ),
             self.create_link(
-                "add",
-                tr.actions_add(),
-                self._addLinkHandler,
-                tip=tr.actions_shortcut_key(val="A"),
-                id="add",
+                "greStudy",
+                "Study",
+                self._greStudyLinkHandler,
+                tip=tr.actions_shortcut_key(val="S"),
+                id="greStudy",
             ),
             self.create_link(
-                "browse",
-                tr.qt_misc_browse(),
-                self._browseLinkHandler,
-                tip=tr.actions_shortcut_key(val="B"),
-                id="browse",
+                "grePractice",
+                "Practice",
+                self._grePracticeLinkHandler,
+                id="grePractice",
             ),
             self.create_link(
-                "stats",
-                tr.qt_misc_stats(),
-                self._statsLinkHandler,
-                tip=tr.actions_shortcut_key(val="T"),
-                id="stats",
+                "greProgress",
+                "Progress",
+                self._greProgressLinkHandler,
+                id="greProgress",
+            ),
+            self.create_link(
+                "greSettings",
+                "Settings",
+                self._greSettingsLinkHandler,
+                id="greSettings",
             ),
         ]
-
-        links.append(self._create_sync_link())
 
         gui_hooks.top_toolbar_did_init_links(links, self)
 
         return "\n".join(links)
+
+    def _register_hidden_toolbar_handlers(self) -> None:
+        "Keep legacy toolbar commands working for shortcuts and add-ons."
+        self.link_handlers["decks"] = self._deckLinkHandler
+        self.link_handlers["add"] = self._addLinkHandler
+        self.link_handlers["browse"] = self._browseLinkHandler
+        self.link_handlers["stats"] = self._statsLinkHandler
+        self.link_handlers["sync"] = self._syncLinkHandler
 
     # Add-ons
     ######################################################################
@@ -413,11 +427,15 @@ class Toolbar:
     def set_sync_active(self, active: bool) -> None:
         method = "add" if active else "remove"
         self.web.eval(
-            f"document.getElementById('sync-spinner').classList.{method}('spin')"
+            f"(() => {{ const el = document.getElementById('sync-spinner');"
+            f" if (el) el.classList.{method}('spin'); }})()"
         )
 
     def set_sync_status(self, status: SyncStatus) -> None:
-        self.web.eval(f"updateSyncColor({status.required})")
+        self.web.eval(
+            f"(() => {{ if (document.getElementById('sync'))"
+            f" updateSyncColor({status.required}); }})()"
+        )
 
     def update_sync_status(self) -> None:
         get_sync_status(self.mw, self.mw.toolbar.set_sync_status)
@@ -430,16 +448,34 @@ class Toolbar:
             self.link_handlers[link]()
         return False
 
+    def _greDashboardLinkHandler(self) -> None:
+        from aqt.brainlift import open_gre_page
+
+        open_gre_page(self.mw, "home")
+
+    def _greStudyLinkHandler(self) -> None:
+        self.mw.onStudyKey()
+
+    def _grePracticeLinkHandler(self) -> None:
+        from aqt.brainlift import open_gre_page
+
+        open_gre_page(self.mw, "practice")
+
+    def _greProgressLinkHandler(self) -> None:
+        from aqt.brainlift import open_gre_page
+
+        open_gre_page(self.mw, "progress")
+
+    def _greSettingsLinkHandler(self) -> None:
+        from aqt.brainlift import open_gre_page
+
+        open_gre_page(self.mw, "settings")
+
     def _deckLinkHandler(self) -> None:
-        self.mw.moveToState("deckBrowser")
+        self.mw.onOpenDebugDeckBrowser()
 
     def _studyLinkHandler(self) -> None:
-        # if overview already shown, switch to review
-        if self.mw.state == "overview":
-            self.mw.col.startTimebox()
-            self.mw.moveToState("review")
-        else:
-            self.mw.onOverview()
+        self.mw.onStudyKey()
 
     def _addLinkHandler(self) -> None:
         self.mw.onAddCard()

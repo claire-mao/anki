@@ -5,77 +5,173 @@
 @use "../lib/sass/vars";
 @use "../routes/image-occlusion/review";
 
+:root {
+    --gre-review-accent: #1e3a5f;
+    --gre-review-accent-soft: #2d5a87;
+    --gre-review-accent-muted: rgb(30 58 95 / 0.12);
+    --gre-review-surface: #f7f9fc;
+    --gre-review-card-bg: #ffffff;
+    --gre-review-card-border: rgb(30 58 95 / 0.1);
+    --gre-review-card-shadow: 0 18px 48px rgb(15 23 42 / 0.08);
+    --gre-review-text: #1f2937;
+    --gre-review-text-muted: #64748b;
+    --gre-review-font:
+        "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Segoe UI",
+        system-ui, sans-serif;
+    --gre-review-mono: "SF Mono", "Cascadia Code", "Segoe UI Mono", ui-monospace, monospace;
+}
+
+body.nightMode {
+    --gre-review-accent: #7eb6ff;
+    --gre-review-accent-soft: #a8ccff;
+    --gre-review-accent-muted: rgb(126 182 255 / 0.14);
+    --gre-review-surface: #0f172a;
+    --gre-review-card-bg: #111827;
+    --gre-review-card-border: rgb(148 163 184 / 0.16);
+    --gre-review-card-shadow: 0 18px 48px rgb(0 0 0 / 0.35);
+    --gre-review-text: #e5eefb;
+    --gre-review-text-muted: #94a3b8;
+}
+
 hr {
     background-color: vars.palette(darkgray, 0);
-    margin: 1em 0;
+    margin: 1.5em 0;
     border: none;
     height: 1px;
 }
 
 body {
-    margin: 20px;
+    margin: 0;
     overflow-wrap: break-word;
-    // default background setting to fit with toolbar
+    background:
+        radial-gradient(circle at top, var(--gre-review-accent-muted), transparent 42%),
+        var(--gre-review-surface);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: top;
     background-attachment: fixed;
+    color: var(--gre-review-text);
+    font-family: var(--gre-review-font);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
 }
 
-// explicit nightMode definition required
-// to override default .card styling
 body.nightMode {
-    background-color: var(--canvas);
-    color: var(--fg);
+    background:
+        radial-gradient(circle at top, var(--gre-review-accent-muted), transparent 42%),
+        var(--gre-review-surface);
+    background-color: var(--gre-review-surface);
+    color: var(--gre-review-text);
+}
+
+.gre-review-shell {
+    box-sizing: border-box;
+    min-height: calc(100vh - 2rem);
+    padding: 1.5rem 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gre-review-card {
+    box-sizing: border-box;
+    width: min(100%, 44rem);
+    min-height: 18rem;
+    margin: 0 auto;
+    padding: 2rem 2.25rem;
+    border: 1px solid var(--gre-review-card-border);
+    border-radius: 1.25rem;
+    background: var(--gre-review-card-bg);
+    box-shadow: var(--gre-review-card-shadow);
+}
+
+#qa {
+    text-align: center;
+}
+
+#qa .card {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    background: transparent;
 }
 
 img {
     max-width: 100%;
-    max-height: 95vh;
+    max-height: 70vh;
+    border-radius: 0.75rem;
 }
 
 li {
     text-align: start;
 }
 
+pre,
+code {
+    font-family: var(--gre-review-mono);
+}
+
 pre {
     text-align: left;
+    padding: 1rem 1.1rem;
+    border-radius: 0.75rem;
+    background: var(--gre-review-accent-muted);
+    overflow-x: auto;
 }
 
 #_flag {
     position: fixed;
+    z-index: 20;
     [dir="ltr"] & {
-        right: 10px;
+        right: 1rem;
     }
     [dir="rtl"] & {
-        left: 10px;
+        left: 1rem;
     }
-    top: 0;
-    font-size: 30px;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
+    top: 0.75rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+    -webkit-text-stroke-width: 0;
 }
 
 #_mark {
     position: fixed;
+    z-index: 20;
     [dir="ltr"] & {
-        left: 10px;
+        left: 1rem;
     }
     [dir="rtl"] & {
-        right: 10px;
+        right: 1rem;
     }
-    top: 0;
-    font-size: 30px;
-    color: yellow;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
+    top: 0.75rem;
+    font-size: 1.75rem;
+    color: #fbbf24;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+    -webkit-text-stroke-width: 0;
 }
 
 #typeans {
     width: 100%;
-    // https://anki.tenderapp.com/discussions/beta-testing/1854-using-margin-auto-causes-horizontal-scrollbar-on-typesomething
     box-sizing: border-box;
     line-height: 1.75;
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--gre-review-card-border);
+    border-radius: 0.85rem;
+    background: var(--gre-review-surface);
+    color: var(--gre-review-text);
+    font: inherit;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+#typeans:focus {
+    outline: none;
+    border-color: var(--gre-review-accent-soft);
+    box-shadow: 0 0 0 4px var(--gre-review-accent-muted);
 }
 
 code#typeans {
@@ -84,41 +180,64 @@ code#typeans {
 }
 
 .typeGood {
-    background: #afa;
-    color: black;
+    background: #dcfce7;
+    color: #14532d;
 }
 
 .typeBad {
-    color: black;
-    background: #faa;
+    color: #7f1d1d;
+    background: #fee2e2;
 }
 
 .typeMissed {
-    color: black;
-    background: #ccc;
+    color: #334155;
+    background: #e2e8f0;
+}
+
+body.nightMode {
+    .typeGood {
+        background: rgb(34 197 94 / 0.18);
+        color: #bbf7d0;
+    }
+
+    .typeBad {
+        background: rgb(239 68 68 / 0.18);
+        color: #fecaca;
+    }
+
+    .typeMissed {
+        background: rgb(148 163 184 / 0.18);
+        color: #cbd5e1;
+    }
 }
 
 button {
-    margin: 1em 0.5em;
+    margin: 0;
 }
 
 .replay-button {
     text-decoration: none;
     display: inline-flex;
     vertical-align: middle;
-    margin: 3px;
+    margin: 0.35rem;
+    border-radius: 999px;
+    transition: transform 160ms ease;
+
+    &:hover {
+        transform: scale(1.04);
+    }
 
     svg {
-        width: 40px;
-        height: 40px;
+        width: 2.5rem;
+        height: 2.5rem;
 
         circle {
-            fill: #fff;
-            stroke: #414141;
+            fill: var(--gre-review-card-bg);
+            stroke: var(--gre-review-accent-soft);
         }
 
         path {
-            fill: #414141;
+            fill: var(--gre-review-accent);
         }
     }
 }
@@ -132,6 +251,7 @@ button {
 .drawing {
     zoom: 50%;
 }
+
 .nightMode img.drawing {
     filter: string.unquote("invert(1) hue-rotate(180deg)");
 }

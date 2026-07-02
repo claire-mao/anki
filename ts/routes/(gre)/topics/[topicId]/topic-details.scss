@@ -1,0 +1,67 @@
+.topic-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-2) var(--gre-space-4);
+    margin: 0 0 var(--gre-space-5);
+    padding: 0;
+    list-style: none;
+    color: var(--fg-subtle);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+}
+
+.topic-header-actions {
+    margin-left: auto;
+}
+
+.topic-grid {
+    display: grid;
+    gap: var(--gre-section-gap);
+}
+
+.topic-grid-wide {
+    grid-column: 1 / -1;
+}
+
+.topic-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+    gap: var(--gre-space-3) var(--gre-space-4);
+}
+
+.topic-stat-grid dt {
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h3);
+    color: var(--fg-subtle);
+    margin: 0;
+}
+
+.topic-stat-grid dd {
+    margin: var(--gre-space-1) 0 0;
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h1);
+}
+
+.topic-stat-empty {
+    grid-column: 1 / -1;
+}
+
+.topic-contribution {
+    line-height: var(--gre-lh-body);
+}
+
+.topic-list-plain {
+    margin: 0;
+    padding-left: var(--gre-space-5);
+}
+
+.topic-list-plain li + li {
+    margin-top: var(--gre-space-2);
+}
+
+.topic-mastery-visuals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+    margin-bottom: var(--gre-space-4);
+}

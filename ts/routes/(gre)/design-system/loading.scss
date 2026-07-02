@@ -1,0 +1,41 @@
+// Unified loading indicators across GRE UI.
+
+.gre-loading {
+    display: grid;
+    justify-items: center;
+    gap: var(--gre-space-3);
+    min-height: 12rem;
+    padding: var(--gre-space-4) 0;
+    text-align: center;
+}
+
+.gre-loading-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+    padding: 0;
+}
+
+.gre-loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--fg-link) 16%, transparent);
+    border-top-color: var(--fg-link);
+    animation: gre-ds-spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+.gre-loading-caption {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gre-loading-spinner {
+        animation: none !important;
+        border-top-color: color-mix(in srgb, var(--fg-link) 16%, transparent);
+    }
+}

@@ -3,35 +3,74 @@
 
 import Foundation
 
-/// Swift wrapper around the shared Rust `mobile_bridge` C API.
-/// Desktop Qt/Python uses the same protobuf RPCs via rsbridge.
+/// Loads GRE pages through the shared Rust backend (`mobile_bridge` → `Backend::run_service_method`).
 @MainActor
 final class AnkiMobileEngine: ObservableObject {
-    @Published var dashboardSummary: String = "Open a collection to load the GRE dashboard."
-    @Published var readinessSummary: String = "Readiness loads from the shared Rust backend."
-    @Published var reviewSummary: String = "Review counts come from GetGreStudyStatus."
-    @Published var syncSummary: String = "BrainLift practice data syncs via Pull/PushBrainLiftChanges."
+    @Published private(set) var dashboard: GreDashboardView?
+    @Published private(set) var progress: GreProgressView?
+    @Published private(set) var practice: GrePracticeBootstrapView?
+    @Published private(set) var study: GreStudyView?
+    @Published private(set) var isLoading = false
     @Published var lastError: String?
 
-    private var backend: OpaquePointer?
+    private var bridge = MobileBridgeClient()
+    private var bootstrapped = false
 
     func bootstrapIfNeeded() async {
-        guard backend == nil else { return }
-        // Production builds link `libmobile_bridge.a` and call anki_mobile_backend_create.
-        // The simulator stub keeps the UI runnable before the Rust library is linked in Xcode.
-        syncSummary = "Offline-first: all RPCs run locally; sync merges brainlift.db by USN + mtime."
-        reviewSummary = "Uses SchedulerService + BrainLift GRE deck (same as desktop)."
-        dashboardSummary = "Uses GetDashboard RPC (same bytes as desktop mediasrv)."
-        readinessSummary = "Uses GetReadinessCalibration RPC with honest abstention."
+        guard !bootstrapped else { return }
+        await refreshAllPages()
     }
 
-    deinit {
-        if let backend {
-            anki_mobile_backend_destroy(backend)
+    func refreshAllPages() async {
+        isLoading = true
+        lastError = nil
+        defer { isLoading = false }
+
+        do {
+            let pages = try await Task.detached(priority: .userInitiated) { [bridge] in
+                try Self.loadPages(bridge: bridge)
+            }.value
+            dashboard = pages.dashboard
+            progress = pages.progress
+            practice = pages.practice
+            study = pages.study
+            bootstrapped = true
+        } catch {
+            lastError = error.localizedDescription
         }
+    }
+
+    nonisolated private static func loadPages(bridge: MobileBridgeClient) throws -> GrePageBundle {
+        let paths = CollectionPaths.default
+        try paths.ensureParentDirectoryExists()
+        try bridge.createBackend()
+        try bridge.openCollection(
+            collectionPath: paths.collectionPath,
+            mediaFolderPath: paths.mediaFolderPath,
+            mediaDbPath: paths.mediaDbPath
+        )
+        return try bridge.loadGrePages()
     }
 }
 
-// C declarations from mobile/mobile_bridge/include/anki_mobile.h
-@_silgen_name("anki_mobile_backend_destroy")
-func anki_mobile_backend_destroy(_ backend: OpaquePointer?)
+private struct CollectionPaths {
+    let collectionPath: String
+    let mediaFolderPath: String
+    let mediaDbPath: String
+
+    static var `default`: CollectionPaths {
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let root = support.appendingPathComponent("BrainLift", isDirectory: true)
+        let collection = root.appendingPathComponent("collection.anki2")
+        return CollectionPaths(
+            collectionPath: collection.path,
+            mediaFolderPath: collection.deletingPathExtension().appendingPathExtension("media").path,
+            mediaDbPath: collection.deletingPathExtension().appendingPathExtension("mdb").path
+        )
+    }
+
+    func ensureParentDirectoryExists() throws {
+        let url = URL(fileURLWithPath: collectionPath).deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+    }
+}

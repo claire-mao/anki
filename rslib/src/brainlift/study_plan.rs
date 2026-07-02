@@ -3,14 +3,18 @@
 
 use std::collections::HashMap;
 
+use anki_proto::brainlift::DailyStudyPlan;
 use anki_proto::brainlift::DashboardCoverage;
 use anki_proto::brainlift::GetStudyPlanRequest;
+use anki_proto::brainlift::StudyPlanDailyTask;
 use anki_proto::brainlift::StudyPlanRecommendation;
 use anki_proto::brainlift::StudyPlanResponse;
 use anki_proto::stats::TopicMasteryEntry;
 
+use crate::brainlift::abstention::MIN_PERFORMANCE_ATTEMPTS;
 use crate::brainlift::signals::mastery_map;
 use crate::brainlift::signals::observed_tags_from_mastery;
+use crate::brainlift::signals::BrainliftSignals;
 use crate::brainlift::topic_insights::leaf_metrics;
 use crate::brainlift::topic_insights::HIGH_EXAM_WEIGHT;
 use crate::brainlift::topic_insights::LOW_MEMORY_RETRIEVABILITY;
@@ -20,7 +24,23 @@ use crate::brainlift::GreCatalog;
 use crate::collection::Collection;
 use crate::error::Result;
 
+use super::GRE_DECK_NAME;
+
 const DEFAULT_STUDY_PLAN_LIMIT: u32 = 10;
+const DAILY_FOCUS_TOPIC_COUNT: u32 = 3;
+const DAILY_REVIEW_TARGET: u32 = 30;
+const DAILY_REVIEW_BOOTSTRAP: u32 = 40;
+const DAILY_REVIEW_CAP: u32 = 60;
+const DAILY_PRACTICE_TARGET: u32 = 5;
+const DAILY_PRACTICE_BOOTSTRAP: u32 = 10;
+const FOCUS_ADD_CARDS_TARGET: u32 = 5;
+const FOCUS_REVIEW_CARDS_TARGET: u32 = 20;
+const FOCUS_PRACTICE_TARGET: u32 = 3;
+const FOCUS_PRACTICE_UNTRIED: u32 = 2;
+
+const TASK_REVIEW_CARDS: &str = "review_cards";
+const TASK_PRACTICE_QUESTIONS: &str = "practice_questions";
+const TASK_FOCUS_TOPIC: &str = "focus_topic";
 
 const FACTOR_COVERAGE_GAP: &str = "coverage_gap";
 const FACTOR_LOW_MASTERY: &str = "low_mastery";
@@ -69,6 +89,16 @@ impl Collection {
                         .unwrap_or(std::cmp::Ordering::Equal)
                 })
         });
+
+        let (new_due, learn_due, review_due) = gre_deck_due_counts(self)?;
+        let daily_plan = build_daily_study_plan(
+            &signals,
+            &recommendations,
+            new_due,
+            learn_due,
+            review_due,
+        );
+
         recommendations.truncate(limit as usize);
 
         let coverage = DashboardCoverage {
@@ -85,8 +115,223 @@ impl Collection {
             recommendations,
             computed_at_millis: signals.computed_at_millis,
             summary,
+            daily_plan: Some(daily_plan),
         })
     }
+}
+
+fn gre_deck_due_counts(col: &mut Collection) -> Result<(u32, u32, u32)> {
+    let deck_id = col.get_deck_id(GRE_DECK_NAME)?;
+    let mut new_count = 0;
+    let mut learn_count = 0;
+    let mut review_count = 0;
+    if let Some(did) = deck_id {
+        let timing = col.timing_today()?;
+        let learn_cutoff = timing.now.0 as u32 + col.learn_ahead_secs();
+        let counts_map = col.due_counts(timing.days_elapsed, learn_cutoff)?;
+        if let Some(counts) = counts_map.get(&did) {
+            new_count = counts.new;
+            learn_count = counts.learning;
+            review_count = counts.review;
+        }
+    }
+    Ok((new_count, learn_count, review_count))
+}
+
+fn build_daily_study_plan(
+    signals: &BrainliftSignals,
+    recommendations: &[StudyPlanRecommendation],
+    new_due: u32,
+    learn_due: u32,
+    review_due: u32,
+) -> DailyStudyPlan {
+    let due_total = new_due + learn_due + review_due;
+    let review_target = daily_review_target(&signals.memory, due_total);
+    let practice_target = daily_practice_target(&signals.performance, &signals.readiness);
+
+    let mut tasks = Vec::new();
+
+    if review_target > 0 {
+        tasks.push(StudyPlanDailyTask {
+            id: TASK_REVIEW_CARDS.into(),
+            title: "Review GRE flashcards".into(),
+            detail: if !signals.memory.sufficient_data {
+                format!(
+                    "{review_target} cards due in {GRE_DECK_NAME} ({new_due} new, {learn_due} learning, {review_due} review) to build memory evidence"
+                )
+            } else {
+                format!(
+                    "Clear up to {review_target} due cards ({new_due} new, {learn_due} learning, {review_due} review)"
+                )
+            },
+            target_count: review_target,
+            topic_id: None,
+            topic_display_name: None,
+        });
+    } else {
+        tasks.push(StudyPlanDailyTask {
+            id: TASK_REVIEW_CARDS.into(),
+            title: "Review GRE flashcards".into(),
+            detail: format!("No cards due in {GRE_DECK_NAME} right now. Add cards for focus topics below."),
+            target_count: 0,
+            topic_id: None,
+            topic_display_name: None,
+        });
+    }
+
+    tasks.push(StudyPlanDailyTask {
+        id: TASK_PRACTICE_QUESTIONS.into(),
+        title: "GRE practice questions".into(),
+        detail: if !signals.performance.sufficient_data {
+            format!(
+                "Answer {practice_target} questions today ({}/{MIN_PERFORMANCE_ATTEMPTS} attempts logged toward performance score)",
+                signals.performance.attempt_count
+            )
+        } else {
+            format!("Answer {practice_target} exam-style questions, prioritizing focus topics below")
+        },
+        target_count: practice_target,
+        topic_id: None,
+        topic_display_name: None,
+    });
+
+    for recommendation in recommendations
+        .iter()
+        .take(DAILY_FOCUS_TOPIC_COUNT as usize)
+    {
+        tasks.push(focus_topic_task(recommendation));
+    }
+
+    let headline = build_daily_headline(
+        signals,
+        review_target,
+        practice_target,
+        recommendations.len(),
+    );
+    let rationale = build_daily_rationale(signals, due_total);
+
+    DailyStudyPlan {
+        headline,
+        tasks,
+        rationale,
+    }
+}
+
+fn daily_review_target(memory: &anki_proto::brainlift::MemoryScore, due_total: u32) -> u32 {
+    if due_total == 0 {
+        return 0;
+    }
+    let cap = if memory.sufficient_data {
+        DAILY_REVIEW_TARGET
+    } else {
+        DAILY_REVIEW_BOOTSTRAP
+    };
+    due_total.min(cap).min(DAILY_REVIEW_CAP)
+}
+
+fn daily_practice_target(
+    performance: &anki_proto::brainlift::PerformanceScore,
+    readiness: &anki_proto::brainlift::ReadinessScore,
+) -> u32 {
+    if !performance.sufficient_data {
+        return DAILY_PRACTICE_BOOTSTRAP;
+    }
+    if readiness.sufficient_data
+        && readiness.projected_score.is_some_and(|score| score < 70.0)
+    {
+        return DAILY_PRACTICE_TARGET + DAILY_PRACTICE_BOOTSTRAP;
+    }
+    DAILY_PRACTICE_TARGET
+}
+
+fn focus_topic_task(recommendation: &StudyPlanRecommendation) -> StudyPlanDailyTask {
+    if recommendation.factors.contains(&FACTOR_COVERAGE_GAP.to_string()) {
+        return StudyPlanDailyTask {
+            id: TASK_FOCUS_TOPIC.into(),
+            title: format!("Cover {}", recommendation.display_name),
+            detail: format!(
+                "Add {FOCUS_ADD_CARDS_TARGET} flashcards tagged {} ({:.0}% exam weight)",
+                recommendation.topic_id,
+                recommendation.exam_weight * 100.0
+            ),
+            target_count: FOCUS_ADD_CARDS_TARGET,
+            topic_id: Some(recommendation.topic_id.clone()),
+            topic_display_name: Some(recommendation.display_name.clone()),
+        };
+    }
+
+    if recommendation.factors.contains(&FACTOR_LOW_MASTERY.to_string()) {
+        let review_target = recommendation
+            .studied_cards
+            .clamp(10, FOCUS_REVIEW_CARDS_TARGET);
+        return StudyPlanDailyTask {
+            id: TASK_FOCUS_TOPIC.into(),
+            title: format!("Strengthen {}", recommendation.display_name),
+            detail: recommendation.explanation.clone(),
+            target_count: review_target,
+            topic_id: Some(recommendation.topic_id.clone()),
+            topic_display_name: Some(recommendation.display_name.clone()),
+        };
+    }
+
+    let practice_target = if recommendation.factors.contains(&FACTOR_LOW_PERFORMANCE.to_string()) {
+        FOCUS_PRACTICE_TARGET
+    } else {
+        FOCUS_PRACTICE_UNTRIED
+    };
+    StudyPlanDailyTask {
+        id: TASK_FOCUS_TOPIC.into(),
+        title: format!("Practice {}", recommendation.display_name),
+        detail: recommendation.explanation.clone(),
+        target_count: practice_target,
+        topic_id: Some(recommendation.topic_id.clone()),
+        topic_display_name: Some(recommendation.display_name.clone()),
+    }
+}
+
+fn build_daily_headline(
+    signals: &BrainliftSignals,
+    review_target: u32,
+    practice_target: u32,
+    recommendation_count: usize,
+) -> String {
+    if recommendation_count == 0 {
+        return "Maintain your streak: keep reviewing and practicing across the GRE catalog."
+            .into();
+    }
+
+    if !signals.readiness.sufficient_data {
+        return format!(
+            "Build readiness evidence today: {review_target} reviews and {practice_target} practice questions, plus {DAILY_FOCUS_TOPIC_COUNT} focus topics"
+        );
+    }
+
+    format!(
+        "Today's plan: {review_target} reviews, {practice_target} practice questions, focusing on top {DAILY_FOCUS_TOPIC_COUNT} ranked topics"
+    )
+}
+
+fn build_daily_rationale(signals: &BrainliftSignals, due_total: u32) -> String {
+    let mut parts = Vec::new();
+
+    if signals.readiness.sufficient_data {
+        parts.push(format!(
+            "Readiness {:.0}% ({})",
+            signals.readiness.projected_score.unwrap_or_default(),
+            signals.readiness.confidence_level
+        ));
+    } else if !signals.readiness.abstain_reason.is_empty() {
+        parts.push(format!("Readiness gated: {}", signals.readiness.abstain_reason));
+    }
+
+    parts.push(signals.memory.detail.clone());
+    parts.push(signals.performance.detail.clone());
+    parts.push(format!(
+        "{due_total} cards due in {GRE_DECK_NAME} · {:.0}% weighted catalog coverage",
+        signals.coverage.weighted_ratio * 100.0
+    ));
+
+    parts.join(" · ")
 }
 
 fn score_study_recommendation(
@@ -316,7 +561,87 @@ mod test {
             assert!(!topic.factors.is_empty());
             assert!(topic.priority_score > 0.0);
         }
+        let daily = plan.daily_plan.unwrap();
+        assert!(!daily.headline.is_empty());
+        assert!(!daily.rationale.is_empty());
+        assert!(daily.tasks.len() >= 2);
+        assert!(daily.tasks.iter().any(|task| task.id == TASK_REVIEW_CARDS));
+        assert!(daily
+            .tasks
+            .iter()
+            .any(|task| task.id == TASK_PRACTICE_QUESTIONS));
         Ok(())
+    }
+
+    #[test]
+    fn daily_review_target_caps_due_cards() {
+        let memory = anki_proto::brainlift::MemoryScore {
+            sufficient_data: true,
+            ..Default::default()
+        };
+        assert_eq!(daily_review_target(&memory, 0), 0);
+        assert_eq!(daily_review_target(&memory, 12), 12);
+        assert_eq!(daily_review_target(&memory, 100), DAILY_REVIEW_TARGET);
+    }
+
+    #[test]
+    fn daily_practice_target_bootstraps_before_performance_unlocks() {
+        let sparse = anki_proto::brainlift::PerformanceScore {
+            sufficient_data: false,
+            attempt_count: 4,
+            ..Default::default()
+        };
+        let readiness = anki_proto::brainlift::ReadinessScore::default();
+        assert_eq!(
+            daily_practice_target(&sparse, &readiness),
+            DAILY_PRACTICE_BOOTSTRAP
+        );
+
+        let healthy = anki_proto::brainlift::PerformanceScore {
+            sufficient_data: true,
+            attempt_count: 25,
+            ..Default::default()
+        };
+        assert_eq!(
+            daily_practice_target(&healthy, &readiness),
+            DAILY_PRACTICE_TARGET
+        );
+    }
+
+    #[test]
+    fn focus_topic_task_maps_factors_to_actions() {
+        let coverage = StudyPlanRecommendation {
+            topic_id: "gre::quant::data_interpretation".into(),
+            display_name: "Data interpretation".into(),
+            section: "quant".into(),
+            exam_weight: 0.15,
+            memory_score: None,
+            practice_accuracy: None,
+            studied_cards: 0,
+            covered: false,
+            priority_score: 0.2,
+            explanation: "Not covered".into(),
+            factors: vec![FACTOR_COVERAGE_GAP.to_string()],
+        };
+        let task = focus_topic_task(&coverage);
+        assert_eq!(task.target_count, FOCUS_ADD_CARDS_TARGET);
+        assert_eq!(task.topic_id.as_deref(), Some(coverage.topic_id.as_str()));
+
+        let weak_memory = StudyPlanRecommendation {
+            factors: vec![FACTOR_LOW_MASTERY.to_string()],
+            studied_cards: 25,
+            topic_id: "gre::quant::algebra::linear".into(),
+            display_name: "Linear equations".into(),
+            section: "quant".into(),
+            exam_weight: 0.10,
+            memory_score: Some(40.0),
+            practice_accuracy: None,
+            covered: true,
+            priority_score: 0.1,
+            explanation: "Low FSRS retrievability".into(),
+        };
+        let task = focus_topic_task(&weak_memory);
+        assert_eq!(task.target_count, FOCUS_REVIEW_CARDS_TARGET);
     }
 
     #[test]

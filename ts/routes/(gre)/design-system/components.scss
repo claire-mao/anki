@@ -1,0 +1,422 @@
+@use "tokens" as *;
+@use "typography" as type;
+@use "progress" as *;
+
+@mixin gre-surface {
+    border: none;
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg);
+    box-shadow: var(--gre-shadow-md);
+}
+
+@mixin gre-surface-muted {
+    border: none;
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+    box-shadow: var(--gre-shadow-sm);
+}
+
+@mixin gre-surface-interactive {
+    transition:
+        box-shadow var(--gre-motion-base) ease,
+        transform var(--gre-motion-fast) ease;
+
+    &:hover {
+        box-shadow: var(--gre-shadow-md-hover);
+    }
+
+    &:active {
+        transform: scale(0.995);
+    }
+}
+
+@mixin gre-score-card-surface {
+    @include gre-surface-muted;
+    padding: var(--gre-card-padding-compact);
+}
+
+@mixin gre-icon-box {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--gre-icon-box);
+    height: var(--gre-icon-box);
+    border-radius: var(--gre-radius-sm);
+    background: color-mix(in srgb, var(--fg-link) 10%, transparent);
+    color: var(--fg-link);
+}
+
+@mixin gre-kpi-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    min-width: 0;
+    padding: var(--gre-card-padding-compact);
+    border: none;
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+    box-shadow: var(--gre-shadow-sm);
+}
+
+@mixin gre-kpi-label {
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h3);
+    line-height: var(--gre-lh-h3);
+    color: var(--fg-subtle);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+@mixin gre-kpi-value {
+    font-size: var(--gre-font-kpi);
+    font-weight: var(--gre-weight-h1);
+    line-height: var(--gre-lh-h1);
+    letter-spacing: -0.025em;
+    color: var(--fg);
+}
+
+.gre-ds-panel {
+    @include gre-surface;
+    padding: var(--gre-card-padding);
+
+    &.gre-ds-panel-interactive {
+        @include gre-surface-interactive;
+    }
+}
+
+.gre-ds-panel-muted {
+    @include gre-surface-muted;
+    padding: var(--gre-card-padding);
+}
+
+.gre-ds-score-card {
+    @include gre-score-card-surface;
+}
+
+.gre-ds-kpi-card {
+    @include gre-kpi-card;
+}
+
+.gre-ds-chart-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: var(--gre-card-padding-compact);
+    border: none;
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg);
+    box-shadow: var(--gre-shadow-sm);
+}
+
+.gre-ds-mission-card {
+    @include gre-surface;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+    min-height: 100%;
+    padding: var(--gre-card-padding);
+}
+
+.gre-ds-stat-strip {
+    @include gre-surface-muted;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gre-space-3);
+    padding: var(--gre-card-padding-compact);
+}
+
+.gre-ds-stat-strip-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+    min-width: 0;
+}
+
+.gre-ds-stat-strip-label {
+    @include gre-kpi-label;
+}
+
+.gre-ds-stat-strip-value {
+    @include gre-kpi-value;
+}
+
+.gre-ds-icon-box {
+    @include gre-icon-box;
+}
+
+.gre-ds-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-section-gap);
+}
+
+.gre-ds-section-sm {
+    gap: var(--gre-space-4);
+}
+
+.gre-ds-section-lg {
+    gap: var(--gre-space-8);
+}
+
+.gre-ds-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-3);
+}
+
+.gre-ds-chip {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--gre-btn-height-sm);
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    border-radius: var(--gre-radius-full);
+    background: var(--gre-surface-bg-inset);
+    color: var(--fg);
+    padding: 0 var(--gre-space-3);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    cursor: pointer;
+    transition:
+        border-color var(--gre-motion-fast) ease,
+        background var(--gre-motion-fast) ease,
+        color var(--gre-motion-fast) ease,
+        transform var(--gre-motion-fast) ease;
+
+    &:hover {
+        border-color: var(--fg-link);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.gre-ds-chip-active {
+    border-color: var(--fg-link);
+    background: color-mix(in srgb, var(--fg-link) 12%, var(--canvas));
+    color: var(--fg-link);
+}
+
+.gre-ds-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--gre-btn-height-md);
+    padding: var(--gre-space-2) var(--gre-space-4);
+    transition:
+        background var(--gre-motion-fast) ease,
+        border-color var(--gre-motion-fast) ease,
+        box-shadow var(--gre-motion-fast) ease,
+        color var(--gre-motion-fast) ease,
+        transform var(--gre-motion-fast) ease,
+        filter var(--gre-motion-fast) ease;
+
+    &:hover:not(:disabled):not(.gre-ds-btn-loading) {
+        box-shadow: var(--gre-shadow-sm);
+    }
+
+    &.btn-primary:hover:not(:disabled):not(.gre-ds-btn-loading) {
+        filter: brightness(1.05);
+    }
+
+    &:active:not(:disabled):not(.gre-ds-btn-loading) {
+        transform: scale(0.985);
+    }
+
+    &.gre-ds-btn-sm {
+        min-height: var(--gre-btn-height-sm);
+        padding: var(--gre-space-1) var(--gre-space-3);
+        font-size: var(--gre-font-caption);
+    }
+
+    &.btn-lg {
+        min-height: var(--gre-btn-height-lg);
+        min-width: min(100%, 16rem);
+        padding: var(--gre-space-3) var(--gre-space-6);
+    }
+
+    &.gre-ds-btn-loading {
+        position: relative;
+        color: transparent !important;
+        pointer-events: none;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            border: 2px solid color-mix(in srgb, var(--fg-link) 22%, transparent);
+            border-top-color: var(--fg-link);
+            animation: gre-ds-spin 0.8s linear infinite;
+        }
+
+        &.btn-primary::after {
+            border-color: rgb(255 255 255 / 0.35);
+            border-top-color: white;
+        }
+    }
+}
+
+.gre-ds-progress-track {
+    @include gre-progress-track;
+}
+
+.gre-ds-progress-fill {
+    @include gre-progress-fill;
+}
+
+.gre-ds-metric-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-3);
+    padding: var(--gre-space-1) 0;
+}
+
+.gre-ds-metric-label {
+    color: var(--fg-subtle);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+}
+
+.gre-ds-metric-value {
+    color: var(--fg);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-value);
+    line-height: var(--gre-lh-caption);
+    text-align: right;
+}
+
+@keyframes gre-ds-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Legacy class aliases (existing markup and page-specific styles)
+
+.gre-panel {
+    @include gre-surface;
+    padding: var(--gre-card-padding);
+}
+
+.home-panel {
+    @include gre-surface-muted;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+    min-width: 0;
+    padding: var(--gre-card-padding);
+}
+
+.home-study-band {
+    @include gre-surface-muted;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gre-space-4);
+    padding: var(--gre-card-padding);
+}
+
+.study-due-stat {
+    @include gre-surface-muted;
+    padding: var(--gre-card-padding-compact);
+    text-align: center;
+}
+
+.progress-kpi-card {
+    @include gre-kpi-card;
+}
+
+.progress-kpi-visual {
+    display: flex;
+    align-items: center;
+    min-height: var(--gre-icon-box);
+    margin-bottom: var(--gre-space-1);
+}
+
+.progress-kpi-visual .gre-progress-bar-header {
+    display: none;
+}
+
+.progress-kpi-label {
+    @include gre-kpi-label;
+}
+
+.progress-kpi-value {
+    @include gre-kpi-value;
+}
+
+.progress-kpi-detail {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.progress-chart-card {
+    @extend .gre-ds-chart-card;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gre-ds-panel,
+    .gre-ds-score-card,
+    .gre-ds-mission-card,
+    .gre-ds-chip,
+    .gre-ds-btn,
+    .gre-panel {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .gre-ds-panel-interactive:hover,
+    .gre-ds-mission-card:hover {
+        transform: none;
+    }
+
+    .gre-ds-progress-fill,
+    .gre-ds-btn:active:not(:disabled) {
+        transform: none !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .gre-main,
+    .home-dashboard {
+        --gre-card-padding-x: var(--gre-space-3);
+        --gre-card-padding-y: var(--gre-space-3);
+        --gre-card-padding-compact: var(--gre-space-3);
+        --gre-card-padding: var(--gre-card-padding-y) var(--gre-card-padding-x);
+    }
+}
+
+// Keyboard focus — visible rings on interactive controls across GRE UI.
+
+.gre-shell :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    .gre-ds-chip,
+    .choice
+):focus-visible {
+    outline: 2px solid var(--fg-link);
+    outline-offset: 2px;
+}
+
+.home-dashboard :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--fg-link);
+    outline-offset: 2px;
+}
+
+.gre-shell :where(input[type="checkbox"], input[type="radio"]):focus-visible {
+    outline-offset: 1px;
+}

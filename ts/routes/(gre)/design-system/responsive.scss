@@ -1,0 +1,422 @@
+// BrainLift GRE responsive layout — 320 / 375 / 768 / 1024 tiers.
+
+@mixin gre-bp-sm {
+    @media (max-width: 374px) {
+        @content;
+    }
+}
+
+@mixin gre-bp-md-down {
+    @media (max-width: 767px) {
+        @content;
+    }
+}
+
+@mixin gre-bp-lg {
+    @media (min-width: 768px) and (max-width: 1023px) {
+        @content;
+    }
+}
+
+@mixin gre-bp-xl-up {
+    @media (min-width: 1024px) {
+        @content;
+    }
+}
+
+// Prevent horizontal page scroll from nested overflow.
+
+.gre-shell,
+.home-dashboard {
+    overflow-x: clip;
+    max-width: 100%;
+}
+
+.gre-main,
+.gre-page,
+.home-dashboard,
+.practice-page,
+.settings-page,
+.progress-dashboard {
+    min-width: 0;
+    max-width: 100%;
+}
+
+// --- Navigation (768 and below) ---
+
+@include gre-bp-md-down {
+    .gre-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: var(--gre-space-3);
+        padding-inline: var(--gre-space-4);
+    }
+
+    .gre-nav {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: var(--gre-space-1);
+        width: 100%;
+        overflow: visible;
+        padding-bottom: 0;
+    }
+
+    .nav-link {
+        flex-direction: column;
+        justify-content: center;
+        gap: var(--gre-space-1);
+        min-width: 0;
+        min-height: var(--gre-touch-target);
+        padding: var(--gre-space-1) var(--gre-space-1);
+        font-size: 0.625rem;
+        line-height: 1.2;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .nav-link svg {
+        flex-shrink: 0;
+    }
+}
+
+@include gre-bp-sm {
+    .gre-header {
+        padding-inline: var(--gre-space-3);
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+
+    .nav-link {
+        font-size: 0;
+    }
+
+    .nav-link svg {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .nav-link-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+}
+
+// --- Page chrome ---
+
+@include gre-bp-md-down {
+    .gre-main {
+        padding: var(--gre-space-4) var(--gre-space-4) var(--gre-space-6);
+    }
+
+    .gre-shell {
+        --gre-section-gap: var(--gre-space-4);
+    }
+
+    .gre-page-skeleton-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gre-page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--gre-space-2);
+        margin-bottom: var(--gre-space-4);
+    }
+
+    .gre-page-header-main {
+        align-items: flex-start;
+    }
+
+    .gre-page-meta {
+        align-self: flex-start;
+    }
+}
+
+@include gre-bp-sm {
+    .gre-main {
+        padding-inline: var(--gre-space-3);
+    }
+}
+
+// --- Typography scale ---
+
+@include gre-bp-sm {
+    .gre-shell,
+    .home-dashboard {
+        --gre-font-hero: clamp(1.5rem, 8vw, 2rem);
+        --gre-font-h1: clamp(1.375rem, 6vw, 1.65rem);
+        --gre-font-kpi: clamp(1.125rem, 4.5vw, 1.5rem);
+    }
+
+    .dashboard-hero-value {
+        font-size: clamp(2rem, 12vw, 2.75rem);
+    }
+}
+
+@include gre-bp-md-down {
+    .gre-shell,
+    .home-dashboard {
+        --gre-font-h1: clamp(1.5rem, 5vw, 1.75rem);
+    }
+}
+
+// --- Card grids ---
+
+.score-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+}
+
+@include gre-bp-xl-up {
+    .score-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@include gre-bp-md-down {
+    .score-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+// --- Progress analytics ---
+
+@include gre-bp-xl-up {
+    .progress-kpi-row {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .progress-charts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include gre-bp-lg {
+    .progress-kpi-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .progress-charts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include gre-bp-md-down {
+    .progress-predictions {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .progress-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-chart-card .progress-chart {
+        max-height: 14rem;
+    }
+
+    .progress-chart-card {
+        --gre-chart-font-tick: 11px;
+        --gre-chart-font-label: 14px;
+    }
+}
+
+@include gre-bp-sm {
+    .progress-kpi-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+// --- Home dashboard ---
+
+@include gre-bp-md-down {
+    .home-dashboard {
+        gap: var(--gre-space-4);
+    }
+
+    .dashboard-hero {
+        padding: var(--gre-space-4);
+    }
+
+    .dashboard-hero-scores {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero-divider {
+        display: none;
+    }
+
+    .dashboard-hero-predictions {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-hero-coverage {
+        flex: none;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .home-study-band {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .home-study-band .home-study-button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .home-secondary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .daily-mission-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@include gre-bp-sm {
+    .home-study-band {
+        padding-inline: var(--gre-space-3);
+    }
+}
+
+// --- Practice ---
+
+@include gre-bp-md-down {
+    .practice-page {
+        gap: var(--gre-space-3);
+    }
+
+    .practice-toolbar {
+        gap: var(--gre-space-2);
+        width: 100%;
+    }
+
+    .practice-page .gre-page-header {
+        align-items: stretch;
+    }
+
+    .practice-filters {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .choice {
+        min-height: var(--gre-touch-target);
+        align-items: center;
+    }
+}
+
+@include gre-bp-sm {
+    .practice-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .gre-ds-stat-strip {
+        grid-template-columns: 1fr;
+    }
+}
+
+// --- Settings ---
+
+@include gre-bp-md-down {
+    .settings-toggle,
+    .settings-number,
+    .settings-text,
+    .settings-select {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .settings-number-input,
+    .settings-text input,
+    .settings-select select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .settings-number-input input {
+        flex: 1;
+        min-height: var(--gre-touch-target);
+    }
+
+    .settings-toggle input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0;
+    }
+}
+
+// --- Study / topic ---
+
+@include gre-bp-md-down {
+    .study-due-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topic-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topic-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include gre-bp-sm {
+    .topic-stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@include gre-bp-lg {
+    .topic-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include gre-bp-md-down {
+    .topic-header-actions {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+}
+
+@include gre-bp-sm {
+    .calibration-table-wrap {
+        margin-inline: calc(-1 * var(--gre-space-2));
+        padding-inline: var(--gre-space-2);
+    }
+}
+
+@media (pointer: coarse) {
+    .gre-ds-btn:not(.gre-ds-btn-sm) {
+        min-height: var(--gre-touch-target);
+    }
+
+    .gre-ds-chip {
+        min-height: var(--gre-touch-target);
+        padding-inline: var(--gre-space-4);
+    }
+
+    .gre-ds-btn-row .gre-ds-btn {
+        min-width: min(100%, 12rem);
+    }
+}

@@ -13,6 +13,7 @@ impl Collection {
             memory: Some(signals.memory),
             performance: Some(signals.performance),
             readiness: Some(signals.readiness),
+            estimated_gre: Some(signals.estimated_gre),
         })
     }
 }
@@ -112,6 +113,8 @@ mod test {
         let readiness = scores.readiness.unwrap();
         assert!(!readiness.evidence_summary.is_empty());
         assert!(readiness.last_updated_millis > 0);
+        let estimated = scores.estimated_gre.unwrap();
+        assert!(!estimated.abstain_reason.is_empty() || estimated.combined_score.is_some());
         Ok(())
     }
 }

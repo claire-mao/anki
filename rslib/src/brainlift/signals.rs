@@ -3,6 +3,7 @@
 
 use std::collections::HashMap;
 
+use anki_proto::brainlift::EstimatedGreScore;
 use anki_proto::brainlift::MemoryScore;
 use anki_proto::brainlift::PerformanceAttempt;
 use anki_proto::brainlift::PerformanceScore;
@@ -15,6 +16,7 @@ use crate::brainlift::calibration::apply_calibration_honesty;
 use crate::brainlift::calibration::maintain_readiness_calibration;
 use crate::brainlift::calibration::OutcomeInputs;
 use crate::brainlift::calibration::ReadinessPredictionSnapshot;
+use crate::brainlift::estimated_gre::compute_estimated_gre_score;
 use crate::brainlift::brainlift_storage;
 use crate::brainlift::compute_coverage;
 use crate::brainlift::is_topic_covered;
@@ -36,6 +38,7 @@ pub(crate) struct BrainliftSignals {
     pub memory: MemoryScore,
     pub performance: PerformanceScore,
     pub readiness: ReadinessScore,
+    pub estimated_gre: EstimatedGreScore,
     pub mastery: TopicMasteryResponse,
     pub coverage: GreCoverage,
     pub recent_attempts: Vec<PerformanceAttemptRow>,
@@ -99,11 +102,20 @@ impl Collection {
             &outcome_inputs,
         )?;
         let readiness = apply_calibration_honesty(readiness, &calibration);
+        let estimated_gre = compute_estimated_gre_score(
+            &memory,
+            &performance,
+            &readiness,
+            &coverage,
+            &mastery.topics,
+            &practice_by_topic,
+        );
 
         Ok(BrainliftSignals {
             memory,
             performance,
             readiness,
+            estimated_gre,
             mastery,
             coverage,
             recent_attempts,

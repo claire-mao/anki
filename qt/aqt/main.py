@@ -83,7 +83,13 @@ from aqt.webview import AnkiWebView, AnkiWebViewKind
 install_pylib_legacy()
 
 MainWindowState = Literal[
-    "startup", "deckBrowser", "overview", "review", "resetRequired", "profileManager"
+    "startup",
+    "greDashboard",
+    "deckBrowser",
+    "overview",
+    "review",
+    "resetRequired",
+    "profileManager",
 ]
 
 
@@ -239,6 +245,7 @@ class AnkiQt(QMainWindow):
         self.updateTitleBar()
         self.setup_focus()
         # screens
+        self.setupGreDashboard()
         self.setupDeckBrowser()
         self.setupOverview()
         self.setupReviewer()
@@ -662,7 +669,8 @@ class AnkiQt(QMainWindow):
             self.update_undo_actions()
             gui_hooks.collection_did_load(self.col)
             self.apply_collection_options()
-            self.moveToState("deckBrowser")
+            self._select_gre_study_deck_if_available()
+            self.moveToState("greDashboard")
         except Exception:
             # dump error to stderr so it gets picked up by errors.py
             traceback.print_exc()
@@ -738,6 +746,11 @@ class AnkiQt(QMainWindow):
             Config.Bool.INTERRUPT_AUDIO_WHEN_ANSWERING
         )
 
+    def _select_gre_study_deck_if_available(self) -> None:
+        from aqt.brainlift import ensure_gre_study_deck
+
+        ensure_gre_study_deck(self)
+
     # Auto-optimize
     ##########################################################################
 
@@ -769,6 +782,14 @@ class AnkiQt(QMainWindow):
             self.bottomWeb.adjustHeightToFit()
         gui_hooks.state_did_change(state, oldState)
 
+    def _greDashboardState(self, oldState: MainWindowState) -> None:
+        self.greDashboard.show()
+
+    def _greDashboardCleanup(self, newState: MainWindowState) -> None:
+        self.toolbarWeb.show()
+        self.toolbar.redraw()
+        self.bottomWeb.show()
+
     def _deckBrowserState(self, oldState: MainWindowState) -> None:
         self.deckBrowser.show()
 
@@ -781,7 +802,7 @@ class AnkiQt(QMainWindow):
 
     def _overviewState(self, oldState: MainWindowState) -> None:
         if not self._selectedDeck():
-            return self.moveToState("deckBrowser")
+            return self.moveToState("greDashboard")
         self.overview.show()
 
     def _reviewState(self, oldState: MainWindowState) -> None:
@@ -846,6 +867,8 @@ class AnkiQt(QMainWindow):
             dirty = self.reviewer.op_executed(changes, handler, focused)
         elif self.state == "overview":
             dirty = self.overview.op_executed(changes, handler, focused)
+        elif self.state == "greDashboard":
+            dirty = self.greDashboard.op_executed(changes, handler, focused)
         elif self.state == "deckBrowser":
             dirty = self.deckBrowser.op_executed(changes, handler, focused)
         else:
@@ -869,6 +892,8 @@ class AnkiQt(QMainWindow):
                 self.reviewer.refresh_if_needed()
             elif self.state == "overview":
                 self.overview.refresh_if_needed()
+            elif self.state == "greDashboard":
+                self.greDashboard.refresh_if_needed()
             elif self.state == "deckBrowser":
                 self.deckBrowser.refresh_if_needed()
 
@@ -1057,6 +1082,11 @@ title="{}" {}>{}</button>""".format(
     def inMainThread(self) -> bool:
         return self._mainThread == QThread.currentThread()
 
+    def setupGreDashboard(self) -> None:
+        from aqt.gre_dashboard import GreDashboard
+
+        self.greDashboard = GreDashboard(self)
+
     def setupDeckBrowser(self) -> None:
         from aqt.deckbrowser import DeckBrowser
 
@@ -1166,7 +1196,7 @@ title="{}" {}>{}</button>""".format(
     def setupKeys(self) -> None:
         globalShortcuts = [
             ("Ctrl+:", show_debug_console),
-            ("d", lambda: self.moveToState("deckBrowser")),
+            ("d", self.onOpenDebugDeckBrowser),
             ("s", self.onStudyKey),
             ("a", self.onAddCard),
             ("b", self.onBrowse),
@@ -1226,11 +1256,16 @@ title="{}" {}>{}</button>""".format(
         self.stateShortcuts = []
 
     def onStudyKey(self) -> None:
+        if self.state == "review":
+            return
         if self.state == "overview":
             self.col.startTimebox()
             self.moveToState("review")
-        else:
-            self.moveToState("overview")
+            return
+
+        from aqt.brainlift import start_gre_review
+
+        start_gre_review(self)
 
     # App exit
     ##########################################################################
@@ -1312,9 +1347,17 @@ title="{}" {}>{}</button>""".format(
             aqt.dialogs.open("NewDeckStats", self)
 
     def onOpenGreDashboard(self) -> None:
+        from aqt.brainlift import open_gre_page
+
+        open_gre_page(self, "home")
+
+    def onOpenGreFullStudy(self) -> None:
         from aqt.brainlift import open_brainlift
 
         open_brainlift(self, path="dashboard")
+
+    def onOpenDebugDeckBrowser(self) -> None:
+        self.moveToState("deckBrowser")
 
     def onPrefs(self) -> None:
         aqt.dialogs.open("Preferences", self)
@@ -1454,8 +1497,17 @@ title="{}" {}>{}</button>""".format(
         qconnect(m.actionPreferences.triggered, self.onPrefs)
 
         gre_menu = self.menuBar().addMenu("GRE")
-        gre_dashboard_action = gre_menu.addAction("Open Dashboard")
-        qconnect(gre_dashboard_action.triggered, self.onOpenGreDashboard)
+        debug_menu = gre_menu.addMenu("Debug")
+        debug_decks_action = debug_menu.addAction("Deck Browser")
+        qconnect(debug_decks_action.triggered, self.onOpenDebugDeckBrowser)
+        debug_browse_action = debug_menu.addAction("Browse")
+        qconnect(debug_browse_action.triggered, self.onBrowse)
+        debug_add_action = debug_menu.addAction("Add")
+        qconnect(debug_add_action.triggered, self.onAddCard)
+        debug_stats_action = debug_menu.addAction("Stats")
+        qconnect(debug_stats_action.triggered, self.onStats)
+        debug_sync_action = debug_menu.addAction("Sync")
+        qconnect(debug_sync_action.triggered, self.on_sync_button_clicked)
 
         # View
         qconnect(
@@ -1548,7 +1600,9 @@ title="{}" {}>{}</button>""".format(
         )
 
     def onRefreshTimer(self) -> None:
-        if self.state == "deckBrowser":
+        if self.state == "greDashboard":
+            self.greDashboard.refresh()
+        elif self.state == "deckBrowser":
             self.deckBrowser.refresh()
         elif self.state == "overview":
             self.overview.refresh()
@@ -1718,23 +1772,9 @@ title="{}" {}>{}</button>""".format(
         check_media_db(self)
 
     def onStudyDeck(self) -> None:
-        from aqt.studydeck import StudyDeck
+        from aqt.brainlift import start_gre_review
 
-        def callback(ret: StudyDeck) -> None:
-            if not ret.name:
-                return
-            deck_id = self.col.decks.id(ret.name)
-            set_current_deck(parent=self, deck_id=deck_id).success(
-                lambda out: self.moveToState("overview")
-            ).run_in_background()
-
-        StudyDeck(
-            self,
-            parent=self,
-            dyn=True,
-            current=self.col.decks.current()["name"],
-            callback=callback,
-        )
+        start_gre_review(self)
 
     def onEmptyCards(self) -> None:
         from aqt.emptycards import show_empty_cards
@@ -1837,7 +1877,7 @@ title="{}" {}>{}</button>""".format(
 
     def interactiveState(self) -> bool:
         "True if not in profile manager, syncing, etc."
-        return self.state in ("overview", "review", "deckBrowser")
+        return self.state in ("overview", "review", "greDashboard", "deckBrowser")
 
     # GC
     ##########################################################################

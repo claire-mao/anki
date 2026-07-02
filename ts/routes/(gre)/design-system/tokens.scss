@@ -1,0 +1,104 @@
+// BrainLift GRE design tokens — spacing, radius, shadows, layout.
+
+@mixin gre-design-tokens {
+    /* Spacing scale (px) */
+    --gre-space-1: 4px;
+    --gre-space-2: 8px;
+    --gre-space-3: 12px;
+    --gre-space-4: 16px;
+    --gre-space-5: 20px;
+    --gre-space-6: 24px;
+    --gre-space-8: 32px;
+    --gre-space-12: 48px;
+
+    /* Layout */
+    --gre-page-max: 56rem;
+    --gre-content-max: 42rem;
+    --gre-header-height: 3.25rem;
+    --gre-section-gap: var(--gre-space-6);
+
+    /* Border radius */
+    --gre-radius-sm: 6px;
+    --gre-radius-md: 12px;
+    --gre-radius-lg: 16px;
+    --gre-radius-full: 999px;
+
+    /* Legacy aliases (existing pages) */
+    --gre-card-radius: var(--gre-radius-md);
+
+    /* Shadows */
+    --gre-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
+    --gre-shadow-md: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+    --gre-shadow-md-hover: 0 2px 4px rgb(0 0 0 / 0.06), 0 12px 28px rgb(0 0 0 / 0.08);
+    --gre-shadow: var(--gre-shadow-md);
+    --gre-shadow-hover: var(--gre-shadow-md-hover);
+
+    /* Surfaces */
+    --gre-surface-bg: var(--canvas);
+    --gre-surface-bg-muted: color-mix(in srgb, var(--canvas-code) 32%, var(--canvas));
+    --gre-surface-bg-inset: color-mix(in srgb, var(--canvas-code) 55%, var(--canvas));
+
+    /* Card padding */
+    --gre-card-padding-y: var(--gre-space-4);
+    --gre-card-padding-x: var(--gre-space-4);
+    --gre-card-padding: var(--gre-card-padding-y) var(--gre-card-padding-x);
+    --gre-card-padding-compact: var(--gre-space-3) var(--gre-space-4);
+
+    /* Icons */
+    --gre-icon-sm: 16px;
+    --gre-icon-md: 18px;
+    --gre-icon-lg: 20px;
+    --gre-icon-xl: 22px;
+    --gre-icon-box: 2.5rem;
+
+    /* Buttons */
+    --gre-btn-height-sm: 2rem;
+    --gre-btn-height-md: 2.375rem;
+    --gre-btn-height-lg: 2.75rem;
+    --gre-touch-target: 2.75rem;
+
+    /* Typography scale */
+    --gre-font-hero: clamp(1.75rem, 4vw, 2.25rem);
+    --gre-font-h1: clamp(1.65rem, 2.5vw, 2rem);
+    --gre-font-h2: 1rem;
+    --gre-font-h3: 0.8125rem;
+    --gre-font-body: 1rem;
+    --gre-font-body-lg: 1.0625rem;
+    --gre-font-caption: 0.875rem;
+    --gre-font-kpi: clamp(1.25rem, 2vw, 1.65rem);
+    --gre-font-brand: 1.125rem;
+
+    /* Chart typography (SVG) */
+    --gre-chart-font-tick: 10px;
+    --gre-chart-font-caption: 10px;
+    --gre-chart-font-label: 13px;
+    --gre-chart-font-title: 16px;
+    --gre-chart-font-empty: 11px;
+
+    --gre-lh-hero: 1.1;
+    --gre-lh-h1: 1.15;
+    --gre-lh-h2: 1.35;
+    --gre-lh-h3: 1.35;
+    --gre-lh-body: 1.55;
+    --gre-lh-caption: 1.45;
+
+    --gre-weight-hero: 800;
+    --gre-weight-h1: 700;
+    --gre-weight-h2: 600;
+    --gre-weight-h3: 600;
+    --gre-weight-body: 400;
+    --gre-weight-caption: 400;
+    --gre-weight-label: 600;
+    --gre-weight-value: 600;
+
+    /* Motion — keep under 200ms for microinteractions */
+    --gre-motion-fast: 120ms;
+    --gre-motion-base: 160ms;
+    --gre-motion-enter: 180ms;
+    --gre-motion-progress: 180ms;
+    --gre-stagger-step: 30ms;
+}
+
+.gre-shell {
+    @include gre-design-tokens;
+}

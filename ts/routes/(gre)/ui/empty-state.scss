@@ -1,0 +1,83 @@
+.gre-empty-state {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    padding: var(--gre-card-padding-compact);
+    border-radius: var(--gre-radius-md);
+    background: color-mix(in srgb, var(--fg-link) 4%, var(--gre-surface-bg-muted));
+    box-shadow: var(--gre-shadow-sm);
+}
+
+.gre-empty-state-compact {
+    gap: var(--gre-space-1);
+    padding: var(--gre-space-2) var(--gre-space-3);
+}
+
+.gre-empty-state-inline {
+    padding: var(--gre-space-2);
+    background: transparent;
+    box-shadow: none;
+}
+
+.gre-empty-kicker {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+}
+
+.gre-empty-title {
+    margin: 0;
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h1);
+    line-height: var(--gre-lh-h2);
+    letter-spacing: -0.01em;
+    color: var(--fg);
+}
+
+.gre-empty-state-compact .gre-empty-title {
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+    letter-spacing: 0;
+}
+
+.gre-empty-explanation {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.gre-empty-checklist-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    margin-top: var(--gre-space-1);
+}
+
+.gre-empty-checklist {
+    margin-top: 0;
+}
+
+.gre-empty-unlock-goal {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.gre-empty-action {
+    align-self: flex-start;
+    margin-top: var(--gre-space-1);
+}
+
+.gre-empty-state-compact .gre-empty-action {
+    margin-top: 0;
+}
+
+.gre-empty-state-inline .gre-empty-action {
+    margin-top: var(--gre-space-1);
+}

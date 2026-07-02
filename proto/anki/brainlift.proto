@@ -21,6 +21,7 @@ service BrainLiftService {
   rpc GetGreStudyStatus(generic.Empty) returns (GreStudyStatusResponse);
   rpc GetStudyPlan(GetStudyPlanRequest) returns (StudyPlanResponse);
   rpc GetReadinessCalibration(generic.Empty) returns (ReadinessCalibrationResponse);
+  rpc GetTopicDetails(GetTopicDetailsRequest) returns (TopicDetailsResponse);
   // Incremental sync for brainlift.db (practice attempts). Collection sync uses SyncService.
   rpc GetBrainLiftSyncStatus(generic.Empty) returns (BrainLiftSyncStatus);
   rpc PullBrainLiftChanges(BrainLiftSyncPullRequest) returns (BrainLiftSyncPullResponse);
@@ -141,10 +142,31 @@ message ReadinessScore {
   repeated AbstentionRequirement abstention_requirements = 14;
 }
 
+// Deterministic Quant + Verbal score estimate mapped from readiness (260–340 combined,
+// 130–170 per section). Uses confidence intervals when underlying evidence provides them.
+message EstimatedGreScore {
+  optional uint32 combined_score = 1;
+  optional uint32 combined_score_low = 2;
+  optional uint32 combined_score_high = 3;
+  optional uint32 quant_score = 4;
+  optional uint32 quant_score_low = 5;
+  optional uint32 quant_score_high = 6;
+  optional uint32 verbal_score = 7;
+  optional uint32 verbal_score_low = 8;
+  optional uint32 verbal_score_high = 9;
+  // True when derived from sufficient readiness evidence (not preliminary).
+  bool sufficient_data = 10;
+  string detail = 11;
+  string abstain_reason = 12;
+  // Preliminary mapping from partial memory/performance/coverage when readiness abstains.
+  bool preliminary = 13;
+}
+
 message GetScoresResponse {
   MemoryScore memory = 1;
   PerformanceScore performance = 2;
   ReadinessScore readiness = 3;
+  EstimatedGreScore estimated_gre = 4;
 }
 
 message DashboardCoverage {
@@ -180,6 +202,7 @@ message DashboardState {
   repeated DashboardTopicInsight recommended_topics = 6;
   repeated PerformanceAttempt recent_activity = 7;
   int64 computed_at_millis = 8;
+  EstimatedGreScore estimated_gre = 9;
 }
 
 message PerformanceAttempt {
@@ -205,6 +228,47 @@ message GetRecentAttemptsResponse {
   repeated PerformanceAttempt attempts = 1;
 }
 
+message GetTopicDetailsRequest {
+  string topic_id = 1;
+  uint32 practice_question_limit = 2;
+  uint32 recent_attempt_limit = 3;
+}
+
+message TopicReadinessContribution {
+  float exam_weight = 1;
+  float section_weight = 2;
+  bool covered = 3;
+  optional float coverage_contribution = 4;
+  optional float memory_contribution = 5;
+  optional float performance_contribution = 6;
+  optional float estimated_total_contribution = 7;
+  string summary = 8;
+}
+
+message TopicDetailsResponse {
+  string topic_id = 1;
+  string display_name = 2;
+  string section = 3;
+  float exam_weight = 4;
+  bool is_leaf = 5;
+  uint32 studied_cards = 6;
+  uint32 total_cards = 7;
+  uint32 mastered_cards = 8;
+  optional float memory_score = 9;
+  optional float avg_retrievability_low = 10;
+  optional float avg_retrievability_high = 11;
+  uint32 total_reviews = 12;
+  optional float practice_accuracy = 13;
+  uint32 practice_correct = 14;
+  uint32 practice_total = 15;
+  bool covered = 16;
+  TopicReadinessContribution readiness_contribution = 17;
+  repeated Question practice_questions = 18;
+  repeated PerformanceAttempt recent_attempts = 19;
+  optional float global_readiness_score = 20;
+  string global_readiness_summary = 21;
+}
+
 message GreStudyStatusResponse {
   string deck_name = 1;
   bool deck_exists = 2;
@@ -215,6 +279,23 @@ message GreStudyStatusResponse {
 
 message GetStudyPlanRequest {
   uint32 limit = 1;
+}
+
+message StudyPlanDailyTask {
+  // Stable id, e.g. "review_cards", "practice_questions", "focus_topic".
+  string id = 1;
+  string title = 2;
+  string detail = 3;
+  uint32 target_count = 4;
+  optional string topic_id = 5;
+  optional string topic_display_name = 6;
+}
+
+message DailyStudyPlan {
+  string headline = 1;
+  repeated StudyPlanDailyTask tasks = 2;
+  // Deterministic explanation tied to readiness and mastery signals.
+  string rationale = 3;
 }
 
 message StudyPlanRecommendation {
@@ -236,6 +317,7 @@ message StudyPlanResponse {
   repeated StudyPlanRecommendation recommendations = 2;
   int64 computed_at_millis = 3;
   string summary = 4;
+  DailyStudyPlan daily_plan = 5;
 }
 
 message ReadinessCalibrationBin {

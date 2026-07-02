@@ -1,72 +1,171 @@
+@use "design-system/index";
+@import "ui/indicators.scss";
+@import "ui/empty-state.scss";
+
 .gre-shell {
     min-height: 100vh;
-    background: var(--canvas);
+    background:
+        radial-gradient(circle at top right, rgb(from var(--fg-link) r g b / 0.06), transparent 42%),
+        var(--canvas);
     color: var(--fg);
 }
 
 .gre-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.75rem 1.25rem;
+    gap: var(--gre-space-4);
+    min-height: var(--gre-header-height);
+    padding: var(--gre-space-3) var(--gre-space-6);
     border-bottom: 1px solid var(--border);
-    background: var(--canvas-code);
+    background: color-mix(in srgb, var(--canvas-code) 88%, transparent);
+    backdrop-filter: blur(10px);
 }
 
 .brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+    font-size: var(--gre-font-brand);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.brand-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--gre-radius-sm);
+    background: var(--fg-link);
+    color: var(--canvas);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0;
 }
 
 .gre-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    justify-content: flex-end;
+    gap: var(--gre-space-1);
+    min-width: 0;
 }
 
 .nav-link {
-    color: var(--fg-link);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+    min-height: var(--gre-touch-target);
+    color: var(--fg-subtle);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: var(--gre-weight-label);
+    font-size: var(--gre-font-caption);
+    background: transparent;
+    border: none;
+    border-radius: var(--gre-radius-full);
+    padding: 0 var(--gre-space-3);
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        color var(--gre-motion-fast) ease,
+        background var(--gre-motion-fast) ease,
+        border-color var(--gre-motion-fast) ease,
+        transform var(--gre-motion-fast) ease;
 }
 
 .nav-link:hover {
-    text-decoration: underline;
+    color: var(--fg);
+    background: var(--canvas-inset);
+    text-decoration: none;
+}
+
+.nav-link-active {
+    color: var(--fg-link);
+    background: color-mix(in srgb, var(--fg-link) 12%, var(--canvas));
+}
+
+.nav-link:active {
+    transform: scale(0.98);
 }
 
 .gre-main {
-    padding: 1.25rem;
-    max-width: 52rem;
+    padding: var(--gre-space-6) var(--gre-space-6) var(--gre-space-8);
+    max-width: var(--gre-page-max);
+    margin: 0 auto;
 }
 
-.gre-panel {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
-    background: var(--canvas);
+.gre-page {
+    animation: gre-page-enter var(--gre-motion-enter) ease both;
+}
+
+.gre-page-loading {
+    animation: none;
+}
+
+@keyframes gre-page-enter {
+    from {
+        opacity: 0;
+        transform: translateY(var(--gre-space-2));
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gre-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--gre-space-3) var(--gre-space-6);
+    margin-bottom: var(--gre-space-6);
+}
+
+.gre-page-header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gre-space-3);
+    min-width: 0;
+}
+
+.gre-page-header-main > div {
+    min-width: 0;
+    word-break: break-word;
+}
+
+.gre-page-subtitle {
+    margin: var(--gre-space-1) 0 0;
+    max-width: 42rem;
+}
+
+.gre-page-meta {
+    margin: 0;
+}
+
+.gre-panel h2 {
+    margin-top: 0;
+    margin-bottom: var(--gre-space-3);
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: var(--gre-lh-h2);
+    letter-spacing: -0.01em;
 }
 
 .gre-panel + .gre-panel {
-    margin-top: 1rem;
+    margin-top: var(--gre-section-gap);
 }
 
 .score-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    gap: 1rem;
-}
-
-.score-card {
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1rem;
-}
-
-.score-value {
-    font-size: 2rem;
-    font-weight: 700;
+    gap: var(--gre-space-4);
 }
 
 .muted {
@@ -74,46 +173,8 @@
 }
 
 .muted-small {
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-}
-
-.dashboard-updated {
-    margin: -0.5rem 0 1rem;
-}
-
-.score-range {
-    color: var(--fg-subtle);
-    font-size: 0.95rem;
-    margin: 0.25rem 0 0.5rem;
-}
-
-.score-abstain {
-    font-weight: 600;
-    margin: 0.5rem 0;
-}
-
-.coverage-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: 1rem;
-    margin: 0;
-}
-
-.coverage-stats div {
-    margin: 0;
-}
-
-.coverage-stats dt {
-    color: var(--fg-subtle);
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-}
-
-.coverage-stats dd {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
+    font-size: var(--gre-font-caption);
+    margin-top: var(--gre-space-2);
 }
 
 .topic-list,
@@ -121,13 +182,16 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
 }
 
 .topic-list li + li,
 .activity-list li + li {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
 }
 
 .topic-list strong,
@@ -138,124 +202,32 @@
 .topic-list .muted,
 .activity-list .muted {
     display: block;
-    margin-top: 0.25rem;
+    margin-top: var(--gre-space-1);
+    word-break: break-word;
+}
+
+.topic-list a,
+.activity-list a {
+    color: var(--fg-link);
+    text-decoration: none;
+    font-weight: var(--gre-weight-label);
+    transition: color var(--gre-motion-fast) ease;
+}
+
+.topic-list a:hover,
+.activity-list a:hover {
+    text-decoration: underline;
+}
+
+.topic-insight-bars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    margin-top: var(--gre-space-2);
 }
 
 .primary-button {
-    margin-top: 1rem;
-}
-
-.practice-intro {
-    margin: -0.25rem 0 1rem;
-}
-
-.performance-panel h2 {
-    margin: 0 0 0.5rem;
-    font-size: 1rem;
-}
-
-.question-stem {
-    font-size: 1.05rem;
-    line-height: 1.5;
-}
-
-.result-heading {
-    margin: 1rem 0 0.5rem;
-}
-
-.practice-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.choices {
-    display: grid;
-    gap: 0.5rem;
-    margin: 1rem 0;
-}
-
-.choice {
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-start;
-}
-
-.confidence {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.study-plan-summary {
-    margin: -0.25rem 0 0.5rem;
-}
-
-.study-plan-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.study-plan-list li {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.study-plan-list li + li {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-}
-
-.study-plan-rank {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--fg-subtle);
-    min-width: 1.5rem;
-}
-
-.study-plan-body strong {
-    display: block;
-}
-
-.study-plan-body .muted {
-    display: block;
-    margin-top: 0.25rem;
-}
-
-.study-plan-body p {
-    margin: 0.5rem 0 0;
-}
-
-.factor-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: 0.5rem;
-}
-
-.factor-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.15rem 0.45rem;
-    border-radius: 0.25rem;
-    background: var(--canvas-code);
-    color: var(--fg-subtle);
-}
-
-.study-plan-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.calibration-note {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
-    border-left: 3px solid var(--border);
-    background: var(--canvas-code);
+    margin-top: var(--gre-space-4);
 }
 
 .calibration-table {
@@ -266,47 +238,44 @@
 .calibration-table th,
 .calibration-table td {
     text-align: left;
-    padding: 0.5rem 0.75rem;
+    padding: var(--gre-space-2) var(--gre-space-3);
     border-bottom: 1px solid var(--border);
 }
 
 .calibration-table th {
     color: var(--fg-subtle);
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
 }
 
-.abstention-panel {
-    margin-top: 0.75rem;
+.study-due-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gre-space-3);
+    margin: var(--gre-space-4) 0;
 }
 
-.abstention-panel h3 {
-    font-size: 0.95rem;
-    margin: 0 0 0.5rem;
-}
-
-.abstention-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.abstention-list li + li {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
-}
-
-.abstention-list strong {
+.study-due-stat strong {
     display: block;
+    font-size: var(--gre-font-kpi);
+    font-weight: var(--gre-weight-h1);
+    line-height: var(--gre-lh-hero);
 }
 
-.abstention-list .muted {
+.study-due-stat span {
     display: block;
-    margin-top: 0.15rem;
+    margin-top: var(--gre-space-1);
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h3);
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.abstention-next {
-    margin: 0.35rem 0 0;
-    font-size: 0.9rem;
+@media (prefers-reduced-motion: reduce) {
+    .gre-page,
+    .nav-link {
+        animation: none !important;
+        transition: none !important;
+    }
 }

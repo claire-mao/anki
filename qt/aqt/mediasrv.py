@@ -413,9 +413,13 @@ def handle_request(pathin: str) -> Response:
 def is_sveltekit_page(path: str) -> bool:
     page_name = path.split("/")[0]
     return page_name in [
+        "home",
+        "progress",
+        "topics",
         "dashboard",
         "review",
         "practice",
+        "settings",
         "study-plan",
         "graphs",
         "readiness",
@@ -732,8 +736,12 @@ exposed_backend_list = [
     # CollectionService
     "latest_progress",
     "get_custom_colours",
+    # ConfigService
+    "get_preferences",
+    "set_preferences",
     # DeckService
     "get_deck_names",
+    "get_deck_id_by_name",
     # I18nService
     "i18n_resources",
     # ImportExportService
@@ -763,6 +771,7 @@ exposed_backend_list = [
     "get_gre_study_status",
     "get_study_plan",
     "get_readiness_calibration",
+    "get_topic_details",
     # TagsService
     "complete_tag",
     # ImageOcclusionService
@@ -860,6 +869,11 @@ def _check_dynamic_request_permissions():
         "/_anki/getReadinessCalibration",
         "/_anki/getRecentAttempts",
         "/_anki/getGreStudyStatus",
+        "/_anki/getTopicDetails",
+        "/_anki/getPreferences",
+        "/_anki/setPreferences",
+        "/_anki/getDeckIdByName",
+        "/_anki/getDeckConfigsForUpdate",
     ):
         pass
     else:

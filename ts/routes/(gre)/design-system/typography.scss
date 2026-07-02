@@ -1,0 +1,110 @@
+// BrainLift GRE typography hierarchy.
+
+@mixin gre-text-hero-style {
+    font-size: var(--gre-font-hero);
+    font-weight: var(--gre-weight-hero);
+    line-height: var(--gre-lh-hero);
+    letter-spacing: -0.03em;
+}
+
+@mixin gre-label-style {
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h3);
+    line-height: var(--gre-lh-h3);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+}
+
+.gre-text {
+    margin: 0;
+}
+
+.gre-text-hero {
+    @include gre-text-hero-style;
+}
+
+.gre-text-h1 {
+    font-size: var(--gre-font-h1);
+    font-weight: var(--gre-weight-h1);
+    line-height: var(--gre-lh-h1);
+    letter-spacing: -0.02em;
+}
+
+.gre-text-h2 {
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: var(--gre-lh-h2);
+    letter-spacing: -0.01em;
+}
+
+.gre-text-h3 {
+    @include gre-label-style;
+}
+
+.gre-text-body {
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-body);
+    line-height: var(--gre-lh-body);
+}
+
+.gre-text-caption {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-caption);
+    line-height: var(--gre-lh-caption);
+}
+
+.gre-text-muted {
+    color: var(--fg-subtle);
+}
+
+.gre-text-strong {
+    font-weight: var(--gre-weight-label);
+}
+
+.gre-text-label-row {
+    display: flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+}
+
+.gre-section-title {
+    @include gre-label-style;
+    margin: 0;
+}
+
+.gre-summary-caption {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.gre-summary :global(.gre-summary-hero) {
+    margin-bottom: var(--gre-space-2);
+}
+
+.gre-icon {
+    display: block;
+    flex-shrink: 0;
+}
+
+.gre-icon-sm {
+    width: var(--gre-icon-sm);
+    height: var(--gre-icon-sm);
+}
+
+.gre-icon-md {
+    width: var(--gre-icon-md);
+    height: var(--gre-icon-md);
+}
+
+.gre-icon-lg {
+    width: var(--gre-icon-lg);
+    height: var(--gre-icon-lg);
+}
+
+.gre-icon-xl {
+    width: var(--gre-icon-xl);
+    height: var(--gre-icon-xl);
+}

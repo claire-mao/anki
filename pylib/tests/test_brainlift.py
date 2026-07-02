@@ -250,6 +250,13 @@ def test_get_study_plan_returns_ranked_recommendations() -> None:
         assert topic.priority_score <= previous
         previous = topic.priority_score
 
+    daily = plan.daily_plan
+    assert daily.headline
+    assert daily.rationale
+    assert len(daily.tasks) >= 2
+    assert any(task.id == "review_cards" for task in daily.tasks)
+    assert any(task.id == "practice_questions" for task in daily.tasks)
+
 
 def test_readiness_abstention_lists_missing_requirements() -> None:
     col = isolated_col()

@@ -1,0 +1,197 @@
+.gre-progress-ring {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.gre-progress-ring svg {
+    display: block;
+    transform: rotate(-90deg);
+}
+
+.gre-progress-ring-bg {
+    fill: none;
+    stroke: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+.gre-progress-ring-fill {
+    fill: none;
+    stroke: var(--fg-link);
+    stroke-linecap: round;
+    transition: stroke-dashoffset var(--gre-motion-progress) ease-out;
+}
+
+.gre-progress-ring-value {
+    position: absolute;
+    font-weight: var(--gre-weight-h1);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+}
+
+.gre-progress-ring-sm {
+    width: 3.25rem;
+    height: 3.25rem;
+}
+
+.gre-progress-ring-sm .gre-progress-ring-value {
+    font-size: var(--gre-font-h3);
+}
+
+.gre-progress-ring-md {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.gre-progress-ring-md .gre-progress-ring-value {
+    font-size: var(--gre-font-body);
+}
+
+.gre-progress-ring-lg {
+    width: 6.5rem;
+    height: 6.5rem;
+}
+
+.gre-progress-ring-lg .gre-progress-ring-value {
+    font-size: var(--gre-font-kpi);
+}
+
+.gre-progress-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    min-width: 0;
+}
+
+.gre-progress-bar-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+}
+
+.gre-progress-bar-label {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.gre-progress-bar-value {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+}
+
+.gre-progress-bar-track {
+    overflow: hidden;
+    height: 0.375rem;
+    border-radius: var(--gre-radius-full);
+    background: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+.gre-progress-bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        var(--fg-link),
+        color-mix(in srgb, var(--fg-link) 72%, var(--state-review))
+    );
+    transition: width var(--gre-motion-progress) ease-out;
+}
+
+.gre-progress-bar-compact .gre-progress-bar-track {
+    height: 0.3rem;
+}
+
+.gre-confidence {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+}
+
+.gre-confidence-segments {
+    display: inline-flex;
+    gap: 0.2rem;
+}
+
+.gre-confidence-segment {
+    width: 1.35rem;
+    height: 0.3rem;
+    border-radius: var(--gre-radius-full);
+    background: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+.gre-confidence-segment-active {
+    background: var(--fg-link);
+}
+
+.gre-confidence-segment-preliminary {
+    background: color-mix(in srgb, var(--state-review) 70%, var(--fg-link));
+}
+
+.gre-confidence-label {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.gre-sparkline {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--fg-link);
+}
+
+.gre-sparkline-fill {
+    fill: color-mix(in srgb, var(--fg-link) 14%, transparent);
+}
+
+.gre-sparkline-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.gre-topic-mastery-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--gre-space-1) var(--gre-space-2);
+    align-items: center;
+}
+
+.gre-topic-mastery-bar-label {
+    grid-column: 1;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gre-topic-mastery-bar-value {
+    grid-column: 2;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+}
+
+.gre-topic-mastery-bar-track {
+    grid-column: 1 / -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gre-progress-ring-fill,
+    .gre-progress-bar-fill {
+        transition: none !important;
+    }
+}

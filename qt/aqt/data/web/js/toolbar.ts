@@ -13,6 +13,9 @@ enum SyncState {
 
 function updateSyncColor(state: SyncState) {
     const elem = document.getElementById("sync");
+    if (!elem) {
+        return;
+    }
     switch (state) {
         case SyncState.NoChanges:
             elem.classList.remove("full-sync", "normal-sync");
