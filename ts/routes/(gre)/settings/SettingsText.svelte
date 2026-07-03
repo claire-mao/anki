@@ -20,5 +20,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <span class="settings-text-description">{description}</span>
         {/if}
     </label>
-    <input id={inputId} type="text" bind:value on:change={() => dispatch("change", value)} />
+    <input
+        id={inputId}
+        type="text"
+        bind:value
+        on:change={() => dispatch("change", value)}
+    />
 </div>

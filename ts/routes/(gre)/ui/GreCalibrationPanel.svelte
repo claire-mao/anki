@@ -3,7 +3,10 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { ReadinessCalibrationStats, ReadinessScore } from "@generated/anki/brainlift_pb";
+    import type {
+        ReadinessCalibrationStats,
+        ReadinessScore,
+    } from "@generated/anki/brainlift_pb";
 
     import { presentCalibration } from "../calibration-presentation";
     import GreConfidenceIndicator from "./GreConfidenceIndicator.svelte";
@@ -28,7 +31,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <header class="gre-calibration-header">
             <h2 class="gre-calibration-title">Prediction calibration</h2>
             <p class="gre-calibration-lead">
-                How accurately BrainLift predicts your readiness, and what shapes confidence.
+                How accurately GRE Atlas predicts your readiness, and what shapes
+                confidence.
             </p>
         </header>
     {/if}
@@ -43,7 +47,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <article class="gre-calibration-metric">
             <h3 class="gre-calibration-metric-label">Historical accuracy</h3>
             <p class="gre-calibration-metric-value">{model.historicalAccuracy}</p>
-            <p class="gre-calibration-metric-detail">{model.historicalAccuracyDetail}</p>
+            <p class="gre-calibration-metric-detail">
+                {model.historicalAccuracyDetail}
+            </p>
         </article>
 
         <article class="gre-calibration-metric">
@@ -62,7 +68,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     height={32}
                 />
             {:else}
-                <p class="gre-calibration-metric-value gre-calibration-metric-muted">Building</p>
+                <p class="gre-calibration-metric-value gre-calibration-metric-muted">
+                    Building
+                </p>
             {/if}
             <p class="gre-calibration-metric-detail">{model.trendCaption}</p>
         </article>
@@ -85,12 +93,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <ul class="gre-calibration-improvements">
                 {#each model.improvementItems as item (item.id)}
                     <li class:gre-calibration-improvement-met={item.met}>
-                        <span class="gre-calibration-improvement-mark" aria-hidden="true">
+                        <span
+                            class="gre-calibration-improvement-mark"
+                            aria-hidden="true"
+                        >
                             {item.met ? "✓" : "○"}
                         </span>
                         <span class="gre-calibration-improvement-copy">
-                            <span class="gre-calibration-improvement-label">{item.label}</span>
-                            <span class="gre-calibration-improvement-detail">{item.detail}</span>
+                            <span class="gre-calibration-improvement-label">
+                                {item.label}
+                            </span>
+                            <span class="gre-calibration-improvement-detail">
+                                {item.detail}
+                            </span>
                         </span>
                     </li>
                 {/each}
@@ -102,7 +117,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <details class="gre-calibration-details">
             <summary>Calibration bins</summary>
             {#if calibration.calibrationCurve.length === 0}
-                <GreEmptyState content={emptyStateContent("calibrationTable")} compact />
+                <GreEmptyState
+                    content={emptyStateContent("calibrationTable")}
+                    compact
+                />
             {:else}
                 <div class="gre-calibration-table-wrap">
                     <table class="calibration-table">
@@ -121,7 +139,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                             {#each calibration.calibrationCurve as bin}
                                 {#if bin.count > 0}
                                     <tr>
-                                        <td>{Math.round(bin.binLow)}–{Math.round(bin.binHigh)}%</td>
+                                        <td>
+                                            {Math.round(bin.binLow)}–{Math.round(
+                                                bin.binHigh,
+                                            )}%
+                                        </td>
                                         <td>{Math.round(bin.predictedMean)}%</td>
                                         <td>{Math.round(bin.outcomeMean)}%</td>
                                         <td>{bin.count}</td>
@@ -338,18 +360,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         font-size: var(--gre-font-caption);
         line-height: var(--gre-lh-caption);
         color: var(--fg-subtle);
-    }
-
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
     }
 
     @media (max-width: 767px) {

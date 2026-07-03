@@ -167,11 +167,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         if (estimatedGre.combinedScore === undefined) {
             return emptyStateTitle("estimatedGre");
         }
-        return formatRange(estimatedGre.combinedScoreLow, estimatedGre.combinedScoreHigh) ?? "";
+        return (
+            formatRange(
+                estimatedGre.combinedScoreLow,
+                estimatedGre.combinedScoreHigh,
+            ) ?? ""
+        );
     }
 
     function readinessKpiDetail(): string {
-        const range = formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh);
+        const range = formatRange(
+            readiness.projectedScoreLow,
+            readiness.projectedScoreHigh,
+        );
         if (range) {
             return range;
         }
@@ -217,121 +225,123 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {#if onboarding.active}
         <GreOnboardingPanel model={onboarding} />
     {:else}
-    <div class="progress-dashboard">
-        <section class="progress-kpi-row gre-stagger" aria-label="Key metrics">
-            <ProgressKpiCard
-                label="Estimated GRE"
-                value={estimatedGreHero(estimatedGre)}
-                detail={estimatedGreKpiDetail() || null}
-                confidence={estimatedGreConfidenceLabel}
-                metricChange={metricChanges.estimatedGre ?? null}
-            />
-            <ProgressKpiCard
-                label="Readiness score"
-                value={readinessHero(readiness, formatPercent)}
-                detail={readinessKpiDetail()}
-                ringValue={
-                    readiness.sufficientData && readiness.projectedScore !== undefined
+        <div class="progress-dashboard">
+            <section class="progress-kpi-row gre-stagger" aria-label="Key metrics">
+                <ProgressKpiCard
+                    label="Estimated GRE"
+                    value={estimatedGreHero(estimatedGre)}
+                    detail={estimatedGreKpiDetail() || null}
+                    confidence={estimatedGreConfidenceLabel}
+                    metricChange={metricChanges.estimatedGre ?? null}
+                />
+                <ProgressKpiCard
+                    label="Readiness score"
+                    value={readinessHero(readiness, formatPercent)}
+                    detail={readinessKpiDetail()}
+                    ringValue={readiness.sufficientData &&
+                    readiness.projectedScore !== undefined
                         ? readiness.projectedScore
-                        : null
-                }
-                ringColor="var(--state-review)"
-                metricChange={metricChanges.readiness ?? null}
-            />
-            <ProgressKpiCard
-                label="Coverage"
-                value={formatRatio(coverage.weightedRatio)}
-                detail={coverageKpiDetail()}
-                barValue={ratioToPercent(coverage.weightedRatio)}
-            />
-            <ProgressKpiCard
-                label="Practice attempts"
-                value={String(performance.attemptCount)}
-                sparklinePoints={practiceTrend}
-            />
-            <ProgressKpiCard
-                label="Studied cards"
-                value={String(masterySummary?.studiedCards ?? 0)}
-                detail={studiedCardsKpiDetail()}
-            />
-        </section>
-
-        <h2 class="progress-section-label">Predictions</h2>
-
-        <div class="progress-predictions gre-stagger">
-            <div class="progress-prediction-panel">
-                <EstimatedGreSummary
-                    estimate={estimatedGre}
-                    {readiness}
-                    {memory}
-                    {performance}
-                    weakTopics={dashboard.weakTopics}
-                    checklistRequirements={estimatedGreChecklist}
-                    calibration={calibrationStats}
-                    variant="compact"
+                        : null}
+                    ringColor="var(--state-review)"
+                    metricChange={metricChanges.readiness ?? null}
                 />
-            </div>
-            <div class="progress-prediction-panel">
-                <ReadinessSummary
-                    {readiness}
-                    {memory}
-                    {performance}
-                    weakTopics={dashboard.weakTopics}
-                    calibration={calibrationStats}
-                    confidenceChange={metricChanges.confidence ?? null}
-                    variant="compact"
+                <ProgressKpiCard
+                    label="Coverage"
+                    value={formatRatio(coverage.weightedRatio)}
+                    detail={coverageKpiDetail()}
+                    barValue={ratioToPercent(coverage.weightedRatio)}
                 />
-            </div>
-        </div>
+                <ProgressKpiCard
+                    label="Practice attempts"
+                    value={String(performance.attemptCount)}
+                    sparklinePoints={practiceTrend}
+                />
+                <ProgressKpiCard
+                    label="Studied cards"
+                    value={String(masterySummary?.studiedCards ?? 0)}
+                    detail={studiedCardsKpiDetail()}
+                />
+            </section>
 
-        <div class="progress-calibration-header">
-            <h2 class="progress-section-label">Calibration</h2>
-            <GreButton variant="ghost" size="sm" href="/readiness">View calibration</GreButton>
-        </div>
+            <h2 class="progress-section-label">Predictions</h2>
 
-        <GreCalibrationPanel
-            {readiness}
-            calibration={calibrationStats!}
-            variant="compact"
-            showImprovements={false}
-        />
-
-        <h2 class="progress-section-label">Charts</h2>
-
-        <div class="progress-charts gre-stagger">
-            <ProgressChart
-                title="Memory"
-                subtitle={memoryDatum().detail}
-                renderChart={renderMemoryChart}
-            />
-            <ProgressChart
-                title="Performance"
-                subtitle={performanceDatum().detail}
-                renderChart={renderPerformanceChart}
-            />
-            <ProgressChart
-                title="Estimated GRE"
-                subtitle={estimatedGreChartContext(estimatedGre, readiness)}
-                renderChart={renderEstimatedGreChart}
-            />
-            <ProgressChart
-                title="Readiness score"
-                subtitle={readinessDatum().detail}
-                renderChart={renderReadinessChart}
-            />
-            {#if metricChanges.topicMastery}
-                <div class="progress-chart-change">
-                    <GreMetricChangeInspect change={metricChanges.topicMastery} />
+            <div class="progress-predictions gre-stagger">
+                <div class="progress-prediction-panel">
+                    <EstimatedGreSummary
+                        estimate={estimatedGre}
+                        {readiness}
+                        {memory}
+                        {performance}
+                        weakTopics={dashboard.weakTopics}
+                        checklistRequirements={estimatedGreChecklist}
+                        calibration={calibrationStats}
+                        variant="compact"
+                    />
                 </div>
-            {/if}
-            <ProgressChart
-                title="Topic mastery"
-                subtitle={topicMasterySubtitle()}
-                renderChart={renderMasteryChart}
-                wide
-                tall
+                <div class="progress-prediction-panel">
+                    <ReadinessSummary
+                        {readiness}
+                        {memory}
+                        {performance}
+                        {coverage}
+                        weakTopics={dashboard.weakTopics}
+                        calibration={calibrationStats}
+                        confidenceChange={metricChanges.confidence ?? null}
+                        variant="compact"
+                    />
+                </div>
+            </div>
+
+            <div class="progress-calibration-header">
+                <h2 class="progress-section-label">Calibration</h2>
+                <GreButton variant="ghost" size="sm" href="/readiness">
+                    View calibration
+                </GreButton>
+            </div>
+
+            <GreCalibrationPanel
+                {readiness}
+                calibration={calibrationStats!}
+                variant="compact"
+                showImprovements={false}
             />
+
+            <h2 class="progress-section-label">Charts</h2>
+
+            <div class="progress-charts gre-stagger">
+                <ProgressChart
+                    title="Memory"
+                    subtitle={memoryDatum().detail}
+                    renderChart={renderMemoryChart}
+                />
+                <ProgressChart
+                    title="Performance"
+                    subtitle={performanceDatum().detail}
+                    renderChart={renderPerformanceChart}
+                />
+                <ProgressChart
+                    title="Estimated GRE"
+                    subtitle={estimatedGreChartContext(estimatedGre, readiness)}
+                    renderChart={renderEstimatedGreChart}
+                />
+                <ProgressChart
+                    title="Readiness score"
+                    subtitle={readinessDatum().detail}
+                    renderChart={renderReadinessChart}
+                />
+                {#if metricChanges.topicMastery}
+                    <div class="progress-chart-change">
+                        <GreMetricChangeInspect change={metricChanges.topicMastery} />
+                    </div>
+                {/if}
+                <ProgressChart
+                    title="Topic mastery"
+                    subtitle={topicMasterySubtitle()}
+                    renderChart={renderMasteryChart}
+                    wide
+                    tall
+                />
+            </div>
         </div>
-    </div>
     {/if}
 </GreSection>

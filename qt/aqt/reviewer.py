@@ -254,10 +254,11 @@ class Reviewer:
         self._card_info.set_card(self.card)
 
         if not self.card:
-            from anki.brainlift import GRE_DECK_NAME
+            from anki.gre_atlas import GRE_DECK_NAME, LEGACY_GRE_DECK_NAME
 
             deck = self.mw.col.decks.current()
-            if deck.get("name") == GRE_DECK_NAME or getattr(
+            deck_name = deck.get("name")
+            if deck_name in (GRE_DECK_NAME, LEGACY_GRE_DECK_NAME) or getattr(
                 self.mw, "gre_review_pending_dashboard_refresh", False
             ):
                 self.mw.moveToState("greDashboard")

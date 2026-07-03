@@ -1,10 +1,10 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
+use std::ffi::CString;
 use std::path::PathBuf;
 use std::sync::atomic::AtomicU64;
 use std::sync::atomic::Ordering;
-use std::ffi::CString;
 
 use anki::backend::Backend;
 use anki::prelude::I18n;
@@ -27,11 +27,10 @@ use prost::Message;
 
 use crate::backend_method::backend_method;
 use crate::backend_method::invoke;
+use crate::demo_pages;
 use crate::gre_pages;
-use crate::gre_pages::GreDashboardView;
-use crate::gre_pages::GrePracticeBootstrapView;
-use crate::gre_pages::GreProgressView;
-use crate::gre_pages::GreStudyView;
+use crate::study_pages;
+use crate::sync_pages;
 use crate::AnkiMobileBackend;
 use crate::ANKI_MOBILE_BACKEND_ERROR;
 use crate::ANKI_MOBILE_OK;
@@ -94,16 +93,31 @@ impl ParityHarness {
 
     unsafe fn open_collection_on_mobile(&self) {
         let collection = CString::new(self.mobile_path.to_string_lossy().as_bytes()).unwrap();
-        let media = CString::new(self.mobile_path.with_extension("media").to_string_lossy().as_bytes())
-            .unwrap();
-        let media_db = CString::new(self.mobile_path.with_extension("mdb").to_string_lossy().as_bytes())
-            .unwrap();
+        let media = CString::new(
+            self.mobile_path
+                .with_extension("media")
+                .to_string_lossy()
+                .as_bytes(),
+        )
+        .unwrap();
+        let media_db = CString::new(
+            self.mobile_path
+                .with_extension("mdb")
+                .to_string_lossy()
+                .as_bytes(),
+        )
+        .unwrap();
+        let mut out_bytes = std::ptr::null_mut();
+        let mut out_len = 0;
         let code = crate::anki_mobile_open_collection(
             self.mobile_backend,
             collection.as_ptr(),
             media.as_ptr(),
             media_db.as_ptr(),
+            &mut out_bytes,
+            &mut out_len,
         );
+        crate::anki_mobile_bytes_free(out_bytes, out_len);
         assert_eq!(code, ANKI_MOBILE_OK);
     }
 
@@ -117,8 +131,18 @@ impl ParityHarness {
         .expect("direct open");
     }
 
-    unsafe fn mobile_command(&self, service: &str, method: &str, input: &[u8]) -> Result<Vec<u8>, Vec<u8>> {
-        let (service_idx, method_idx) = backend_method(service, method);
+    unsafe fn mobile_command(
+        &self,
+        service: &str,
+        method: &str,
+        input: &[u8],
+    ) -> Result<Vec<u8>, Vec<u8>> {
+        let (service_idx, method_idx) = backend_method(service, method).unwrap_or_else(|err| {
+            panic!(
+                "missing {service}.{method}: {}",
+                String::from_utf8_lossy(&err)
+            )
+        });
         let mut out_ptr: *mut u8 = std::ptr::null_mut();
         let mut out_len = 0usize;
         let code = crate::anki_mobile_backend_command(
@@ -148,9 +172,18 @@ impl ParityHarness {
         unsafe {
             let mobile_out = self
                 .mobile_command(service, method, input)
-                .unwrap_or_else(|err| panic!("mobile {service}.{method} failed: {:?}", String::from_utf8_lossy(&err)));
-            let direct_out = invoke(&self.direct, service, method, input)
-                .unwrap_or_else(|err| panic!("direct {service}.{method} failed: {:?}", String::from_utf8_lossy(&err)));
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "mobile {service}.{method} failed: {:?}",
+                        String::from_utf8_lossy(&err)
+                    )
+                });
+            let direct_out = invoke(&self.direct, service, method, input).unwrap_or_else(|err| {
+                panic!(
+                    "direct {service}.{method} failed: {:?}",
+                    String::from_utf8_lossy(&err)
+                )
+            });
             let mobile_msg = M::decode(mobile_out.as_slice()).expect("decode mobile");
             let direct_msg = M::decode(direct_out.as_slice()).expect("decode direct");
             assert_eq!(normalize(mobile_msg), normalize(direct_msg));
@@ -189,7 +222,9 @@ fn normalize_study_plan(mut response: StudyPlanResponse) -> StudyPlanResponse {
     response
 }
 
-fn normalize_calibration(mut response: ReadinessCalibrationResponse) -> ReadinessCalibrationResponse {
+fn normalize_calibration(
+    mut response: ReadinessCalibrationResponse,
+) -> ReadinessCalibrationResponse {
     response.computed_at_millis = 0;
     if let Some(readiness) = response.readiness.as_mut() {
         readiness.last_updated_millis = 0;
@@ -273,7 +308,7 @@ fn mobile_bridge_get_readiness_calibration_matches_direct_backend() {
 fn mobile_bridge_topic_mastery_matches_direct_backend() {
     let harness = unsafe { ParityHarness::new("mastery") };
     let req = TopicMasteryRequest {
-        search: "deck:\"BrainLift GRE\"".into(),
+        search: r#"deck:"GRE Atlas" OR deck:"BrainLift GRE""#.into(),
         topic_tag_prefix: "gre::".into(),
         mastery_threshold: None,
         min_reviews: 0,
@@ -319,13 +354,16 @@ fn mobile_bridge_create_session_matches_direct_backend() {
 }
 
 #[test]
-#[test]
 fn gre_dashboard_page_matches_between_mobile_ffi_and_direct_backend() {
     let harness = unsafe { ParityHarness::new("dashboard-page") };
     let mobile_view = gre_pages::load_dashboard_page(unsafe { harness.mobile_backend().backend() })
         .expect("mobile dashboard page");
-    let direct_view = gre_pages::load_dashboard_page(&harness.direct).expect("direct dashboard page");
-    assert_eq!(mobile_view, direct_view);
+    let direct_view =
+        gre_pages::load_dashboard_page(&harness.direct).expect("direct dashboard page");
+    assert_eq!(
+        gre_pages::normalize_dashboard(mobile_view),
+        gre_pages::normalize_dashboard(direct_view)
+    );
 }
 
 #[test]
@@ -334,7 +372,10 @@ fn gre_progress_page_matches_between_mobile_ffi_and_direct_backend() {
     let mobile_view = gre_pages::load_progress_page(unsafe { harness.mobile_backend().backend() })
         .expect("mobile progress page");
     let direct_view = gre_pages::load_progress_page(&harness.direct).expect("direct progress page");
-    assert_eq!(mobile_view, direct_view);
+    assert_eq!(
+        gre_pages::normalize_progress(mobile_view),
+        gre_pages::normalize_progress(direct_view)
+    );
 }
 
 #[test]
@@ -357,4 +398,83 @@ fn gre_study_page_matches_between_mobile_ffi_and_direct_backend() {
         .expect("mobile study page");
     let direct_view = gre_pages::load_study_page(&harness.direct).expect("direct study page");
     assert_eq!(mobile_view, direct_view);
+}
+
+#[test]
+fn gre_study_review_matches_between_mobile_ffi_and_direct_backend() {
+    let harness = unsafe { ParityHarness::new("study-review") };
+    let mobile_view = study_pages::load_study_review(unsafe { harness.mobile_backend().backend() })
+        .expect("mobile study review");
+    let direct_view = study_pages::load_study_review(&harness.direct).expect("direct study review");
+    assert_eq!(mobile_view, direct_view);
+}
+
+#[test]
+fn gre_atlas_sync_status_matches_between_mobile_ffi_and_direct_backend() {
+    let harness = unsafe { ParityHarness::new("sync-status") };
+    let mobile_view = sync_pages::load_sync_status(unsafe { harness.mobile_backend().backend() })
+        .expect("mobile sync status");
+    let direct_view = sync_pages::load_sync_status(&harness.direct).expect("direct sync status");
+    assert_eq!(mobile_view, direct_view);
+}
+
+#[test]
+fn gre_atlas_sync_pull_matches_after_practice_attempt() {
+    let harness = unsafe { ParityHarness::new("sync-pull") };
+    for backend in [&harness.direct, unsafe {
+        harness.mobile_backend().backend()
+    }] {
+        let bootstrap = gre_pages::load_practice_bootstrap(backend).expect("practice bootstrap");
+        let question = bootstrap
+            .questions
+            .first()
+            .expect("expected at least one practice question");
+        gre_pages::record_practice_attempt(
+            backend,
+            gre_pages::GreRecordAttemptInput {
+                question_id: question.id.clone(),
+                answer: question
+                    .choices
+                    .first()
+                    .cloned()
+                    .unwrap_or_else(|| "A".into()),
+                response_time_ms: 800,
+                session_id: bootstrap.session_id.clone(),
+            },
+        )
+        .expect("record attempt");
+    }
+
+    let input = sync_pages::GreAtlasSyncPullInput {
+        after_usn: 0,
+        limit: 100,
+    };
+    let mobile_view =
+        sync_pages::pull_sync_changes(unsafe { harness.mobile_backend().backend() }, input.clone())
+            .expect("mobile sync pull")
+            .normalize_for_parity();
+    let direct_view = sync_pages::pull_sync_changes(&harness.direct, input)
+        .expect("direct sync pull")
+        .normalize_for_parity();
+    assert_eq!(mobile_view, direct_view);
+    assert!(!mobile_view.attempts.is_empty());
+}
+
+#[test]
+fn prepare_demo_collection_matches_between_mobile_ffi_and_direct_backend() {
+    let harness = unsafe { ParityHarness::new("prepare-demo") };
+    let mobile_view =
+        demo_pages::prepare_demo_collection(unsafe { harness.mobile_backend().backend() })
+            .expect("mobile prepare demo");
+    let direct_view =
+        demo_pages::prepare_demo_collection(&harness.direct).expect("direct prepare demo");
+    assert_eq!(mobile_view.deck_name, direct_view.deck_name);
+    assert_eq!(mobile_view.cards_added, direct_view.cards_added);
+    assert_eq!(mobile_view.cards_added, 8);
+    assert_eq!(mobile_view.practice_attempts_added, 4);
+    // greatlas.db is shared per collection folder in the parity harness, so the
+    // second prepare call may skip practice seeding.
+    assert!(direct_view.practice_attempts_added <= mobile_view.practice_attempts_added);
+    assert!(mobile_view.due_total >= 4);
+    assert_eq!(mobile_view.due_total, direct_view.due_total);
 }

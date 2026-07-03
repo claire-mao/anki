@@ -140,8 +140,8 @@ export function readinessConfidenceLabel(readiness: ReadinessScore): string {
 export function readinessNextAction(readiness: ReadinessScore): PredictionAction {
     if (readinessUnlocked(readiness)) {
         if (
-            readiness.confidenceLevel === "low" ||
-            readiness.coverageRatio < 0.5
+            readiness.confidenceLevel === "low"
+            || readiness.coverageRatio < 0.5
         ) {
             return { label: "Expand coverage", href: "/study-plan" };
         }

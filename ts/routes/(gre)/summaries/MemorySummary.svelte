@@ -16,7 +16,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     export let memory: MemoryScore;
 
-    $: fsrsMet = memory.abstentionRequirements.find((req) => req.id === "fsrs_enabled")?.met ?? false;
+    $: fsrsMet =
+        memory.abstentionRequirements.find((req) => req.id === "fsrs_enabled")?.met ??
+        false;
 </script>
 
 <div class="gre-summary">

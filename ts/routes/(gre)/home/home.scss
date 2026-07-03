@@ -4,24 +4,8 @@
     gap: var(--gre-space-6);
 }
 
-.home-header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gre-space-1);
-    margin-bottom: var(--gre-space-2);
-}
-
-.home-header :global(.gre-text-h1) {
-    margin: 0;
-    font-size: var(--gre-font-h1);
-    letter-spacing: -0.02em;
-}
-
-.home-tagline {
-    margin: 0;
-    font-size: var(--gre-font-caption);
-    line-height: var(--gre-lh-caption);
-    color: var(--fg-subtle);
+.home-dashboard :global(.gre-page-header) {
+    margin-bottom: 0;
 }
 
 .home-section {
@@ -86,10 +70,10 @@
 }
 
 .dashboard-hero-value {
-    font-size: clamp(2.5rem, 7vw, 3.75rem);
+    font-size: var(--gre-font-display);
     font-weight: var(--gre-weight-hero);
-    line-height: 1;
-    letter-spacing: -0.04em;
+    line-height: var(--gre-lh-display);
+    letter-spacing: var(--gre-tracking-display);
     color: var(--fg);
 }
 

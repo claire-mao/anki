@@ -21,13 +21,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import GreButton from "../ui/GreButton.svelte";
     import { emptyStateContent } from "../empty-states";
     import GreEmptyState from "../ui/GreEmptyState.svelte";
-    import GreText from "../ui/GreText.svelte";
     import { formatRatio } from "../score-format";
     import { rollingAccuracySeries } from "../indicator-utils";
     import GreTopicMasteryBar from "../ui/GreTopicMasteryBar.svelte";
     import GreSparkline from "../ui/GreSparkline.svelte";
     import { topicDetailsPath } from "../topic-link";
+    import GreCoverageSummary from "../ui/GreCoverageSummary.svelte";
     import DashboardHero from "./DashboardHero.svelte";
+    import GrePageHeader from "../GrePageHeader.svelte";
     import type { PageData } from "./$types";
 
     import "./home.scss";
@@ -42,6 +43,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const performance = dashboard.performance!;
     const readiness = dashboard.readiness!;
     const estimatedGre = dashboard.estimatedGre!;
+    const coverage = dashboard.coverage!;
     const weakestTopic = data.dashboard.weakTopics[0];
     const dailyPlan = plan.dailyPlan!;
     const dueTotal = status.newCount + status.learnCount + status.reviewCount;
@@ -137,23 +139,25 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 </script>
 
 <div class="home-dashboard">
-    <header class="home-header">
-        <GreText variant="h1" tag="h1">Dashboard</GreText>
-        <p class="home-tagline">
-            {onboarding.active
-                ? "Complete study and practice to unlock your first estimated GRE score."
-                : "How close you are to your GRE goal"}
-        </p>
-    </header>
+    <GrePageHeader
+        title="Dashboard"
+        icon="dashboard"
+        subtitle={onboarding.active
+            ? "Complete study and practice to unlock your first estimated GRE score."
+            : "How close you are to your GRE goal"}
+    />
 
     {#if onboarding.active}
+        <GreCoverageSummary {coverage} compact showReadinessGate={false} />
         <GreOnboardingPanel model={onboarding} />
     {:else}
+        <GreCoverageSummary {coverage} />
         <DashboardHero
             estimate={estimatedGre}
             {readiness}
             {memory}
             {performance}
+            {coverage}
             weakTopics={dashboard.weakTopics}
             checklistRequirements={estimatedGreChecklist}
             {metricChanges}
@@ -166,10 +170,17 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     <section class="home-section home-study-band" aria-labelledby="home-study-heading">
         <div class="home-study-copy">
-            <h2 class="gre-section-title" id="home-study-heading">{studyBandHeading()}</h2>
+            <h2 class="gre-section-title" id="home-study-heading">
+                {studyBandHeading()}
+            </h2>
             <p class="home-study-meta">{studyBandMeta()}</p>
         </div>
-        <GreButton variant="primary" size="lg" className="home-study-button" on:click={continueStudying}>
+        <GreButton
+            variant="primary"
+            size="lg"
+            className="home-study-button"
+            on:click={continueStudying}
+        >
             {continueStudyingLabel()}
         </GreButton>
     </section>
@@ -177,45 +188,69 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <div class="home-secondary-grid gre-stagger">
         {#if !onboarding.active}
             <section class="home-panel" aria-labelledby="home-weakest-heading">
-            <h2 class="gre-section-title" id="home-weakest-heading">Weakest topic</h2>
-            {#if weakestTopic}
-                <a class="home-panel-lead" href={topicDetailsPath(weakestTopic.topicId)}>
-                    {weakestTopic.displayName}
-                </a>
-                {#if weakestTopicContext()}
-                    <p class="home-panel-meta">{weakestTopicContext()}</p>
+                <h2 class="gre-section-title" id="home-weakest-heading">
+                    Weakest topic
+                </h2>
+                {#if weakestTopic}
+                    <a
+                        class="home-panel-lead"
+                        href={topicDetailsPath(weakestTopic.topicId)}
+                    >
+                        {weakestTopic.displayName}
+                    </a>
+                    {#if weakestTopicContext()}
+                        <p class="home-panel-meta">{weakestTopicContext()}</p>
+                    {/if}
+                    <div class="home-topic-bars">
+                        {#if weakestTopic.memoryScore !== undefined}
+                            <GreTopicMasteryBar
+                                label="Memory"
+                                value={weakestTopic.memoryScore}
+                            />
+                        {/if}
+                        {#if weakestTopic.practiceAccuracy !== undefined}
+                            <GreTopicMasteryBar
+                                label="Practice"
+                                value={weakestTopic.practiceAccuracy}
+                            />
+                        {/if}
+                    </div>
+                {:else}
+                    <GreEmptyState
+                        content={emptyStateContent("homeWeakTopics")}
+                        compact
+                    />
                 {/if}
-                <div class="home-topic-bars">
-                    {#if weakestTopic.memoryScore !== undefined}
-                        <GreTopicMasteryBar label="Memory" value={weakestTopic.memoryScore} />
-                    {/if}
-                    {#if weakestTopic.practiceAccuracy !== undefined}
-                        <GreTopicMasteryBar label="Practice" value={weakestTopic.practiceAccuracy} />
-                    {/if}
-                </div>
-            {:else}
-                <GreEmptyState content={emptyStateContent("homeWeakTopics")} compact />
-            {/if}
-        </section>
+            </section>
 
-        <section class="home-panel" aria-labelledby="home-recent-heading">
-            <h2 class="gre-section-title" id="home-recent-heading">Recent practice</h2>
-            {#if dashboard.recentActivity.length > 0}
-                {#if recentTrend.length >= 2}
-                    <GreSparkline points={recentTrend} label="Recent accuracy trend" />
+            <section class="home-panel" aria-labelledby="home-recent-heading">
+                <h2 class="gre-section-title" id="home-recent-heading">
+                    Recent practice
+                </h2>
+                {#if dashboard.recentActivity.length > 0}
+                    {#if recentTrend.length >= 2}
+                        <GreSparkline
+                            points={recentTrend}
+                            label="Recent accuracy trend"
+                        />
+                    {/if}
+                    <ul class="home-recent-list">
+                        {#each dashboard.recentActivity as attempt}
+                            <li>
+                                <span class="home-recent-topic">{attempt.topic}</span>
+                                <span class="home-recent-meta">
+                                    {attemptSummary(attempt)}
+                                </span>
+                            </li>
+                        {/each}
+                    </ul>
+                {:else}
+                    <GreEmptyState
+                        content={emptyStateContent("homeRecentPractice")}
+                        compact
+                    />
                 {/if}
-                <ul class="home-recent-list">
-                    {#each dashboard.recentActivity as attempt}
-                        <li>
-                            <span class="home-recent-topic">{attempt.topic}</span>
-                            <span class="home-recent-meta">{attemptSummary(attempt)}</span>
-                        </li>
-                    {/each}
-                </ul>
-            {:else}
-                <GreEmptyState content={emptyStateContent("homeRecentPractice")} compact />
-            {/if}
-        </section>
+            </section>
         {/if}
     </div>
 </div>

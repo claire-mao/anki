@@ -3,7 +3,10 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { DailyStudyPlan, GreStudyStatusResponse } from "@generated/anki/brainlift_pb";
+    import type {
+        DailyStudyPlan,
+        GreStudyStatusResponse,
+    } from "@generated/anki/brainlift_pb";
 
     import DailyMissionTask from "./DailyMissionTask.svelte";
     import { missionIntro } from "./daily-mission";
@@ -18,7 +21,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 <section class="daily-mission" class:daily-mission-compact={compact}>
     <header class="daily-mission-header">
-        <GreText variant="h3" tag="h2" className="daily-mission-heading gre-text-label-row" id="daily-mission-heading">
+        <GreText
+            variant="h3"
+            tag="h2"
+            className="daily-mission-heading gre-text-label-row"
+            id="daily-mission-heading"
+        >
             <GreIcon name="calendar" size="sm" />
             Today's mission
         </GreText>
@@ -33,7 +41,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     {#if compact}
         <p class="daily-mission-more daily-mission-more-compact">
-            <a href="/study-plan" on:click={(event) => runGreNavAction({ label: "Study plan", href: "/study-plan" }, event)}>
+            <a
+                href="/study-plan"
+                on:click={(event) =>
+                    runGreNavAction(
+                        { label: "Study plan", href: "/study-plan" },
+                        event,
+                    )}
+            >
                 View full study plan
             </a>
         </p>

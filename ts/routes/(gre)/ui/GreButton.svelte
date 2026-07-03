@@ -33,10 +33,13 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <a
         class="btn gre-ds-btn {className}"
         class:btn-primary={variant === "primary"}
+        class:gre-ds-btn-ghost={variant === "ghost"}
         class:gre-ds-btn-sm={size === "sm"}
         class:btn-lg={size === "lg"}
         class:gre-ds-btn-loading={loading}
         href={linkHref}
+        aria-describedby={ariaDescribedby}
+        aria-busy={loading ? "true" : undefined}
         on:click={navAction || bridge ? handleLinkClick : undefined}
     >
         <slot />
@@ -45,12 +48,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <button
         class="btn gre-ds-btn {className}"
         class:btn-primary={variant === "primary"}
+        class:gre-ds-btn-ghost={variant === "ghost"}
         class:gre-ds-btn-sm={size === "sm"}
         class:btn-lg={size === "lg"}
         class:gre-ds-btn-loading={loading}
         {type}
         disabled={disabled || loading}
         aria-describedby={ariaDescribedby}
+        aria-busy={loading ? "true" : undefined}
         on:click
     >
         <slot />

@@ -5,7 +5,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import type { AbstentionRequirement } from "@generated/anki/brainlift_pb";
 
-    import type { PredictionAction, PredictionDetailRow } from "../prediction-presentation";
+    import type {
+        PredictionAction,
+        PredictionDetailRow,
+    } from "../prediction-presentation";
     import type { PredictionExplainability } from "../prediction-explainability";
     import type { MetricChangePresentation } from "../metric-change-presentation";
     import { runGreNavAction } from "../gre-navigation";
@@ -58,7 +61,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </div>
     {/if}
 
-    <GreMetricChangeInspect change={metricChange} variant={explainCompact ? "compact" : "default"} />
+    <GreMetricChangeInspect
+        change={metricChange}
+        variant={explainCompact ? "compact" : "default"}
+    />
 
     {#if explainability}
         <GrePredictionExplain {explainability} compact={explainCompact} />
@@ -86,7 +92,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     {nextAction.label}
                 </GreButton>
             {:else}
-                <GreButton variant="secondary" size="sm" className="gre-prediction-action">
+                <GreButton
+                    variant="secondary"
+                    size="sm"
+                    className="gre-prediction-action"
+                >
                     {nextAction.label}
                 </GreButton>
             {/if}

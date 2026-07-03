@@ -1,0 +1,406 @@
+{
+    "label": "gre_atlas_gold_eval_v1",
+    "verified": true,
+    "questions": [
+        {
+            "id": "gold-001",
+            "topic": "gre::quant::arithmetic::percent",
+            "section": "quant",
+            "stem": "A store marks down an $80 item by 25%. What is the sale price?",
+            "keywords": ["percent", "discount", "sale", "price"],
+            "correct_answer": "$60"
+        },
+        {
+            "id": "gold-002",
+            "topic": "gre::quant::arithmetic::percent",
+            "section": "quant",
+            "stem": "What is 30% of 250?",
+            "keywords": ["percent", "of", "multiply"],
+            "correct_answer": "75"
+        },
+        {
+            "id": "gold-003",
+            "topic": "gre::quant::arithmetic::ratio",
+            "section": "quant",
+            "stem": "If the ratio of boys to girls is 3:5 and there are 24 boys, how many girls are there?",
+            "keywords": ["ratio", "proportion", "parts"],
+            "correct_answer": "40"
+        },
+        {
+            "id": "gold-004",
+            "topic": "gre::quant::arithmetic::ratio",
+            "section": "quant",
+            "stem": "A map scale is 1 inch to 15 miles. How many miles are represented by 4 inches?",
+            "keywords": ["ratio", "scale", "proportion"],
+            "correct_answer": "60"
+        },
+        {
+            "id": "gold-005",
+            "topic": "gre::quant::algebra::linear",
+            "section": "quant",
+            "stem": "If 3x + 7 = 22, what is the value of x?",
+            "keywords": ["linear", "equation", "solve", "variable"],
+            "correct_answer": "5"
+        },
+        {
+            "id": "gold-006",
+            "topic": "gre::quant::algebra::linear",
+            "section": "quant",
+            "stem": "If 2(x - 4) = 10, what is x?",
+            "keywords": ["linear", "equation", "distribute"],
+            "correct_answer": "9"
+        },
+        {
+            "id": "gold-007",
+            "topic": "gre::quant::algebra::quadratic",
+            "section": "quant",
+            "stem": "What are the roots of x² - 5x + 6 = 0?",
+            "keywords": ["quadratic", "factor", "roots"],
+            "correct_answer": "2 and 3"
+        },
+        {
+            "id": "gold-008",
+            "topic": "gre::quant::algebra::quadratic",
+            "section": "quant",
+            "stem": "Which value of x satisfies x² = 49?",
+            "keywords": ["quadratic", "square", "root"],
+            "correct_answer": "7"
+        },
+        {
+            "id": "gold-009",
+            "topic": "gre::quant::geometry::triangles",
+            "section": "quant",
+            "stem": "A right triangle has legs 6 and 8. What is the hypotenuse?",
+            "keywords": ["triangle", "pythagorean", "hypotenuse"],
+            "correct_answer": "10"
+        },
+        {
+            "id": "gold-010",
+            "topic": "gre::quant::geometry::triangles",
+            "section": "quant",
+            "stem": "What is the area of a triangle with base 10 and height 6?",
+            "keywords": ["triangle", "area", "base", "height"],
+            "correct_answer": "30"
+        },
+        {
+            "id": "gold-011",
+            "topic": "gre::quant::geometry::circles",
+            "section": "quant",
+            "stem": "A circle has radius 5. What is its circumference?",
+            "keywords": ["circle", "circumference", "radius"],
+            "correct_answer": "10π"
+        },
+        {
+            "id": "gold-012",
+            "topic": "gre::quant::geometry::circles",
+            "section": "quant",
+            "stem": "A circle has diameter 12. What is its area?",
+            "keywords": ["circle", "area", "diameter", "radius"],
+            "correct_answer": "36π"
+        },
+        {
+            "id": "gold-013",
+            "topic": "gre::quant::data_interpretation",
+            "section": "quant",
+            "stem": "Revenue rose from $40M to $50M. Which company had the greater percent increase if another rose from $30M to $36M?",
+            "keywords": ["table", "percent", "increase", "compare"],
+            "correct_answer": "first company"
+        },
+        {
+            "id": "gold-014",
+            "topic": "gre::quant::data_interpretation",
+            "section": "quant",
+            "stem": "Sales were 120 in Q1 and 150 in Q2. What is the percent increase?",
+            "keywords": ["percent", "increase", "compare", "chart"],
+            "correct_answer": "25%"
+        },
+        {
+            "id": "gold-015",
+            "topic": "gre::quant::statistics::probability",
+            "section": "quant",
+            "stem": "A fair die is rolled once. What is the probability of rolling an even number?",
+            "keywords": ["probability", "outcome", "event"],
+            "correct_answer": "1/2"
+        },
+        {
+            "id": "gold-016",
+            "topic": "gre::quant::statistics::probability",
+            "section": "quant",
+            "stem": "A bag contains 2 green and 3 yellow tickets. What is P(green)?",
+            "keywords": ["probability", "fraction", "outcome"],
+            "correct_answer": "2/5"
+        },
+        {
+            "id": "gold-017",
+            "topic": "gre::quant::statistics::data_analysis",
+            "section": "quant",
+            "stem": "What is the mean of 2, 4, 6, 8, and 10?",
+            "keywords": ["mean", "average", "data"],
+            "correct_answer": "6"
+        },
+        {
+            "id": "gold-018",
+            "topic": "gre::quant::statistics::data_analysis",
+            "section": "quant",
+            "stem": "What is the range of 5, 9, 12, 20?",
+            "keywords": ["range", "data", "analysis"],
+            "correct_answer": "15"
+        },
+        {
+            "id": "gold-019",
+            "topic": "gre::quant::word_problems",
+            "section": "quant",
+            "stem": "A car travels 180 miles in 3 hours. What is its average speed?",
+            "keywords": ["rate", "distance", "time", "speed"],
+            "correct_answer": "60 mph"
+        },
+        {
+            "id": "gold-020",
+            "topic": "gre::quant::word_problems",
+            "section": "quant",
+            "stem": "Pipe A fills a tank in 4 hours and Pipe B in 8 hours. How long together?",
+            "keywords": ["work", "rate", "combined", "time"],
+            "correct_answer": "8/3 hours"
+        },
+        {
+            "id": "gold-021",
+            "topic": "gre::quant::number_properties",
+            "section": "quant",
+            "stem": "Which of the following is a prime number: 21, 29, 33, 39?",
+            "keywords": ["prime", "integer", "factor"],
+            "correct_answer": "29"
+        },
+        {
+            "id": "gold-022",
+            "topic": "gre::quant::number_properties",
+            "section": "quant",
+            "stem": "What is the remainder when 83 is divided by 7?",
+            "keywords": ["remainder", "divisible", "integer"],
+            "correct_answer": "6"
+        },
+        {
+            "id": "gold-023",
+            "topic": "gre::verbal::text_completion",
+            "section": "verbal",
+            "stem": "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
+            "keywords": ["context", "blank", "logic", "support"],
+            "correct_answer": "compelling"
+        },
+        {
+            "id": "gold-024",
+            "topic": "gre::verbal::text_completion",
+            "section": "verbal",
+            "stem": "Because the evidence was ______, the jury reached a quick verdict.",
+            "keywords": ["context", "blank", "contrast"],
+            "correct_answer": "overwhelming"
+        },
+        {
+            "id": "gold-025",
+            "topic": "gre::verbal::sentence_equivalence",
+            "section": "verbal",
+            "stem": "Although the CEO's apology was ______, many employees remained skeptical.",
+            "keywords": ["equivalent", "synonym", "tone", "meaning"],
+            "correct_answer": "heartfelt"
+        },
+        {
+            "id": "gold-026",
+            "topic": "gre::verbal::sentence_equivalence",
+            "section": "verbal",
+            "stem": "The professor's lecture was surprisingly ______ given the complexity of the topic.",
+            "keywords": ["equivalent", "pair", "meaning"],
+            "correct_answer": "accessible"
+        },
+        {
+            "id": "gold-027",
+            "topic": "gre::verbal::reading::inference",
+            "section": "verbal",
+            "stem": "Passage: Mixed-use zoning may shorten commutes but can raise nearby housing costs. Best inference?",
+            "keywords": ["inference", "passage", "imply", "support"],
+            "correct_answer": "Convenience may trade off with affordability."
+        },
+        {
+            "id": "gold-028",
+            "topic": "gre::verbal::reading::inference",
+            "section": "verbal",
+            "stem": "Passage: The policy reduced emissions yet increased manufacturing costs. What is supported?",
+            "keywords": ["inference", "conclude", "passage"],
+            "correct_answer": "Environmental gains may come with economic costs."
+        },
+        {
+            "id": "gold-029",
+            "topic": "gre::verbal::reading::main_idea",
+            "section": "verbal",
+            "stem": "Passage: Bees pollinate crops, but pesticide use threatens hive survival. Main idea?",
+            "keywords": ["main", "idea", "central", "passage"],
+            "correct_answer": "Pesticide use threatens pollinators essential to agriculture."
+        },
+        {
+            "id": "gold-030",
+            "topic": "gre::verbal::reading::main_idea",
+            "section": "verbal",
+            "stem": "Passage: The memoir recounts migration and identity struggles across three decades. Main idea?",
+            "keywords": ["main", "purpose", "passage"],
+            "correct_answer": "The memoir explores migration and identity over time."
+        },
+        {
+            "id": "gold-031",
+            "topic": "gre::verbal::reading::detail",
+            "section": "verbal",
+            "stem": "Passage: The study enrolled 500 adults over six months. According to the passage, how many adults?",
+            "keywords": ["detail", "states", "according", "specific"],
+            "correct_answer": "500"
+        },
+        {
+            "id": "gold-032",
+            "topic": "gre::verbal::reading::detail",
+            "section": "verbal",
+            "stem": "Passage: The treaty was signed in 1998 in Geneva. Where was it signed?",
+            "keywords": ["detail", "passage", "specific"],
+            "correct_answer": "Geneva"
+        },
+        {
+            "id": "gold-033",
+            "topic": "gre::verbal::vocabulary::context",
+            "section": "verbal",
+            "stem": "The instructions were so ______ that even beginners completed the task.",
+            "keywords": ["context", "meaning", "clue", "word"],
+            "correct_answer": "clear"
+        },
+        {
+            "id": "gold-034",
+            "topic": "gre::verbal::vocabulary::context",
+            "section": "verbal",
+            "stem": "Her ______ remarks offended listeners who expected a diplomatic tone.",
+            "keywords": ["context", "surrounding", "clue"],
+            "correct_answer": "tactless"
+        },
+        {
+            "id": "gold-035",
+            "topic": "gre::verbal::vocabulary::advanced",
+            "section": "verbal",
+            "stem": "The critic's review was ______, praising nuance rather than spectacle.",
+            "keywords": ["vocabulary", "precise", "nuance", "connotation"],
+            "correct_answer": "judicious"
+        },
+        {
+            "id": "gold-036",
+            "topic": "gre::verbal::vocabulary::advanced",
+            "section": "verbal",
+            "stem": "The politician's ______ promise convinced few voters familiar with past reversals.",
+            "keywords": ["register", "connotation", "precise"],
+            "correct_answer": "hollow"
+        },
+        {
+            "id": "gold-037",
+            "topic": "gre::verbal::reading::function",
+            "section": "verbal",
+            "stem": "Passage: Solar costs fell sharply. Still, grid storage remains expensive. Function of the second sentence?",
+            "keywords": ["function", "sentence", "role", "structure"],
+            "correct_answer": "It introduces a limitation to the prior claim."
+        },
+        {
+            "id": "gold-038",
+            "topic": "gre::verbal::reading::function",
+            "section": "verbal",
+            "stem": "Passage: The author defines a key term. The next sentence gives an example. Function of the example?",
+            "keywords": ["function", "passage", "role"],
+            "correct_answer": "It illustrates the definition."
+        },
+        {
+            "id": "gold-039",
+            "topic": "gre::awa::issue",
+            "section": "awa",
+            "stem": "Issue: Governments should prioritize prevention over technological fixes for environmental problems.",
+            "keywords": ["issue", "claim", "critique", "evidence"],
+            "correct_answer": "Prevention and technology can complement each other."
+        },
+        {
+            "id": "gold-040",
+            "topic": "gre::awa::issue",
+            "section": "awa",
+            "stem": "Issue: Leaders should never change policies after public criticism.",
+            "keywords": ["issue", "position", "counterargument"],
+            "correct_answer": "Responsive policy change can reflect new information."
+        },
+        {
+            "id": "gold-041",
+            "topic": "gre::awa::argument",
+            "section": "awa",
+            "stem": "Argument: Our website traffic doubled, so customer loyalty must have doubled.",
+            "keywords": ["argument", "assumption", "flaw", "evidence"],
+            "correct_answer": "Traffic does not necessarily measure loyalty."
+        },
+        {
+            "id": "gold-042",
+            "topic": "gre::awa::argument",
+            "section": "awa",
+            "stem": "Argument: Because one branch increased sales, the entire chain is profitable.",
+            "keywords": ["argument", "flaw", "alternative"],
+            "correct_answer": "One branch's performance may not represent the whole chain."
+        },
+        {
+            "id": "gold-043",
+            "topic": "gre::quant::arithmetic::percent",
+            "section": "quant",
+            "stem": "A price increases from $50 to $65. What is the percent increase?",
+            "keywords": ["percent", "increase", "fraction"],
+            "correct_answer": "30%"
+        },
+        {
+            "id": "gold-044",
+            "topic": "gre::quant::algebra::linear",
+            "section": "quant",
+            "stem": "If 5x = 3x + 14, what is x?",
+            "keywords": ["linear", "variable", "solve"],
+            "correct_answer": "7"
+        },
+        {
+            "id": "gold-045",
+            "topic": "gre::quant::geometry::triangles",
+            "section": "quant",
+            "stem": "Two angles of a triangle measure 35° and 75°. What is the third angle?",
+            "keywords": ["triangle", "angle", "sum"],
+            "correct_answer": "70°"
+        },
+        {
+            "id": "gold-046",
+            "topic": "gre::quant::statistics::probability",
+            "section": "quant",
+            "stem": "Two coins are flipped. What is P(both heads)?",
+            "keywords": ["probability", "independent", "outcome"],
+            "correct_answer": "1/4"
+        },
+        {
+            "id": "gold-047",
+            "topic": "gre::verbal::text_completion",
+            "section": "verbal",
+            "stem": "The contract language was deliberately ______ to allow flexible interpretation.",
+            "keywords": ["blank", "logic", "context"],
+            "correct_answer": "ambiguous"
+        },
+        {
+            "id": "gold-048",
+            "topic": "gre::verbal::reading::inference",
+            "section": "verbal",
+            "stem": "Passage: Remote work expanded talent pools but complicated team onboarding. Best inference?",
+            "keywords": ["inference", "imply", "passage"],
+            "correct_answer": "Remote work brings both opportunities and challenges."
+        },
+        {
+            "id": "gold-049",
+            "topic": "gre::quant::number_properties",
+            "section": "quant",
+            "stem": "How many positive divisors does 12 have?",
+            "keywords": ["factor", "divisible", "integer"],
+            "correct_answer": "6"
+        },
+        {
+            "id": "gold-050",
+            "topic": "gre::quant::word_problems",
+            "section": "quant",
+            "stem": "A cyclist rides 15 miles in 1.5 hours. What is the average speed in mph?",
+            "keywords": ["rate", "distance", "time"],
+            "correct_answer": "10 mph"
+        }
+    ]
+}

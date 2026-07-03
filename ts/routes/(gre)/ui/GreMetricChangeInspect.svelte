@@ -21,7 +21,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 <span
                     class="gre-metric-change-delta"
                     class:gre-metric-change-delta-up={change.direction === "increased"}
-                    class:gre-metric-change-delta-down={change.direction === "decreased"}
+                    class:gre-metric-change-delta-down={change.direction ===
+                        "decreased"}
                 >
                     {change.deltaLabel}
                 </span>

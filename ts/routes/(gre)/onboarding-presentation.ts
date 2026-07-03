@@ -2,9 +2,9 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 import {
-    presentPredictionReadiness,
     type PredictionReadinessInput,
     type PredictionReadinessPresentation,
+    presentPredictionReadiness,
 } from "./prediction-readiness-presentation";
 
 export type OnboardingInput = PredictionReadinessInput;
@@ -14,4 +14,8 @@ export function presentOnboarding(input: OnboardingInput): OnboardingPresentatio
     return presentPredictionReadiness(input);
 }
 
-export type { PredictionReadinessPresentation, PredictionReadinessInput, OnboardingContext } from "./prediction-readiness-presentation";
+export type {
+    OnboardingContext,
+    PredictionReadinessInput,
+    PredictionReadinessPresentation,
+} from "./prediction-readiness-presentation";

@@ -1028,7 +1028,7 @@ class Collection(DeprecatedNamesMixin):
         mastery_threshold: float | None = None,
         min_reviews: int = 1,
     ) -> stats_pb2.TopicMasteryResponse:
-        """Aggregate FSRS retrievability by GRE topic tags (BrainLift)."""
+        """Aggregate FSRS retrievability by GRE topic tags (GRE Atlas)."""
         req = stats_pb2.TopicMasteryRequest(
             search=search,
             topic_tag_prefix=topic_tag_prefix,

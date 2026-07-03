@@ -10,7 +10,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 </script>
 
 <div class="gre-prediction-explain" class:gre-prediction-explain-compact={compact}>
-    <section class="gre-prediction-explain-section" aria-label="Evidence used for this prediction">
+    <section
+        class="gre-prediction-explain-section"
+        aria-label="Evidence used for this prediction"
+    >
         <h4 class="gre-prediction-explain-heading">Based on</h4>
         <ul class="gre-prediction-based-on">
             {#each explainability.basedOn as pillar (pillar.id)}
@@ -26,18 +29,27 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     </section>
 
     {#if explainability.needsImprovement.length > 0}
-        <section class="gre-prediction-explain-section" aria-label="Areas to improve this prediction">
+        <section
+            class="gre-prediction-explain-section"
+            aria-label="Areas to improve this prediction"
+        >
             <h4 class="gre-prediction-explain-heading">Needs improvement</h4>
             <ul class="gre-prediction-improvements">
                 {#each explainability.needsImprovement as item (item.id)}
                     <li>
                         {#if item.href}
-                            <a class="gre-prediction-improvement-link" href={item.href}>{item.label}</a>
+                            <a class="gre-prediction-improvement-link" href={item.href}>
+                                {item.label}
+                            </a>
                         {:else}
-                            <span class="gre-prediction-improvement-label">{item.label}</span>
+                            <span class="gre-prediction-improvement-label">
+                                {item.label}
+                            </span>
                         {/if}
                         {#if item.detail && !compact}
-                            <span class="gre-prediction-improvement-detail">{item.detail}</span>
+                            <span class="gre-prediction-improvement-detail">
+                                {item.detail}
+                            </span>
                         {/if}
                     </li>
                 {/each}
@@ -150,17 +162,5 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     .gre-prediction-improvement-detail {
         padding-left: calc(1rem + var(--gre-space-2));
         color: var(--fg-subtle);
-    }
-
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
     }
 </style>

@@ -3,7 +3,7 @@
 
 import type { GreStudyStatusResponse, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
 
-import { runGreNavAction, type GreNavAction } from "./gre-navigation";
+import { type GreNavAction, runGreNavAction } from "./gre-navigation";
 import { topicDetailsPath } from "./topic-link";
 
 export type MissionIconName =

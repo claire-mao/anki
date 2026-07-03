@@ -120,15 +120,15 @@ class Overview:
         elif url == "description":
             self.edit_description()
         elif url == "greOpenPractice":
-            from aqt.brainlift import open_brainlift
+            from aqt.gre_atlas import open_gre_atlas
 
-            open_brainlift(self.mw, path="practice")
+            open_gre_atlas(self.mw, path="practice")
         elif url == "greOpenDashboard":
-            from aqt.brainlift import open_brainlift
+            from aqt.gre_atlas import open_gre_atlas
 
-            open_brainlift(self.mw, path="dashboard")
+            open_gre_atlas(self.mw, path="dashboard")
         elif url == "greStartReview":
-            from aqt.brainlift import start_gre_review
+            from aqt.gre_atlas import start_gre_review
 
             start_gre_review(self.mw)
         elif url.lower().startswith("http"):

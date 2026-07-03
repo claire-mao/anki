@@ -212,7 +212,13 @@
         box-shadow var(--gre-motion-fast) ease,
         color var(--gre-motion-fast) ease,
         transform var(--gre-motion-fast) ease,
-        filter var(--gre-motion-fast) ease;
+        filter var(--gre-motion-fast) ease,
+        opacity var(--gre-motion-fast) ease;
+
+    &:disabled:not(.gre-ds-btn-loading) {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
 
     &:hover:not(:disabled):not(.gre-ds-btn-loading) {
         box-shadow: var(--gre-shadow-sm);
@@ -230,6 +236,22 @@
         min-height: var(--gre-btn-height-sm);
         padding: var(--gre-space-1) var(--gre-space-3);
         font-size: var(--gre-font-caption);
+    }
+
+    &.gre-ds-btn-ghost {
+        border-color: transparent;
+        background: transparent;
+        color: var(--fg-link);
+        box-shadow: none;
+
+        &:hover:not(:disabled):not(.gre-ds-btn-loading) {
+            background: color-mix(in srgb, var(--fg-link) 8%, var(--canvas));
+            box-shadow: none;
+        }
+    }
+
+    &.gre-ds-btn-spaced {
+        margin-top: var(--gre-space-4);
     }
 
     &.btn-lg {

@@ -4,6 +4,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
     import type {
+        DashboardCoverage,
         DashboardTopicInsight,
         MemoryScore,
         PerformanceScore,
@@ -12,12 +13,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     } from "@generated/anki/brainlift_pb";
 
     import { buildReadinessExplainability } from "../prediction-explainability";
+    import { coverageAwareReadinessUnlocked } from "../coverage-presentation";
     import {
         readinessConfidenceLabel,
         readinessDetailRows,
         readinessEvidence,
         readinessNextAction,
-        readinessUnlocked,
         readinessWhy,
     } from "../prediction-presentation";
     import type { MetricChangePresentation } from "../metric-change-presentation";
@@ -28,6 +29,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     export let readiness: ReadinessScore;
     export let memory: MemoryScore | undefined = undefined;
     export let performance: PerformanceScore | undefined = undefined;
+    export let coverage: DashboardCoverage | undefined = undefined;
     export let weakTopics: DashboardTopicInsight[] = [];
     export let calibration: ReadinessCalibrationStats | undefined = undefined;
     export let variant: "card" | "compact" | "inline" = "card";
@@ -47,7 +49,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     title="Readiness score"
     score={readinessHero(readiness, formatPercent)}
     scoreRange={formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh)}
-    unlocked={readinessUnlocked(readiness)}
+    unlocked={coverageAwareReadinessUnlocked(readiness, coverage)}
     confidence={readinessConfidenceLabel(readiness)}
     why={readinessWhy()}
     evidence={readinessEvidence(readiness)}

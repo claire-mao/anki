@@ -3,7 +3,10 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { PerformanceAttempt, PerformanceScore } from "@generated/anki/brainlift_pb";
+    import type {
+        PerformanceAttempt,
+        PerformanceScore,
+    } from "@generated/anki/brainlift_pb";
 
     import { emptyStateContent } from "../empty-states";
     import { formatPercent } from "../score-format";

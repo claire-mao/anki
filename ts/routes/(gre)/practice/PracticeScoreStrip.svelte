@@ -19,6 +19,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     </div>
     <div class="gre-ds-stat-strip-item">
         <span class="gre-ds-stat-strip-label">Performance</span>
-        <span class="gre-ds-stat-strip-value">{performanceHero(performance, formatPercent)}</span>
+        <span class="gre-ds-stat-strip-value">
+            {performanceHero(performance, formatPercent)}
+        </span>
     </div>
 </div>

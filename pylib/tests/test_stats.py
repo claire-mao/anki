@@ -111,4 +111,3 @@ def test_topic_mastery_catalog_coverage_partial():
     assert resp.summary.coverage_ratio > 0.0
     assert resp.summary.coverage_ratio < 1.0
     assert not resp.summary.sufficient_data
-

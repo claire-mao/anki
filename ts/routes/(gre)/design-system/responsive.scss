@@ -1,4 +1,4 @@
-// BrainLift GRE responsive layout — 320 / 375 / 768 / 1024 tiers.
+// GRE Atlas responsive layout — 320 / 375 / 768 / 1024 tiers.
 
 @mixin gre-bp-sm {
     @media (max-width: 374px) {
@@ -155,10 +155,7 @@
         --gre-font-hero: clamp(1.5rem, 8vw, 2rem);
         --gre-font-h1: clamp(1.375rem, 6vw, 1.65rem);
         --gre-font-kpi: clamp(1.125rem, 4.5vw, 1.5rem);
-    }
-
-    .dashboard-hero-value {
-        font-size: clamp(2rem, 12vw, 2.75rem);
+        --gre-font-display: clamp(2rem, 10vw, 2.75rem);
     }
 }
 
@@ -395,7 +392,10 @@
 @include gre-bp-md-down {
     .topic-header-actions {
         width: 100%;
-        margin-left: 0 !important;
+    }
+
+    .gre-page-header .topic-header-actions {
+        align-self: stretch;
     }
 }
 

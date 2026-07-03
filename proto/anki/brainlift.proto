@@ -20,12 +20,26 @@ service BrainLiftService {
       returns (GetRecentAttemptsResponse);
   rpc GetGreStudyStatus(generic.Empty) returns (GreStudyStatusResponse);
   rpc GetStudyPlan(GetStudyPlanRequest) returns (StudyPlanResponse);
-  rpc GetReadinessCalibration(generic.Empty) returns (ReadinessCalibrationResponse);
+  rpc GetReadinessCalibration(generic.Empty)
+      returns (ReadinessCalibrationResponse);
+  rpc GenerateBrainLiftEvalReport(generic.Empty)
+      returns (BrainLiftEvalReportResponse);
+  rpc GenerateBrainLiftAiEvalReport(generic.Empty)
+      returns (BrainLiftAiEvalReportResponse);
+  rpc GenerateQuestion(GenerateQuestionRequest)
+      returns (GenerateQuestionResponse);
   rpc GetTopicDetails(GetTopicDetailsRequest) returns (TopicDetailsResponse);
-  // Incremental sync for brainlift.db (practice attempts). Collection sync uses SyncService.
+  // Incremental sync for brainlift.db (practice attempts). Collection sync uses
+  // SyncService.
   rpc GetBrainLiftSyncStatus(generic.Empty) returns (BrainLiftSyncStatus);
-  rpc PullBrainLiftChanges(BrainLiftSyncPullRequest) returns (BrainLiftSyncPullResponse);
-  rpc PushBrainLiftChanges(BrainLiftSyncPushRequest) returns (BrainLiftSyncPushResponse);
+  rpc PullBrainLiftChanges(BrainLiftSyncPullRequest)
+      returns (BrainLiftSyncPullResponse);
+  rpc PushBrainLiftChanges(BrainLiftSyncPushRequest)
+      returns (BrainLiftSyncPushResponse);
+  // Idempotent demo bootstrap: GRE deck, flashcards, and sample practice
+  // history.
+  rpc PrepareDemoCollection(generic.Empty)
+      returns (PrepareDemoCollectionResponse);
 }
 
 service BackendBrainLiftService {}
@@ -37,6 +51,27 @@ message Question {
   string format = 4;
   string stem = 5;
   repeated string choices = 6;
+  optional QuestionAttribution attribution = 7;
+}
+
+message QuestionAttribution {
+  string source_name = 1;
+  string source_section = 2;
+  int64 generated_at_secs = 3;
+  optional float confidence = 4;
+}
+
+message GenerateQuestionRequest {
+  string topic_id = 1;
+  bool persist = 2;
+}
+
+message GenerateQuestionResponse {
+  bool accepted = 1;
+  float confidence = 2;
+  string rejection_reason = 3;
+  optional Question question = 4;
+  optional QuestionAttribution attribution = 5;
 }
 
 message ListQuestionsRequest {
@@ -123,7 +158,8 @@ message PerformanceScore {
 }
 
 message ReadinessScore {
-  // Projected GRE readiness index (0–100). Omitted when sufficient_data is false.
+  // Projected GRE readiness index (0–100). Omitted when sufficient_data is
+  // false.
   optional float projected_score = 1;
   optional float projected_score_low = 2;
   optional float projected_score_high = 3;
@@ -133,8 +169,8 @@ message ReadinessScore {
   string evidence_summary = 7;
   bool sufficient_data = 8;
   string abstain_reason = 9;
-  // Honest calibration summary from held-out prediction/outcome pairs. Empty when
-  // insufficient calibration history.
+  // Honest calibration summary from held-out prediction/outcome pairs. Empty
+  // when insufficient calibration history.
   string calibration_note = 10;
   optional float calibration_brier_score = 11;
   bool calibration_sufficient_data = 12;
@@ -142,8 +178,9 @@ message ReadinessScore {
   repeated AbstentionRequirement abstention_requirements = 14;
 }
 
-// Deterministic Quant + Verbal score estimate mapped from readiness (260–340 combined,
-// 130–170 per section). Uses confidence intervals when underlying evidence provides them.
+// Deterministic Quant + Verbal score estimate mapped from readiness (260–340
+// combined, 130–170 per section). Uses confidence intervals when underlying
+// evidence provides them.
 message EstimatedGreScore {
   optional uint32 combined_score = 1;
   optional uint32 combined_score_low = 2;
@@ -158,7 +195,8 @@ message EstimatedGreScore {
   bool sufficient_data = 10;
   string detail = 11;
   string abstain_reason = 12;
-  // Preliminary mapping from partial memory/performance/coverage when readiness abstains.
+  // Preliminary mapping from partial memory/performance/coverage when readiness
+  // abstains.
   bool preliminary = 13;
 }
 
@@ -169,11 +207,23 @@ message GetScoresResponse {
   EstimatedGreScore estimated_gre = 4;
 }
 
+message DashboardSectionCoverage {
+  string section = 1;
+  string label = 2;
+  float covered_exam_weight = 3;
+  uint32 catalog_leaf_count = 4;
+  uint32 covered_leaf_count = 5;
+}
+
 message DashboardCoverage {
   float weighted_ratio = 1;
   float unweighted_ratio = 2;
   uint32 catalog_leaf_count = 3;
   uint32 covered_leaf_count = 4;
+  repeated DashboardSectionCoverage sections = 5;
+  repeated DashboardTopicInsight uncovered_topics = 6;
+  float coverage_threshold = 7;
+  bool readiness_available = 8;
 }
 
 message DashboardTopicInsight {
@@ -186,6 +236,7 @@ message DashboardTopicInsight {
   uint32 studied_cards = 7;
   bool covered = 8;
   string reason = 9;
+  string study_label = 10;
 }
 
 message GetDashboardRequest {
@@ -346,6 +397,17 @@ message ReadinessCalibrationResponse {
   int64 computed_at_millis = 3;
 }
 
+message BrainLiftEvalReportResponse {
+  string json = 1;
+  string markdown = 2;
+  string performance_markdown = 3;
+}
+
+message BrainLiftAiEvalReportResponse {
+  string json = 1;
+  string markdown = 2;
+}
+
 // Syncable practice attempt row from brainlift.db.
 message BrainLiftSyncAttempt {
   int64 id = 1;
@@ -393,4 +455,14 @@ message BrainLiftSyncPushResponse {
   int32 current_usn = 1;
   repeated BrainLiftSyncConflict conflicts = 2;
   uint32 applied_count = 3;
+}
+
+message PrepareDemoCollectionResponse {
+  string deck_name = 1;
+  bool deck_created = 2;
+  uint32 cards_added = 3;
+  uint32 practice_attempts_added = 4;
+  uint32 due_new = 5;
+  uint32 due_learn = 6;
+  uint32 due_review = 7;
 }

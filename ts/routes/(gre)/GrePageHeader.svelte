@@ -24,12 +24,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <div>
             <GreText variant="h1" tag="h1">{title}</GreText>
             {#if subtitle}
-                <GreText variant="body" tag="p" muted className="gre-page-subtitle">{subtitle}</GreText>
+                <GreText variant="body" tag="p" muted className="gre-page-subtitle">
+                    {subtitle}
+                </GreText>
             {/if}
         </div>
     </div>
     {#if meta}
-        <GreText variant="caption" tag="p" muted className="gre-page-meta">{meta}</GreText>
+        <GreText variant="caption" tag="p" muted className="gre-page-meta">
+            {meta}
+        </GreText>
     {/if}
     <slot />
 </header>

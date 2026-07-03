@@ -6,10 +6,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import GreSkeleton from "./GreSkeleton.svelte";
 </script>
 
-<div class="gre-page-skeleton" role="status" aria-label="Loading page">
+<div
+    class="gre-page-skeleton"
+    role="status"
+    aria-live="polite"
+    aria-label="Loading page"
+>
     <div class="gre-page-skeleton-header">
-        <GreSkeleton width="40%" height="1.75rem" shape="md" />
-        <GreSkeleton width="62%" height="0.875rem" />
+        <GreSkeleton width="2.5rem" height="2.5rem" shape="md" />
+        <div class="gre-page-skeleton-header-text">
+            <GreSkeleton width="40%" height="1.75rem" shape="md" />
+            <GreSkeleton width="62%" height="0.875rem" />
+        </div>
     </div>
 
     <div class="gre-page-skeleton-grid">

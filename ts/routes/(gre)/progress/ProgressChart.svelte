@@ -7,7 +7,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     export let title: string;
     export let subtitle: string | null = null;
-    export let renderChart: ((svg: SVGElement, bounds: GraphBounds) => void) | null = null;
+    export let renderChart: ((svg: SVGElement, bounds: GraphBounds) => void) | null =
+        null;
     export let wide = false;
     export let tall = false;
 
@@ -29,7 +30,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <header class="progress-chart-header">
         <h3 class="progress-chart-title" id="chart-title-{chartId}">{title}</h3>
         {#if subtitle}
-            <p class="progress-chart-subtitle" id="chart-subtitle-{chartId}">{subtitle}</p>
+            <p class="progress-chart-subtitle" id="chart-subtitle-{chartId}">
+                {subtitle}
+            </p>
         {/if}
     </header>
     <div
@@ -38,7 +41,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         aria-labelledby="chart-title-{chartId}"
         aria-describedby={subtitle ? `chart-subtitle-${chartId}` : undefined}
     >
-        <svg bind:this={svg} class="progress-chart" viewBox="0 0 {bounds.width} {bounds.height}">
+        <svg
+            bind:this={svg}
+            class="progress-chart"
+            viewBox="0 0 {bounds.width} {bounds.height}"
+        >
             <g class="chart-root" />
         </svg>
     </div>

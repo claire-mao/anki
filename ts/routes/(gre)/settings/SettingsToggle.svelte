@@ -19,9 +19,5 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <span class="settings-toggle-description">{description}</span>
         {/if}
     </span>
-    <input
-        type="checkbox"
-        bind:checked
-        on:change={() => dispatch("change", checked)}
-    />
+    <input type="checkbox" bind:checked on:change={() => dispatch("change", checked)} />
 </label>

@@ -1,0 +1,42 @@
+[
+    {
+        "front": "What is 25% of 80?",
+        "back": "$20",
+        "topic": "gre::quant::arithmetic::percent"
+    },
+    {
+        "front": "If 3x + 7 = 22, what is x?",
+        "back": "5",
+        "topic": "gre::quant::algebra::linear"
+    },
+    {
+        "front": "A right triangle has legs 6 and 8. Hypotenuse length?",
+        "back": "10",
+        "topic": "gre::quant::geometry::triangles"
+    },
+    {
+        "front": "Ratio of boys to girls is 3:5. With 24 boys, how many girls?",
+        "back": "40",
+        "topic": "gre::quant::arithmetic::ratio"
+    },
+    {
+        "front": "Synonym of <i>compelling</i> (convincing evidence)",
+        "back": "persuasive",
+        "topic": "gre::verbal::text_completion"
+    },
+    {
+        "front": "Opposite of <i>perfunctory</i>",
+        "back": "heartfelt",
+        "topic": "gre::verbal::sentence_equivalence"
+    },
+    {
+        "front": "Inference: mixed-use zoning may trade convenience for higher housing costs.",
+        "back": "True — passage contrasts commute benefits with affordability concerns.",
+        "topic": "gre::verbal::reading::inference"
+    },
+    {
+        "front": "AWA: Name one element of a strong Issue essay introduction.",
+        "back": "A clear thesis that states your position on the prompt.",
+        "topic": "gre::awa::issue"
+    }
+]

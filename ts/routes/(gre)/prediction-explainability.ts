@@ -58,12 +58,11 @@ function memoryRetentionPillar(memory: MemoryScore | undefined): EvidencePillar 
         };
     }
 
-    const status =
-        studiedReq?.status ||
-        fsrsReq?.status ||
-        memory?.abstainReason ||
-        memory?.detail ||
-        "Review more GRE flashcards";
+    const status = studiedReq?.status
+        || fsrsReq?.status
+        || memory?.abstainReason
+        || memory?.detail
+        || "Review more GRE flashcards";
 
     return {
         id: PILLAR_MEMORY,
@@ -91,11 +90,10 @@ function practiceAccuracyPillar(performance: PerformanceScore | undefined): Evid
         id: PILLAR_PRACTICE,
         label: "Practice accuracy",
         met: false,
-        status:
-            attemptsReq?.status ||
-            performance?.abstainReason ||
-            performance?.detail ||
-            "Answer more GRE practice questions",
+        status: attemptsReq?.status
+            || performance?.abstainReason
+            || performance?.detail
+            || "Answer more GRE practice questions",
     };
 }
 
@@ -126,10 +124,9 @@ function topicCoveragePillar(memory: MemoryScore | undefined, readiness: Readine
         id: PILLAR_COVERAGE,
         label: "Topic coverage",
         met: coverageReq?.met ?? false,
-        status:
-            coverageReq?.status ||
-            readiness?.abstainReason ||
-            "Review cards across more GRE topics",
+        status: coverageReq?.status
+            || readiness?.abstainReason
+            || "Review cards across more GRE topics",
     };
 }
 
@@ -288,10 +285,9 @@ export function buildTopicExplainability(details: TopicDetailsResponse): Predict
             id: PILLAR_MEMORY,
             label: "Memory retention",
             met: details.memoryScore !== undefined,
-            status:
-                details.memoryScore !== undefined
-                    ? `${Math.round(details.memoryScore)}% memory on this topic`
-                    : `${details.studiedCards} studied cards on this topic`,
+            status: details.memoryScore !== undefined
+                ? `${Math.round(details.memoryScore)}% memory on this topic`
+                : `${details.studiedCards} studied cards on this topic`,
         },
         {
             id: PILLAR_PRACTICE,

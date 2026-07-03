@@ -100,11 +100,13 @@ export function milestoneRequirementsForEstimatedGre(
     readiness: ReadinessScore,
 ): AbstentionRequirement[] {
     const byId = new Map<string, AbstentionRequirement>();
-    for (const req of [
-        ...memory.abstentionRequirements,
-        ...performance.abstentionRequirements,
-        ...readiness.abstentionRequirements,
-    ]) {
+    for (
+        const req of [
+            ...memory.abstentionRequirements,
+            ...performance.abstentionRequirements,
+            ...readiness.abstentionRequirements,
+        ]
+    ) {
         byId.set(req.id, req);
     }
     return sortRequirementsForProgress([...byId.values()]);
@@ -117,7 +119,9 @@ export function memoryChartContext(
     if (!memory.sufficientData) {
         return `${memory.studiedCards} cards studied · ${formatRatio(memory.coverageRatio)} coverage`;
     }
-    return `${memory.studiedCards} cards · ${formatRatio(memory.coverageRatio)} coverage · FSRS ${fsrsStatus(memory.abstentionRequirements)}`;
+    return `${memory.studiedCards} cards · ${formatRatio(memory.coverageRatio)} coverage · FSRS ${
+        fsrsStatus(memory.abstentionRequirements)
+    }`;
 }
 
 export function performanceChartContext(performance: PerformanceScore): string {

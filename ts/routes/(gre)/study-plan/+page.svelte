@@ -10,7 +10,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import GrePanel from "../ui/GrePanel.svelte";
     import GreEmptyState from "../ui/GreEmptyState.svelte";
     import GreSection from "../ui/GreSection.svelte";
-    import GreCoverageBars from "../ui/GreCoverageBars.svelte";
+    import GreCoverageSummary from "../ui/GreCoverageSummary.svelte";
     import GreStudyRecommendationList from "../ui/GreStudyRecommendationList.svelte";
     import type { PageData } from "./$types";
 
@@ -41,19 +41,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <DailyStudyPlan plan={dailyPlan} studyStatus={status} />
 
     <GrePanel title="Coverage">
-        <GreCoverageBars
-            weightedRatio={coverage.weightedRatio}
-            unweightedRatio={coverage.unweightedRatio}
-            coveredLeafCount={coverage.coveredLeafCount}
-            catalogLeafCount={coverage.catalogLeafCount}
-        />
+        <GreCoverageSummary {coverage} />
     </GrePanel>
 
     <GrePanel title="Impact-ranked topics">
         {#if recommendations.length === 0}
             <GreEmptyState content={emptyStateContent("studyPlanRecommendations")} />
         {:else}
-            <p class="study-plan-ranked-intro">Sorted by expected GRE impact, not study order.</p>
+            <p class="study-plan-ranked-intro">
+                Sorted by expected GRE impact, not study order.
+            </p>
             <GreStudyRecommendationList {recommendations} />
         {/if}
     </GrePanel>

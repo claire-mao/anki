@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BLC1000010000000000000001 /* GREAtlasCompanionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000001 /* GREAtlasCompanionApp.swift */; };
+		BLC1000010000000000000002 /* AnkiMobileEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000002 /* AnkiMobileEngine.swift */; };
+		BLC1000010000000000000003 /* GrePageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000003 /* GrePageModels.swift */; };
+		BLC1000010000000000000004 /* MobileBridgeClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000004 /* MobileBridgeClient.swift */; };
+		BLC1000010000000000000005 /* ProtobufEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000005 /* ProtobufEncoding.swift */; };
+		BLC1000010000000000000006 /* ScoreFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000006 /* ScoreFormat.swift */; };
+		BLC100001000000000000000B /* PracticeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000000E /* PracticeSession.swift */; };
+		BLC100001000000000000000C /* StudySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000000F /* StudySession.swift */; };
+		BLC100001000000000000000D /* StudyCardWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000010 /* StudyCardWebView.swift */; };
+		BLC100001000000000000000E /* GREAtlasSyncSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000011 /* GREAtlasSyncSession.swift */; };
+		BLC100001000000000000000F /* DemoStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000012 /* DemoStatusBanner.swift */; };
+		BLC1000010000000000000007 /* GREViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000007 /* GREViews.swift */; };
+		BLC1000010000000000000009 /* GreNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000000C /* GreNavigation.swift */; };
+		BLC100001000000000000000A /* GreNavigationShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000000D /* GreNavigationShell.swift */; };
+		BLC1000010000000000000010 /* DemoCollectionInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000014 /* DemoCollectionInstaller.swift */; };
+		BLC1000010000000000000011 /* DemoBundle in Resources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000013 /* DemoBundle */; };
+		BLC1000010000000000000012 /* DemoCollectionInstallerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000015 /* DemoCollectionInstallerTests.swift */; };
+		BLC1000010000000000000008 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000008 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BLCA000010000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BLC8000010000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BLC5000010000000000000001;
+			remoteInfo = GREAtlasCompanion;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BLC2000010000000000000001 /* GREAtlasCompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GREAtlasCompanionApp.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000002 /* AnkiMobileEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiMobileEngine.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000003 /* GrePageModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrePageModels.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000004 /* MobileBridgeClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileBridgeClient.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000005 /* ProtobufEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtobufEncoding.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000006 /* ScoreFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreFormat.swift; sourceTree = "<group>"; };
+		BLC200001000000000000000E /* PracticeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeSession.swift; sourceTree = "<group>"; };
+		BLC200001000000000000000F /* StudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudySession.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000010 /* StudyCardWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyCardWebView.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000011 /* GREAtlasSyncSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GREAtlasSyncSession.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000012 /* DemoStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoStatusBanner.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000007 /* GREViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GREViews.swift; sourceTree = "<group>"; };
+		BLC200001000000000000000C /* GreNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreNavigation.swift; sourceTree = "<group>"; };
+		BLC200001000000000000000D /* GreNavigationShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreNavigationShell.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000008 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		BLC2000010000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BLC200001000000000000000A /* build-mobile-bridge.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-mobile-bridge.sh"; sourceTree = "<group>"; };
+		BLC200001000000000000000B /* GREAtlasCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GREAtlasCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BLC2000010000000000000013 /* DemoBundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DemoBundle; sourceTree = "<group>"; };
+		BLC2000010000000000000014 /* DemoCollectionInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionInstaller.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000015 /* DemoCollectionInstallerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionInstallerTests.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000016 /* GREAtlasCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GREAtlasCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BLC3000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BLC1000010000000000000008 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BLC4000010000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				BLC4000010000000000000002 /* GREAtlasCompanion */,
+				BLC4000010000000000000009 /* GREAtlasCompanionTests */,
+				BLC4000010000000000000003 /* scripts */,
+				BLC4000010000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000002 /* GREAtlasCompanion */ = {
+			isa = PBXGroup;
+			children = (
+				BLC2000010000000000000001 /* GREAtlasCompanionApp.swift */,
+				BLC4000010000000000000007 /* Navigation */,
+				BLC4000010000000000000005 /* Engine */,
+				BLC4000010000000000000006 /* Views */,
+				BLC4000010000000000000008 /* Resources */,
+				BLC2000010000000000000009 /* Info.plist */,
+			);
+			path = GREAtlasCompanion;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000003 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				BLC200001000000000000000A /* build-mobile-bridge.sh */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BLC200001000000000000000B /* GREAtlasCompanion.app */,
+				BLC2000010000000000000016 /* GREAtlasCompanionTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000005 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				BLC2000010000000000000002 /* AnkiMobileEngine.swift */,
+				BLC2000010000000000000014 /* DemoCollectionInstaller.swift */,
+				BLC2000010000000000000003 /* GrePageModels.swift */,
+				BLC2000010000000000000004 /* MobileBridgeClient.swift */,
+				BLC2000010000000000000005 /* ProtobufEncoding.swift */,
+				BLC2000010000000000000006 /* ScoreFormat.swift */,
+				BLC200001000000000000000E /* PracticeSession.swift */,
+				BLC200001000000000000000F /* StudySession.swift */,
+				BLC2000010000000000000011 /* GREAtlasSyncSession.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000006 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BLC2000010000000000000007 /* GREViews.swift */,
+				BLC2000010000000000000010 /* StudyCardWebView.swift */,
+				BLC2000010000000000000012 /* DemoStatusBanner.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000007 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				BLC200001000000000000000C /* GreNavigation.swift */,
+				BLC200001000000000000000D /* GreNavigationShell.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000008 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BLC2000010000000000000013 /* DemoBundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		BLC4000010000000000000009 /* GREAtlasCompanionTests */ = {
+			isa = PBXGroup;
+			children = (
+				BLC2000010000000000000015 /* DemoCollectionInstallerTests.swift */,
+			);
+			path = GREAtlasCompanionTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BLC5000010000000000000001 /* GREAtlasCompanion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BLC6000010000000000000003 /* Build configuration list for PBXNativeTarget "GREAtlasCompanion" */;
+			buildPhases = (
+				BLC7000010000000000000001 /* Build mobile_bridge */,
+				BLC3000010000000000000002 /* Sources */,
+				BLC3000010000000000000003 /* Resources */,
+				BLC3000010000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GREAtlasCompanion;
+			productName = GREAtlasCompanion;
+			productReference = BLC200001000000000000000B /* GREAtlasCompanion.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BLC5000010000000000000002 /* GREAtlasCompanionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BLC6000010000000000000004 /* Build configuration list for PBXNativeTarget "GREAtlasCompanionTests" */;
+			buildPhases = (
+				BLC3000010000000000000004 /* Sources */,
+				BLC3000010000000000000005 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BLCB000010000000000000001 /* PBXTargetDependency */,
+			);
+			name = GREAtlasCompanionTests;
+			productName = GREAtlasCompanionTests;
+			productReference = BLC2000010000000000000016 /* GREAtlasCompanionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BLC8000010000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					BLC5000010000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = BLC6000010000000000000001 /* Build configuration list for PBXProject "GREAtlasCompanion" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BLC4000010000000000000001;
+			productRefGroup = BLC4000010000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BLC5000010000000000000001 /* GREAtlasCompanion */,
+				BLC5000010000000000000002 /* GREAtlasCompanionTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BLC7000010000000000000001 /* Build mobile_bridge */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build mobile_bridge";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/out/lib/libmobile_bridge.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "\"${SRCROOT}/scripts/build-mobile-bridge.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BLC3000010000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BLC1000010000000000000011 /* DemoBundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BLC3000010000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BLC1000010000000000000001 /* GREAtlasCompanionApp.swift in Sources */,
+				BLC1000010000000000000002 /* AnkiMobileEngine.swift in Sources */,
+				BLC1000010000000000000003 /* GrePageModels.swift in Sources */,
+				BLC1000010000000000000004 /* MobileBridgeClient.swift in Sources */,
+				BLC1000010000000000000005 /* ProtobufEncoding.swift in Sources */,
+				BLC1000010000000000000006 /* ScoreFormat.swift in Sources */,
+				BLC100001000000000000000B /* PracticeSession.swift in Sources */,
+				BLC100001000000000000000C /* StudySession.swift in Sources */,
+				BLC100001000000000000000E /* GREAtlasSyncSession.swift in Sources */,
+				BLC100001000000000000000D /* StudyCardWebView.swift in Sources */,
+				BLC100001000000000000000F /* DemoStatusBanner.swift in Sources */,
+				BLC1000010000000000000007 /* GREViews.swift in Sources */,
+				BLC1000010000000000000009 /* GreNavigation.swift in Sources */,
+				BLC100001000000000000000A /* GreNavigationShell.swift in Sources */,
+				BLC1000010000000000000010 /* DemoCollectionInstaller.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BLC3000010000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BLC1000010000000000000012 /* DemoCollectionInstallerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BLC3000010000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BLCB000010000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BLC5000010000000000000001 /* GREAtlasCompanion */;
+			targetProxy = BLCA000010000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BLC9000010000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BLC9000010000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BLC9000010000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../mobile_bridge/include",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = GREAtlasCompanion/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/out/lib",
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lmobile_bridge",
+					"-lc++",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.ankitects.greatlas.companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BLC9000010000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../mobile_bridge/include",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = GREAtlasCompanion/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/out/lib",
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lmobile_bridge",
+					"-lc++",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.ankitects.greatlas.companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BLC9000010000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ankitects.greatlas.companionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GREAtlasCompanion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GREAtlasCompanion";
+			};
+			name = Debug;
+		};
+		BLC9000010000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ankitects.greatlas.companionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GREAtlasCompanion.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GREAtlasCompanion";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BLC6000010000000000000001 /* Build configuration list for PBXProject "GREAtlasCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BLC9000010000000000000001 /* Debug */,
+				BLC9000010000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BLC6000010000000000000003 /* Build configuration list for PBXNativeTarget "GREAtlasCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BLC9000010000000000000003 /* Debug */,
+				BLC9000010000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BLC6000010000000000000004 /* Build configuration list for PBXNativeTarget "GREAtlasCompanionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BLC9000010000000000000005 /* Debug */,
+				BLC9000010000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BLC8000010000000000000001 /* Project object */;
+}

@@ -5,6 +5,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import type {
         AbstentionRequirement,
+        DashboardCoverage,
         DashboardTopicInsight,
         EstimatedGreScore,
         MemoryScore,
@@ -15,7 +16,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import EstimatedGreSummary from "../summaries/EstimatedGreSummary.svelte";
     import ReadinessSummary from "../summaries/ReadinessSummary.svelte";
     import type { MetricChanges } from "../metric-change";
-    import { readinessUnlocked } from "../prediction-presentation";
+    import { coverageAwareReadinessUnlocked } from "../coverage-presentation";
     import { estimatedGreHero } from "../summary-metrics";
     import { formatGreScoreRange, formatRange } from "../score-format";
     import GreIcon from "../GreIcon.svelte";
@@ -25,6 +26,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     export let readiness: ReadinessScore;
     export let memory: MemoryScore;
     export let performance: PerformanceScore;
+    export let coverage: DashboardCoverage | undefined = undefined;
     export let weakTopics: DashboardTopicInsight[] = [];
     export let checklistRequirements: AbstentionRequirement[] = [];
     export let metricChanges: MetricChanges = {};
@@ -40,7 +42,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <span class="dashboard-hero-value">{estimatedGreHero(estimate)}</span>
             {#if formatGreScoreRange(estimate.combinedScoreLow, estimate.combinedScoreHigh)}
                 <span class="dashboard-hero-detail">
-                    {formatGreScoreRange(estimate.combinedScoreLow, estimate.combinedScoreHigh)}
+                    {formatGreScoreRange(
+                        estimate.combinedScoreLow,
+                        estimate.combinedScoreHigh,
+                    )}
                 </span>
             {/if}
         </div>
@@ -54,14 +59,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             </span>
             <div class="dashboard-hero-readiness-visual">
                 <GreProgressRing
-                    value={readinessUnlocked(readiness) ? readiness.projectedScore! : null}
+                    value={coverageAwareReadinessUnlocked(readiness, coverage)
+                        ? readiness.projectedScore!
+                        : null}
                     size="lg"
                     label="Readiness score"
                     color="var(--state-review)"
                 />
                 {#if formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh)}
                     <span class="dashboard-hero-detail">
-                        {formatRange(readiness.projectedScoreLow, readiness.projectedScoreHigh)}
+                        {formatRange(
+                            readiness.projectedScoreLow,
+                            readiness.projectedScoreHigh,
+                        )}
                     </span>
                 {/if}
             </div>
@@ -75,7 +85,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {memory}
             {performance}
             {weakTopics}
-            checklistRequirements={checklistRequirements}
+            {checklistRequirements}
             metricChange={metricChanges.estimatedGre ?? null}
             variant="compact"
         />
@@ -83,6 +93,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {readiness}
             {memory}
             {performance}
+            {coverage}
             {weakTopics}
             metricChange={metricChanges.readiness ?? null}
             confidenceChange={metricChanges.confidence ?? null}

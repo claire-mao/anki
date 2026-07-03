@@ -1,11 +1,7 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type {
-    DashboardTopicInsight,
-    StudyPlanDailyTask,
-    StudyPlanRecommendation,
-} from "@generated/anki/brainlift_pb";
+import type { DashboardTopicInsight, StudyPlanDailyTask, StudyPlanRecommendation } from "@generated/anki/brainlift_pb";
 
 import { formatPercent } from "./score-format";
 import { topicDetailsPath } from "./topic-link";
@@ -114,10 +110,9 @@ export function presentStudyPlanRecommendation(
     maxPriority: number,
 ): StudyRecommendationPresentation {
     const factor = primaryFactor(rec.factors);
-    const reason =
-        FACTOR_REASON[factor] ??
-        rec.explanation.split(" · ")[0] ??
-        rec.explanation;
+    const reason = FACTOR_REASON[factor]
+        ?? rec.explanation.split(" · ")[0]
+        ?? rec.explanation;
 
     return {
         title: rec.displayName,

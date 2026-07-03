@@ -37,12 +37,17 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePageHeader
     title="Study"
     icon="study"
-    subtitle="Flashcard review for the BrainLift GRE deck."
+    subtitle="Flashcard review for the GRE Atlas deck."
 />
 
 <GrePanel>
     {#if launched}
-        <div class="gre-loading" role="status" aria-live="polite" transition:fade={{ duration: 180 }}>
+        <div
+            class="gre-loading"
+            role="status"
+            aria-live="polite"
+            transition:fade={{ duration: 180 }}
+        >
             <div class="gre-loading-spinner" aria-hidden="true"></div>
             <GreText variant="caption" muted className="gre-loading-caption">
                 Opening your GRE review session…
@@ -54,7 +59,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <code>gre::</code>
             topics.
         </GreText>
-        <GreButton variant="primary" className="primary-button" on:click={() => runGreNavAction(settingsNavAction())}>
+        <GreButton
+            variant="primary"
+            className="gre-ds-btn-spaced"
+            on:click={() => runGreNavAction(settingsNavAction())}
+        >
             Set up deck
         </GreButton>
     {:else}
@@ -73,7 +82,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 <span>Review</span>
             </div>
         </div>
-        <GreButton variant="primary" className="primary-button" on:click={startReview}>
+        <GreButton
+            variant="primary"
+            className="gre-ds-btn-spaced"
+            on:click={startReview}
+        >
             Start review
         </GreButton>
     {/if}

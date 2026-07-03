@@ -7,11 +7,13 @@ use std::collections::HashSet;
 use fsrs::FSRS;
 use fsrs::FSRS5_DEFAULT_DECAY;
 
-use crate::brainlift::compute_coverage;
-use crate::brainlift::GreCatalog;
-use crate::brainlift::abstention::sufficient_data_and_reason;
 use crate::card::CardType;
 use crate::config::BoolKey;
+use crate::gre_atlas::abstention::sufficient_data_and_reason;
+use crate::gre_atlas::compute_coverage;
+use crate::gre_atlas::gre_deck_search_str;
+use crate::gre_atlas::GreCatalog;
+use crate::gre_atlas::TOPIC_TAG_PREFIX;
 use crate::prelude::*;
 use crate::scheduler::timing::SchedTimingToday;
 use crate::search::SortMode;
@@ -72,9 +74,41 @@ impl Collection {
         &mut self,
         req: anki_proto::stats::TopicMasteryRequest,
     ) -> Result<anki_proto::stats::TopicMasteryResponse> {
+        if is_standard_gre_mastery_request(&req) {
+            let collection_mod = self.gre_collection_revision()?;
+            if let Some((cached_mod, cached)) = &self.state.gre_topic_mastery_cache {
+                if *cached_mod == collection_mod {
+                    return Ok(cached.clone());
+                }
+            }
+            let response = self.compute_topic_mastery_uncached(req)?;
+            self.state.gre_topic_mastery_cache = Some((collection_mod, response.clone()));
+            return Ok(response);
+        }
+        self.compute_topic_mastery_uncached(req)
+    }
+
+    fn compute_topic_mastery_uncached(
+        &mut self,
+        req: anki_proto::stats::TopicMasteryRequest,
+    ) -> Result<anki_proto::stats::TopicMasteryResponse> {
         let guard = self.search_cards_into_table(req.search.as_str(), SortMode::NoOrder)?;
         topic_mastery_inner(guard.col, req)
     }
+
+    pub(crate) fn fsrs_for_mastery(&mut self) -> Result<&FSRS> {
+        if self.state.mastery_fsrs.is_none() {
+            self.state.mastery_fsrs = Some(FSRS::new(None)?);
+        }
+        Ok(self.state.mastery_fsrs.as_ref().unwrap())
+    }
+}
+
+fn is_standard_gre_mastery_request(req: &anki_proto::stats::TopicMasteryRequest) -> bool {
+    req.search == gre_deck_search_str()
+        && req.topic_tag_prefix == TOPIC_TAG_PREFIX
+        && req.mastery_threshold.is_none()
+        && req.min_reviews == 1
 }
 
 fn topic_mastery_inner(
@@ -85,7 +119,7 @@ fn topic_mastery_inner(
 
     let fsrs_enabled = col.get_config_bool(BoolKey::Fsrs);
     let timing = col.timing_today()?;
-    let fsrs = FSRS::new(None)?;
+    let fsrs = col.fsrs_for_mastery()?;
 
     let topic_prefix = if req.topic_tag_prefix.is_empty() {
         DEFAULT_TOPIC_PREFIX.to_string()
@@ -107,7 +141,7 @@ fn topic_mastery_inner(
 
     for entry in &cards {
         let card = &entry.card;
-        let retrievability = card_retrievability(card, &timing, &fsrs);
+        let retrievability = card_retrievability(card, &timing, fsrs);
         let is_studied = card.reps >= min_reviews;
         let is_mastered = is_studied
             && card.ctype == CardType::Review
@@ -186,8 +220,15 @@ fn build_topic_entries(
     topics: &HashMap<String, TopicAccumulator>,
     topic_prefix: &str,
 ) -> Vec<anki_proto::stats::TopicMasteryEntry> {
-    let mut entries = Vec::new();
-    let mut seen = HashSet::new();
+    let mut extra_ids: Vec<_> = topics
+        .keys()
+        .filter(|id| id.starts_with(topic_prefix))
+        .cloned()
+        .collect();
+    extra_ids.sort();
+
+    let mut seen: HashSet<String> = HashSet::with_capacity(GreCatalog::topics().len());
+    let mut entries = Vec::with_capacity(GreCatalog::topics().len() + extra_ids.len());
 
     for def in GreCatalog::topics() {
         seen.insert(def.id.to_string());
@@ -198,13 +239,10 @@ fn build_topic_entries(
         ));
     }
 
-    let mut extra_ids: Vec<_> = topics
-        .keys()
-        .filter(|id| !seen.contains(*id) && id.starts_with(topic_prefix))
-        .cloned()
-        .collect();
-    extra_ids.sort();
     for id in extra_ids {
+        if seen.contains(&id) {
+            continue;
+        }
         entries.push(topic_entry_from_accumulator(
             &id,
             GreCatalog::display_name_for_tag(&id),
@@ -252,7 +290,7 @@ mod test {
     use std::time::Instant;
 
     use super::*;
-    use crate::brainlift::GreSection;
+    use crate::gre_atlas::GreSection;
     use crate::scheduler::answering::test_helpers::PostAnswerState;
     use crate::scheduler::answering::CardAnswer;
     use crate::scheduler::answering::Rating;
@@ -468,6 +506,35 @@ mod test {
             .find(|t| t.topic_id == "gre::quant::data_interpretation")
             .unwrap();
         assert_eq!(topic.display_name, "Data interpretation");
+        Ok(())
+    }
+
+    #[test]
+    fn gre_deck_search_used_by_eval_harness() -> Result<()> {
+        use crate::gre_atlas::GRE_DECK_NAME;
+        use crate::gre_atlas::TOPIC_TAG_PREFIX;
+
+        let mut col = Collection::new();
+        col.set_config_bool(BoolKey::Fsrs, true, false)?;
+        let mut deck = Deck::new_normal();
+        deck.name = NativeDeckName::from_human_name(GRE_DECK_NAME);
+        col.add_deck(&mut deck)?;
+        add_tagged_note(&mut col, &["gre::quant::algebra"], deck.id)?;
+        col.set_current_deck(deck.id)?;
+        graduate_card(&mut col)?;
+
+        let resp = col.compute_topic_mastery(anki_proto::stats::TopicMasteryRequest {
+            search: format!("deck:\"{GRE_DECK_NAME}\""),
+            topic_tag_prefix: TOPIC_TAG_PREFIX.into(),
+            min_reviews: 1,
+            ..Default::default()
+        })?;
+        let algebra = resp
+            .topics
+            .iter()
+            .find(|t| t.topic_id == "gre::quant::algebra")
+            .unwrap();
+        assert_eq!(algebra.studied_cards, 1);
         Ok(())
     }
 

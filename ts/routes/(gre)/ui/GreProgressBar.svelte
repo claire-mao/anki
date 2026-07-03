@@ -12,8 +12,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     export let compact = false;
     export let formatValue: ((value: number) => string) | null = null;
 
-    $: percent =
-        value === null || max <= 0 ? 0 : clampPercent((value / max) * 100);
+    $: percent = value === null || max <= 0 ? 0 : clampPercent((value / max) * 100);
 
     function formatDisplayValue(): string {
         if (value === null) {

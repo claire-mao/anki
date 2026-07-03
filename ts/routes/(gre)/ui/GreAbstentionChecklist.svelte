@@ -22,7 +22,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     >
         {#each visible as req}
             <li class:gre-checklist-met={req.met}>
-                <span class="gre-checklist-mark" aria-hidden="true">{req.met ? "✓" : "○"}</span>
+                <span class="gre-checklist-mark" aria-hidden="true">
+                    {req.met ? "✓" : "○"}
+                </span>
                 <span class="sr-only">{req.met ? "Complete:" : "Incomplete:"}</span>
                 <span class="gre-checklist-label">{req.label}</span>
                 {#if !showProgress}
@@ -32,17 +34,3 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         {/each}
     </ul>
 {/if}
-
-<style lang="scss">
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-</style>

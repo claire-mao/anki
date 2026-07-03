@@ -13,7 +13,7 @@ import type { TopicMasteryEntry, TopicMasterySummary } from "@generated/anki/sta
 
 import { rollingAccuracySeries } from "./indicator-utils";
 
-const STORAGE_KEY = "brainlift-gre-metric-snapshot";
+const STORAGE_KEY = "gre-atlas-metric-snapshot";
 
 export type GreTopicSnapshot = {
     displayName: string;
@@ -94,11 +94,13 @@ function requirementSnapshot(
     readiness: ReadinessScore,
 ): Record<string, { label: string; met: boolean }> {
     const requirements: Record<string, { label: string; met: boolean }> = {};
-    for (const req of [
-        ...memory.abstentionRequirements,
-        ...performance.abstentionRequirements,
-        ...readiness.abstentionRequirements,
-    ]) {
+    for (
+        const req of [
+            ...memory.abstentionRequirements,
+            ...performance.abstentionRequirements,
+            ...readiness.abstentionRequirements,
+        ]
+    ) {
         requirements[req.id] = { label: req.label, met: req.met };
     }
     return requirements;

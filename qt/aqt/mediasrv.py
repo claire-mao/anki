@@ -21,7 +21,7 @@ from pathlib import Path
 import flask
 import stringcase
 import waitress.wasyncore
-from flask import Response, abort, redirect, request
+from flask import Response, abort, request
 from waitress.server import create_server
 
 import aqt
@@ -760,7 +760,7 @@ exposed_backend_list = [
     "topic_mastery",
     "get_graph_preferences",
     "set_graph_preferences",
-    # BrainLiftService
+    # GRE Atlas (BrainLiftService)
     "list_questions",
     "get_question",
     "create_session",

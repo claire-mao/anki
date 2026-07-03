@@ -36,7 +36,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     class="nav-link"
                     class:nav-link-active={isGreNavActive(item, $page.url.pathname)}
                     href={greNavHref(item)}
-                    aria-current={isGreNavActive(item, $page.url.pathname) ? "page" : undefined}
+                    aria-current={isGreNavActive(item, $page.url.pathname)
+                        ? "page"
+                        : undefined}
                     on:click={(event) => onNavClick(item, event)}
                 >
                     <GreIcon name={item.icon} size="sm" />
@@ -45,14 +47,22 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {/each}
         </nav>
     </header>
-    <main class="gre-main">
+    <main class="gre-main" aria-busy={$navigating ? "true" : undefined}>
         {#if $navigating}
-            <div class="gre-page gre-page-loading" in:fade={{ duration: 120 }} out:fade={{ duration: 100 }}>
+            <div
+                class="gre-page gre-page-loading"
+                in:fade={{ duration: 120 }}
+                out:fade={{ duration: 100 }}
+            >
                 <GrePageSkeleton />
             </div>
         {:else}
             {#key $page.url.pathname}
-                <div class="gre-page" in:fade={{ duration: 180 }} out:fade={{ duration: 120 }}>
+                <div
+                    class="gre-page"
+                    in:fade={{ duration: 180 }}
+                    out:fade={{ duration: 120 }}
+                >
                     <slot />
                 </div>
             {/key}

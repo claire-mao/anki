@@ -207,26 +207,30 @@ Depending on your operating system, this produces a file under `out/installer/di
 - A .dmg file on macOS.
 - A tarball on Linux.
 
-The installer includes the standard Anki desktop app and embedded GRE web UI. After installing, use **GRE → Open GRE** to open the BrainLift dashboard.
+The installer includes the standard Anki desktop app and embedded GRE web UI. After installing, open a collection — the app enters the **GRE main shell** at `/home` (header navigation: Dashboard, Study, Practice, Progress, Settings).
 
 ### Issues During Building
 
 If you are experiencing issues building the installer, make sure that all dependencies
 are installed. See [Building from source](#building-from-source) for more info.
 
-## BrainLift GRE
+## GRE Atlas
 
 GRE study features (dashboard, practice, study plan, readiness) are documented in:
 
-- [BrainLift release & build guide](./brainlift-release.md) — clean checkout build, installer verification, release checklist
-- [BrainLift architecture](./brainlift-architecture.md) — codebase map
-- [BrainLift product architecture](./brainlift-product-architecture.md) — product design
+- **[GRE Atlas submission package](./gre-atlas-submission/README.md)** — build, evaluation, demo script, grading checklist (start here for review)
+- [GRE Atlas release & build guide](./gre-atlas-release.md) — clean checkout build, installer verification, release checklist
+- [GRE Atlas architecture](./gre-atlas-architecture.md) — codebase map
+- [GRE Atlas product architecture](./gre-atlas-product-architecture.md) — product design
+- [Model docs](./models/) — memory, performance, readiness specifications
+- [Eval harness](../../scripts/eval/README.md) — calibration, ablation, benchmark methodology
 
 Quick start after building:
 
 ```bash
 just check      # format, build, test
-just run        # launch dev Anki → GRE → Open GRE
+just run        # launch dev Anki → GRE shell at /home
+just eval-gre-atlas /path/to/collection.anki2
 ```
 
 ## Releasing

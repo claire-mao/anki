@@ -9,8 +9,8 @@ import type {
     ReadinessScore,
 } from "@generated/anki/brainlift_pb";
 
-import { clampPercent } from "./indicator-utils";
 import { settingsNavAction } from "./gre-navigation";
+import { clampPercent } from "./indicator-utils";
 import { topicDetailsPath } from "./topic-link";
 
 /** Display-only thresholds matching rslib abstention / calibration gates. */
@@ -116,8 +116,8 @@ function impactFromCategoryGap(categoryPercent: number): number {
 
 function practiceEvidenceLacking(performance: PerformanceScore): boolean {
     return (
-        performance.attemptCount < MIN_PRACTICE_ATTEMPTS ||
-        !requirementMet(performance.abstentionRequirements, "practice_attempts")
+        performance.attemptCount < MIN_PRACTICE_ATTEMPTS
+        || !requirementMet(performance.abstentionRequirements, "practice_attempts")
     );
 }
 
@@ -257,29 +257,29 @@ export function presentPredictionReadiness(
 
     const categories: EvidenceCategoryPresentation[] = input.deckExists
         ? [
-              { id: "memory", label: "Memory", percent: memoryCategoryPercent(input.memory) },
-              {
-                  id: "practice",
-                  label: "Practice",
-                  percent: practiceCategoryPercent(input.performance),
-              },
-              {
-                  id: "coverage",
-                  label: "Coverage",
-                  percent: coverageCategoryPercent(input.memory),
-              },
-              {
-                  id: "calibration",
-                  label: "Calibration",
-                  percent: calibrationCategoryPercent(input.readiness, input.calibration),
-              },
-          ]
+            { id: "memory", label: "Memory", percent: memoryCategoryPercent(input.memory) },
+            {
+                id: "practice",
+                label: "Practice",
+                percent: practiceCategoryPercent(input.performance),
+            },
+            {
+                id: "coverage",
+                label: "Coverage",
+                percent: coverageCategoryPercent(input.memory),
+            },
+            {
+                id: "calibration",
+                label: "Calibration",
+                percent: calibrationCategoryPercent(input.readiness, input.calibration),
+            },
+        ]
         : [
-              { id: "memory", label: "Memory", percent: 0 },
-              { id: "practice", label: "Practice", percent: 0 },
-              { id: "coverage", label: "Coverage", percent: 0 },
-              { id: "calibration", label: "Calibration", percent: 0 },
-          ];
+            { id: "memory", label: "Memory", percent: 0 },
+            { id: "practice", label: "Practice", percent: 0 },
+            { id: "coverage", label: "Coverage", percent: 0 },
+            { id: "calibration", label: "Calibration", percent: 0 },
+        ];
 
     const evidencePercent = averagePercent(categories.map((cat) => cat.percent));
     const nextAction = buildNextAction(input, categories);

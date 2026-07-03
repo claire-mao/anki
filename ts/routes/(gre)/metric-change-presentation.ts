@@ -113,8 +113,8 @@ function topicPracticeEvidence(
     for (const [topicId, currentTopic] of Object.entries(current.topics)) {
         const previousTopic = previous.topics[topicId];
         if (
-            currentTopic.practiceAccuracy === undefined ||
-            previousTopic?.practiceAccuracy === undefined
+            currentTopic.practiceAccuracy === undefined
+            || previousTopic?.practiceAccuracy === undefined
         ) {
             continue;
         }
@@ -168,19 +168,16 @@ function componentEvidence(
     const evidence: MetricChangeEvidence[] = [];
     const masteredDelta = current.masteredCards - previous.masteredCards;
     const studiedDelta = current.studiedCards - previous.studiedCards;
-    const memoryDelta =
-        current.memoryValue !== undefined && previous.memoryValue !== undefined
-            ? current.memoryValue - previous.memoryValue
-            : 0;
-    const performanceDelta =
-        current.performanceValue !== undefined && previous.performanceValue !== undefined
-            ? current.performanceValue - previous.performanceValue
-            : 0;
+    const memoryDelta = current.memoryValue !== undefined && previous.memoryValue !== undefined
+        ? current.memoryValue - previous.memoryValue
+        : 0;
+    const performanceDelta = current.performanceValue !== undefined && previous.performanceValue !== undefined
+        ? current.performanceValue - previous.performanceValue
+        : 0;
     const coverageDelta = current.coverageRatio - previous.coverageRatio;
-    const recentDelta =
-        current.recentAccuracy !== undefined && previous.recentAccuracy !== undefined
-            ? current.recentAccuracy - previous.recentAccuracy
-            : 0;
+    const recentDelta = current.recentAccuracy !== undefined && previous.recentAccuracy !== undefined
+        ? current.recentAccuracy - previous.recentAccuracy
+        : 0;
 
     if (direction === "up") {
         if (masteredDelta >= 1) {
@@ -293,9 +290,9 @@ function presentReadinessChange(
         };
     }
     if (
-        previous.readinessScore === undefined ||
-        current.readinessScore === undefined ||
-        !current.readinessUnlocked
+        previous.readinessScore === undefined
+        || current.readinessScore === undefined
+        || !current.readinessUnlocked
     ) {
         return null;
     }
@@ -334,8 +331,8 @@ function presentEstimatedGreChange(
         };
     }
     if (
-        previous.estimatedGreScore === undefined ||
-        current.estimatedGreScore === undefined
+        previous.estimatedGreScore === undefined
+        || current.estimatedGreScore === undefined
     ) {
         return null;
     }
@@ -382,8 +379,8 @@ function presentTopicMasteryChange(
         };
     }
     if (
-        previous.topicMasteryPercent === undefined ||
-        current.topicMasteryPercent === undefined
+        previous.topicMasteryPercent === undefined
+        || current.topicMasteryPercent === undefined
     ) {
         return null;
     }
@@ -392,8 +389,8 @@ function presentTopicMasteryChange(
     const direction = directionFromDelta(delta);
     const masteredDelta = current.masteredCards - previous.masteredCards;
     if (
-        (!direction || Math.abs(delta) < MASTERY_DELTA) &&
-        Math.abs(masteredDelta) < 1
+        (!direction || Math.abs(delta) < MASTERY_DELTA)
+        && Math.abs(masteredDelta) < 1
     ) {
         return null;
     }
@@ -416,9 +413,9 @@ function presentTopicMasteryChange(
         evidence.push(...topicMemoryEvidence(previous, current, "up"));
     } else if (direction === "decreased") {
         if (
-            current.memoryValue !== undefined &&
-            previous.memoryValue !== undefined &&
-            current.memoryValue - previous.memoryValue <= -COMPONENT_DELTA
+            current.memoryValue !== undefined
+            && previous.memoryValue !== undefined
+            && current.memoryValue - previous.memoryValue <= -COMPONENT_DELTA
         ) {
             evidence.push({
                 id: "memory-down",
@@ -434,10 +431,9 @@ function presentTopicMasteryChange(
         metricId: "topicMastery",
         direction: direction ?? (masteredDelta >= 0 ? "increased" : "decreased"),
         headline,
-        deltaLabel:
-            direction && Math.abs(delta) >= MASTERY_DELTA
-                ? formatSignedDelta(delta, " pts")
-                : undefined,
+        deltaLabel: direction && Math.abs(delta) >= MASTERY_DELTA
+            ? formatSignedDelta(delta, " pts")
+            : undefined,
         evidence: limitEvidence(evidence),
     };
 }
@@ -487,10 +483,10 @@ function presentConfidenceChange(
     }
 
     if (
-        direction === "decreased" &&
-        current.calibrationNote &&
-        ((previous.calibrationWellCalibrated && !current.calibrationWellCalibrated) ||
-            current.calibrationNote !== previous.calibrationNote)
+        direction === "decreased"
+        && current.calibrationNote
+        && ((previous.calibrationWellCalibrated && !current.calibrationWellCalibrated)
+            || current.calibrationNote !== previous.calibrationNote)
     ) {
         evidence.push({
             id: "calibration-note",
@@ -498,10 +494,10 @@ function presentConfidenceChange(
             positive: false,
         });
     } else if (
-        direction === "increased" &&
-        current.calibrationWellCalibrated &&
-        !previous.calibrationWellCalibrated &&
-        current.calibrationNote
+        direction === "increased"
+        && current.calibrationWellCalibrated
+        && !previous.calibrationWellCalibrated
+        && current.calibrationNote
     ) {
         evidence.push({
             id: "calibration-note",
@@ -514,7 +510,9 @@ function presentConfidenceChange(
         metricId: "confidence",
         direction,
         headline: confidenceHeadline(direction),
-        deltaLabel: `${capitalizeLabel(previous.confidenceLevel || "unknown")} → ${capitalizeLabel(current.confidenceLevel)}`,
+        deltaLabel: `${capitalizeLabel(previous.confidenceLevel || "unknown")} → ${
+            capitalizeLabel(current.confidenceLevel)
+        }`,
         evidence: limitEvidence(evidence),
     };
 }

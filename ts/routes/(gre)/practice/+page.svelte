@@ -3,7 +3,11 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { MemoryScore, PerformanceScore, Question } from "@generated/anki/brainlift_pb";
+    import type {
+        MemoryScore,
+        PerformanceScore,
+        Question,
+    } from "@generated/anki/brainlift_pb";
     import { getScores, recordAttempt } from "@generated/backend";
     import { fade, fly } from "svelte/transition";
 
@@ -126,11 +130,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             const scores = await getScores({});
             memory = scores.memory!;
             performance = scores.performance!;
-        } catch (error) {
-            submitError =
-                error instanceof Error
-                    ? error.message
-                    : "Could not record this attempt. Please try again.";
+        } catch {
+            submitError = "Could not record this attempt. Please try again.";
         } finally {
             submitting = false;
         }
@@ -156,11 +157,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         <span class="practice-progress-count">{progressPercent}%</span>
                     </div>
                     <div class="practice-progress-track">
-                        <div class="practice-progress-fill" style:width="{progressPercent}%"></div>
+                        <div
+                            class="practice-progress-fill"
+                            style:width="{progressPercent}%"
+                        ></div>
                     </div>
                 </div>
             {/if}
-            <div class="practice-filters">
+            <div class="practice-filters" role="group" aria-label="Section filter">
                 {#each sectionFilters as section}
                     <GreChip
                         active={sectionFilter === section}
@@ -187,25 +191,35 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 />
             {:else}
                 <GreText variant="body">
-                    You finished {attemptsRecorded} question{attemptsRecorded === 1 ? "" : "s"} in this
-                    session.
+                    You finished {attemptsRecorded} question{attemptsRecorded === 1
+                        ? ""
+                        : "s"} in this session.
                 </GreText>
             {/if}
             <GreButtonRow className="practice-actions">
-                <GreButton variant="primary" on:click={() => applySectionFilter(sectionFilter)}>
+                <GreButton
+                    variant="primary"
+                    on:click={() => applySectionFilter(sectionFilter)}
+                >
                     Practice again
                 </GreButton>
             </GreButtonRow>
         </GrePanel>
     {:else if currentQuestion}
         {#key currentQuestion.id}
-            <div class="practice-question-wrap" in:fly={{ y: 8, duration: 180 }} out:fade={{ duration: 120 }}>
+            <div
+                class="practice-question-wrap"
+                in:fly={{ y: 8, duration: 180 }}
+                out:fade={{ duration: 120 }}
+            >
                 <section class="practice-question-stage">
                     <p class="question-meta">
                         {currentQuestion.section} · {currentQuestion.format}
                     </p>
 
-                    <GreText variant="body" tag="p" className="question-stem">{currentQuestion.stem}</GreText>
+                    <GreText variant="body" tag="p" className="question-stem">
+                        {currentQuestion.stem}
+                    </GreText>
 
                     {#if result}
                         <div
@@ -214,7 +228,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                             class:incorrect={!result.correct}
                         >
                             <p class="result-heading">
-                                <strong class="result-status">{result.correct ? "✓ Correct" : "✗ Incorrect"}</strong>
+                                <strong class="result-status">
+                                    {result.correct ? "✓ Correct" : "✗ Incorrect"}
+                                </strong>
                                 · {formatResponseTimeMs(result.responseTimeMs)}
                             </p>
                             <p class="result-explanation">{result.explanation}</p>
@@ -230,10 +246,21 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                             Continue
                         </GreButton>
                     {:else}
-                        <div class="choices" role="radiogroup" aria-label="Answer choices">
+                        <div
+                            class="choices"
+                            role="radiogroup"
+                            aria-label="Answer choices"
+                        >
                             {#each currentQuestion.choices as choice}
-                                <label class="choice" class:choice-selected={selected === choice}>
-                                    <input type="radio" bind:group={selected} value={choice} />
+                                <label
+                                    class="choice"
+                                    class:choice-selected={selected === choice}
+                                >
+                                    <input
+                                        type="radio"
+                                        bind:group={selected}
+                                        value={choice}
+                                    />
                                     <span class="choice-text">{choice}</span>
                                 </label>
                             {/each}

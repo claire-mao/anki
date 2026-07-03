@@ -5,7 +5,7 @@ import { getDashboard, getGreStudyStatus, getReadinessCalibration, getScores, to
 
 import type { PageLoad } from "./$types";
 
-const GRE_DECK_NAME = "BrainLift GRE";
+const GRE_DECK_NAME = "GRE Atlas";
 
 export const load = (async () => {
     const [scores, dashboard, mastery, calibration, status] = await Promise.all([

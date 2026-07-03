@@ -33,7 +33,9 @@ int anki_mobile_open_collection(
     AnkiMobileBackend *backend,
     const char *collection_path,
     const char *media_folder_path,
-    const char *media_db_path);
+    const char *media_db_path,
+    uint8_t **out_bytes,
+    size_t *out_len);
 
 int anki_mobile_backend_command(
     AnkiMobileBackend *backend,
@@ -59,8 +61,56 @@ int anki_mobile_gre_practice_bootstrap_json(
     uint8_t **out_bytes,
     size_t *out_len);
 
+int anki_mobile_gre_record_attempt_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_practice_scores_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
 int anki_mobile_gre_study_json(
     AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_study_review_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_study_answer_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_prepare_demo_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_brainlift_sync_status_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_brainlift_sync_pull_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_brainlift_sync_push_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
     uint8_t **out_bytes,
     size_t *out_len);
 

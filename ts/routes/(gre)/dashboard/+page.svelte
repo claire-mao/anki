@@ -21,7 +21,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import GreEmptyState from "../ui/GreEmptyState.svelte";
     import GreScoreCard from "../ui/GreScoreCard.svelte";
     import GreSection from "../ui/GreSection.svelte";
-    import GreCoverageBars from "../ui/GreCoverageBars.svelte";
+    import GreCoverageSummary from "../ui/GreCoverageSummary.svelte";
     import GreSparkline from "../ui/GreSparkline.svelte";
     import GreTopicMasteryBar from "../ui/GreTopicMasteryBar.svelte";
     import { presentTopicInsights } from "../recommendation-presentation";
@@ -122,98 +122,105 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {#if onboarding.active}
         <GreOnboardingPanel model={onboarding} />
     {:else}
-    <div class="score-grid gre-stagger">
-        <GreScoreCard title="Memory" icon="memory">
-            <MemorySummary {memory} />
-        </GreScoreCard>
+        <div class="score-grid gre-stagger">
+            <GreScoreCard title="Memory" icon="memory">
+                <MemorySummary {memory} />
+            </GreScoreCard>
 
-        <GreScoreCard title="Performance" icon="performance">
-            <PerformanceSummary {performance} recentAttempts={dashboard.recentActivity} />
-        </GreScoreCard>
+            <GreScoreCard title="Performance" icon="performance">
+                <PerformanceSummary
+                    {performance}
+                    recentAttempts={dashboard.recentActivity}
+                />
+            </GreScoreCard>
 
-        <GreScoreCard title="Estimated GRE" icon="score">
-            <EstimatedGreSummary
-                estimate={estimatedGre}
-                {readiness}
-                {memory}
-                {performance}
-                weakTopics={dashboard.weakTopics}
-                checklistRequirements={estimatedGreChecklist}
-                metricChange={metricChanges.estimatedGre ?? null}
-            />
-        </GreScoreCard>
+            <GreScoreCard title="Estimated GRE" icon="score">
+                <EstimatedGreSummary
+                    estimate={estimatedGre}
+                    {readiness}
+                    {memory}
+                    {performance}
+                    weakTopics={dashboard.weakTopics}
+                    checklistRequirements={estimatedGreChecklist}
+                    metricChange={metricChanges.estimatedGre ?? null}
+                />
+            </GreScoreCard>
 
-        <GreScoreCard title="Readiness score" icon="readiness">
-            <ReadinessSummary
-                {readiness}
-                {memory}
-                {performance}
-                weakTopics={dashboard.weakTopics}
-                metricChange={metricChanges.readiness ?? null}
-                confidenceChange={metricChanges.confidence ?? null}
-            />
-        </GreScoreCard>
-    </div>
+            <GreScoreCard title="Readiness score" icon="readiness">
+                <ReadinessSummary
+                    {readiness}
+                    {memory}
+                    {performance}
+                    {coverage}
+                    weakTopics={dashboard.weakTopics}
+                    metricChange={metricChanges.readiness ?? null}
+                    confidenceChange={metricChanges.confidence ?? null}
+                />
+            </GreScoreCard>
+        </div>
 
-    <GrePanel title="Topic coverage">
-        <GreCoverageBars
-            weightedRatio={coverage.weightedRatio}
-            unweightedRatio={coverage.unweightedRatio}
-            coveredLeafCount={coverage.coveredLeafCount}
-            catalogLeafCount={coverage.catalogLeafCount}
-        />
-    </GrePanel>
+        <GrePanel title="Topic coverage">
+            <GreCoverageSummary {coverage} showReadinessGate={false} />
+        </GrePanel>
 
-    <GrePanel title="Weak topics">
-        {#if dashboard.weakTopics.length > 0}
-            <ul class="topic-list">
-                {#each dashboard.weakTopics as topic}
-                    <li>
-                        <a href={topicDetailsPath(topic.topicId)}>
-                            <strong>{topic.displayName}</strong>
-                        </a>
-                        <span class="muted">{topic.section} · {formatRatio(topic.examWeight)}</span>
-                        <div class="topic-insight-bars">
-                            {#if topic.memoryScore !== undefined}
-                                <GreTopicMasteryBar label="Memory" value={topic.memoryScore} />
-                            {/if}
-                            {#if topic.practiceAccuracy !== undefined}
-                                <GreTopicMasteryBar label="Practice" value={topic.practiceAccuracy} />
-                            {/if}
-                        </div>
-                    </li>
-                {/each}
-            </ul>
-        {:else}
-            <GreEmptyState content={emptyStateContent("weakTopics")} />
-        {/if}
-    </GrePanel>
-
-    <GrePanel title="Recommended focus">
-        {#if recommendedFocus.length > 0}
-            <GreStudyRecommendationList recommendations={recommendedFocus} />
-        {:else}
-            <GreEmptyState content={emptyStateContent("recommendations")} />
-        {/if}
-    </GrePanel>
-
-    <GrePanel title="Recent practice">
-        {#if dashboard.recentActivity.length > 0}
-            {@const trend = rollingAccuracySeries(dashboard.recentActivity)}
-            {#if trend.length >= 2}
-                <GreSparkline points={trend} label="Recent accuracy trend" />
+        <GrePanel title="Weak topics">
+            {#if dashboard.weakTopics.length > 0}
+                <ul class="topic-list">
+                    {#each dashboard.weakTopics as topic}
+                        <li>
+                            <a href={topicDetailsPath(topic.topicId)}>
+                                <strong>{topic.displayName}</strong>
+                            </a>
+                            <span class="muted">
+                                {topic.section} · {formatRatio(topic.examWeight)}
+                            </span>
+                            <div class="topic-insight-bars">
+                                {#if topic.memoryScore !== undefined}
+                                    <GreTopicMasteryBar
+                                        label="Memory"
+                                        value={topic.memoryScore}
+                                    />
+                                {/if}
+                                {#if topic.practiceAccuracy !== undefined}
+                                    <GreTopicMasteryBar
+                                        label="Practice"
+                                        value={topic.practiceAccuracy}
+                                    />
+                                {/if}
+                            </div>
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <GreEmptyState content={emptyStateContent("weakTopics")} />
             {/if}
-            <ul class="activity-list">
-                {#each dashboard.recentActivity as attempt}
-                    <li>
-                        <strong>{attempt.topic}</strong>
-                        <span class="muted">{attemptSummary(attempt)}</span>
-                    </li>
-                {/each}
-            </ul>
-        {:else}
-            <GreEmptyState content={emptyStateContent("recentPractice")} />
-        {/if}
-    </GrePanel>
+        </GrePanel>
+
+        <GrePanel title="Recommended focus">
+            {#if recommendedFocus.length > 0}
+                <GreStudyRecommendationList recommendations={recommendedFocus} />
+            {:else}
+                <GreEmptyState content={emptyStateContent("recommendations")} />
+            {/if}
+        </GrePanel>
+
+        <GrePanel title="Recent practice">
+            {#if dashboard.recentActivity.length > 0}
+                {@const trend = rollingAccuracySeries(dashboard.recentActivity)}
+                {#if trend.length >= 2}
+                    <GreSparkline points={trend} label="Recent accuracy trend" />
+                {/if}
+                <ul class="activity-list">
+                    {#each dashboard.recentActivity as attempt}
+                        <li>
+                            <strong>{attempt.topic}</strong>
+                            <span class="muted">{attemptSummary(attempt)}</span>
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <GreEmptyState content={emptyStateContent("recentPractice")} />
+            {/if}
+        </GrePanel>
     {/if}
 </GreSection>

@@ -1,4 +1,4 @@
-// BrainLift GRE design tokens — spacing, radius, shadows, layout.
+// GRE Atlas design tokens — spacing, radius, shadows, layout.
 
 @mixin gre-design-tokens {
     /* Spacing scale (px) */
@@ -66,6 +66,9 @@
     --gre-font-body-lg: 1.0625rem;
     --gre-font-caption: 0.875rem;
     --gre-font-kpi: clamp(1.25rem, 2vw, 1.65rem);
+    --gre-font-display: clamp(2.5rem, 6vw, 3.5rem);
+    --gre-font-display-sm: clamp(2rem, 5vw, 2.75rem);
+    --gre-font-prompt: clamp(1.125rem, 2.8vw, 1.4rem);
     --gre-font-brand: 1.125rem;
 
     /* Chart typography (SVG) */
@@ -81,6 +84,8 @@
     --gre-lh-h3: 1.35;
     --gre-lh-body: 1.55;
     --gre-lh-caption: 1.45;
+    --gre-lh-display: 1;
+    --gre-lh-prompt: 1.6;
 
     --gre-weight-hero: 800;
     --gre-weight-h1: 700;
@@ -90,6 +95,9 @@
     --gre-weight-caption: 400;
     --gre-weight-label: 600;
     --gre-weight-value: 600;
+
+    /* Letter spacing */
+    --gre-tracking-display: -0.03em;
 
     /* Motion — keep under 200ms for microinteractions */
     --gre-motion-fast: 120ms;

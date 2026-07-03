@@ -12,7 +12,7 @@ import {
 
 import type { PageLoad } from "./$types";
 
-const GRE_DECK_NAME = "BrainLift GRE";
+const GRE_DECK_NAME = "GRE Atlas";
 
 export const load = (async () => {
     const [preferences, studyStatus, scores] = await Promise.all([

@@ -1,0 +1,13 @@
+out/
+.DS_Store
+
+# Xcode user-specific state (never commit personal IDE state)
+*.xcuserstate
+xcuserdata/
+DerivedData/
+build/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager
+.swiftpm/

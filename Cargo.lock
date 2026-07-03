@@ -4030,6 +4030,7 @@ dependencies = [
  "anki_proto_gen",
  "prost",
  "prost-reflect",
+ "rand 0.9.4",
  "serde",
  "serde_json",
  "tempfile",

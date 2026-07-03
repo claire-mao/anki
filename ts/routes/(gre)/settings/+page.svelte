@@ -40,7 +40,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     $: canOpenDeckOptions = data.studyStatus.deckExists && data.deckId !== null;
 
     let rollover = preferences.scheduling?.rollover ?? 4;
-    let learnAheadMins = Math.round((preferences.scheduling?.learnAheadSecs ?? 1200) / 60);
+    let learnAheadMins = Math.round(
+        (preferences.scheduling?.learnAheadSecs ?? 1200) / 60,
+    );
     let timeLimitMins = Math.round((preferences.reviewing?.timeLimitSecs ?? 0) / 60);
     let dailyBackups = preferences.backups?.daily ?? 4;
     let weeklyBackups = preferences.backups?.weekly ?? 0;
@@ -50,13 +52,23 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     let addingDefaultsToCurrentDeck = !preferences.editing!.addingDefaultsToCurrentDeck;
     let defaultSearchText = preferences.editing!.defaultSearchText;
     let newReviewMix = String(
-        preferences.scheduling?.newReviewMix ?? Preferences_Scheduling_NewReviewMix.DISTRIBUTE,
+        preferences.scheduling?.newReviewMix ??
+            Preferences_Scheduling_NewReviewMix.DISTRIBUTE,
     );
 
     const newReviewMixOptions = [
-        { value: String(Preferences_Scheduling_NewReviewMix.DISTRIBUTE), label: "Mix new and review cards" },
-        { value: String(Preferences_Scheduling_NewReviewMix.REVIEWS_FIRST), label: "Show review cards first" },
-        { value: String(Preferences_Scheduling_NewReviewMix.NEW_FIRST), label: "Show new cards first" },
+        {
+            value: String(Preferences_Scheduling_NewReviewMix.DISTRIBUTE),
+            label: "Mix new and review cards",
+        },
+        {
+            value: String(Preferences_Scheduling_NewReviewMix.REVIEWS_FIRST),
+            label: "Show review cards first",
+        },
+        {
+            value: String(Preferences_Scheduling_NewReviewMix.NEW_FIRST),
+            label: "Show new cards first",
+        },
     ];
 
     function persist(): void {
@@ -76,7 +88,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         if (!preferences.scheduling) {
             return;
         }
-        preferences.scheduling.newReviewMix = Number(newReviewMix) as Preferences_Scheduling_NewReviewMix;
+        preferences.scheduling.newReviewMix = Number(
+            newReviewMix,
+        ) as Preferences_Scheduling_NewReviewMix;
         persist();
     }
 
@@ -219,19 +233,28 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     <SettingsSection
         title="Prediction"
-        description="Scheduling and deck options that power BrainLift score predictions."
+        description="Scheduling and deck options that power GRE Atlas score predictions."
     >
         <GreMetricRow label="FSRS" value={fsrsLabel} />
         {#if activePreset}
             <GreMetricRow
                 label="Desired retention"
-                value={formatPercent(Math.round((activePreset.desiredRetention ?? 0.9) * 100))}
+                value={formatPercent(
+                    Math.round((activePreset.desiredRetention ?? 0.9) * 100),
+                )}
             />
-            <GreMetricRow label="Daily new cards" value={String(activePreset.newPerDay)} />
-            <GreMetricRow label="Daily review limit" value={String(activePreset.reviewsPerDay)} />
+            <GreMetricRow
+                label="Daily new cards"
+                value={String(activePreset.newPerDay)}
+            />
+            <GreMetricRow
+                label="Daily review limit"
+                value={String(activePreset.reviewsPerDay)}
+            />
         {:else}
             <GreText variant="caption" muted>
-                Create the "{data.studyStatus.deckName}" deck to configure prediction settings.
+                Create the "{data.studyStatus.deckName}" deck to configure prediction
+                settings.
             </GreText>
         {/if}
         {#if canOpenDeckOptions}
@@ -264,7 +287,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <details class="gre-ds-panel settings-advanced">
         <summary class="settings-advanced-summary">
             <span class="settings-advanced-title">Advanced</span>
-            <span class="settings-advanced-hint">Editing, backups, scheduling extras, and global Anki options</span>
+            <span class="settings-advanced-hint">
+                Editing, backups, scheduling extras, and global Anki options
+            </span>
         </summary>
 
         <div class="settings-advanced-body">
@@ -280,13 +305,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     label="Use new timezone handling"
                     bind:checked={preferences.scheduling!.newTimezone}
                     on:change={() =>
-                        updateScheduling("newTimezone", preferences.scheduling!.newTimezone)}
+                        updateScheduling(
+                            "newTimezone",
+                            preferences.scheduling!.newTimezone,
+                        )}
                 />
                 <SettingsToggle
                     label="Show learning cards before reviews"
                     bind:checked={preferences.scheduling!.dayLearnFirst}
                     on:change={() =>
-                        updateScheduling("dayLearnFirst", preferences.scheduling!.dayLearnFirst)}
+                        updateScheduling(
+                            "dayLearnFirst",
+                            preferences.scheduling!.dayLearnFirst,
+                        )}
                 />
                 <SettingsToggle
                     label="Enable load balancer"
@@ -315,30 +346,43 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     label="Paste clipboard images as PNG"
                     bind:checked={preferences.editing!.pasteImagesAsPng}
                     on:change={() =>
-                        updateEditing("pasteImagesAsPng", preferences.editing!.pasteImagesAsPng)}
+                        updateEditing(
+                            "pasteImagesAsPng",
+                            preferences.editing!.pasteImagesAsPng,
+                        )}
                 />
                 <SettingsToggle
                     label="Paste without Shift strips formatting"
                     bind:checked={preferences.editing!.pasteStripsFormatting}
                     on:change={() =>
-                        updateEditing("pasteStripsFormatting", preferences.editing!.pasteStripsFormatting)}
+                        updateEditing(
+                            "pasteStripsFormatting",
+                            preferences.editing!.pasteStripsFormatting,
+                        )}
                 />
                 <SettingsToggle
                     label="Generate LaTeX images automatically"
                     bind:checked={preferences.editing!.renderLatex}
-                    on:change={() => updateEditing("renderLatex", preferences.editing!.renderLatex)}
+                    on:change={() =>
+                        updateEditing("renderLatex", preferences.editing!.renderLatex)}
                 />
                 <SettingsToggle
                     label="Ignore accents in search"
                     bind:checked={preferences.editing!.ignoreAccentsInSearch}
                     on:change={() =>
-                        updateEditing("ignoreAccentsInSearch", preferences.editing!.ignoreAccentsInSearch)}
+                        updateEditing(
+                            "ignoreAccentsInSearch",
+                            preferences.editing!.ignoreAccentsInSearch,
+                        )}
                 />
                 <SettingsToggle
                     label="Adding cards defaults to current deck"
                     bind:checked={addingDefaultsToCurrentDeck}
                     on:change={() =>
-                        updateEditing("addingDefaultsToCurrentDeck", !addingDefaultsToCurrentDeck)}
+                        updateEditing(
+                            "addingDefaultsToCurrentDeck",
+                            !addingDefaultsToCurrentDeck,
+                        )}
                 />
                 <SettingsText
                     label="Default search text"
@@ -384,8 +428,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
             <SettingsSection title="All Anki preferences">
                 <GreText variant="caption" muted>
-                    Appearance, language, answer keys, updates, video driver, and other global
-                    options live in Anki’s full preferences window.
+                    Appearance, language, answer keys, updates, video driver, and other
+                    global options live in Anki’s full preferences window.
                 </GreText>
                 <GreButtonRow className="settings-actions">
                     <GreButton on:click={() => runBridge("greOpenAnkiPreferences")}>

@@ -49,7 +49,6 @@ from aqt.legacy import install_pylib_legacy
 from aqt.mediasync import MediaSyncer
 from aqt.operations import QueryOp
 from aqt.operations.collection import redo, undo
-from aqt.operations.deck import set_current_deck
 from aqt.profiles import ProfileManager as ProfileManagerType
 from aqt.qt import *
 from aqt.qt import sip
@@ -747,7 +746,7 @@ class AnkiQt(QMainWindow):
         )
 
     def _select_gre_study_deck_if_available(self) -> None:
-        from aqt.brainlift import ensure_gre_study_deck
+        from aqt.gre_atlas import ensure_gre_study_deck
 
         ensure_gre_study_deck(self)
 
@@ -1263,7 +1262,7 @@ title="{}" {}>{}</button>""".format(
             self.moveToState("review")
             return
 
-        from aqt.brainlift import start_gre_review
+        from aqt.gre_atlas import start_gre_review
 
         start_gre_review(self)
 
@@ -1347,14 +1346,14 @@ title="{}" {}>{}</button>""".format(
             aqt.dialogs.open("NewDeckStats", self)
 
     def onOpenGreDashboard(self) -> None:
-        from aqt.brainlift import open_gre_page
+        from aqt.gre_atlas import open_gre_page
 
         open_gre_page(self, "home")
 
     def onOpenGreFullStudy(self) -> None:
-        from aqt.brainlift import open_brainlift
+        from aqt.gre_atlas import open_gre_atlas
 
-        open_brainlift(self, path="dashboard")
+        open_gre_atlas(self, path="dashboard")
 
     def onOpenDebugDeckBrowser(self) -> None:
         self.moveToState("deckBrowser")
@@ -1772,7 +1771,7 @@ title="{}" {}>{}</button>""".format(
         check_media_db(self)
 
     def onStudyDeck(self) -> None:
-        from aqt.brainlift import start_gre_review
+        from aqt.gre_atlas import start_gre_review
 
         start_gre_review(self)
 

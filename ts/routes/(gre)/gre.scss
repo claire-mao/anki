@@ -30,7 +30,7 @@
     align-items: center;
     gap: var(--gre-space-2);
     font-size: var(--gre-font-brand);
-    font-weight: 800;
+    font-weight: var(--gre-weight-hero);
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -44,7 +44,7 @@
     background: var(--fg-link);
     color: var(--canvas);
     font-size: 0.7rem;
-    font-weight: 800;
+    font-weight: var(--gre-weight-hero);
     letter-spacing: 0;
 }
 
@@ -224,10 +224,6 @@
     flex-direction: column;
     gap: var(--gre-space-2);
     margin-top: var(--gre-space-2);
-}
-
-.primary-button {
-    margin-top: var(--gre-space-4);
 }
 
 .calibration-table {

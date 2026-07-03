@@ -4,8 +4,8 @@
 import type { ReadinessCalibrationStats, ReadinessScore } from "@generated/anki/brainlift_pb";
 
 import { calibrationOutcomeSeries } from "./indicator-utils";
-import { capitalizeLabel } from "./summary-metrics";
 import { formatRange } from "./score-format";
+import { capitalizeLabel } from "./summary-metrics";
 
 /** Matches `MIN_CALIBRATION_HELD_OUT` in rslib calibration (display only). */
 const MIN_CALIBRATION_HELD_OUT = 5;
@@ -148,10 +148,9 @@ function improvementItems(
         items.push({
             id: "calibration_history",
             label: "Calibration history",
-            detail:
-                remaining > 0
-                    ? `${remaining} more held-out outcome${remaining === 1 ? "" : "s"} needed`
-                    : stats.assessment,
+            detail: remaining > 0
+                ? `${remaining} more held-out outcome${remaining === 1 ? "" : "s"} needed`
+                : stats.assessment,
             met: stats.sufficientData,
         });
     } else if (!stats.wellCalibrated) {

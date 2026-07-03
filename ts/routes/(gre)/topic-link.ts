@@ -2,7 +2,7 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 export function topicDetailsPath(topicId: string): string {
-    return `topics/${encodeURIComponent(topicId)}`;
+    return `/topics/${encodeURIComponent(topicId)}`;
 }
 
 export function decodeTopicIdParam(topicId: string): string {

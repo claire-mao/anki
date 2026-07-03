@@ -87,9 +87,9 @@
 
 .practice-question-stage :global(.question-stem) {
     margin: 0;
-    font-size: clamp(1.125rem, 2.8vw, 1.4rem);
+    font-size: var(--gre-font-prompt);
     font-weight: var(--gre-weight-h2);
-    line-height: 1.65;
+    line-height: var(--gre-lh-prompt);
     letter-spacing: -0.01em;
     word-break: break-word;
 }
@@ -131,6 +131,11 @@
     border-color: var(--fg-link);
     background: color-mix(in srgb, var(--fg-link) 8%, var(--canvas));
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg-link) 20%, transparent);
+}
+
+.choice:focus-within {
+    border-color: var(--fg-link);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--fg-link) 22%, transparent);
 }
 
 .choice input {

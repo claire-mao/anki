@@ -449,7 +449,7 @@ class Toolbar:
         return False
 
     def _greDashboardLinkHandler(self) -> None:
-        from aqt.brainlift import open_gre_page
+        from aqt.gre_atlas import open_gre_page
 
         open_gre_page(self.mw, "home")
 
@@ -457,17 +457,17 @@ class Toolbar:
         self.mw.onStudyKey()
 
     def _grePracticeLinkHandler(self) -> None:
-        from aqt.brainlift import open_gre_page
+        from aqt.gre_atlas import open_gre_page
 
         open_gre_page(self.mw, "practice")
 
     def _greProgressLinkHandler(self) -> None:
-        from aqt.brainlift import open_gre_page
+        from aqt.gre_atlas import open_gre_page
 
         open_gre_page(self.mw, "progress")
 
     def _greSettingsLinkHandler(self) -> None:
-        from aqt.brainlift import open_gre_page
+        from aqt.gre_atlas import open_gre_page
 
         open_gre_page(self.mw, "settings")
 

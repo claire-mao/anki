@@ -174,6 +174,21 @@ ci branch:
 complexipy-diff:
     {{ ninja }} check:complexipy-diff
 
+# Regenerate GRE Atlas evaluation metrics from a collection (read-only).
+eval-gre-atlas collection:
+    {{ ninja }} pylib
+    PYTHONPATH={{ if os() == "windows" { "out\\pylib" } else { "out/pylib" } }} {{ UV_PROJECT_ENVIRONMENT }}/bin/python scripts/eval/gre_atlas_eval.py --collection {{ collection }}
+
+# Regenerate GRE Atlas AI question-generation eval (read-only gold set).
+eval-gre-atlas-ai *args:
+    {{ ninja }} pylib
+    PYTHONPATH={{ if os() == "windows" { "out\\pylib" } else { "out/pylib" } }} {{ UV_PROJECT_ENVIRONMENT }}/bin/python scripts/eval/gre_atlas_ai_eval.py {{ args }} --output-dir docs/gre-atlas-submission/results
+
+# Benchmark GRE Atlas production APIs on large collections (read-only timing).
+bench-gre-atlas *args:
+    {{ ninja }} pylib
+    PYTHONPATH={{ if os() == "windows" { "out\\pylib" } else { "out/pylib" } }} {{ UV_PROJECT_ENVIRONMENT }}/bin/python scripts/eval/gre_atlas_benchmark.py --output-dir docs/gre-atlas-submission/results {{ args }}
+
 # Remove build outputs from out/ (pass keep-env to keep node_modules/pyenv); macOS/Linux
 clean *args:
     ./tools/clean {{ args }}

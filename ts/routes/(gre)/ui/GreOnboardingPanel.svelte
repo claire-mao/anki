@@ -66,7 +66,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         flex-direction: column;
         gap: var(--gre-space-4);
         padding: var(--gre-card-padding);
-        border-radius: var(--gre-radius-md);
+        border-radius: var(--gre-radius-lg);
         background: var(--gre-surface-bg);
         box-shadow: var(--gre-shadow-md);
     }

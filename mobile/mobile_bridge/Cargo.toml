@@ -13,14 +13,22 @@ name = "mobile_bridge"
 crate-type = ["staticlib", "cdylib"]
 path = "src/lib.rs"
 
+[[bin]]
+name = "generate_ios_demo_bundle"
+path = "src/bin/generate_ios_demo_bundle.rs"
+
 [dependencies]
 anki = { workspace = true, features = ["rustls"] }
 anki_proto.workspace = true
+prost.workspace = true
+rand.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[build-dependencies]
 anki_proto_gen.workspace = true
 prost.workspace = true
 prost-reflect.workspace = true
-serde.workspace = true
-serde_json.workspace = true
 
 [dev-dependencies]
 tempfile.workspace = true

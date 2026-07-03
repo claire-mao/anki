@@ -50,14 +50,21 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {#if hasChecklist}
         <div class="gre-empty-checklist-block">
             <p class="gre-checklist-heading">Unlock milestones</p>
-            <ul class="gre-checklist gre-empty-checklist" aria-label="Unlock milestones">
+            <ul
+                class="gre-checklist gre-empty-checklist"
+                aria-label="Unlock milestones"
+            >
                 {#each sortedRequirements as req (req.id)}
                     <li class:gre-checklist-met={req.met}>
                         <span class="gre-checklist-mark" aria-hidden="true">
                             {req.met ? "✓" : "○"}
                         </span>
-                        <span class="sr-only">{req.met ? "Complete:" : "Incomplete:"}</span>
-                        <span class="gre-checklist-label">{requirementUnlockLabel(req)}</span>
+                        <span class="sr-only">
+                            {req.met ? "Complete:" : "Incomplete:"}
+                        </span>
+                        <span class="gre-checklist-label">
+                            {requirementUnlockLabel(req)}
+                        </span>
                     </li>
                 {/each}
             </ul>
@@ -68,38 +75,13 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {/if}
 
     {#if showAction}
-        {#if content.action.href || content.action.bridge}
-            <GreButton
-                variant="secondary"
-                size={compact ? "sm" : "md"}
-                className="gre-empty-action"
-                on:click={handleAction}
-            >
-                {content.action.label}
-            </GreButton>
-        {:else}
-            <GreButton
-                variant="secondary"
-                size={compact ? "sm" : "md"}
-                className="gre-empty-action"
-                on:click={handleAction}
-            >
-                {content.action.label}
-            </GreButton>
-        {/if}
+        <GreButton
+            variant="primary"
+            size={compact ? "sm" : "md"}
+            className="gre-empty-action"
+            on:click={handleAction}
+        >
+            {content.action.label}
+        </GreButton>
     {/if}
 </div>
-
-<style lang="scss">
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-</style>

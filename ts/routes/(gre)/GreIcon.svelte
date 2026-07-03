@@ -51,7 +51,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <path d="M8 4v16" />
     {:else if name === "practice"}
         <path d="M9 11l2 2 4-4" />
-        <path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+        <path
+            d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        />
     {:else if name === "progress"}
         <path d="M4 18V6" />
         <path d="M10 18V10" />
@@ -70,11 +72,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <circle cx="12" cy="12" r="3" />
         <path d="M12 4v2M12 18v2" />
     {:else if name === "readiness"}
-        <path d="M5 20V8l7-4 7 4v12" />
-        <path d="M9 20v-6h6v6" />
+        <path d="M3.34 19a10 10 0 1 1 17.32 0" />
+        <path d="M12 14l4-4" />
     {:else if name === "score"}
-        <path d="M7 7h10v10H7z" />
-        <path d="M9 12h6M12 9v6" />
+        <circle cx="12" cy="8" r="6" />
+        <path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11" />
     {:else if name === "calendar"}
         <rect x="3" y="5" width="18" height="16" rx="2" />
         <path d="M16 3v4M8 3v4M3 10h18" />
@@ -85,6 +87,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <path d="M20 6 9 17l-5-5" />
     {:else if name === "alert"}
         <path d="M12 8v4M12 16h.01" />
-        <path d="M10.3 4.3 2.6 18a1 1 0 0 0 .9 1.5h16a1 1 0 0 0 .9-1.5L13.7 4.3a1 1 0 0 0-1.8 0z" />
+        <path
+            d="M10.3 4.3 2.6 18a1 1 0 0 0 .9 1.5h16a1 1 0 0 0 .9-1.5L13.7 4.3a1 1 0 0 0-1.8 0z"
+        />
     {/if}
 </svg>

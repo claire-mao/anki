@@ -3,7 +3,10 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { GreStudyStatusResponse, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
+    import type {
+        GreStudyStatusResponse,
+        StudyPlanDailyTask,
+    } from "@generated/anki/brainlift_pb";
 
     import {
         missionAction,
@@ -44,8 +47,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 <GreIcon name={icon} size="lg" />
             </div>
             <div class="daily-mission-copy">
-                <GreText variant="h3" tag="h3" className="daily-mission-title">{title}</GreText>
-                <GreText variant="caption" muted className="daily-mission-description">{description}</GreText>
+                <GreText variant="h3" tag="h3" className="daily-mission-title">
+                    {title}
+                </GreText>
+                <GreText variant="caption" muted className="daily-mission-description">
+                    {description}
+                </GreText>
             </div>
         </div>
 
@@ -74,7 +81,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </div>
 
         {#if action.bridge}
-            <GreButton variant="primary" size="sm" className="daily-mission-action" on:click={onAction}>
+            <GreButton
+                variant="primary"
+                size="sm"
+                className="daily-mission-action"
+                on:click={onAction}
+            >
                 {action.label}
             </GreButton>
         {:else if action.href}

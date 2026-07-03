@@ -25,11 +25,27 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <article class="progress-kpi-card">
     <div class="progress-kpi-visual">
         {#if ringValue !== null}
-            <GreProgressRing value={ringValue} size="sm" label={null} color={ringColor} />
+            <GreProgressRing
+                value={ringValue}
+                size="sm"
+                label={null}
+                color={ringColor}
+            />
         {:else if barValue !== null}
-            <GreProgressBar label={null} value={barValue} max={barMax} compact showValue={false} />
+            <GreProgressBar
+                label={null}
+                value={barValue}
+                max={barMax}
+                compact
+                showValue={false}
+            />
         {:else if sparklinePoints.length >= 2}
-            <GreSparkline points={sparklinePoints} label={null} width={72} height={24} />
+            <GreSparkline
+                points={sparklinePoints}
+                label={null}
+                width={72}
+                height={24}
+            />
         {:else if confidence}
             <GreConfidenceIndicator {confidence} showLabel={false} />
         {/if}

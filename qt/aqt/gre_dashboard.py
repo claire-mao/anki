@@ -7,9 +7,8 @@ from collections.abc import Callable
 
 import aqt
 from anki.collection import OpChanges
-from aqt.brainlift import handle_brainlift_bridge_cmd
+from aqt.gre_atlas import handle_gre_atlas_bridge_cmd
 from aqt.sound import av_player
-from aqt.utils import shortcut, tr
 
 
 class GreDashboard:
@@ -59,7 +58,7 @@ class GreDashboard:
         return self._refresh_needed
 
     def _linkHandler(self, url: str) -> bool:
-        if handle_brainlift_bridge_cmd(self.mw, url):
+        if handle_gre_atlas_bridge_cmd(self.mw, url):
             return False
         if url == "decks":
             self.mw.onOpenDebugDeckBrowser()

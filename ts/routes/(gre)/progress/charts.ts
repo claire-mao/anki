@@ -297,10 +297,13 @@ export function renderCalibrationCurve(
         .y((d) => y(d[1]));
 
     g.append("path")
-        .attr("d", identity([
-            [0, 0],
-            [100, 100],
-        ]))
+        .attr(
+            "d",
+            identity([
+                [0, 0],
+                [100, 100],
+            ]),
+        )
         .attr("fill", "none")
         .attr("stroke", "var(--border)")
         .attr("stroke-dasharray", "4 4");

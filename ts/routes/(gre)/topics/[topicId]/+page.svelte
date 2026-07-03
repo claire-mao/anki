@@ -87,7 +87,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <li>{details.covered ? "Covered" : "Not covered"}</li>
 </ul>
 
-<div class="topic-grid">
+<div class="topic-grid gre-stagger">
     <section class="gre-panel">
         <h2>Mastery</h2>
         <div class="topic-mastery-visuals">
@@ -115,12 +115,22 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {#if formatRange(details.avgRetrievabilityLow, details.avgRetrievabilityHigh)}
                 <div>
                     <dt>Retrievability range</dt>
-                    <dd>{formatRange(details.avgRetrievabilityLow, details.avgRetrievabilityHigh)}</dd>
+                    <dd>
+                        {formatRange(
+                            details.avgRetrievabilityLow,
+                            details.avgRetrievabilityHigh,
+                        )}
+                    </dd>
                 </div>
             {/if}
             {#if details.memoryScore === undefined}
                 <div class="topic-stat-empty">
-                    <GreEmptyState content={emptyStateContent("studiedCards")} inline compact showChecklist={false} />
+                    <GreEmptyState
+                        content={emptyStateContent("studiedCards")}
+                        inline
+                        compact
+                        showChecklist={false}
+                    />
                 </div>
             {/if}
         </dl>
@@ -142,7 +152,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             </div>
             {#if details.practiceAccuracy === undefined}
                 <div class="topic-stat-empty">
-                    <GreEmptyState content={emptyStateContent("practiceAttempts")} inline compact showChecklist={false} />
+                    <GreEmptyState
+                        content={emptyStateContent("practiceAttempts")}
+                        inline
+                        compact
+                        showChecklist={false}
+                    />
                 </div>
             {/if}
         </dl>
@@ -152,7 +167,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <h2>Readiness contribution</h2>
         <GrePredictionBrief
             title="Global readiness"
-            score={topicGlobalReadinessScore(details.globalReadinessScore, formatPercent)}
+            score={topicGlobalReadinessScore(
+                details.globalReadinessScore,
+                formatPercent,
+            )}
             unlocked={details.globalReadinessScore !== undefined}
             confidence={topicGlobalReadinessConfidence(details.globalReadinessScore)}
             confidenceAsText={true}
@@ -161,7 +179,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 details.globalReadinessSummary,
                 contribution.estimatedTotalContribution,
             )}
-            nextAction={topicGlobalReadinessNextAction(details.covered, details.practiceTotal)}
+            nextAction={topicGlobalReadinessNextAction(
+                details.covered,
+                details.practiceTotal,
+            )}
             explainability={topicExplainability}
             detailRows={[
                 {
@@ -194,7 +215,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 {#each details.practiceQuestions as question}
                     <li>
                         <strong>{questionPreview(question)}</strong>
-                        <span class="muted"> · {question.format}</span>
+                        <span class="muted">· {question.format}</span>
                     </li>
                 {/each}
             </ul>

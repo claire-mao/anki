@@ -138,7 +138,14 @@ pub struct CollectionState {
     /// identical backups.
     pub(crate) last_backup_modified: Option<TimestampMillis>,
     pub(crate) progress: Arc<Mutex<ProgressState>>,
-    pub(crate) brainlift: Option<crate::brainlift::storage::BrainliftStorage>,
+    pub(crate) gre_atlas: Option<crate::gre_atlas::storage::GreAtlasStorage>,
+    /// Cached FSRS instance for TopicMastery scans (invalidated only on drop).
+    pub(crate) mastery_fsrs: Option<fsrs::FSRS>,
+    /// Cached GRE signal bundle keyed by collection + sidecar revision.
+    pub(crate) gre_atlas_signals_cache: Option<crate::gre_atlas::signals::GreAtlasSignalsCache>,
+    /// Cached TopicMastery for the standard GRE deck search.
+    pub(crate) gre_topic_mastery_cache:
+        Option<(TimestampMillis, anki_proto::stats::TopicMasteryResponse)>,
 }
 
 pub struct Collection {

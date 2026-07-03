@@ -1,4 +1,4 @@
-// BrainLift GRE typography hierarchy.
+// GRE Atlas typography hierarchy.
 
 @mixin gre-text-hero-style {
     font-size: var(--gre-font-hero);
@@ -107,4 +107,19 @@
 .gre-icon-xl {
     width: var(--gre-icon-xl);
     height: var(--gre-icon-xl);
+}
+
+// Screen-reader-only text — shared across GRE components.
+
+.sr-only,
+.gre-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
