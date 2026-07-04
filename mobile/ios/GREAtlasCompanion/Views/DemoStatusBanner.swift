@@ -18,7 +18,7 @@ struct DemoStatusBanner: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, GreTheme.pagePadding)
-            .padding(.vertical, 8)
+            .padding(.vertical, 6)
             .background(.ultraThinMaterial)
         } else if engine.isLoading {
             ProgressView("Loading Rust backend…")

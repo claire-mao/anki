@@ -1,0 +1,20 @@
+// Green learning palette for GRE Atlas (scoped to .gre-shell).
+
+@mixin gre-learning-theme {
+    --gre-accent: #15803d;
+    --gre-accent-hover: #166534;
+    --gre-accent-soft: color-mix(in srgb, #16a34a 10%, var(--canvas));
+    --gre-accent-muted: color-mix(in srgb, #86efac 20%, var(--canvas));
+    --gre-success: #15803d;
+    --gre-success-soft: color-mix(in srgb, var(--gre-success) 12%, var(--canvas));
+    --gre-error: #b91c1c;
+    --gre-error-soft: color-mix(in srgb, var(--gre-error) 12%, var(--canvas));
+
+    --fg-link: var(--gre-accent);
+    --state-new: #22c55e;
+    --state-learn: #16a34a;
+    --state-review: #15803d;
+
+    --gre-surface-bg-muted: color-mix(in srgb, #bbf7d0 20%, var(--canvas));
+    --gre-surface-bg-inset: color-mix(in srgb, #16a34a 6%, var(--canvas));
+}

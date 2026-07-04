@@ -24,6 +24,11 @@
 		BLC1000010000000000000010 /* DemoCollectionInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000014 /* DemoCollectionInstaller.swift */; };
 		BLC1000010000000000000011 /* DemoBundle in Resources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000013 /* DemoBundle */; };
 		BLC1000010000000000000012 /* DemoCollectionInstallerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000015 /* DemoCollectionInstallerTests.swift */; };
+		BLC1000010000000000000017 /* GreTabRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000017 /* GreTabRouter.swift */; };
+		BLC1000010000000000000018 /* GreMissionCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000018 /* GreMissionCopy.swift */; };
+		BLC1000010000000000000019 /* SessionCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000019 /* SessionCompletion.swift */; };
+		BLC100001000000000000001A /* GreCoverageCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000001A /* GreCoverageCopy.swift */; };
+		BLC100001000000000000001B /* GreAtlasSyncCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = BLC200001000000000000001B /* GreAtlasSyncCredentials.swift */; };
 		BLC1000010000000000000008 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BLC2000010000000000000008 /* Security.framework */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +65,11 @@
 		BLC2000010000000000000014 /* DemoCollectionInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionInstaller.swift; sourceTree = "<group>"; };
 		BLC2000010000000000000015 /* DemoCollectionInstallerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCollectionInstallerTests.swift; sourceTree = "<group>"; };
 		BLC2000010000000000000016 /* GREAtlasCompanionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GREAtlasCompanionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BLC2000010000000000000017 /* GreTabRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreTabRouter.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000018 /* GreMissionCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreMissionCopy.swift; sourceTree = "<group>"; };
+		BLC2000010000000000000019 /* SessionCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCompletion.swift; sourceTree = "<group>"; };
+		BLC200001000000000000001A /* GreCoverageCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreCoverageCopy.swift; sourceTree = "<group>"; };
+		BLC200001000000000000001B /* GreAtlasSyncCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreAtlasSyncCredentials.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +136,10 @@
 				BLC200001000000000000000E /* PracticeSession.swift */,
 				BLC200001000000000000000F /* StudySession.swift */,
 				BLC2000010000000000000011 /* GREAtlasSyncSession.swift */,
+				BLC200001000000000000001B /* GreAtlasSyncCredentials.swift */,
+				BLC2000010000000000000018 /* GreMissionCopy.swift */,
+				BLC200001000000000000001A /* GreCoverageCopy.swift */,
+				BLC2000010000000000000019 /* SessionCompletion.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -145,6 +159,7 @@
 			children = (
 				BLC200001000000000000000C /* GreNavigation.swift */,
 				BLC200001000000000000000D /* GreNavigationShell.swift */,
+				BLC2000010000000000000017 /* GreTabRouter.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -285,11 +300,16 @@
 				BLC100001000000000000000B /* PracticeSession.swift in Sources */,
 				BLC100001000000000000000C /* StudySession.swift in Sources */,
 				BLC100001000000000000000E /* GREAtlasSyncSession.swift in Sources */,
+				BLC100001000000000000001B /* GreAtlasSyncCredentials.swift in Sources */,
 				BLC100001000000000000000D /* StudyCardWebView.swift in Sources */,
 				BLC100001000000000000000F /* DemoStatusBanner.swift in Sources */,
 				BLC1000010000000000000007 /* GREViews.swift in Sources */,
 				BLC1000010000000000000009 /* GreNavigation.swift in Sources */,
 				BLC100001000000000000000A /* GreNavigationShell.swift in Sources */,
+				BLC1000010000000000000017 /* GreTabRouter.swift in Sources */,
+				BLC1000010000000000000018 /* GreMissionCopy.swift in Sources */,
+				BLC100001000000000000001A /* GreCoverageCopy.swift in Sources */,
+				BLC1000010000000000000019 /* SessionCompletion.swift in Sources */,
 				BLC1000010000000000000010 /* DemoCollectionInstaller.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

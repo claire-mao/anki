@@ -7,37 +7,31 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
     import type { GraphBounds } from "../../graphs/graph-helpers";
+    import { defaultGraphBounds } from "../../graphs/graph-helpers";
     import GrePageHeader from "../GrePageHeader.svelte";
     import GreSection from "../ui/GreSection.svelte";
+    import GreButton from "../ui/GreButton.svelte";
+    import GreButtonRow from "../ui/GreButtonRow.svelte";
+    import GreChip from "../ui/GreChip.svelte";
+    import GreOnboardingPanel from "../ui/GreOnboardingPanel.svelte";
+    import GreMetricChangeInspect from "../ui/GreMetricChangeInspect.svelte";
+    import ProgressChart from "./ProgressChart.svelte";
     import { commitMetricSnapshot, type MetricChanges } from "../metric-change";
     import { presentOnboarding } from "../onboarding-presentation";
-    import { formatPercent, formatRatio, formatRange } from "../score-format";
-    import { ratioToPercent, rollingAccuracySeries } from "../indicator-utils";
     import {
-        checklistRequirementsForEstimatedGre,
-        estimatedGreChartContext,
-        estimatedGreConfidence,
-        estimatedGreHero,
-        memoryChartContext,
-        performanceChartContext,
-        readinessChartContext,
-        readinessHero,
-    } from "../summary-metrics";
-    import EstimatedGreSummary from "../summaries/EstimatedGreSummary.svelte";
-    import ReadinessSummary from "../summaries/ReadinessSummary.svelte";
-    import GreCalibrationPanel from "../ui/GreCalibrationPanel.svelte";
-    import GreButton from "../ui/GreButton.svelte";
-    import GreMetricChangeInspect from "../ui/GreMetricChangeInspect.svelte";
-    import GreOnboardingPanel from "../ui/GreOnboardingPanel.svelte";
-    import { chartEmptyLabel, emptyStateTitle } from "../empty-states";
+        filterAttemptsByHorizon,
+        rollingAccuracySeries,
+        rollingAccuracyTrendPoints,
+        type AccuracyTrendHorizon,
+    } from "../indicator-utils";
+    import { greNavAction, greNavItem, GRE_CTA_PRACTICE, GRE_CTA_REVIEW } from "../gre-navigation";
     import { topicDetailsPath } from "../topic-link";
-    import ProgressChart from "./ProgressChart.svelte";
-    import ProgressKpiCard from "./ProgressKpiCard.svelte";
     import {
-        renderEstimatedGreScore,
-        renderScoreBar,
+        renderAccuracyTrendChart,
         renderTopicMasteryChart,
-        type ScoreBarDatum,
+        topicMasteryChartHeight,
+        topicMasteryChartRows,
+        topicMasteryChartSubtitle,
     } from "./charts";
     import type { PageData } from "./$types";
 
@@ -55,9 +49,31 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const performance = scores.performance!;
     const readiness = scores.readiness!;
     const estimatedGre = scores.estimatedGre!;
-    const calibrationStats = readinessCalibration.calibration;
-    const coverage = dashboard.coverage!;
     const masterySummary = mastery.summary;
+
+    const performanceHorizons: { id: AccuracyTrendHorizon; label: string }[] = [
+        { id: "1d", label: "Last 1 day" },
+        { id: "3d", label: "Last 3 days" },
+        { id: "7d", label: "Last 7 days" },
+        { id: "30d", label: "Last 30 days" },
+        { id: "all", label: "All time" },
+    ];
+    const performanceChartBounds: GraphBounds = {
+        ...defaultGraphBounds(),
+        height: 360,
+        marginLeft: 58,
+        marginBottom: 48,
+    };
+    $: topicMasteryRows = topicMasteryChartRows(mastery.topics);
+    $: advancedMasteryBounds = {
+        ...defaultGraphBounds(),
+        height: topicMasteryChartHeight(topicMasteryRows.length),
+        marginLeft: 148,
+        marginRight: 28,
+        marginBottom: 36,
+    };
+
+    let performanceHorizon: AccuracyTrendHorizon = "30d";
 
     $: onboarding = presentOnboarding({
         deckExists: status.deckExists,
@@ -66,20 +82,29 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         performance,
         readiness,
         estimatedGre,
-        calibration: calibrationStats,
+        calibration: readinessCalibration.calibration,
         dueTotal: status.newCount + status.learnCount + status.reviewCount,
         weakestTopicId: dashboard.weakTopics[0]?.topicId,
         weakestTopicName: dashboard.weakTopics[0]?.displayName,
         context: "progress",
     });
 
-    let metricChanges: MetricChanges = {};
+    $: filteredPerformanceAttempts = filterAttemptsByHorizon(
+        data.recentAttempts,
+        performanceHorizon,
+    );
+    $: accuracyTrendPoints = rollingAccuracyTrendPoints(filteredPerformanceAttempts);
+    $: accuracyTrend = rollingAccuracySeries(filteredPerformanceAttempts);
+    $: renderPerformanceChart = (svg: SVGElement, bounds: GraphBounds) =>
+        renderAccuracyTrendChart(svg, bounds, accuracyTrendPoints);
+
+    let changes: MetricChanges = {};
 
     onMount(() => {
         if (!browser) {
             return;
         }
-        metricChanges = commitMetricSnapshot({
+        changes = commitMetricSnapshot({
             memory,
             performance,
             readiness,
@@ -91,123 +116,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         });
     });
 
-    function formatTimestampMillis(millis: bigint): string {
-        return new Date(Number(millis)).toLocaleString(undefined, {
-            dateStyle: "medium",
-            timeStyle: "short",
-        });
-    }
-
-    function memoryDatum(): ScoreBarDatum {
-        if (memory.sufficientData && memory.value !== undefined) {
-            return {
-                label: "Memory",
-                value: memory.value,
-                low: memory.valueLow,
-                high: memory.valueHigh,
-                detail: memoryChartContext(memory, formatRatio),
-                color: "var(--state-learn)",
-            };
-        }
-        return {
-            label: "Memory",
-            abstain: chartEmptyLabel("score"),
-            detail: memoryChartContext(memory, formatRatio),
-            color: "var(--state-learn)",
-        };
-    }
-
-    function performanceDatum(): ScoreBarDatum {
-        if (performance.sufficientData && performance.value !== undefined) {
-            return {
-                label: "Performance",
-                value: performance.value,
-                low: performance.valueLow,
-                high: performance.valueHigh,
-                detail: performanceChartContext(performance),
-                color: "var(--fg-link)",
-            };
-        }
-        return {
-            label: "Performance",
-            abstain: chartEmptyLabel("score"),
-            detail: performanceChartContext(performance),
-            color: "var(--fg-link)",
-        };
-    }
-
-    function readinessDatum(): ScoreBarDatum {
-        if (readiness.sufficientData && readiness.projectedScore !== undefined) {
-            return {
-                label: "Readiness score",
-                value: readiness.projectedScore,
-                low: readiness.projectedScoreLow,
-                high: readiness.projectedScoreHigh,
-                detail: readinessChartContext(readiness, formatRatio),
-                color: "var(--state-review)",
-            };
-        }
-        return {
-            label: "Readiness score",
-            abstain: chartEmptyLabel("score"),
-            detail: readinessChartContext(readiness, formatRatio),
-            color: "var(--state-review)",
-        };
-    }
-
-    $: practiceTrend = rollingAccuracySeries(dashboard.recentActivity);
-    $: estimatedGreConfidenceLabel = estimatedGreConfidence(estimatedGre, readiness);
-    $: estimatedGreChecklist = checklistRequirementsForEstimatedGre(
-        memory,
-        performance,
-        readiness,
+    $: topicMasterySubtitle = topicMasteryChartSubtitle(
+        masterySummary?.topicCount ?? 0,
+        mastery.topics,
     );
 
-    function estimatedGreKpiDetail(): string {
-        if (estimatedGre.combinedScore === undefined) {
-            return emptyStateTitle("estimatedGre");
-        }
-        return (
-            formatRange(
-                estimatedGre.combinedScoreLow,
-                estimatedGre.combinedScoreHigh,
-            ) ?? ""
-        );
-    }
-
-    function readinessKpiDetail(): string {
-        const range = formatRange(
-            readiness.projectedScoreLow,
-            readiness.projectedScoreHigh,
-        );
-        if (range) {
-            return range;
-        }
-        return readinessChartContext(readiness, formatRatio);
-    }
-
-    function coverageKpiDetail(): string {
-        return `${formatRatio(coverage.unweightedRatio)} unweighted · ${coverage.coveredLeafCount}/${coverage.catalogLeafCount} leaves`;
-    }
-
-    function studiedCardsKpiDetail(): string {
-        const topics = masterySummary?.topicCount ?? 0;
-        return `${topics} topics tracked`;
-    }
-
-    function topicMasterySubtitle(): string {
-        const topics = masterySummary?.topicCount ?? 0;
-        return `${topics} topics · average retrievability by topic`;
-    }
-
-    const renderMemoryChart = (svg: SVGElement, bounds: GraphBounds) =>
-        renderScoreBar(svg, bounds, memoryDatum());
-    const renderPerformanceChart = (svg: SVGElement, bounds: GraphBounds) =>
-        renderScoreBar(svg, bounds, performanceDatum());
-    const renderReadinessChart = (svg: SVGElement, bounds: GraphBounds) =>
-        renderScoreBar(svg, bounds, readinessDatum());
-    const renderEstimatedGreChart = (svg: SVGElement, bounds: GraphBounds) =>
-        renderEstimatedGreScore(svg, bounds, estimatedGre);
     const renderMasteryChart = (svg: SVGElement, bounds: GraphBounds) =>
         renderTopicMasteryChart(svg, bounds, mastery.topics, (topicId) => {
             void goto(topicDetailsPath(topicId));
@@ -217,131 +130,127 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePageHeader
     title="Progress"
     icon="progress"
-    subtitle="Track your learning and prediction quality."
-    meta="Last updated {formatTimestampMillis(dashboard.computedAtMillis)}"
+    subtitle="See how far you've come, then keep going."
 />
 
 <GreSection>
     {#if onboarding.active}
         <GreOnboardingPanel model={onboarding} />
     {:else}
-        <div class="progress-dashboard">
-            <section class="progress-kpi-row gre-stagger" aria-label="Key metrics">
-                <ProgressKpiCard
-                    label="Estimated GRE"
-                    value={estimatedGreHero(estimatedGre)}
-                    detail={estimatedGreKpiDetail() || null}
-                    confidence={estimatedGreConfidenceLabel}
-                    metricChange={metricChanges.estimatedGre ?? null}
-                />
-                <ProgressKpiCard
-                    label="Readiness score"
-                    value={readinessHero(readiness, formatPercent)}
-                    detail={readinessKpiDetail()}
-                    ringValue={readiness.sufficientData &&
-                    readiness.projectedScore !== undefined
-                        ? readiness.projectedScore
-                        : null}
-                    ringColor="var(--state-review)"
-                    metricChange={metricChanges.readiness ?? null}
-                />
-                <ProgressKpiCard
-                    label="Coverage"
-                    value={formatRatio(coverage.weightedRatio)}
-                    detail={coverageKpiDetail()}
-                    barValue={ratioToPercent(coverage.weightedRatio)}
-                />
-                <ProgressKpiCard
-                    label="Practice attempts"
-                    value={String(performance.attemptCount)}
-                    sparklinePoints={practiceTrend}
-                />
-                <ProgressKpiCard
-                    label="Studied cards"
-                    value={String(masterySummary?.studiedCards ?? 0)}
-                    detail={studiedCardsKpiDetail()}
-                />
+        <section class="progress-next-action">
+            <div class="progress-next-action-copy">
+                <h2 class="gre-section-title">Keep improving</h2>
+                <p class="progress-next-action-hint">
+                    A few minutes of review or practice moves your score forward.
+                </p>
+            </div>
+            <GreButtonRow className="progress-next-action-buttons">
+                <GreButton variant="primary" navAction={greNavAction(greNavItem("practice"))}>
+                    {GRE_CTA_PRACTICE}
+                </GreButton>
+                <GreButton navAction={greNavAction(greNavItem("study"))}>
+                    {GRE_CTA_REVIEW}
+                </GreButton>
+            </GreButtonRow>
+        </section>
+
+        <div class="progress-history">
+            <section class="progress-group" aria-labelledby="progress-memory">
+                <h2 class="gre-section-title" id="progress-memory">Memory</h2>
+                {#if changes.topicMastery}
+                    <GreMetricChangeInspect change={changes.topicMastery} />
+                {:else}
+                    <p class="progress-group-empty">
+                        Your memory retention trend builds as you review cards across
+                        multiple days.
+                    </p>
+                {/if}
             </section>
 
-            <h2 class="progress-section-label">Predictions</h2>
-
-            <div class="progress-predictions gre-stagger">
-                <div class="progress-prediction-panel">
-                    <EstimatedGreSummary
-                        estimate={estimatedGre}
-                        {readiness}
-                        {memory}
-                        {performance}
-                        weakTopics={dashboard.weakTopics}
-                        checklistRequirements={estimatedGreChecklist}
-                        calibration={calibrationStats}
-                        variant="compact"
-                    />
-                </div>
-                <div class="progress-prediction-panel">
-                    <ReadinessSummary
-                        {readiness}
-                        {memory}
-                        {performance}
-                        {coverage}
-                        weakTopics={dashboard.weakTopics}
-                        calibration={calibrationStats}
-                        confidenceChange={metricChanges.confidence ?? null}
-                        variant="compact"
-                    />
-                </div>
-            </div>
-
-            <div class="progress-calibration-header">
-                <h2 class="progress-section-label">Calibration</h2>
-                <GreButton variant="ghost" size="sm" href="/readiness">
-                    View calibration
-                </GreButton>
-            </div>
-
-            <GreCalibrationPanel
-                {readiness}
-                calibration={calibrationStats!}
-                variant="compact"
-                showImprovements={false}
-            />
-
-            <h2 class="progress-section-label">Charts</h2>
-
-            <div class="progress-charts gre-stagger">
-                <ProgressChart
-                    title="Memory"
-                    subtitle={memoryDatum().detail}
-                    renderChart={renderMemoryChart}
-                />
-                <ProgressChart
-                    title="Performance"
-                    subtitle={performanceDatum().detail}
-                    renderChart={renderPerformanceChart}
-                />
-                <ProgressChart
-                    title="Estimated GRE"
-                    subtitle={estimatedGreChartContext(estimatedGre, readiness)}
-                    renderChart={renderEstimatedGreChart}
-                />
-                <ProgressChart
-                    title="Readiness score"
-                    subtitle={readinessDatum().detail}
-                    renderChart={renderReadinessChart}
-                />
-                {#if metricChanges.topicMastery}
-                    <div class="progress-chart-change">
-                        <GreMetricChangeInspect change={metricChanges.topicMastery} />
+            <section class="progress-group" aria-labelledby="progress-performance">
+                <h2 class="gre-section-title" id="progress-performance">Performance</h2>
+                {#if data.recentAttempts.length > 0}
+                    <div
+                        class="progress-horizons"
+                        role="group"
+                        aria-label="Performance time range"
+                    >
+                        {#each performanceHorizons as horizon (horizon.id)}
+                            <GreChip
+                                active={performanceHorizon === horizon.id}
+                                on:click={() => (performanceHorizon = horizon.id)}
+                            >
+                                {horizon.label}
+                            </GreChip>
+                        {/each}
                     </div>
                 {/if}
-                <ProgressChart
-                    title="Topic mastery"
-                    subtitle={topicMasterySubtitle()}
-                    renderChart={renderMasteryChart}
-                    wide
-                    tall
-                />
-            </div>
+                {#if accuracyTrend.length >= 2}
+                    <div class="progress-performance-chart">
+                        <ProgressChart
+                            ariaLabel="Accuracy trend"
+                            renderChart={renderPerformanceChart}
+                            bounds={performanceChartBounds}
+                            wide
+                            tall
+                        />
+                    </div>
+                {:else}
+                    <p class="progress-group-empty">
+                        {#if data.recentAttempts.length === 0}
+                            Answer a few more practice questions to see your accuracy trend.
+                        {:else}
+                            Answer a few more practice questions in this period to see your
+                            accuracy trend.
+                        {/if}
+                    </p>
+                {/if}
+            </section>
+
+            <section class="progress-group" aria-labelledby="progress-readiness">
+                <h2 class="gre-section-title" id="progress-readiness">Readiness</h2>
+                {#if changes.readiness || changes.estimatedGre}
+                    {#if changes.readiness}
+                        <GreMetricChangeInspect change={changes.readiness} />
+                    {/if}
+                    {#if changes.estimatedGre}
+                        <GreMetricChangeInspect change={changes.estimatedGre} />
+                    {/if}
+                {:else}
+                    <p class="progress-group-empty">
+                        Your readiness and estimated score changes appear here after your
+                        next study sessions.
+                    </p>
+                {/if}
+            </section>
+
+            <section class="progress-group" aria-labelledby="progress-coverage">
+                <h2 class="gre-section-title" id="progress-coverage">Coverage</h2>
+                <p class="progress-group-empty">
+                    Coverage growth shows here as you study cards across new GRE topics.
+                </p>
+            </section>
+
+            <details class="progress-advanced">
+                <summary class="progress-advanced-summary">Advanced measurement</summary>
+                <div class="progress-advanced-body">
+                    <div class="progress-charts progress-charts-advanced gre-stagger">
+                        <ProgressChart
+                            title="Topic mastery"
+                            subtitle={topicMasterySubtitle}
+                            renderChart={renderMasteryChart}
+                            bounds={advancedMasteryBounds}
+                            wide
+                            tall
+                            extraTall
+                            scrollable
+                        />
+                    </div>
+                    <GreButton variant="ghost" size="sm" href="/readiness">
+                        Open readiness details
+                    </GreButton>
+                </div>
+            </details>
         </div>
     {/if}
 </GreSection>

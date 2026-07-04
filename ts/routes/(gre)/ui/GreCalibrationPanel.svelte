@@ -25,58 +25,72 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <section
     class="gre-calibration"
     class:gre-calibration-compact={variant === "compact"}
-    aria-label="Prediction calibration"
+    aria-label="Score estimate track record"
 >
     {#if variant === "full"}
         <header class="gre-calibration-header">
-            <h2 class="gre-calibration-title">Prediction calibration</h2>
-            <p class="gre-calibration-lead">
-                How accurately GRE Atlas predicts your readiness, and what shapes
-                confidence.
-            </p>
+            <h2 class="gre-calibration-title">Score estimate track record</h2>
+            {#if model.showFullPanel}
+                <p class="gre-calibration-lead">
+                    How closely past estimates matched your actual results, and what
+                    shapes confidence.
+                </p>
+            {/if}
         </header>
     {/if}
 
+    {#if !model.showFullPanel}
+        <p class="gre-calibration-early">{model.earlyStateSummary}</p>
+    {:else}
     <div class="gre-calibration-grid">
         <article class="gre-calibration-metric">
             <h3 class="gre-calibration-metric-label">Current confidence</h3>
             <GreConfidenceIndicator confidence={model.currentConfidence} />
-            <p class="gre-calibration-metric-detail">{model.confidenceCaption}</p>
+            {#if model.confidenceCaption}
+                <p class="gre-calibration-metric-detail">{model.confidenceCaption}</p>
+            {/if}
         </article>
 
         <article class="gre-calibration-metric">
             <h3 class="gre-calibration-metric-label">Historical accuracy</h3>
-            <p class="gre-calibration-metric-value">{model.historicalAccuracy}</p>
-            <p class="gre-calibration-metric-detail">
-                {model.historicalAccuracyDetail}
-            </p>
+            <p class="gre-calibration-metric-status">{model.historicalAccuracy}</p>
+            {#if model.historicalAccuracyDetail}
+                <p class="gre-calibration-metric-detail">
+                    {model.historicalAccuracyDetail}
+                </p>
+            {/if}
         </article>
 
         <article class="gre-calibration-metric">
-            <h3 class="gre-calibration-metric-label">Prediction quality</h3>
-            <p class="gre-calibration-metric-value">{model.predictionQuality}</p>
-            <p class="gre-calibration-metric-detail">{model.predictionQualityDetail}</p>
+            <h3 class="gre-calibration-metric-label">Estimate accuracy</h3>
+            <p class="gre-calibration-metric-status">{model.predictionQuality}</p>
+            {#if model.predictionQualityDetail}
+                <p class="gre-calibration-metric-detail">{model.predictionQualityDetail}</p>
+            {/if}
         </article>
 
         <article class="gre-calibration-metric gre-calibration-metric-trend">
-            <h3 class="gre-calibration-metric-label">Calibration trend</h3>
+            <h3 class="gre-calibration-metric-label">Accuracy trend</h3>
             {#if model.trendAvailable}
                 <GreSparkline
                     points={model.trendPoints}
-                    label="Calibration trend across predicted bins"
+                    label="Accuracy trend across score levels"
                     width={variant === "compact" ? 96 : 120}
                     height={32}
                 />
             {:else}
-                <p class="gre-calibration-metric-value gre-calibration-metric-muted">
-                    Building
+                <p
+                    class="gre-calibration-metric-status gre-calibration-metric-status-muted"
+                    aria-hidden="true"
+                >
+                    —
                 </p>
             {/if}
             <p class="gre-calibration-metric-detail">{model.trendCaption}</p>
         </article>
     </div>
 
-    {#if model.confidenceChangeNotes.length > 0}
+    {#if model.showFullPanel && model.confidenceChangeNotes.length > 0}
         <section class="gre-calibration-section" aria-label="How confidence changes">
             <h3 class="gre-calibration-section-title">How confidence changes</h3>
             <ul class="gre-calibration-notes">
@@ -87,7 +101,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </section>
     {/if}
 
-    {#if showImprovements && model.improvementItems.length > 0}
+    {#if showImprovements && model.showFullPanel && model.improvementItems.length > 0}
         <section class="gre-calibration-section" aria-label="What improves confidence">
             <h3 class="gre-calibration-section-title">What improves confidence</h3>
             <ul class="gre-calibration-improvements">
@@ -113,9 +127,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </section>
     {/if}
 
-    {#if variant === "full"}
+    {#if variant === "full" && model.showFullPanel}
         <details class="gre-calibration-details">
-            <summary>Calibration bins</summary>
+            <summary>Estimate checks by score level</summary>
             {#if calibration.calibrationCurve.length === 0}
                 <GreEmptyState
                     content={emptyStateContent("calibrationTable")}
@@ -153,13 +167,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         </tbody>
                     </table>
                 </div>
-            {/if}
-            {#if model.assessment}
-                <p class="gre-calibration-assessment">{model.assessment}</p>
+                {#if model.assessment}
+                    <p class="gre-calibration-assessment">{model.assessment}</p>
+                {/if}
             {/if}
         </details>
-    {:else if model.assessment}
+    {:else if model.showFullPanel && model.assessment}
         <p class="gre-calibration-assessment">{model.assessment}</p>
+    {/if}
     {/if}
 </section>
 
@@ -203,6 +218,13 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         color: var(--fg-subtle);
     }
 
+    .gre-calibration-early {
+        margin: 0;
+        font-size: var(--gre-font-body);
+        line-height: var(--gre-lh-body);
+        color: var(--fg-subtle);
+    }
+
     .gre-calibration-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -238,19 +260,24 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         color: var(--fg-subtle);
     }
 
-    .gre-calibration-metric-value {
-        margin: 0;
-        font-size: var(--gre-font-kpi);
-        font-weight: var(--gre-weight-h1);
-        line-height: var(--gre-lh-h1);
-        letter-spacing: -0.02em;
+    .gre-calibration-metric :global(.gre-confidence-label) {
+        font-size: var(--gre-font-body-lg);
+        font-weight: var(--gre-weight-label);
+        line-height: var(--gre-lh-body);
         color: var(--fg);
     }
 
-    .gre-calibration-metric-muted {
-        font-size: var(--gre-font-body);
+    .gre-calibration-metric-status {
+        margin: 0;
+        font-size: var(--gre-font-body-lg);
+        font-weight: var(--gre-weight-label);
         line-height: var(--gre-lh-body);
-        color: var(--fg-subtle);
+        color: var(--fg);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .gre-calibration-metric-status-muted {
+        color: color-mix(in srgb, var(--fg-subtle) 82%, var(--fg));
     }
 
     .gre-calibration-metric-detail {

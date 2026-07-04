@@ -10,11 +10,15 @@ import {
     getScores,
 } from "@generated/backend";
 
+import { ensureGreAtlasStudyDeck } from "../study-bootstrap";
+
 import type { PageLoad } from "./$types";
 
 const GRE_DECK_NAME = "GRE Atlas";
 
 export const load = (async () => {
+    await ensureGreAtlasStudyDeck();
+
     const [preferences, studyStatus, scores] = await Promise.all([
         getPreferences({}),
         getGreStudyStatus({}),

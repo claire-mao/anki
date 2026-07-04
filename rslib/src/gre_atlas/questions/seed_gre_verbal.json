@@ -1,0 +1,3646 @@
+[
+    {
+        "id": "gre-foundation-verbal-tc-001",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The diplomat's remarks were so ______ that they eased tensions rather than inflaming them.",
+        "answer_choices": [
+            "conciliatory",
+            "incendiary",
+            "ambiguous",
+            "grating"
+        ],
+        "correct_answer": "conciliatory",
+        "explanation": "Easing tensions implies a peacemaking tone.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-002",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Although the evidence was ______, the jury reached a unanimous verdict.",
+        "answer_choices": [
+            "circumstantial",
+            "conclusive",
+            "overwhelming",
+            "unambiguous"
+        ],
+        "correct_answer": "circumstantial",
+        "explanation": "\"Although\" signals contrast with reaching verdict despite imperfect evidence.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-003",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The professor's lecture was ______: every claim was supported by primary sources.",
+        "answer_choices": [
+            "meticulous",
+            "speculative",
+            "cursory",
+            "rambling"
+        ],
+        "correct_answer": "meticulous",
+        "explanation": "Supported by primary sources implies careful scholarship.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-004",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Far from being ______, the reform actually strengthened institutional accountability.",
+        "answer_choices": [
+            "redundant",
+            "transformative",
+            "superficial",
+            "obsolete"
+        ],
+        "correct_answer": "superficial",
+        "explanation": "\"Far from\" contrasts with strengthening accountability.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-005",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The artist's early work was ______, but her mature paintings show remarkable restraint.",
+        "answer_choices": [
+            "florid",
+            "austere",
+            "muted",
+            "minimal"
+        ],
+        "correct_answer": "florid",
+        "explanation": "Contrast with mature restraint implies early excess.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-006",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The CEO's apology sounded ______ to employees who had heard similar promises before.",
+        "answer_choices": [
+            "hollow",
+            "sincere",
+            "heartfelt",
+            "candid"
+        ],
+        "correct_answer": "hollow",
+        "explanation": "Skepticism from repeated promises implies emptiness.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-007",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The novel's plot is ______, unfolding through a series of seemingly unrelated vignettes.",
+        "answer_choices": [
+            "episodic",
+            "linear",
+            "formulaic",
+            "predictable"
+        ],
+        "correct_answer": "episodic",
+        "explanation": "Unrelated vignettes suggest episodic structure.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-008",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Critics found the policy ______, noting it addressed symptoms rather than root causes.",
+        "answer_choices": [
+            "superficial",
+            "comprehensive",
+            "innovative",
+            "rigorous"
+        ],
+        "correct_answer": "superficial",
+        "explanation": "Treating symptoms not causes is superficial.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-009",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Her tone was deliberately ______, masking strong opinions behind neutral phrasing.",
+        "answer_choices": [
+            "measured",
+            "strident",
+            "effusive",
+            "combative"
+        ],
+        "correct_answer": "measured",
+        "explanation": "Masking strong opinions behind neutral phrasing is measured.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-010",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The habitat recovery was ______; within a decade native species returned in large numbers.",
+        "answer_choices": [
+            "robust",
+            "tenuous",
+            "marginal",
+            "illusory"
+        ],
+        "correct_answer": "robust",
+        "explanation": "Large-scale species return indicates strong recovery.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-011",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The committee's report was at once ______ and ______: thorough in detail yet accessible to lay readers.",
+        "answer_choices": [
+            "scholarly ... lucid",
+            "opaque ... jargon-filled",
+            "brief ... superficial",
+            "technical ... abstruse"
+        ],
+        "correct_answer": "scholarly ... lucid",
+        "explanation": "Thorough yet accessible matches scholarly and lucid.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "two_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "two_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-012",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The witness was ______ but not ______: credible on facts yet unreliable on motives.",
+        "answer_choices": [
+            "credible ... unreliable",
+            "deceptive ... honest",
+            "confused ... clear",
+            "hostile ... cooperative"
+        ],
+        "correct_answer": "credible ... unreliable",
+        "explanation": "Reliable on facts, not on motives.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "two_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "two_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-013",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The market's reaction was ______ rather than ______: investors paused instead of panicking.",
+        "answer_choices": [
+            "cautious ... hysterical",
+            "euphoric ... restrained",
+            "indifferent ... engaged",
+            "volatile ... stable"
+        ],
+        "correct_answer": "cautious ... hysterical",
+        "explanation": "Paused instead of panicking is cautious not hysterical.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "two_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "two_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-014",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The author's style is ______ yet never ______: complex ideas expressed without needless ornament.",
+        "answer_choices": [
+            "dense ... florid",
+            "simple ... spare",
+            "plain ... ornate",
+            " terse ... verbose"
+        ],
+        "correct_answer": "dense ... florid",
+        "explanation": "Complex without ornament: dense not florid.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "two_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "two_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-015",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The treaty proved ______ in letter but ______ in practice.",
+        "answer_choices": [
+            "ambitious ... ineffectual",
+            "modest ... transformative",
+            "binding ... enforceable",
+            " concise ... sweeping"
+        ],
+        "correct_answer": "ambitious ... ineffectual",
+        "explanation": "Strong on paper, weak in execution.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "two_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "two_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-016",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The theory, though ______ in scope, remained ______ in evidence and ______ in predictive power.",
+        "answer_choices": [
+            "expansive ... thin ... limited",
+            "narrow ... robust ... strong",
+            " modest ... ample ... proven",
+            " sweeping ... solid ... unmatched"
+        ],
+        "correct_answer": "expansive ... thin ... limited",
+        "explanation": "Large scope but weak evidence and prediction.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "three_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "three_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-017",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The memoir is ______ in tone, ______ in structure, and ______ in its refusal to settle scores.",
+        "answer_choices": [
+            "reflective ... fragmented ... restrained",
+            "angry ... linear ... vindictive",
+            "haughty ... rigid ... aggressive",
+            " playful ... chaotic ... bitter"
+        ],
+        "correct_answer": "reflective ... fragmented ... restrained",
+        "explanation": "Thoughtful, non-linear, not vindictive.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "three_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "three_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-018",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Early results were ______; later trials ______ the findings; the final meta-analysis ______ confidence.",
+        "answer_choices": [
+            "promising ... corroborated ... bolstered",
+            "definitive ... contradicted ... erased",
+            "mixed ... ignored ... undermined",
+            "negative ... replicated ... shattered"
+        ],
+        "correct_answer": "promising ... corroborated ... bolstered",
+        "explanation": "Progressive strengthening of evidence.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "three_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "three_blank"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-verbal-tc-019",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The politician's rhetoric grew increasingly ______ as the election neared.",
+        "answer_choices": [
+            "inflammatory",
+            "subdued",
+            "technical",
+            "diplomatic"
+        ],
+        "correct_answer": "inflammatory",
+        "explanation": "Heated election rhetoric.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-020",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The scientist remained ______ despite fierce criticism from peers.",
+        "answer_choices": [
+            "resolute",
+            "wavering",
+            "indifferent",
+            "cynical"
+        ],
+        "correct_answer": "resolute",
+        "explanation": "Unmoved by criticism.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-021",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The archive's value lies not in its size but in its ______.",
+        "answer_choices": [
+            "rarity",
+            "bulk",
+            "disorder",
+            "redundancy"
+        ],
+        "correct_answer": "rarity",
+        "explanation": "Value from rare materials.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-022",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The translation is faithful but occasionally ______.",
+        "answer_choices": [
+            "awkward",
+            " lyrical",
+            "innovative",
+            " concise"
+        ],
+        "correct_answer": "awkward",
+        "explanation": "Faithful but clumsy phrasing.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-023",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "Investors treated the forecast as ______ until revenue confirmed it.",
+        "answer_choices": [
+            "speculative",
+            "canonical",
+            "immutable",
+            " trivial"
+        ],
+        "correct_answer": "speculative",
+        "explanation": "Unconfirmed until revenue.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-024",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The dean's policy was ______: strict on deadlines but flexible on methods.",
+        "answer_choices": [
+            "pragmatic",
+            "arbitrary",
+            " punitive",
+            " chaotic"
+        ],
+        "correct_answer": "pragmatic",
+        "explanation": "Balanced strictness and flexibility.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-025",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The poem's imagery is ______, evoking loss without naming it.",
+        "answer_choices": [
+            "evocative",
+            "literal",
+            "clinical",
+            " didactic"
+        ],
+        "correct_answer": "evocative",
+        "explanation": "Suggestive imagery.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-026",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The startup's growth was ______, doubling users each quarter.",
+        "answer_choices": [
+            "exponential",
+            "negligible",
+            " erratic",
+            " stagnant"
+        ],
+        "correct_answer": "exponential",
+        "explanation": "Doubling each quarter.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-027",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The historian's account is ______, privileging archival records over anecdote.",
+        "answer_choices": [
+            "document-driven",
+            " fanciful",
+            " impressionistic",
+            " partisan"
+        ],
+        "correct_answer": "document-driven",
+        "explanation": "Archival over anecdote.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-028",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The critic dismissed the film as ______ entertainment.",
+        "answer_choices": [
+            "mindless",
+            " thought-provoking",
+            " nuanced",
+            " ambitious"
+        ],
+        "correct_answer": "mindless",
+        "explanation": "Dismissive tone.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-029",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The lawyer's argument was ______, anticipating every counterclaim.",
+        "answer_choices": [
+            "comprehensive",
+            " narrow",
+            " impulsive",
+            " fragmentary"
+        ],
+        "correct_answer": "comprehensive",
+        "explanation": "Anticipating counterclaims.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-tc-030",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "prompt": "The patient's recovery was ______, with setbacks followed by steady gains.",
+        "answer_choices": [
+            "uneven",
+            " instantaneous",
+            " illusory",
+            " uniform"
+        ],
+        "correct_answer": "uneven",
+        "explanation": "Setbacks then gains.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "one_blank",
+        "question_type": "text_completion",
+        "concepts_tested": [
+            "text_completion",
+            "one_blank"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-se-001",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The manager's feedback was surprisingly ______, offering specific praise rather than vague encouragement.",
+        "answer_choices": [
+            "forthright",
+            "perfunctory",
+            "candid",
+            "grudging",
+            "evasive",
+            "elaborate"
+        ],
+        "correct_answer": "forthright",
+        "explanation": "Specific praise suggests directness (forthright/candid).",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-002",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The ruins were so ______ that archaeologists could barely distinguish walls from rubble.",
+        "answer_choices": [
+            "dilapidated",
+            "pristine",
+            "intact",
+            "restored",
+            "fragile",
+            "ancient"
+        ],
+        "correct_answer": "dilapidated",
+        "explanation": "Barely distinguish walls — severely decayed.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-003",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "Her explanation was ______, leaving no doubt about the committee's next steps.",
+        "answer_choices": [
+            "unambiguous",
+            "cryptic",
+            "equivocal",
+            "lucid",
+            "muddled",
+            "terse"
+        ],
+        "correct_answer": "unambiguous",
+        "explanation": "No doubt — clear meaning.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-004",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The negotiators remained ______ despite hours of heated debate.",
+        "answer_choices": [
+            "composed",
+            "agitated",
+            "unruffled",
+            "volatile",
+            "indifferent",
+            "frantic"
+        ],
+        "correct_answer": "composed",
+        "explanation": "Calm despite heat (composed/unruffled).",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-005",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The author's irony is so ______ that some readers miss the critique entirely.",
+        "answer_choices": [
+            "subtle",
+            "heavy-handed",
+            "blunt",
+            "overt",
+            "clumsy",
+            "obvious"
+        ],
+        "correct_answer": "subtle",
+        "explanation": "Missed critique implies subtle irony.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-006",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The policy proved ______, solving one problem while creating two others.",
+        "answer_choices": [
+            "counterproductive",
+            "beneficial",
+            "streamlined",
+            "efficient",
+            "redundant",
+            "elegant"
+        ],
+        "correct_answer": "counterproductive",
+        "explanation": "Creates new problems.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-007",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The witness was ______, answering only what was asked.",
+        "answer_choices": [
+            "terse",
+            "loquacious",
+            "expansive",
+            "effusive",
+            "rambling",
+            "verbose"
+        ],
+        "correct_answer": "terse",
+        "explanation": "Minimal answers.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-008",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The landscape looked ______ after weeks of drought.",
+        "answer_choices": [
+            "parched",
+            "lush",
+            "verdant",
+            "flooded",
+            "fertile",
+            "saturated"
+        ],
+        "correct_answer": "parched",
+        "explanation": "Drought dries land.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-009",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The professor's reputation is ______; colleagues cite her work across disciplines.",
+        "answer_choices": [
+            "far-reaching",
+            "negligible",
+            "insular",
+            "disputed",
+            "narrow",
+            "questionable"
+        ],
+        "correct_answer": "far-reaching",
+        "explanation": "Cited across disciplines.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-010",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The contract language is intentionally ______, allowing flexible interpretation.",
+        "answer_choices": [
+            "vague",
+            "precise",
+            "explicit",
+            "rigid",
+            "definitive",
+            "airtight"
+        ],
+        "correct_answer": "vague",
+        "explanation": "Flexible interpretation.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-011",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The team's victory was ______, earned through disciplined execution.",
+        "answer_choices": [
+            "deserved",
+            "accidental",
+            "fluky",
+            "undeserved",
+            "arbitrary",
+            "hollow"
+        ],
+        "correct_answer": "deserved",
+        "explanation": "Earned through discipline.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-012",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The memoir's tone is ______ rather than nostalgic.",
+        "answer_choices": [
+            "reflective",
+            "sentimental",
+            "maudlin",
+            "wistful",
+            "cloying",
+            "romantic"
+        ],
+        "correct_answer": "reflective",
+        "explanation": "Thoughtful not nostalgic.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-013",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The CEO's plan is ______, relying on untested assumptions.",
+        "answer_choices": [
+            "speculative",
+            "proven",
+            "conservative",
+            "empirical",
+            "validated",
+            "cautious"
+        ],
+        "correct_answer": "speculative",
+        "explanation": "Untested assumptions.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-014",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The critic found the novel ______, praising its structure but not its characters.",
+        "answer_choices": [
+            "uneven",
+            "flawless",
+            "cohesive",
+            "seamless",
+            "uniform",
+            "polished"
+        ],
+        "correct_answer": "uneven",
+        "explanation": "Strong structure, weak characters.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-015",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The speaker was ______, moving the audience without manipulative tricks.",
+        "answer_choices": [
+            "persuasive",
+            "coercive",
+            "compelling",
+            "bullying",
+            "overbearing",
+            "dictatorial"
+        ],
+        "correct_answer": "persuasive",
+        "explanation": "Moved audience ethically.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-016",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The data were ______, showing a clear trend across all regions.",
+        "answer_choices": [
+            "consistent",
+            "contradictory",
+            "anomalous",
+            "scattered",
+            "incompatible",
+            "erratic"
+        ],
+        "correct_answer": "consistent",
+        "explanation": "Clear trend everywhere.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-017",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The editor's cuts made the essay ______.",
+        "answer_choices": [
+            "tighter",
+            "sprawling",
+            "diffuse",
+            "bloated",
+            "redundant",
+            "wandering"
+        ],
+        "correct_answer": "tighter",
+        "explanation": "Cuts improve focus.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-018",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The philosopher's argument is ______, built from definitions all parties accept.",
+        "answer_choices": [
+            "cogent",
+            "fallacious",
+            "incoherent",
+            "circular",
+            "muddled",
+            "self-contradictory"
+        ],
+        "correct_answer": "cogent",
+        "explanation": "Accepted definitions, sound reasoning.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-019",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The harbor was ______ at dawn, with only a few boats stirring.",
+        "answer_choices": [
+            "tranquil",
+            "chaotic",
+            "bustling",
+            "frenzied",
+            "crowded",
+            "noisy"
+        ],
+        "correct_answer": "tranquil",
+        "explanation": "Few boats, calm.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-020",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The student's essay was ______, full of unsupported generalizations.",
+        "answer_choices": [
+            "superficial",
+            "penetrating",
+            "nuanced",
+            "rigorous",
+            "exhaustive",
+            "meticulous"
+        ],
+        "correct_answer": "superficial",
+        "explanation": "Unsupported generalizations.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-021",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The merger announcement was ______, sending shares down sharply.",
+        "answer_choices": [
+            "unsettling",
+            "reassuring",
+            "welcome",
+            "expected",
+            "soothing",
+            "predictable"
+        ],
+        "correct_answer": "unsettling",
+        "explanation": "Shares fell sharply.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-se-022",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "prompt": "The gardener kept the hedge ______, trimming it every week.",
+        "answer_choices": [
+            "neat",
+            "wild",
+            "overgrown",
+            "unruly",
+            "tangled",
+            "shaggy"
+        ],
+        "correct_answer": "neat",
+        "explanation": "Weekly trimming.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "sentence_equivalence",
+        "question_type": "sentence_equivalence",
+        "concepts_tested": [
+            "sentence_equivalence",
+            "vocabulary"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-001",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe passage primarily presents?",
+        "answer_choices": [
+            "proof that 15-minute cities always lower costs",
+            "a history of urban zoning law",
+            "a planning concept along with support and criticism",
+            "reasons to eliminate all car traffic"
+        ],
+        "correct_answer": "a planning concept along with support and criticism",
+        "explanation": "The passage explains the idea and both pro and con views.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-001",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "may have unintended social costs",
+            "originated in rural areas",
+            "will definitely reduce all traffic",
+            "are unsupported by any evidence"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-001",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nAccording to the passage, proponents claim 15-minute cities?",
+        "answer_choices": [
+            "require highway expansion",
+            "reduce car dependence",
+            "eliminate all local businesses",
+            "ban mixed-use zoning"
+        ],
+        "correct_answer": "reduce car dependence",
+        "explanation": "Explicitly stated benefit.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-001",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "introduce a historical example",
+            "define zoning terminology",
+            "refute the entire concept",
+            "state a claimed benefit of the design"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-002",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage is mainly concerned with?",
+        "answer_choices": [
+            "arguing that bioluminescence is always harmful",
+            "comparing luciferin in fungi and fireflies",
+            "describing how to cultivate glowing mushrooms",
+            "revising an explanation for fungal bioluminescence"
+        ],
+        "correct_answer": "revising an explanation for fungal bioluminescence",
+        "explanation": "Moves from old assumption to new adaptive view.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-002",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "essential for spore production",
+            "stronger in daylight",
+            "unrelated to evolutionary advantage",
+            "identical to insect bioluminescence"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-002",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nAccording to the passage, luciferin is involved in?",
+        "answer_choices": [
+            "insect digestion",
+            "spore destruction",
+            "a chemical reaction producing light",
+            "photosynthesis in trees"
+        ],
+        "correct_answer": "a chemical reaction producing light",
+        "explanation": "Stated in first sentence.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-002",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            "dismisses all prior research",
+            "defines the term luciferin",
+            " compares fungi to plants",
+            "offers a possible adaptive purpose for the trait"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-003",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe passage primarily discusses?",
+        "answer_choices": [
+            "the decline of medieval book production",
+            "changing scholarly approaches to textual variants",
+            "why scribes were always inaccurate",
+            "how to eliminate all copying errors"
+        ],
+        "correct_answer": "changing scholarly approaches to textual variants",
+        "explanation": "Contrasts views on variants and notes digital shift.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-003",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            "expanded the scale of textual comparison",
+            " replaced the need for interpretation",
+            "proven that all variants are meaningless",
+            "shown scribes never made errors"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-003",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nSome scholars view variant readings as?",
+        "answer_choices": [
+            "noise",
+            " sacred doctrine",
+            " artistic embellishment only",
+            " legal evidence"
+        ],
+        "correct_answer": "noise",
+        "explanation": "Explicitly stated.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-003",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "summarize digital software features",
+            "present an alternative view of variants",
+            "define manuscript illumination",
+            "criticize all medieval scribes"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-004",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe passage primarily presents?",
+        "answer_choices": [
+            "proof that 15-minute cities always lower costs",
+            "a history of urban zoning law",
+            "reasons to eliminate all car traffic",
+            "a planning concept along with support and criticism"
+        ],
+        "correct_answer": "a planning concept along with support and criticism",
+        "explanation": "The passage explains the idea and both pro and con views.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-004",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "will definitely reduce all traffic",
+            "may have unintended social costs",
+            "originated in rural areas",
+            "are unsupported by any evidence"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-004",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nAccording to the passage, proponents claim 15-minute cities?",
+        "answer_choices": [
+            "ban mixed-use zoning",
+            "require highway expansion",
+            "reduce car dependence",
+            "eliminate all local businesses"
+        ],
+        "correct_answer": "reduce car dependence",
+        "explanation": "Explicitly stated benefit.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-004",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "refute the entire concept",
+            "define zoning terminology",
+            "introduce a historical example",
+            "state a claimed benefit of the design"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-005",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage is mainly concerned with?",
+        "answer_choices": [
+            "revising an explanation for fungal bioluminescence",
+            "arguing that bioluminescence is always harmful",
+            "comparing luciferin in fungi and fireflies",
+            "describing how to cultivate glowing mushrooms"
+        ],
+        "correct_answer": "revising an explanation for fungal bioluminescence",
+        "explanation": "Moves from old assumption to new adaptive view.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-005",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "essential for spore production",
+            "identical to insect bioluminescence",
+            "unrelated to evolutionary advantage",
+            "stronger in daylight"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-005",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nAccording to the passage, luciferin is involved in?",
+        "answer_choices": [
+            "a chemical reaction producing light",
+            "photosynthesis in trees",
+            "spore destruction",
+            "insect digestion"
+        ],
+        "correct_answer": "a chemical reaction producing light",
+        "explanation": "Stated in first sentence.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-005",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            "dismisses all prior research",
+            "defines the term luciferin",
+            "offers a possible adaptive purpose for the trait",
+            " compares fungi to plants"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-006",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe passage primarily discusses?",
+        "answer_choices": [
+            "the decline of medieval book production",
+            "changing scholarly approaches to textual variants",
+            "how to eliminate all copying errors",
+            "why scribes were always inaccurate"
+        ],
+        "correct_answer": "changing scholarly approaches to textual variants",
+        "explanation": "Contrasts views on variants and notes digital shift.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-006",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            "proven that all variants are meaningless",
+            " replaced the need for interpretation",
+            "expanded the scale of textual comparison",
+            "shown scribes never made errors"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-006",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nSome scholars view variant readings as?",
+        "answer_choices": [
+            " legal evidence",
+            "noise",
+            " artistic embellishment only",
+            " sacred doctrine"
+        ],
+        "correct_answer": "noise",
+        "explanation": "Explicitly stated.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-006",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "summarize digital software features",
+            "criticize all medieval scribes",
+            "define manuscript illumination",
+            "present an alternative view of variants"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-007",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe passage primarily presents?",
+        "answer_choices": [
+            "a planning concept along with support and criticism",
+            "proof that 15-minute cities always lower costs",
+            "reasons to eliminate all car traffic",
+            "a history of urban zoning law"
+        ],
+        "correct_answer": "a planning concept along with support and criticism",
+        "explanation": "The passage explains the idea and both pro and con views.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-007",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "are unsupported by any evidence",
+            "will definitely reduce all traffic",
+            "may have unintended social costs",
+            "originated in rural areas"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-007",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nAccording to the passage, proponents claim 15-minute cities?",
+        "answer_choices": [
+            "reduce car dependence",
+            "eliminate all local businesses",
+            "ban mixed-use zoning",
+            "require highway expansion"
+        ],
+        "correct_answer": "reduce car dependence",
+        "explanation": "Explicitly stated benefit.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-007",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "state a claimed benefit of the design",
+            "refute the entire concept",
+            "introduce a historical example",
+            "define zoning terminology"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-008",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage is mainly concerned with?",
+        "answer_choices": [
+            "comparing luciferin in fungi and fireflies",
+            "arguing that bioluminescence is always harmful",
+            "revising an explanation for fungal bioluminescence",
+            "describing how to cultivate glowing mushrooms"
+        ],
+        "correct_answer": "revising an explanation for fungal bioluminescence",
+        "explanation": "Moves from old assumption to new adaptive view.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-008",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "unrelated to evolutionary advantage",
+            "essential for spore production",
+            "stronger in daylight",
+            "identical to insect bioluminescence"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-008",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nAccording to the passage, luciferin is involved in?",
+        "answer_choices": [
+            "photosynthesis in trees",
+            "spore destruction",
+            "a chemical reaction producing light",
+            "insect digestion"
+        ],
+        "correct_answer": "a chemical reaction producing light",
+        "explanation": "Stated in first sentence.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-008",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            " compares fungi to plants",
+            "offers a possible adaptive purpose for the trait",
+            "defines the term luciferin",
+            "dismisses all prior research"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-009",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe passage primarily discusses?",
+        "answer_choices": [
+            "the decline of medieval book production",
+            "changing scholarly approaches to textual variants",
+            "how to eliminate all copying errors",
+            "why scribes were always inaccurate"
+        ],
+        "correct_answer": "changing scholarly approaches to textual variants",
+        "explanation": "Contrasts views on variants and notes digital shift.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-009",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            "expanded the scale of textual comparison",
+            " replaced the need for interpretation",
+            "shown scribes never made errors",
+            "proven that all variants are meaningless"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-009",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nSome scholars view variant readings as?",
+        "answer_choices": [
+            " artistic embellishment only",
+            " sacred doctrine",
+            "noise",
+            " legal evidence"
+        ],
+        "correct_answer": "noise",
+        "explanation": "Explicitly stated.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-009",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "criticize all medieval scribes",
+            "summarize digital software features",
+            "present an alternative view of variants",
+            "define manuscript illumination"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-010",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe passage primarily presents?",
+        "answer_choices": [
+            "a planning concept along with support and criticism",
+            "reasons to eliminate all car traffic",
+            "proof that 15-minute cities always lower costs",
+            "a history of urban zoning law"
+        ],
+        "correct_answer": "a planning concept along with support and criticism",
+        "explanation": "The passage explains the idea and both pro and con views.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-010",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "will definitely reduce all traffic",
+            "may have unintended social costs",
+            "originated in rural areas",
+            "are unsupported by any evidence"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-010",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nAccording to the passage, proponents claim 15-minute cities?",
+        "answer_choices": [
+            "reduce car dependence",
+            "require highway expansion",
+            "ban mixed-use zoning",
+            "eliminate all local businesses"
+        ],
+        "correct_answer": "reduce car dependence",
+        "explanation": "Explicitly stated benefit.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-010",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "state a claimed benefit of the design",
+            "define zoning terminology",
+            "refute the entire concept",
+            "introduce a historical example"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-011",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage is mainly concerned with?",
+        "answer_choices": [
+            "arguing that bioluminescence is always harmful",
+            "describing how to cultivate glowing mushrooms",
+            "comparing luciferin in fungi and fireflies",
+            "revising an explanation for fungal bioluminescence"
+        ],
+        "correct_answer": "revising an explanation for fungal bioluminescence",
+        "explanation": "Moves from old assumption to new adaptive view.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-011",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "unrelated to evolutionary advantage",
+            "identical to insect bioluminescence",
+            "essential for spore production",
+            "stronger in daylight"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-011",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nAccording to the passage, luciferin is involved in?",
+        "answer_choices": [
+            "insect digestion",
+            "spore destruction",
+            "photosynthesis in trees",
+            "a chemical reaction producing light"
+        ],
+        "correct_answer": "a chemical reaction producing light",
+        "explanation": "Stated in first sentence.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-011",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            "defines the term luciferin",
+            "offers a possible adaptive purpose for the trait",
+            "dismisses all prior research",
+            " compares fungi to plants"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-012",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe passage primarily discusses?",
+        "answer_choices": [
+            "changing scholarly approaches to textual variants",
+            "how to eliminate all copying errors",
+            "why scribes were always inaccurate",
+            "the decline of medieval book production"
+        ],
+        "correct_answer": "changing scholarly approaches to textual variants",
+        "explanation": "Contrasts views on variants and notes digital shift.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-012",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            "expanded the scale of textual comparison",
+            "proven that all variants are meaningless",
+            " replaced the need for interpretation",
+            "shown scribes never made errors"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-detail-012",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nSome scholars view variant readings as?",
+        "answer_choices": [
+            " legal evidence",
+            " sacred doctrine",
+            " artistic embellishment only",
+            "noise"
+        ],
+        "correct_answer": "noise",
+        "explanation": "Explicitly stated.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "detail",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "detail"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-012",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "present an alternative view of variants",
+            "criticize all medieval scribes",
+            "define manuscript illumination",
+            "summarize digital software features"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-013",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe passage primarily presents?",
+        "answer_choices": [
+            "proof that 15-minute cities always lower costs",
+            "a history of urban zoning law",
+            "a planning concept along with support and criticism",
+            "reasons to eliminate all car traffic"
+        ],
+        "correct_answer": "a planning concept along with support and criticism",
+        "explanation": "The passage explains the idea and both pro and con views.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-013",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "originated in rural areas",
+            "may have unintended social costs",
+            "are unsupported by any evidence",
+            "will definitely reduce all traffic"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-013",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "refute the entire concept",
+            "state a claimed benefit of the design",
+            "introduce a historical example",
+            "define zoning terminology"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-014",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage is mainly concerned with?",
+        "answer_choices": [
+            "comparing luciferin in fungi and fireflies",
+            "arguing that bioluminescence is always harmful",
+            "revising an explanation for fungal bioluminescence",
+            "describing how to cultivate glowing mushrooms"
+        ],
+        "correct_answer": "revising an explanation for fungal bioluminescence",
+        "explanation": "Moves from old assumption to new adaptive view.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-014",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "stronger in daylight",
+            "identical to insect bioluminescence",
+            "essential for spore production",
+            "unrelated to evolutionary advantage"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-014",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            "offers a possible adaptive purpose for the trait",
+            "defines the term luciferin",
+            " compares fungi to plants",
+            "dismisses all prior research"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-main_idea-015",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe passage primarily discusses?",
+        "answer_choices": [
+            "changing scholarly approaches to textual variants",
+            "how to eliminate all copying errors",
+            "the decline of medieval book production",
+            "why scribes were always inaccurate"
+        ],
+        "correct_answer": "changing scholarly approaches to textual variants",
+        "explanation": "Contrasts views on variants and notes digital shift.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "main_idea",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "main_idea"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-015",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            " replaced the need for interpretation",
+            "proven that all variants are meaningless",
+            "expanded the scale of textual comparison",
+            "shown scribes never made errors"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-015",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "criticize all medieval scribes",
+            "present an alternative view of variants",
+            "define manuscript illumination",
+            "summarize digital software features"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-016",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nIt can be inferred that skeptics believe 15-minute city policies?",
+        "answer_choices": [
+            "are unsupported by any evidence",
+            "originated in rural areas",
+            "may have unintended social costs",
+            "will definitely reduce all traffic"
+        ],
+        "correct_answer": "may have unintended social costs",
+        "explanation": "Displacement and higher costs are social costs.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-016",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Urban planners increasingly advocate for \"15-minute cities,\" neighborhoods where residents can reach daily needs within a short walk or bike ride. Proponents argue this design reduces car dependence and strengthens local economies. Skeptics counter that rigid zoning for mixed-use development can raise housing costs and displace long-term residents.\n\nThe second sentence primarily serves to?",
+        "answer_choices": [
+            "state a claimed benefit of the design",
+            "define zoning terminology",
+            "refute the entire concept",
+            "introduce a historical example"
+        ],
+        "correct_answer": "state a claimed benefit of the design",
+        "explanation": "It lists proponents' arguments.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-017",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe passage suggests that earlier researchers viewed fungal glow as?",
+        "answer_choices": [
+            "identical to insect bioluminescence",
+            "stronger in daylight",
+            "essential for spore production",
+            "unrelated to evolutionary advantage"
+        ],
+        "correct_answer": "unrelated to evolutionary advantage",
+        "explanation": "They assumed it was metabolic byproduct, not adaptive.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-017",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Bioluminescent fungi on forest floors produce light through a chemical reaction involving luciferin. Researchers once assumed the glow was a accidental byproduct of metabolism. Recent experiments suggest the light may attract insects that spread fungal spores, indicating the trait could be adaptive rather than incidental.\n\nThe final sentence primarily?",
+        "answer_choices": [
+            "defines the term luciferin",
+            "dismisses all prior research",
+            "offers a possible adaptive purpose for the trait",
+            " compares fungi to plants"
+        ],
+        "correct_answer": "offers a possible adaptive purpose for the trait",
+        "explanation": "Introduces spore-spreading hypothesis.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-inference-018",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nIt can be inferred that digital collation has?",
+        "answer_choices": [
+            "expanded the scale of textual comparison",
+            " replaced the need for interpretation",
+            "proven that all variants are meaningless",
+            "shown scribes never made errors"
+        ],
+        "correct_answer": "expanded the scale of textual comparison",
+        "explanation": "Compare hundreds of witnesses rapidly.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "inference",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "inference"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-rc-function-018",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "prompt": "Passage: Medieval scribes copied manuscripts by hand, a labor that preserved texts but introduced errors. Some scholars treat each variant reading as noise; others argue variants reveal how communities adapted texts to local beliefs. Digital collation now allows rapid comparison of hundreds of witnesses, shifting debate from whether to compare to how comparisons should inform interpretation.\n\nThe third sentence serves to?",
+        "answer_choices": [
+            "present an alternative view of variants",
+            "criticize all medieval scribes",
+            "summarize digital software features",
+            "define manuscript illumination"
+        ],
+        "correct_answer": "present an alternative view of variants",
+        "explanation": "Others see variants as revealing adaptation.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "function",
+        "question_type": "reading_comprehension",
+        "concepts_tested": [
+            "reading_comprehension",
+            "function"
+        ],
+        "estimated_time_seconds": 120
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-001",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The CEO's ______ remarks calmed investors worried about the merger.",
+        "answer_choices": [
+            "assuring",
+            "cryptic",
+            "hostile",
+            "flippant"
+        ],
+        "correct_answer": "assuring",
+        "explanation": "Calmed worried investors.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-002",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "Because the contract was ______, both parties interpreted key clauses differently.",
+        "answer_choices": [
+            "ambiguous",
+            "explicit",
+            "concise",
+            "binding"
+        ],
+        "correct_answer": "ambiguous",
+        "explanation": "Different interpretations imply ambiguity.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-003",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The desert flora is ______, thriving on minimal rainfall.",
+        "answer_choices": [
+            "hardy",
+            "delicate",
+            "tropical",
+            "aquatic"
+        ],
+        "correct_answer": "hardy",
+        "explanation": "Thrives with little water.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-004",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "Her ______ smile suggested she knew more than she stated.",
+        "answer_choices": [
+            "knowing",
+            "vacant",
+            "forced",
+            "timid"
+        ],
+        "correct_answer": "knowing",
+        "explanation": "Implied hidden knowledge.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-005",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The lawyer's ______ questioning exposed inconsistencies in the testimony.",
+        "answer_choices": [
+            "probing",
+            "perfunctory",
+            "gentle",
+            "random"
+        ],
+        "correct_answer": "probing",
+        "explanation": "Exposed inconsistencies.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-006",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The mountain trail was ______, forcing hikers to proceed slowly.",
+        "answer_choices": [
+            "treacherous",
+            "gentle",
+            "paved",
+            "crowded"
+        ],
+        "correct_answer": "treacherous",
+        "explanation": "Forced slow progress.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-007",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The child's ______ curiosity led her to dismantle the clock.",
+        "answer_choices": [
+            "insatiable",
+            "fleeting",
+            "muted",
+            "cautious"
+        ],
+        "correct_answer": "insatiable",
+        "explanation": "Dismantling shows intense curiosity.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-008",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The speaker's ______ diction made complex ideas accessible.",
+        "answer_choices": [
+            "lucid",
+            "ornate",
+            "archaic",
+            "opaque"
+        ],
+        "correct_answer": "lucid",
+        "explanation": "Accessible complex ideas.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-009",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "After the scandal, the politician's reputation was ______.",
+        "answer_choices": [
+            "tarnished",
+            "enhanced",
+            "unchanged",
+            "celebrated"
+        ],
+        "correct_answer": "tarnished",
+        "explanation": "Post-scandal damage.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-010",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The fabric's ______ texture felt rough against the skin.",
+        "answer_choices": [
+            "coarse",
+            "silky",
+            "smooth",
+            "elastic"
+        ],
+        "correct_answer": "coarse",
+        "explanation": "Rough feel.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-011",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The mentor's advice was ______: brief but decisive.",
+        "answer_choices": [
+            "pithy",
+            "rambling",
+            "verbose",
+            "equivocal"
+        ],
+        "correct_answer": "pithy",
+        "explanation": "Brief and decisive.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-012",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The evidence was ______, pointing clearly to one suspect.",
+        "answer_choices": [
+            "incriminating",
+            "exonerating",
+            "irrelevant",
+            "ambiguous"
+        ],
+        "correct_answer": "incriminating",
+        "explanation": "Points to suspect.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-013",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The orchestra's performance was ______, earning a standing ovation.",
+        "answer_choices": [
+            "stellar",
+            "mediocre",
+            "tentative",
+            "disjointed"
+        ],
+        "correct_answer": "stellar",
+        "explanation": "Standing ovation.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-014",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The policy had ______ effects, harming the groups it aimed to help.",
+        "answer_choices": [
+            "perverse",
+            "beneficial",
+            "neutral",
+            "predictable"
+        ],
+        "correct_answer": "perverse",
+        "explanation": "Harm despite intent to help.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-015",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The room was ______ after the windows were opened.",
+        "answer_choices": [
+            "airy",
+            "stuffy",
+            "dim",
+            "cluttered"
+        ],
+        "correct_answer": "airy",
+        "explanation": "Open windows freshen space.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-016",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The researcher remained ______, refusing to announce results before replication.",
+        "answer_choices": [
+            "circumspect",
+            "reckless",
+            "boastful",
+            "impatient"
+        ],
+        "correct_answer": "circumspect",
+        "explanation": "Waited for replication.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vctx-017",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The debate turned ______ when personal insults replaced argument.",
+        "answer_choices": [
+            "acrimonious",
+            "collegial",
+            "productive",
+            "subdued"
+        ],
+        "correct_answer": "acrimonious",
+        "explanation": "Personal insults.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "context_clue",
+        "question_type": "vocabulary_in_context",
+        "concepts_tested": [
+            "vocabulary",
+            "context_clues"
+        ],
+        "estimated_time_seconds": 70
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-001",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The senator's ______ speech alienated allies with its harsh tone.",
+        "answer_choices": [
+            "truculent",
+            "conciliatory",
+            "measured",
+            "diplomatic"
+        ],
+        "correct_answer": "truculent",
+        "explanation": "Harsh, aggressive tone.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-002",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The essay's argument was ______, relying on unstated assumptions.",
+        "answer_choices": [
+            "tendentious",
+            "evenhanded",
+            "dispassionate",
+            "objective"
+        ],
+        "correct_answer": "tendentious",
+        "explanation": "Biased, assumption-laden.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-003",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "Her ______ wit defused tension without minimizing the problem.",
+        "answer_choices": [
+            "mordant",
+            "saccharine",
+            "clumsy",
+            "obtuse"
+        ],
+        "correct_answer": "mordant",
+        "explanation": "Dark, sharp humor.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-004",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The CEO's ______ praise sounded insincere to employees.",
+        "answer_choices": [
+            "fulsome",
+            "restrained",
+            "grudging",
+            "terse"
+        ],
+        "correct_answer": "fulsome",
+        "explanation": "Excessive, insincere praise.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-005",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The critic's review was ______, finding fault in minor details.",
+        "answer_choices": [
+            "captious",
+            "generous",
+            "sweeping",
+            "indifferent"
+        ],
+        "correct_answer": "captious",
+        "explanation": "Overly fault-finding.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-006",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The peace accord was ______, satisfying neither side completely.",
+        "answer_choices": [
+            "imperfect",
+            "flawless",
+            "comprehensive",
+            "enduring"
+        ],
+        "correct_answer": "imperfect",
+        "explanation": "Neither side fully satisfied.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-007",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The artist's style is ______, avoiding emotional display.",
+        "answer_choices": [
+            "austere",
+            "florid",
+            "effusive",
+            "sentimental"
+        ],
+        "correct_answer": "austere",
+        "explanation": "Restrained, no emotional display.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-008",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The witness gave a ______ account, omitting no relevant detail.",
+        "answer_choices": [
+            "exhaustive",
+            "cursory",
+            "misleading",
+            "partial"
+        ],
+        "correct_answer": "exhaustive",
+        "explanation": "Complete detail.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-009",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The plan is ______, depending on conditions that may not hold.",
+        "answer_choices": [
+            "contingent",
+            "inevitable",
+            "immutable",
+            "self-evident"
+        ],
+        "correct_answer": "contingent",
+        "explanation": "Depends on uncertain conditions.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-010",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The professor's reputation for ______ makes students prepare thoroughly.",
+        "answer_choices": [
+            "rigor",
+            "leniency",
+            "absentmindedness",
+            "favoritism"
+        ],
+        "correct_answer": "rigor",
+        "explanation": "Strict standards.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-011",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The novel's plot twist felt ______, contradicting established facts.",
+        "answer_choices": [
+            "arbitrary",
+            "inevitable",
+            "foreshadowed",
+            "nuanced"
+        ],
+        "correct_answer": "arbitrary",
+        "explanation": "Unsupported by prior facts.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-012",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The diplomat's ______ approach won trust from both factions.",
+        "answer_choices": [
+            "evenhanded",
+            "partisan",
+            "aggressive",
+            "evasive"
+        ],
+        "correct_answer": "evenhanded",
+        "explanation": "Fair to both sides.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-013",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The company's ______ growth could not continue indefinitely.",
+        "answer_choices": [
+            "meteoric",
+            "sluggish",
+            "negligible",
+            "stagnant"
+        ],
+        "correct_answer": "meteoric",
+        "explanation": "Rapid rise implies unsustainable pace.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-014",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The judge's ruling was ______, grounded in precedent.",
+        "answer_choices": [
+            "judicious",
+            "whimsical",
+            "impulsive",
+            "opaque"
+        ],
+        "correct_answer": "judicious",
+        "explanation": "Precedent-based, wise.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-015",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The speech was ______, full of empty slogans.",
+        "answer_choices": [
+            "platitudinous",
+            "incisive",
+            "technical",
+            "succinct"
+        ],
+        "correct_answer": "platitudinous",
+        "explanation": "Empty slogans.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-016",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The researcher remained ______ about results until data were verified.",
+        "answer_choices": [
+            "circumspect",
+            "boastful",
+            "dismissive",
+            "credulous"
+        ],
+        "correct_answer": "circumspect",
+        "explanation": "Cautious before verification.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-017",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The memoir's portrait of childhood is ______ rather than nostalgic.",
+        "answer_choices": [
+            "unsentimental",
+            "maudlin",
+            "romanticized",
+            "hazy"
+        ],
+        "correct_answer": "unsentimental",
+        "explanation": "Not nostalgic.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-verbal-vadv-018",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "vocabulary",
+        "prompt": "The opposition's argument is ______, attacking motives instead of evidence.",
+        "answer_choices": [
+            "ad hominem",
+            "empirical",
+            "syllogistic",
+            "constructive"
+        ],
+        "correct_answer": "ad hominem",
+        "explanation": "Attacks motives not evidence.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "advanced_vocab",
+        "question_type": "advanced_vocabulary",
+        "concepts_tested": [
+            "vocabulary",
+            "advanced"
+        ],
+        "estimated_time_seconds": 75
+    }
+]

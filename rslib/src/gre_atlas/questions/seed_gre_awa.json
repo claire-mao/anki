@@ -1,0 +1,627 @@
+[
+    {
+        "id": "gre-foundation-awa-issue-001",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Governments should prioritize funding for the arts over funding for scientific research.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "Scientific research often underpins technologies and medical advances that benefit society broadly.",
+            "Issues cannot be debated meaningfully.",
+            "The claim is obviously true in all cases."
+        ],
+        "correct_answer": "Scientific research often underpins technologies and medical advances that benefit society broadly.",
+        "explanation": "Arts funding and scientific research serve different but complementary public goods.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-002",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Success in any field requires more luck than skill.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Issues cannot be debated meaningfully.",
+            "The claim is obviously true in all cases.",
+            "Attributing success mainly to luck ignores the role of deliberate practice and preparation.",
+            "Only experts may discuss this topic."
+        ],
+        "correct_answer": "Attributing success mainly to luck ignores the role of deliberate practice and preparation.",
+        "explanation": "Skill and luck interact; framing the issue as either-or oversimplifies.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-003",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Universities should abolish letter grades and adopt pass/fail evaluation.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully.",
+            "The claim is obviously true in all cases.",
+            "Letter grades can motivate excellence and signal achievement to employers."
+        ],
+        "correct_answer": "Letter grades can motivate excellence and signal achievement to employers.",
+        "explanation": "Pass/fail may reduce unhealthy competition but can also blur meaningful distinctions.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-004",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Technology makes people less capable of thinking for themselves.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Issues cannot be debated meaningfully.",
+            "Technology offloads routine tasks, freeing cognitive resources for higher-order thinking.",
+            "The claim is obviously true in all cases.",
+            "Only experts may discuss this topic."
+        ],
+        "correct_answer": "Technology offloads routine tasks, freeing cognitive resources for higher-order thinking.",
+        "explanation": "Effects depend on how technology is used, not technology alone.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-005",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"It is primarily the responsibility of individuals, not governments, to reduce environmental harm.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "The claim is obviously true in all cases.",
+            "Issues cannot be debated meaningfully.",
+            "Individual choices alone cannot address large-scale pollution without policy.",
+            "Only experts may discuss this topic."
+        ],
+        "correct_answer": "Individual choices alone cannot address large-scale pollution without policy.",
+        "explanation": "Both individual action and government regulation are necessary at scale.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-006",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Formal education becomes obsolete within a decade of graduation.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "The claim is obviously true in all cases.",
+            "Core skills such as reasoning and communication remain valuable across careers.",
+            "Issues cannot be debated meaningfully."
+        ],
+        "correct_answer": "Core skills such as reasoning and communication remain valuable across careers.",
+        "explanation": "Education must evolve, but foundational skills retain long-term value.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-007",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Competition is always more productive than cooperation in the workplace.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "The claim is obviously true in all cases.",
+            "Issues cannot be debated meaningfully.",
+            "Cooperation enables knowledge sharing and reduces duplicated effort."
+        ],
+        "correct_answer": "Cooperation enables knowledge sharing and reduces duplicated effort.",
+        "explanation": "Healthy workplaces blend competition and collaboration depending on context.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-008",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Leaders should never admit uncertainty to those they lead.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "The claim is obviously true in all cases.",
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully.",
+            "Acknowledging uncertainty can build trust and improve decision quality."
+        ],
+        "correct_answer": "Acknowledging uncertainty can build trust and improve decision quality.",
+        "explanation": "Transparency about limits of knowledge differs from expressing doubt about goals.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-009",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"The best way to help developing nations is through unrestricted foreign investment.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "The claim is obviously true in all cases.",
+            "Investment without safeguards can exploit labor and weaken local institutions.",
+            "Issues cannot be debated meaningfully.",
+            "Only experts may discuss this topic."
+        ],
+        "correct_answer": "Investment without safeguards can exploit labor and weaken local institutions.",
+        "explanation": "Aid and regulated investment may better align with long-term development.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-010",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"History has little to teach us about solving contemporary problems.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully.",
+            "The claim is obviously true in all cases.",
+            "Historical patterns reveal recurring causes of conflict and reform."
+        ],
+        "correct_answer": "Historical patterns reveal recurring causes of conflict and reform.",
+        "explanation": "Past cases offer analogies and warnings even when contexts differ.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-011",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Public figures should be held to higher moral standards than private citizens.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Public roles amplify the impact of misconduct, justifying higher scrutiny.",
+            "The claim is obviously true in all cases.",
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully."
+        ],
+        "correct_answer": "Public roles amplify the impact of misconduct, justifying higher scrutiny.",
+        "explanation": "Unrealistic standards may discourage qualified people from public service.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-012",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"Censorship can be justified when it protects social harmony.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully.",
+            "The claim is obviously true in all cases.",
+            "Suppressing speech can silence dissent and entrench power."
+        ],
+        "correct_answer": "Suppressing speech can silence dissent and entrench power.",
+        "explanation": "Harm-based limits differ from broad censorship for harmony.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-issue-013",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Issue prompt: \"The primary goal of education should be job preparation.\" What is the strongest critique of this claim?",
+        "answer_choices": [
+            "Education also cultivates citizenship, ethics, and lifelong learning.",
+            "The claim is obviously true in all cases.",
+            "Only experts may discuss this topic.",
+            "Issues cannot be debated meaningfully."
+        ],
+        "correct_answer": "Education also cultivates citizenship, ethics, and lifelong learning.",
+        "explanation": "Vocational and liberal aims need not be mutually exclusive.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_issue",
+        "question_type": "awa_issue",
+        "concepts_tested": [
+            "awa",
+            "issue_task",
+            "critique"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-001",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Our café's revenue rose 20% after we added vegan options, so vegan options caused the increase.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "Arguments cannot be evaluated logically.",
+            "All surveys are perfectly representative.",
+            "The conclusion must be true regardless of evidence.",
+            "Other factors such as seasonal traffic or marketing could explain the rise."
+        ],
+        "correct_answer": "Other factors such as seasonal traffic or marketing could explain the rise.",
+        "explanation": "Correlation after a menu change does not prove causation.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-002",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Since 90% of surveyed customers said they were satisfied, our service quality is excellent.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "Survey respondents may not represent all customers or may bias toward polite answers.",
+            "All surveys are perfectly representative.",
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically."
+        ],
+        "correct_answer": "Survey respondents may not represent all customers or may bias toward polite answers.",
+        "explanation": "Sample selection and response bias weaken the generalization.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-003",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"The city should build a new stadium because it will create jobs.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "All surveys are perfectly representative.",
+            "Temporary construction jobs may not offset public subsidies or opportunity costs.",
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically."
+        ],
+        "correct_answer": "Temporary construction jobs may not offset public subsidies or opportunity costs.",
+        "explanation": "Job creation claims ignore duration, cost, and alternative investments.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-004",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Reading scores improved after we reduced class sizes, proving smaller classes always raise achievement.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "Arguments cannot be evaluated logically.",
+            "The conclusion must be true regardless of evidence.",
+            "Other reforms may have occurred simultaneously; gains may not generalize.",
+            "All surveys are perfectly representative."
+        ],
+        "correct_answer": "Other reforms may have occurred simultaneously; gains may not generalize.",
+        "explanation": "Single-district improvement does not establish universal causation.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-005",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"We should adopt software X because our competitor uses it and remains profitable.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically.",
+            "The competitor's success may stem from many factors unrelated to software X.",
+            "All surveys are perfectly representative."
+        ],
+        "correct_answer": "The competitor's success may stem from many factors unrelated to software X.",
+        "explanation": "Competitor practice alone is not evidence of causal benefit.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-006",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"The hospital infection rate fell after hand-sanitizer dispensers were installed, so dispensers alone eliminated infections.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically.",
+            "All surveys are perfectly representative.",
+            "Concurrent hygiene campaigns or seasonal effects could contribute."
+        ],
+        "correct_answer": "Concurrent hygiene campaigns or seasonal effects could contribute.",
+        "explanation": "Attributing all improvement to one intervention ignores confounds.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-007",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Local wildlife declined after a wind farm opened; therefore wind farms destroy ecosystems.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "All surveys are perfectly representative.",
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically.",
+            "Habitat loss, climate, or other development may explain wildlife trends."
+        ],
+        "correct_answer": "Habitat loss, climate, or other development may explain wildlife trends.",
+        "explanation": "Temporal association without controlling variables is weak evidence.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-008",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Employee morale surveys show high satisfaction, so turnover will remain low.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "All surveys are perfectly representative.",
+            "Satisfaction surveys may not predict behavior during economic shifts.",
+            "Arguments cannot be evaluated logically.",
+            "The conclusion must be true regardless of evidence."
+        ],
+        "correct_answer": "Satisfaction surveys may not predict behavior during economic shifts.",
+        "explanation": "Stated morale does not guarantee retention.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-009",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"The town's crime rate dropped after more streetlights were added, so lighting is the best crime policy.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "Policing changes or demographic shifts may coincide with lighting upgrades.",
+            "All surveys are perfectly representative.",
+            "The conclusion must be true regardless of evidence.",
+            "Arguments cannot be evaluated logically."
+        ],
+        "correct_answer": "Policing changes or demographic shifts may coincide with lighting upgrades.",
+        "explanation": "Multiple policies often change together.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-010",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Online course completion rates exceed 80%, proving online instruction is superior to in-person teaching.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "All surveys are perfectly representative.",
+            "The conclusion must be true regardless of evidence.",
+            "Completion is not the same as learning; populations and courses differ.",
+            "Arguments cannot be evaluated logically."
+        ],
+        "correct_answer": "Completion is not the same as learning; populations and courses differ.",
+        "explanation": "Metric choice and selection effects undermine the comparison.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-011",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Our product's market share grew in regions where we advertised, so advertising alone drove growth.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "All surveys are perfectly representative.",
+            "Arguments cannot be evaluated logically.",
+            "The conclusion must be true regardless of evidence.",
+            "Pricing, distribution, or competitor errors may explain regional gains."
+        ],
+        "correct_answer": "Pricing, distribution, or competitor errors may explain regional gains.",
+        "explanation": "Regional correlation does not isolate advertising effects.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    },
+    {
+        "id": "gre-foundation-awa-arg-012",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "prompt": "Argument prompt: \"Patient recovery times shortened after a new protocol was introduced, so the protocol should be mandatory nationwide.\" What is the strongest objection to this argument?",
+        "answer_choices": [
+            "The conclusion must be true regardless of evidence.",
+            "The pilot hospital may differ from others; results may not replicate.",
+            "All surveys are perfectly representative.",
+            "Arguments cannot be evaluated logically."
+        ],
+        "correct_answer": "The pilot hospital may differ from others; results may not replicate.",
+        "explanation": "Single-site success requires broader validation.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "analyze_argument",
+        "question_type": "awa_argument",
+        "concepts_tested": [
+            "awa",
+            "argument_task",
+            "logical_flaw"
+        ],
+        "estimated_time_seconds": 1800
+    }
+]

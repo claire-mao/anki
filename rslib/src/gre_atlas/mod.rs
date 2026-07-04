@@ -21,6 +21,9 @@ pub(crate) mod signals;
 pub mod storage;
 mod study_plan;
 mod sync;
+#[cfg(test)]
+mod sync_parity;
+pub mod sync_transport;
 mod topic_details;
 mod topic_insights;
 

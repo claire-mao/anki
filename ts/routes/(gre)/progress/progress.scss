@@ -4,39 +4,88 @@
     gap: var(--gre-section-gap);
 }
 
-.progress-kpi-row {
-    display: grid;
-    gap: var(--gre-space-3);
+.progress-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-4);
 }
 
-.progress-predictions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--gre-space-3);
+.progress-group {
+    padding: var(--gre-card-padding);
+    border-radius: var(--gre-radius-lg);
+    border: 1px solid var(--border);
+    background: var(--canvas);
 }
 
-.progress-calibration-header {
+.progress-group .gre-section-title {
+    margin: 0 0 var(--gre-space-3);
+}
+
+.progress-group-empty {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    max-width: 34rem;
+}
+
+.progress-horizons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-1);
+    margin-bottom: var(--gre-space-3);
+    opacity: 0.82;
+}
+
+.progress-horizons :global(.gre-ds-chip) {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    min-height: 1.75rem;
+    border-color: color-mix(in srgb, var(--border) 88%, transparent);
+    color: var(--fg-subtle);
+}
+
+.progress-horizons :global(.gre-ds-chip-active) {
+    opacity: 1;
+}
+
+.progress-performance-chart {
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-performance-chart :global(.progress-chart-card) {
+    margin: 0;
+}
+
+.progress-performance-chart :global(.progress-chart-tall .progress-chart) {
+    max-height: 22rem;
+    min-height: 16rem;
+}
+
+.progress-next-action {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--gre-space-2);
+    gap: var(--gre-space-3) var(--gre-space-4);
+    padding: var(--gre-card-padding);
+    border-radius: var(--gre-radius-lg);
+    border: 1px solid color-mix(in srgb, var(--gre-accent) 15%, var(--border));
+    background: var(--gre-accent-soft);
+    margin-bottom: var(--gre-space-4);
 }
 
-.progress-calibration-header .progress-section-label {
-    margin: 0;
+.progress-next-action-copy {
+    min-width: 0;
 }
 
-.progress-chart-change {
-    grid-column: 1 / -1;
-}
-
-.progress-prediction-panel {
-    padding: var(--gre-card-padding-compact);
-    border: none;
-    border-radius: var(--gre-radius-md);
-    background: var(--gre-surface-bg-muted);
-    box-shadow: var(--gre-shadow-sm);
+.progress-next-action-hint {
+    margin: var(--gre-space-1) 0 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    max-width: 34rem;
 }
 
 .progress-charts {
@@ -44,19 +93,46 @@
     gap: var(--gre-space-3);
 }
 
-.progress-chart-wide {
-    grid-column: 1 / -1;
+.progress-charts-advanced {
+    grid-template-columns: 1fr;
+    gap: var(--gre-space-4);
 }
 
-.progress-section-label {
-    margin: 0;
-    font-size: var(--gre-font-h3);
-    font-weight: var(--gre-weight-h3);
-    line-height: var(--gre-lh-h3);
+.progress-charts-advanced :global(.progress-chart-extra-tall .progress-chart) {
+    max-height: 30rem;
+    min-height: 22rem;
+}
+
+.progress-charts-advanced :global(.progress-chart-card) {
+    --gre-chart-font-tick: 11px;
+    --gre-chart-font-caption: 11px;
+    --gre-chart-font-label: 14px;
+    --gre-chart-font-empty: 12px;
+}
+
+.progress-advanced {
+    padding: var(--gre-space-3) var(--gre-space-4);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+}
+
+.progress-advanced-summary {
+    cursor: pointer;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
     color: var(--fg-subtle);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    animation: gre-fade-in var(--gre-motion-enter) ease both;
+    list-style: none;
+}
+
+.progress-advanced-summary::-webkit-details-marker {
+    display: none;
+}
+
+.progress-advanced-body {
+    margin: var(--gre-space-2) 0 var(--gre-space-3);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
 }
 
 @media (prefers-reduced-motion: reduce) {

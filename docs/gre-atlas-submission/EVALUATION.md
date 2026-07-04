@@ -148,8 +148,8 @@ Thresholds in eval reports should match:
 
 | Model                                             | Doc                                                              |
 | ------------------------------------------------- | ---------------------------------------------------------------- |
-| Memory abstention (FSRS, 200 cards, 50% coverage) | [../models/memory-model.md](../models/memory-model.md)           |
-| Performance abstention (20 attempts)              | [../models/performance-model.md](../models/performance-model.md) |
+| Memory abstention (FSRS, 20 cards, 50% coverage) | [../models/memory-model.md](../models/memory-model.md)           |
+| Performance abstention (50 attempts)              | [../models/performance-model.md](../models/performance-model.md) |
 | Readiness composite (45/45/10)                    | [../models/readiness-model.md](../models/readiness-model.md)     |
 
 ## 6. What eval does _not_ measure

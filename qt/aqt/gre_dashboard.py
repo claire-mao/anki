@@ -38,6 +38,9 @@ class GreDashboard:
 
     def refresh(self) -> None:
         self._refresh_needed = False
+        # Practice keeps session progress client-side; a full reload resets the queue.
+        if self._page == "practice":
+            return
         self.web.load_sveltekit_page(self._page)
         self._hide_anki_chrome()
         self.mw.web.setFocus()

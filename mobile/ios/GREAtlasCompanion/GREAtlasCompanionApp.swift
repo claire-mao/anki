@@ -6,11 +6,15 @@ import SwiftUI
 @main
 struct GREAtlasCompanionApp: App {
     @StateObject private var engine = AnkiMobileEngine()
+    @StateObject private var tabRouter = GreTabRouter()
+    @StateObject private var syncSession = GREAtlasSyncSession()
 
     var body: some Scene {
         WindowGroup {
             GreNavigationShell()
                 .environmentObject(engine)
+                .environmentObject(tabRouter)
+                .environmentObject(syncSession)
         }
     }
 }

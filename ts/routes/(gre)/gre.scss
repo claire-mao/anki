@@ -1,13 +1,25 @@
 @use "design-system/index";
+@use "design-system/learning-theme";
+@use "design-system/motion" as gre-motion;
 @import "ui/indicators.scss";
 @import "ui/empty-state.scss";
 
 .gre-shell {
+    @include learning-theme.gre-learning-theme;
     min-height: 100vh;
-    background:
-        radial-gradient(circle at top right, rgb(from var(--fg-link) r g b / 0.06), transparent 42%),
-        var(--canvas);
+    background: var(--canvas);
     color: var(--fg);
+}
+
+.gre-shell .btn-primary {
+    --bs-btn-bg: var(--gre-accent);
+    --bs-btn-border-color: var(--gre-accent);
+    --bs-btn-hover-bg: var(--gre-accent-hover);
+    --bs-btn-hover-border-color: var(--gre-accent-hover);
+    --bs-btn-active-bg: var(--gre-accent-hover);
+    --bs-btn-active-border-color: var(--gre-accent-hover);
+    --bs-btn-disabled-bg: var(--gre-accent);
+    --bs-btn-disabled-border-color: var(--gre-accent);
 }
 
 .gre-header {
@@ -31,8 +43,8 @@
     gap: var(--gre-space-2);
     font-size: var(--gre-font-brand);
     font-weight: var(--gre-weight-hero);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-transform: none;
 }
 
 .brand-mark {
@@ -41,7 +53,7 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: var(--gre-radius-sm);
-    background: var(--fg-link);
+    background: var(--gre-accent, var(--fg-link));
     color: var(--canvas);
     font-size: 0.7rem;
     font-weight: var(--gre-weight-hero);
@@ -86,8 +98,24 @@
 }
 
 .nav-link-active {
-    color: var(--fg-link);
-    background: color-mix(in srgb, var(--fg-link) 12%, var(--canvas));
+    color: var(--gre-accent);
+    background: var(--gre-accent-soft);
+}
+
+.gre-nav-divider {
+    width: 1px;
+    align-self: stretch;
+    margin: var(--gre-space-1) var(--gre-space-1);
+    background: color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.nav-link-utility {
+    opacity: 0.72;
+}
+
+.nav-link-utility:hover,
+.nav-link-utility.nav-link-active {
+    opacity: 1;
 }
 
 .nav-link:active {
@@ -106,6 +134,22 @@
 
 .gre-page-loading {
     animation: none;
+}
+
+.gre-shell :where(
+    .topic-measurement,
+    .progress-advanced,
+    .study-plan-recommendations,
+    .study-plan-coverage,
+    .gre-evidence-card,
+    .methodology-card,
+    .settings-advanced,
+    .readiness-calibration,
+    .gre-prediction-details,
+    .gre-calibration-details,
+    .gre-metric-change
+) {
+    @include gre-motion.gre-disclosure-panel;
 }
 
 @keyframes gre-page-enter {
@@ -273,5 +317,9 @@
     .nav-link {
         animation: none !important;
         transition: none !important;
+    }
+
+    .nav-link:active {
+        transform: none;
     }
 }

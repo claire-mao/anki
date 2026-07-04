@@ -6,10 +6,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { navigating, page } from "$app/stores";
     import { fade } from "svelte/transition";
 
+    import { greMotionDuration } from "./motion";
     import GreIcon from "./GreIcon.svelte";
     import {
         greNavHref,
-        greNavItems,
+        grePrimaryNavItems,
+        greUtilityNavItems,
         isGreNavActive,
         runGreNavAction,
         greNavAction,
@@ -22,18 +24,41 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     function onNavClick(item: GreNavItem, event: MouseEvent): void {
         runGreNavAction(greNavAction(item), event);
     }
+
+    $: pageFadeIn = greMotionDuration(160);
+    $: pageFadeOut = greMotionDuration(120);
+    $: skeletonFade = greMotionDuration(120);
 </script>
+
+<svelte:head>
+    <title>GRE Atlas</title>
+</svelte:head>
 
 <div class="gre-shell">
     <header class="gre-header">
         <div class="brand">
-            <span class="brand-mark">G</span>
-            GRE
+            <span class="brand-mark"><GreIcon name="compass" size="sm" /></span>
+            GRE Atlas
         </div>
         <nav class="gre-nav" aria-label="GRE sections">
-            {#each greNavItems as item}
+            {#each grePrimaryNavItems as item}
                 <a
                     class="nav-link"
+                    class:nav-link-active={isGreNavActive(item, $page.url.pathname)}
+                    href={greNavHref(item)}
+                    aria-current={isGreNavActive(item, $page.url.pathname)
+                        ? "page"
+                        : undefined}
+                    on:click={(event) => onNavClick(item, event)}
+                >
+                    <GreIcon name={item.icon} size="sm" />
+                    <span class="nav-link-label">{item.label}</span>
+                </a>
+            {/each}
+            <span class="gre-nav-divider" aria-hidden="true"></span>
+            {#each greUtilityNavItems as item}
+                <a
+                    class="nav-link nav-link-utility"
                     class:nav-link-active={isGreNavActive(item, $page.url.pathname)}
                     href={greNavHref(item)}
                     aria-current={isGreNavActive(item, $page.url.pathname)
@@ -51,8 +76,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         {#if $navigating}
             <div
                 class="gre-page gre-page-loading"
-                in:fade={{ duration: 120 }}
-                out:fade={{ duration: 100 }}
+                in:fade={{ duration: skeletonFade }}
+                out:fade={{ duration: pageFadeOut }}
             >
                 <GrePageSkeleton />
             </div>
@@ -60,8 +85,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {#key $page.url.pathname}
                 <div
                     class="gre-page"
-                    in:fade={{ duration: 180 }}
-                    out:fade={{ duration: 120 }}
+                    in:fade={{ duration: pageFadeIn }}
+                    out:fade={{ duration: pageFadeOut }}
                 >
                     <slot />
                 </div>

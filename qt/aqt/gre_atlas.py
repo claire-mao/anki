@@ -30,6 +30,12 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
     if cmd == "greStartReview":
         start_gre_review(mw)
         return True
+    if cmd == "greBrowseGreDeck":
+        browse_gre_deck(mw)
+        return True
+    if cmd == "greOpenStudy":
+        open_gre_page(mw, "review")
+        return True
     if cmd == "greOpenDashboard":
         open_gre_page(mw, "home")
         return True
@@ -40,7 +46,7 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
         open_gre_page(mw, "practice")
         return True
     if cmd == "greOpenStudyPlan":
-        open_gre_atlas(mw, path="study-plan")
+        open_gre_page(mw, "study-plan")
         return True
     if cmd == "greOpenReadiness":
         open_gre_atlas(mw, path="readiness")
@@ -50,6 +56,9 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
         return True
     if cmd == "greOpenSettings":
         open_gre_page(mw, "settings")
+        return True
+    if cmd == "greOpenMethodology":
+        open_gre_page(mw, "methodology")
         return True
     if cmd == "greOpenDeckOptions":
         _gre_open_deck_options(mw)
@@ -63,6 +72,9 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
     if cmd == "greSyncLogout":
         _gre_sync_logout(mw)
         return True
+    if cmd == "grePerformGreAtlasSync":
+        _gre_perform_gre_atlas_sync(mw)
+        return True
     return False
 
 
@@ -72,7 +84,7 @@ def _gre_open_deck_options(mw: aqt.main.AnkiQt) -> None:
     deck_id = ensure_gre_study_deck(mw)
     if deck_id is None:
         showWarning(
-            f'Create a deck named "{GRE_DECK_NAME}" with your GRE flashcards first.',
+            "GRE Atlas couldn't load your study deck. Open Study to try again.",
             parent=mw,
         )
         return
@@ -101,10 +113,45 @@ def _gre_sync_logout(mw: aqt.main.AnkiQt) -> None:
     mw.col.media.force_resync()
 
 
+def _gre_perform_gre_atlas_sync(mw: aqt.main.AnkiQt) -> None:
+    from anki.gre_atlas import perform_gre_atlas_sync
+
+    auth = mw.pm.sync_auth()
+    if auth is None:
+        tooltip("Sign in to sync GRE Atlas practice data.")
+        return
+    try:
+        response = perform_gre_atlas_sync(
+            mw.col,
+            hkey=auth.hkey,
+            endpoint=auth.endpoint,
+            io_timeout_secs=auth.io_timeout_secs,
+        )
+    except Exception as err:
+        showWarning(f"GRE Atlas sync failed: {err}", parent=mw)
+        return
+    if response.success:
+        tooltip(
+            f"GRE Atlas synced ({response.applied_count} merged, "
+            f"{response.uploaded_count} uploaded)."
+        )
+    elif response.message:
+        showWarning(response.message, parent=mw)
+    else:
+        tooltip("GRE Atlas sync skipped.")
+
+
 def ensure_gre_study_deck(mw: aqt.main.AnkiQt) -> DeckId | None:
     deck_id = mw.col.decks.id(GRE_DECK_NAME)
     if deck_id is None:
         deck_id = mw.col.decks.id(LEGACY_GRE_DECK_NAME)
+    if deck_id is None:
+        from anki.gre_atlas import prepare_demo_collection
+
+        prepare_demo_collection(mw.col)
+        deck_id = mw.col.decks.id(GRE_DECK_NAME)
+        if deck_id is None:
+            deck_id = mw.col.decks.id(LEGACY_GRE_DECK_NAME)
     if deck_id is None:
         return None
     deck_id = DeckId(deck_id)
@@ -117,7 +164,7 @@ def start_gre_review(mw: aqt.main.AnkiQt) -> None:
     deck_id = ensure_gre_study_deck(mw)
     if deck_id is None:
         showWarning(
-            f'Create a deck named "{GRE_DECK_NAME}" with your GRE flashcards first.',
+            "GRE Atlas couldn't load your study deck. Try opening Study again.",
             parent=mw,
         )
         return
@@ -128,6 +175,22 @@ def start_gre_review(mw: aqt.main.AnkiQt) -> None:
     if mw.state != "review":
         tooltip(tr.studying_no_cards_are_due_yet())
         mw.gre_review_pending_dashboard_refresh = False  # type: ignore[attr-defined]
+
+
+def browse_gre_deck(mw: aqt.main.AnkiQt) -> None:
+    deck_id = ensure_gre_study_deck(mw)
+    if deck_id is None:
+        showWarning(
+            "GRE Atlas couldn't open your study deck. Try opening Study first.",
+            parent=mw,
+        )
+        return
+
+    from anki.collection import SearchNode
+
+    deck_name = mw.col.decks.name_if_exists(deck_id) or GRE_DECK_NAME
+    browser = aqt.dialogs.open("Browser", mw)
+    browser.search_for_terms(SearchNode(deck=deck_name))
 
 
 def refresh_gre_dashboard(mw: aqt.main.AnkiQt) -> None:
@@ -146,6 +209,7 @@ def _on_state_did_change(new_state: str, old_state: str) -> None:
         return
     mw.gre_review_pending_dashboard_refresh = False  # type: ignore[attr-defined]
     refresh_gre_dashboard(mw)
+    _gre_perform_gre_atlas_sync(mw)
 
 
 def _register_hooks() -> None:

@@ -11,7 +11,6 @@ import type {
     ReadinessScore,
 } from "@generated/anki/brainlift_pb";
 
-import { presentCalibration } from "./calibration-presentation";
 import {
     coverageAwareReadinessUnlocked,
     coverageBlocksReadiness,
@@ -21,8 +20,10 @@ import {
 import { buildReadinessExplainability } from "./prediction-explainability";
 import type { PredictionAction } from "./prediction-presentation";
 import { readinessNextAction } from "./prediction-presentation";
+import { studyPlanNavAction } from "./gre-navigation";
 import { formatGreScoreRange, formatPercent, formatRange, formatRatio } from "./score-format";
 import { capitalizeLabel, estimatedGreHero, memoryHero, performanceHero, unmetRequirements } from "./summary-metrics";
+import type { GreMetricStructuredValue } from "./ui/metric-value";
 
 export type ReadinessEvidenceLine = {
     label: string;
@@ -36,15 +37,15 @@ export type ReadinessPagePresentation = {
     unavailableDetails: string[];
     readinessScore: string | null;
     estimatedGre: string;
+    estimatedGreAvailable: boolean;
     estimatedGreDetail: string | null;
     confidenceInterval: string;
     confidenceLevel: string;
     evidenceUsed: ReadinessEvidenceLine[];
     evidenceMissing: ReadinessEvidenceLine[];
-    coverage: string;
-    memory: string;
-    performance: string;
-    calibrationQuality: string;
+    coverage: GreMetricStructuredValue;
+    memory: GreMetricStructuredValue;
+    performance: GreMetricStructuredValue;
     lastUpdated: string;
     nextAction: PredictionAction;
 };
@@ -67,7 +68,6 @@ function estimatedGrePresentation(
         return {
             value: "Unavailable",
             detail: estimate.abstainReason
-                || estimate.detail
                 || "Not enough evidence for a GRE score yet.",
         };
     }
@@ -105,39 +105,35 @@ function confidenceLevelPresentation(
     return "Medium";
 }
 
-function coveragePresentation(coverage: DashboardCoverage): string {
+function coveragePresentation(coverage: DashboardCoverage): GreMetricStructuredValue {
     const summary = presentCoverageSummary(coverage);
-    const sectionParts = summary.sections.map((section) => `${section.label} ${section.percent}%`);
-    const base = `${summary.totalPercent}% weighted`;
-    if (sectionParts.length === 0) {
-        return base;
-    }
-    return `${base} · ${sectionParts.join(" · ")}`;
+    const sectionDetails = summary.sections.map(
+        (section) => `${section.label} ${section.percent}%`,
+    );
+    return {
+        headline: `${summary.totalPercent}% weighted`,
+        details: sectionDetails.length > 0 ? sectionDetails : undefined,
+        detailLayout: sectionDetails.length > 0 ? "chips" : undefined,
+    };
 }
 
-function memoryPresentation(memory: MemoryScore): string {
+function memoryPresentation(memory: MemoryScore): GreMetricStructuredValue {
     const score = memoryHero(memory, formatPercent);
-    const parts = [score !== "—" ? `${score} retention` : "Insufficient memory evidence"];
-    parts.push(`${memory.studiedCards} cards studied`);
-    parts.push(`${formatRatio(memory.coverageRatio)} catalog coverage`);
-    return parts.join(" · ");
+    return {
+        headline: score !== "—" ? `${score} retention` : "Insufficient memory evidence",
+        details: [
+            `${memory.studiedCards} cards studied`,
+            `${formatRatio(memory.coverageRatio)} catalog coverage`,
+        ],
+    };
 }
 
-function performancePresentation(performance: PerformanceScore): string {
+function performancePresentation(performance: PerformanceScore): GreMetricStructuredValue {
     const score = performanceHero(performance, formatPercent);
-    const parts = [
-        score !== "—" ? `${score} accuracy` : "Insufficient practice evidence",
-        `${performance.attemptCount} attempts`,
-    ];
-    return parts.join(" · ");
-}
-
-function calibrationQualityPresentation(
-    readiness: ReadinessScore,
-    calibration: ReadinessCalibrationStats,
-): string {
-    const model = presentCalibration(readiness, calibration);
-    return `${model.predictionQuality} · ${model.predictionQualityDetail}`;
+    return {
+        headline: score !== "—" ? `${score} accuracy` : "Insufficient practice evidence",
+        details: [`${performance.attemptCount} attempts`],
+    };
 }
 
 function unavailableReason(
@@ -238,20 +234,32 @@ function evidenceMissingLines(
         });
     }
 
+    // Pillars above already surface these gates; skip the requirement duplicates.
+    const pillarRequirementIds = new Set([
+        "studied_cards",
+        "practice_attempts",
+        "topic_coverage",
+    ]);
     for (const req of unmetRequirements(readiness.abstentionRequirements)) {
+        if (pillarRequirementIds.has(req.id)) {
+            continue;
+        }
         lines.push({
             label: req.label,
             detail: req.nextStep || req.status,
         });
     }
 
-    const seen = new Set<string>();
+    // Collapse duplicate labels and identical reasons (e.g. repeated coverage text).
+    const seenKeys = new Set<string>();
+    const seenDetails = new Set<string>();
     return lines.filter((line) => {
         const key = `${line.label}:${line.detail}`;
-        if (seen.has(key)) {
+        if (seenKeys.has(key) || seenDetails.has(line.detail)) {
             return false;
         }
-        seen.add(key);
+        seenKeys.add(key);
+        seenDetails.add(line.detail);
         return true;
     });
 }
@@ -264,9 +272,9 @@ function nextActionForPage(
     if (coverageBlocksReadiness(coverage)) {
         const recommendation = coverage.uncoveredTopics[0]?.studyLabel;
         if (recommendation) {
-            return { label: recommendation, href: "/study-plan" };
+            return studyPlanNavAction(recommendation);
         }
-        return { label: "Expand GRE coverage", href: "/study-plan" };
+        return studyPlanNavAction("Expand GRE coverage");
     }
     return readinessNextAction(readiness);
 }
@@ -283,6 +291,7 @@ export function presentReadinessPage(input: {
 }): ReadinessPagePresentation {
     const available = coverageAwareReadinessUnlocked(input.readiness, input.coverage);
     const unavailable = unavailableReason(input.readiness, input.coverage);
+    const estimatedGreAvailable = available && input.estimatedGre.combinedScore !== undefined;
     const estimated = estimatedGrePresentation(input.estimatedGre, available);
 
     return {
@@ -294,6 +303,7 @@ export function presentReadinessPage(input: {
             ? formatPercent(input.readiness.projectedScore)
             : null,
         estimatedGre: estimated.value,
+        estimatedGreAvailable,
         estimatedGreDetail: estimated.detail,
         confidenceInterval: confidenceIntervalPresentation(available, input.readiness),
         confidenceLevel: confidenceLevelPresentation(available, input.readiness),
@@ -317,7 +327,6 @@ export function presentReadinessPage(input: {
         coverage: coveragePresentation(input.coverage),
         memory: memoryPresentation(input.memory),
         performance: performancePresentation(input.performance),
-        calibrationQuality: calibrationQualityPresentation(input.readiness, input.calibration),
         lastUpdated: formatTimestampMillis(
             input.readiness.lastUpdatedMillis || input.computedAtMillis,
         ),

@@ -5,16 +5,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import type {
         GreStudyStatusResponse,
+        PerformanceAttempt,
         StudyPlanDailyTask,
     } from "@generated/anki/brainlift_pb";
 
     import {
+        type DailyMissionProgressContext,
         missionAction,
         missionDescription,
         missionIcon,
         missionProgress,
         missionTitle,
         runMissionAction,
+        startOfLocalDaySecs,
     } from "./daily-mission";
     import { runGreNavAction } from "./gre-navigation";
     import { presentDailyFocusTask } from "./recommendation-presentation";
@@ -25,12 +28,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     export let task: StudyPlanDailyTask;
     export let studyStatus: GreStudyStatusResponse | undefined = undefined;
+    export let recentAttempts: PerformanceAttempt[] | undefined = undefined;
 
-    $: focusRecommendation = presentDailyFocusTask(task);
+    $: progressContext = {
+        studyStatus,
+        recentAttempts,
+        dayStartSecs: startOfLocalDaySecs(),
+    } satisfies DailyMissionProgressContext;
+    $: focusRecommendation = presentDailyFocusTask(task, progressContext);
     $: icon = missionIcon(task);
     $: title = missionTitle(task);
     $: description = missionDescription(task);
-    $: progress = missionProgress(task, studyStatus);
+    $: progress = missionProgress(task, progressContext);
     $: action = missionAction(task);
 
     function onAction(): void {
@@ -57,13 +66,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </div>
 
         <div class="daily-mission-progress">
+            <div class="daily-mission-progress-meta">
+                <span class="daily-mission-progress-label">{progress.label}</span>
+                {#if progress.detail}
+                    <span class="daily-mission-progress-detail">{progress.detail}</span>
+                {/if}
+            </div>
             {#if progress.showBar !== false}
                 <div
                     class="gre-ds-progress-track daily-mission-progress-track"
                     role="progressbar"
                     aria-valuemin="0"
-                    aria-valuemax="100"
-                    aria-valuenow={progress.value}
+                    aria-valuemax={progress.target ?? 100}
+                    aria-valuenow={progress.current ?? progress.value}
                     aria-label="{title} progress"
                 >
                     <div
@@ -72,12 +87,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     ></div>
                 </div>
             {/if}
-            <div class="daily-mission-progress-meta">
-                <span class="daily-mission-progress-label">{progress.label}</span>
-                {#if progress.detail}
-                    <span class="daily-mission-progress-detail">{progress.detail}</span>
-                {/if}
-            </div>
         </div>
 
         {#if action.bridge}

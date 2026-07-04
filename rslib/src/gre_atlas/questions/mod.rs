@@ -2,17 +2,42 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 pub mod ai_gen;
+pub mod bank;
+pub mod eval_pipeline;
+pub mod explanation;
+pub mod foundation;
+pub mod generator;
+pub mod llm;
+pub mod metadata;
 pub mod source;
+pub mod variants;
 
+pub use bank::ensure_exam_length_bank;
+pub use bank::exam_bank_question_count;
+pub use bank::purge_invalid_questions;
+pub use bank::target_count_for_topic;
+
+use anki_proto::brainlift::AnswerChoiceExplanation;
+use anki_proto::brainlift::AnswerExplanation;
+use anki_proto::brainlift::ExplainAnswerResponse;
 use anki_proto::brainlift::GenerateQuestionResponse;
 use anki_proto::brainlift::Question;
 use anki_proto::brainlift::QuestionAttribution;
 
 use crate::collection::Collection;
+use crate::error::OrInvalid;
 use crate::error::Result;
 use crate::gre_atlas::gre_atlas_storage;
-use crate::gre_atlas::questions::ai_gen::generate_question_for_topic;
-use crate::gre_atlas::questions::ai_gen::GenerationOutcome;
+use crate::gre_atlas::questions::ai_gen::load_gold_eval_set;
+use crate::gre_atlas::questions::eval_pipeline::normalize_stem;
+use crate::gre_atlas::questions::explanation::build_answer_explanation;
+use crate::gre_atlas::questions::explanation::AnswerExplanationData;
+use crate::gre_atlas::questions::generator::generate_with_fallback;
+use crate::gre_atlas::questions::generator::GeneratedQuestion;
+use crate::gre_atlas::questions::llm::GreAtlasAiConfig;
+use crate::gre_atlas::questions::llm::LlmClient;
+use crate::gre_atlas::questions::llm::OpenAiLlmClient;
+use crate::gre_atlas::questions::metadata::OFFLINE_TEMPLATE_NOTE;
 use crate::gre_atlas::storage::StoredQuestion;
 use crate::timestamp::TimestampSecs;
 
@@ -30,6 +55,10 @@ pub(crate) fn stored_question_to_proto(q: StoredQuestion) -> Question {
                 source_section,
                 generated_at_secs,
                 confidence,
+                provenance: q.provenance.clone().unwrap_or_default(),
+                model_version: q.model_version.clone().unwrap_or_default(),
+                evaluation_status: q.evaluation_status.clone().unwrap_or_default(),
+                source_document: q.source_document.clone().unwrap_or_default(),
             })
         }
         _ => None,
@@ -52,57 +81,165 @@ impl Collection {
         persist: bool,
     ) -> Result<GenerateQuestionResponse> {
         let now = TimestampSecs::now();
-        let outcome = generate_question_for_topic(topic_id, now);
-        match outcome {
-            GenerationOutcome::Accepted(draft) => {
-                if persist {
-                    let storage = gre_atlas_storage(self)?;
-                    storage.insert_generated_question(&draft)?;
-                }
-                Ok(GenerateQuestionResponse {
-                    accepted: true,
-                    confidence: draft.confidence,
-                    rejection_reason: String::new(),
-                    question: Some(stored_question_to_proto(StoredQuestion {
-                        id: draft.id.clone(),
-                        topic: draft.topic.clone(),
-                        section: draft.section.clone(),
-                        format: draft.format.clone(),
-                        stem: draft.stem.clone(),
-                        choices: draft.choices.clone(),
-                        correct_answer: draft.correct_answer.clone(),
-                        explanation: draft.explanation.clone(),
-                        difficulty: draft.difficulty,
-                        source_name: Some(draft.attribution.source_name.clone()),
-                        source_section: Some(draft.attribution.source_section.clone()),
-                        generated_at_secs: Some(draft.attribution.generated_at_secs),
-                        generation_confidence: Some(draft.confidence),
-                    })),
-                    attribution: Some(QuestionAttribution {
-                        source_name: draft.attribution.source_name,
-                        source_section: draft.attribution.source_section,
-                        generated_at_secs: draft.attribution.generated_at_secs,
-                        confidence: Some(draft.confidence),
-                    }),
-                })
+        // Optional, env-gated AI client. `None` (default) => deterministic path.
+        let ai_client = build_ai_client();
+        let gold = load_gold_eval_set()?;
+
+        // Existing normalized stems power the duplicate-rejection gate.
+        let existing_normalized: Vec<String> = {
+            let storage = gre_atlas_storage(self)?;
+            storage
+                .list_questions("", u32::MAX)?
+                .into_iter()
+                .map(|q| normalize_stem(&q.stem))
+                .collect()
+        };
+
+        let attempt = generate_with_fallback(
+            topic_id,
+            0,
+            now,
+            ai_client.as_deref(),
+            &gold,
+            &existing_normalized,
+        );
+
+        // Persist eval metrics + the approved question (if any).
+        {
+            let storage = gre_atlas_storage(self)?;
+            for record in &attempt.eval_records {
+                storage.record_generation_eval(record)?;
             }
-            GenerationOutcome::Rejected {
-                confidence,
-                reason,
-                attribution,
-            } => Ok(GenerateQuestionResponse {
+            if persist {
+                if let Some(question) = &attempt.question {
+                    storage.insert_generated_question_with_meta(&question.draft, &question.metadata)?;
+                }
+            }
+        }
+
+        match attempt.question {
+            Some(question) => Ok(generated_question_response(question)),
+            None => Ok(GenerateQuestionResponse {
                 accepted: false,
-                confidence,
-                rejection_reason: reason,
+                confidence: 0.0,
+                rejection_reason: attempt
+                    .fallback_reason
+                    .unwrap_or_else(|| format!("unable to generate a question for {topic_id}")),
                 question: None,
-                attribution: Some(QuestionAttribution {
-                    source_name: attribution.source_name,
-                    source_section: attribution.source_section,
-                    generated_at_secs: attribution.generated_at_secs,
-                    confidence: Some(confidence),
-                }),
+                attribution: None,
+                provenance: String::new(),
+                model_version: String::new(),
+                evaluation_status: String::new(),
+                provenance_note: String::new(),
             }),
         }
+    }
+
+    /// Build a post-answer explanation for a stored question. Uses the optional
+    /// LLM path when enabled/reachable, otherwise a deterministic templated
+    /// explanation. Never errors for AI-unavailability.
+    pub fn gre_atlas_explain_answer(
+        &mut self,
+        question_id: &str,
+        selected_answer: &str,
+    ) -> Result<ExplainAnswerResponse> {
+        let ai_client = build_ai_client();
+        let storage = gre_atlas_storage(self)?;
+        let question = storage
+            .get_question(question_id)?
+            .or_invalid("question not found")?;
+        let data = build_answer_explanation(&question, selected_answer, ai_client.as_deref());
+        Ok(ExplainAnswerResponse {
+            explanation: Some(answer_explanation_to_proto(data)),
+        })
+    }
+}
+
+/// Construct the optional LLM client from the environment. Returns `None`
+/// (feature disabled) unless `GRE_ATLAS_OPENAI_API_KEY` is set — this is what
+/// keeps the default build/test path fully offline.
+fn build_ai_client() -> Option<Box<dyn LlmClient>> {
+    GreAtlasAiConfig::from_env().map(|config| Box::new(OpenAiLlmClient::new(config)) as Box<dyn LlmClient>)
+}
+
+/// Map an approved generated question into the RPC response, including
+/// provenance metadata and the offline-template note when applicable.
+fn generated_question_response(question: GeneratedQuestion) -> GenerateQuestionResponse {
+    // `evaluation` is captured for auditing; the eval grounding score is already
+    // reflected in `draft.confidence` for AI items.
+    let GeneratedQuestion {
+        draft, metadata, ..
+    } = question;
+    let provenance = metadata.provenance.as_str().to_string();
+    let evaluation_status = metadata.evaluation_status.as_str().to_string();
+    let provenance_note = if metadata.provenance.is_ai() {
+        String::new()
+    } else {
+        OFFLINE_TEMPLATE_NOTE.to_string()
+    };
+
+    let stored = StoredQuestion {
+        id: draft.id.clone(),
+        topic: draft.topic.clone(),
+        section: draft.section.clone(),
+        format: draft.format.clone(),
+        stem: draft.stem.clone(),
+        choices: draft.choices.clone(),
+        correct_answer: draft.correct_answer.clone(),
+        explanation: draft.explanation.clone(),
+        difficulty: draft.difficulty,
+        source_name: Some(draft.attribution.source_name.clone()),
+        source_section: Some(draft.attribution.source_section.clone()),
+        generated_at_secs: Some(draft.attribution.generated_at_secs),
+        generation_confidence: Some(draft.confidence),
+        source_document: Some(metadata.source_document.clone()),
+        model_version: Some(metadata.model_version.clone()),
+        provenance: Some(provenance.clone()),
+        evaluation_status: Some(evaluation_status.clone()),
+    };
+
+    GenerateQuestionResponse {
+        accepted: true,
+        confidence: draft.confidence,
+        rejection_reason: String::new(),
+        question: Some(stored_question_to_proto(stored)),
+        attribution: Some(QuestionAttribution {
+            source_name: draft.attribution.source_name,
+            source_section: draft.attribution.source_section,
+            generated_at_secs: draft.attribution.generated_at_secs,
+            confidence: Some(draft.confidence),
+            provenance: provenance.clone(),
+            model_version: metadata.model_version.clone(),
+            evaluation_status: evaluation_status.clone(),
+            source_document: metadata.source_document.clone(),
+        }),
+        provenance,
+        model_version: metadata.model_version,
+        evaluation_status,
+        provenance_note,
+    }
+}
+
+/// Map the internal explanation data to the protobuf message.
+fn answer_explanation_to_proto(data: AnswerExplanationData) -> AnswerExplanation {
+    AnswerExplanation {
+        summary: data.summary,
+        choices: data
+            .choices
+            .into_iter()
+            .map(|c| AnswerChoiceExplanation {
+                choice: c.choice,
+                is_correct: c.is_correct,
+                reasoning: c.reasoning,
+            })
+            .collect(),
+        correct_answer: data.correct_answer,
+        citation_source_name: data.citation_source_name,
+        citation_source_section: data.citation_source_section,
+        citation_excerpt: data.citation_excerpt,
+        provenance: data.provenance.as_str().to_string(),
+        provenance_note: data.provenance_note,
+        model_version: data.model_version,
     }
 }
 
@@ -169,6 +306,74 @@ mod test {
             Some(attr.source_section.as_str())
         );
         assert_eq!(stored.generated_at_secs, Some(attr.generated_at_secs));
+        Ok(())
+    }
+
+    /// With no API key configured (the default), generation must silently use
+    /// the deterministic offline-template path and surface the exact note.
+    #[test]
+    fn generate_question_defaults_to_offline_template_when_ai_disabled() -> Result<()> {
+        use crate::collection::CollectionBuilder;
+
+        // Guard: this integration test asserts the offline path, which requires
+        // no API key. Skip the note assertion if a developer has one set.
+        let ai_enabled = GreAtlasAiConfig::from_env().is_some();
+
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        let mut col = CollectionBuilder::new(&col_path).build()?;
+        let resp = col.gre_atlas_generate_question("gre::quant::algebra::linear", true)?;
+
+        assert!(resp.accepted);
+        assert_eq!(resp.evaluation_status, "approved");
+        if !ai_enabled {
+            assert_eq!(resp.provenance, "offline_template");
+            assert_eq!(resp.provenance_note, OFFLINE_TEMPLATE_NOTE);
+            assert_eq!(resp.model_version, "template_v1");
+        }
+        Ok(())
+    }
+
+    /// Explanations must always be produced (never error) and, in the offline
+    /// default, carry per-choice reasoning, a citation, and the offline note.
+    #[test]
+    fn explain_answer_offline_has_citation_and_per_choice_reasoning() -> Result<()> {
+        use crate::collection::CollectionBuilder;
+
+        let ai_enabled = GreAtlasAiConfig::from_env().is_some();
+
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        let mut col = CollectionBuilder::new(&col_path).build()?;
+
+        let question = {
+            let storage = gre_atlas_storage(&mut col)?;
+            storage
+                .list_questions("gre::quant::algebra::linear", 1)?
+                .pop()
+                .unwrap()
+        };
+
+        let resp = col.gre_atlas_explain_answer(&question.id, &question.choices[0])?;
+        let explanation = resp.explanation.unwrap();
+
+        // One reasoning entry per presented choice; exactly one marked correct.
+        assert_eq!(explanation.choices.len(), question.choices.len());
+        assert_eq!(
+            explanation.choices.iter().filter(|c| c.is_correct).count(),
+            1
+        );
+        assert!(!explanation.summary.is_empty());
+        assert!(!explanation.correct_answer.is_empty());
+        assert!(!explanation.citation_source_name.is_empty());
+        if !ai_enabled {
+            assert_eq!(explanation.provenance, "offline_template");
+            assert_eq!(explanation.provenance_note, OFFLINE_TEMPLATE_NOTE);
+        }
         Ok(())
     }
 }

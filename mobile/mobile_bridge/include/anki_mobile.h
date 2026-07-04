@@ -114,6 +114,13 @@ int anki_mobile_brainlift_sync_push_json(
     uint8_t **out_bytes,
     size_t *out_len);
 
+int anki_mobile_brainlift_sync_perform_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
 void anki_mobile_bytes_free(uint8_t *ptr, size_t len);
 
 int anki_mobile_last_error(const char **out);

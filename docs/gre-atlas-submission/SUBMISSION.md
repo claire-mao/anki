@@ -20,7 +20,7 @@ just eval-gre-atlas-ai                                  # AI gold-set eval (read
 ## What to verify manually
 
 1. **Shell:** `just run` → main window loads GRE at `/home` (header: Dashboard, Study, Practice, Progress, Settings).
-2. **Abstention:** Fresh profile → Progress / Readiness show missing requirements (FSRS, 200 cards, 50% coverage, 20 practice attempts).
+2. **Abstention:** Fresh profile → Progress / Readiness show missing requirements (FSRS, 20 cards, 50% coverage, 50 practice attempts).
 3. **Practice isolation:** Answer one MCQ → performance count rises; revlog unchanged (`pylib/tests/test_gre_atlas.py::test_gre_atlas_record_attempt_does_not_modify_revlog`).
 4. **Study plan:** `/study-plan` shows ranked recommendations with factor explanations.
 5. **Modal entry:** Congrats screen → Practice / Dashboard opens GRE modal at `/dashboard`.

@@ -3,12 +3,14 @@
 
 import type {
     AbstentionRequirement,
+    DashboardCoverage,
     EstimatedGreScore,
     MemoryScore,
     PerformanceScore,
     ReadinessScore,
 } from "@generated/anki/brainlift_pb";
 
+import { coverageAwareReadinessUnlocked } from "./coverage-presentation";
 import { emptyStateTitle, sortRequirementsForProgress } from "./empty-states";
 
 export function capitalizeLabel(value: string): string {
@@ -53,6 +55,48 @@ export function estimatedGreHero(estimate: EstimatedGreScore): string {
         return String(Math.round(estimate.combinedScore));
     }
     return "—";
+}
+
+/** Dashboard hero gates both metrics on the same readiness unlock check. */
+export function dashboardHeroMetricsUnlocked(
+    readiness: ReadinessScore,
+    coverage?: DashboardCoverage | null,
+): boolean {
+    return coverageAwareReadinessUnlocked(readiness, coverage);
+}
+
+/** True when the dashboard hero may show a numeric GRE estimate. */
+export function dashboardHeroEstimatedGreAvailable(
+    estimate: EstimatedGreScore,
+    readiness: ReadinessScore,
+    coverage?: DashboardCoverage | null,
+): boolean {
+    return dashboardHeroMetricsUnlocked(readiness, coverage)
+        && estimate.combinedScore !== undefined;
+}
+
+export function dashboardHeroEstimatedGre(
+    estimate: EstimatedGreScore,
+    readiness: ReadinessScore,
+    coverage?: DashboardCoverage | null,
+): string {
+    if (!dashboardHeroEstimatedGreAvailable(estimate, readiness, coverage)) {
+        return "—";
+    }
+    return estimatedGreHero(estimate);
+}
+
+export function dashboardHeroEstimatedGreHint(
+    estimate: EstimatedGreScore,
+    readiness: ReadinessScore,
+    coverage?: DashboardCoverage | null,
+): string {
+    if (dashboardHeroEstimatedGreAvailable(estimate, readiness, coverage)) {
+        return "Your projected GRE score (260–340).";
+    }
+    return estimate.abstainReason
+        || readiness.abstainReason
+        || emptyStateTitle("estimatedGreChart");
 }
 
 export function memoryHero(memory: MemoryScore, formatPercent: (v: number) => string): string {

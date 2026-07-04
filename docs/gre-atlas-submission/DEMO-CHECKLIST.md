@@ -91,8 +91,8 @@ just eval-gre-atlas /path/to/profile/collection.anki2
 | -------------------- | ------------------------------------------------------------ |
 | Fast abstention demo | Fresh profile, no GRE deck                                   |
 | Fast practice demo   | Open Practice immediately (seeded question bank)             |
-| Unlock performance   | 20+ practice attempts (or use demo seed on mobile)           |
-| Unlock memory        | FSRS + 200+ reviewed GRE-tagged cards + 50% catalog coverage |
+| Unlock performance   | 50+ practice attempts (or use demo seed on mobile)           |
+| Unlock memory        | FSRS + 20+ reviewed GRE-tagged cards + 50% catalog coverage |
 
 ## Troubleshooting during demo
 

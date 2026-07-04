@@ -27,6 +27,6 @@ Place captured PNGs in [screenshots/](./screenshots/). Reference them from [READ
 
 - Use a **dev profile** (File → Switch Profile) so personal data is not exposed.
 - macOS: `Cmd+Shift+4` for region capture; name files exactly as above.
-- For abstention demo, use an empty profile; for unlocked scores, seed GRE deck + 20+ practice attempts or run `PrepareDemoCollection` on mobile.
+- For abstention demo, use an empty profile; for unlocked scores, seed GRE deck + 50+ practice attempts or run `PrepareDemoCollection` on mobile.
 
 See [DEMO-CHECKLIST.md](./DEMO-CHECKLIST.md) for the live demo flow these screenshots support.

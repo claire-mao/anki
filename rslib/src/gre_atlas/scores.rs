@@ -65,7 +65,7 @@ mod test {
         let storage = gre_atlas_storage(&mut col)?;
         let q = storage.list_questions("", 1)?.pop().unwrap();
         let session = storage.create_session("practice")?;
-        for _ in 0..20 {
+        for _ in 0..50 {
             storage.record_attempt(
                 &q.id,
                 &q.topic,

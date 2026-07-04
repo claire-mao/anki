@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS bl_question (
   source_section TEXT,
   generated_at_secs INTEGER,
   generation_confidence REAL,
+  source_document TEXT,
+  model_version TEXT,
+  provenance TEXT,
+  evaluation_status TEXT,
   usn INTEGER NOT NULL DEFAULT 0,
   mtime_secs INTEGER NOT NULL
 );
@@ -68,3 +72,19 @@ CREATE TABLE IF NOT EXISTS bl_readiness_prediction (
 );
 CREATE INDEX IF NOT EXISTS ix_bl_readiness_pred_time ON bl_readiness_prediction(predicted_at_secs);
 CREATE INDEX IF NOT EXISTS ix_bl_readiness_pred_resolved ON bl_readiness_prediction(outcome_score);
+-- Per-candidate evaluation log for AI question generation (pass/reject metrics).
+-- Records every generation attempt's gate outcome so rejected candidates never
+-- reach the practice bank yet remain auditable.
+CREATE TABLE IF NOT EXISTS bl_generation_eval (
+  id INTEGER PRIMARY KEY,
+  candidate_id TEXT NOT NULL,
+  topic TEXT NOT NULL,
+  model_version TEXT NOT NULL,
+  provenance TEXT NOT NULL,
+  status TEXT NOT NULL,
+  reason TEXT NOT NULL DEFAULT '',
+  confidence REAL,
+  evaluated_at_secs INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_status ON bl_generation_eval(status);
+CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_time ON bl_generation_eval(evaluated_at_secs);

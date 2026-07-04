@@ -16,7 +16,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         | "calendar"
         | "topic"
         | "check"
-        | "alert";
+        | "alert"
+        | "compass"
+        | "info";
     export let size: number | "sm" | "md" | "lg" | "xl" = "md";
 
     const sizeMap = {
@@ -90,5 +92,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <path
             d="M10.3 4.3 2.6 18a1 1 0 0 0 .9 1.5h16a1 1 0 0 0 .9-1.5L13.7 4.3a1 1 0 0 0-1.8 0z"
         />
+    {:else if name === "compass"}
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 6l1.7 4.3 4.3 1.7-4.3 1.7L12 18l-1.7-4.3L6 12l4.3-1.7z" />
+    {:else if name === "info"}
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5" />
+        <path d="M12 8h.01" />
     {/if}
 </svg>

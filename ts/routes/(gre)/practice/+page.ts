@@ -7,10 +7,11 @@ import { buildQuestionQueue } from "./practice-session";
 
 import type { PageLoad } from "./$types";
 
-export const load = (async () => {
+export const load = (async ({ url }) => {
+    const topicFilter = url.searchParams.get("topic")?.trim() ?? "";
     const [session, questionsResponse, scoresResponse] = await Promise.all([
         createSession({ source: "practice" }),
-        listQuestions({ limit: 200, topicPrefix: "" }),
+        listQuestions({ limit: 200, topicPrefix: topicFilter }),
         getScores({}),
     ]);
 
@@ -19,12 +20,15 @@ export const load = (async () => {
         throw new Error("No GRE practice questions in the performance database.");
     }
 
-    const queue = buildQuestionQueue(questions, "all");
+    const queue = buildQuestionQueue(questions, "all", {
+        topicFilter: topicFilter || undefined,
+    });
 
     return {
         sessionId: session.sessionId,
         questions,
         queue,
+        topicFilter,
         memory: scoresResponse.memory!,
         performance: scoresResponse.performance!,
     };

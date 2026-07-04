@@ -295,6 +295,26 @@ struct GREAtlasSyncPushView: Codable, Equatable {
     let conflicts: [GREAtlasSyncConflictView]
 }
 
+struct GREAtlasSyncAuthInput: Codable, Equatable {
+    let hkey: String
+    let endpoint: String?
+    let ioTimeoutSecs: UInt32?
+}
+
+struct GREAtlasPerformSyncInput: Codable, Equatable {
+    let auth: GREAtlasSyncAuthInput?
+}
+
+struct GREAtlasPerformSyncView: Codable, Equatable {
+    let success: Bool
+    let message: String
+    let downloadedCount: UInt
+    let uploadedCount: UInt
+    let appliedCount: UInt
+    let conflicts: [GREAtlasSyncConflictView]
+    let status: GREAtlasSyncStatusView?
+}
+
 struct GrePageBundle: Equatable {
     let dashboard: GreDashboardView
     let progress: GreProgressView

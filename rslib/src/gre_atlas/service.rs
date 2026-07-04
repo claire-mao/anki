@@ -16,6 +16,7 @@ use crate::error::OrInvalid;
 use crate::gre_atlas::gre_atlas_storage;
 use crate::gre_atlas::questions::stored_question_to_proto;
 use crate::gre_atlas::GRE_DECK_NAME;
+use crate::sync::login::SyncAuth;
 
 impl crate::services::BrainLiftService for Collection {
     fn list_questions(
@@ -170,6 +171,13 @@ impl crate::services::BrainLiftService for Collection {
         self.gre_atlas_generate_question(&input.topic_id, input.persist)
     }
 
+    fn explain_answer(
+        &mut self,
+        input: anki_proto::brainlift::ExplainAnswerRequest,
+    ) -> error::Result<anki_proto::brainlift::ExplainAnswerResponse> {
+        self.gre_atlas_explain_answer(&input.question_id, &input.selected_answer)
+    }
+
     fn get_topic_details(
         &mut self,
         input: anki_proto::brainlift::GetTopicDetailsRequest,
@@ -196,6 +204,49 @@ impl crate::services::BrainLiftService for Collection {
         input: anki_proto::brainlift::BrainLiftSyncPushRequest,
     ) -> error::Result<anki_proto::brainlift::BrainLiftSyncPushResponse> {
         self.gre_atlas_push_changes(input.attempts)
+    }
+
+    fn pull_brain_lift_sync_bundle(
+        &mut self,
+        input: anki_proto::brainlift::BrainLiftSyncPullRequest,
+    ) -> error::Result<anki_proto::brainlift::BrainLiftSyncBundleResponse> {
+        let limit = if input.limit == 0 {
+            5000
+        } else {
+            input.limit
+        };
+        self.gre_atlas_pull_sync_bundle(input.after_usn, limit)
+    }
+
+    fn push_brain_lift_sync_bundle(
+        &mut self,
+        input: anki_proto::brainlift::BrainLiftSyncBundlePushRequest,
+    ) -> error::Result<anki_proto::brainlift::BrainLiftSyncBundlePushResponse> {
+        let bundle = input
+            .bundle
+            .or_invalid("missing sync bundle")?;
+        self.gre_atlas_push_sync_bundle(bundle)
+    }
+
+    fn perform_gre_atlas_sync(
+        &mut self,
+        input: anki_proto::brainlift::PerformGreAtlasSyncRequest,
+    ) -> error::Result<anki_proto::brainlift::PerformGreAtlasSyncResponse> {
+        let Some(auth_proto) = input.auth else {
+            return self.gre_atlas_perform_sync_offline();
+        };
+        let auth = SyncAuth {
+            hkey: auth_proto.hkey,
+            endpoint: auth_proto
+                .endpoint
+                .and_then(|e| reqwest::Url::parse(&e).ok()),
+            io_timeout_secs: auth_proto.io_timeout_secs,
+        };
+        let client = reqwest::Client::new();
+        let rt = tokio::runtime::Runtime::new().map_err(|e| error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        rt.block_on(self.gre_atlas_perform_sync(auth, client))
     }
 
     fn prepare_demo_collection(

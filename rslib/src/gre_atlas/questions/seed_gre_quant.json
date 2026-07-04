@@ -1,0 +1,3588 @@
+[
+    {
+        "id": "gre-foundation-quant-pct-001",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $120 is discounted by 20%. What is the sale price?",
+        "answer_choices": [
+            "$96",
+            "$100",
+            "$140",
+            "$60"
+        ],
+        "correct_answer": "$96",
+        "explanation": "20% of $120 is $24; $120 − $24 = $96.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-002",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $200 is discounted by 15%. What is the sale price?",
+        "answer_choices": [
+            "$100",
+            "$185",
+            "$170",
+            "$215"
+        ],
+        "correct_answer": "$170",
+        "explanation": "15% of $200 is $30; $200 − $30 = $170.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-003",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $80 is discounted by 25%. What is the sale price?",
+        "answer_choices": [
+            "$60",
+            "$105",
+            "$40",
+            "$55"
+        ],
+        "correct_answer": "$60",
+        "explanation": "25% of $80 is $20; $80 − $20 = $60.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-004",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $150 is discounted by 10%. What is the sale price?",
+        "answer_choices": [
+            "$135",
+            "$75",
+            "$160",
+            "$140"
+        ],
+        "correct_answer": "$135",
+        "explanation": "10% of $150 is $15; $150 − $15 = $135.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-005",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $60 is discounted by 50%. What is the sale price?",
+        "answer_choices": [
+            "$110",
+            "$30",
+            "$10",
+            "$70"
+        ],
+        "correct_answer": "$30",
+        "explanation": "50% of $60 is $30.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-006",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $400 is discounted by 5%. What is the sale price?",
+        "answer_choices": [
+            "$405",
+            "$200",
+            "$395",
+            "$380"
+        ],
+        "correct_answer": "$380",
+        "explanation": "5% of $400 is $20; $400 − $20 = $380.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-007",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $90 is discounted by 30%. What is the sale price?",
+        "answer_choices": [
+            "$60",
+            "$45",
+            "$120",
+            "$63"
+        ],
+        "correct_answer": "$63",
+        "explanation": "30% of $90 is $27; $90 − $27 = $63.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-008",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $250 is discounted by 12%. What is the sale price?",
+        "answer_choices": [
+            "$125",
+            "$238",
+            "$220",
+            "$262"
+        ],
+        "correct_answer": "$220",
+        "explanation": "12% of $250 is $30; $250 − $30 = $220.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-009",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $45 is discounted by 40%. What is the sale price?",
+        "answer_choices": [
+            "$85",
+            "$5",
+            "$22",
+            "$27"
+        ],
+        "correct_answer": "$27",
+        "explanation": "40% of $45 is $18; $45 − $18 = $27.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-010",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $300 is discounted by 8%. What is the sale price?",
+        "answer_choices": [
+            "$150",
+            "$292",
+            "$276",
+            "$308"
+        ],
+        "correct_answer": "$276",
+        "explanation": "8% of $300 is $24; $300 − $24 = $276.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-011",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $75 is discounted by 16%. What is the sale price?",
+        "answer_choices": [
+            "$59",
+            "$63",
+            "$37",
+            "$91"
+        ],
+        "correct_answer": "$63",
+        "explanation": "16% of $75 is $12; $75 − $12 = $63.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-012",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $500 is discounted by 6%. What is the sale price?",
+        "answer_choices": [
+            "$494",
+            "$470",
+            "$250",
+            "$506"
+        ],
+        "correct_answer": "$470",
+        "explanation": "6% of $500 is $30; $500 − $30 = $470.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-013",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $180 is discounted by 35%. What is the sale price?",
+        "answer_choices": [
+            "$215",
+            "$117",
+            "$90",
+            "$145"
+        ],
+        "correct_answer": "$117",
+        "explanation": "35% of $180 is $63; $180 − $63 = $117.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-pct-014",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A jacket priced at $240 is discounted by 45%. What is the sale price?",
+        "answer_choices": [
+            "$195",
+            "$120",
+            "$285",
+            "$132"
+        ],
+        "correct_answer": "$132",
+        "explanation": "45% of $240 is $108; $240 − $108 = $132.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_discount",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "percent",
+            "discount"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-rat-001",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 2:3 and A equals 10, what is B?",
+        "answer_choices": [
+            "23",
+            "15",
+            "20",
+            "12"
+        ],
+        "correct_answer": "15",
+        "explanation": "10 is 2 parts, so one part is 5. Three parts gives 15.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-002",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 3:4 and A equals 21, what is B?",
+        "answer_choices": [
+            "36",
+            "33",
+            "28",
+            "25"
+        ],
+        "correct_answer": "28",
+        "explanation": "21 is 3 parts, so one part is 7. Four parts gives 28.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-003",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 5:2 and A equals 35, what is B?",
+        "answer_choices": [
+            "11",
+            "14",
+            "19",
+            "22"
+        ],
+        "correct_answer": "14",
+        "explanation": "35 is 5 parts, so one part is 7. Two parts gives 14.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-004",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 4:7 and A equals 16, what is B?",
+        "answer_choices": [
+            "36",
+            "33",
+            "25",
+            "28"
+        ],
+        "correct_answer": "28",
+        "explanation": "16 is 4 parts, so one part is 4. Seven parts gives 28.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-005",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 3:5 and A equals 18, what is B?",
+        "answer_choices": [
+            "35",
+            "38",
+            "30",
+            "27"
+        ],
+        "correct_answer": "30",
+        "explanation": "18 is 3 parts, so one part is 6. Five parts gives 30.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-006",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 2:5 and A equals 14, what is B?",
+        "answer_choices": [
+            "43",
+            "40",
+            "35",
+            "32"
+        ],
+        "correct_answer": "35",
+        "explanation": "14 is 2 parts, so one part is 7. Five parts gives 35.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-007",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 7:3 and A equals 28, what is B?",
+        "answer_choices": [
+            "12",
+            "20",
+            "9",
+            "17"
+        ],
+        "correct_answer": "12",
+        "explanation": "28 is 7 parts, so one part is 4. Three parts gives 12.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-008",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 5:8 and A equals 25, what is B?",
+        "answer_choices": [
+            "45",
+            "40",
+            "37",
+            "48"
+        ],
+        "correct_answer": "40",
+        "explanation": "25 is 5 parts, so one part is 5. Eight parts gives 40.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-009",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 6:11 and A equals 30, what is B?",
+        "answer_choices": [
+            "60",
+            "52",
+            "63",
+            "55"
+        ],
+        "correct_answer": "55",
+        "explanation": "30 is 6 parts, so one part is 5. Eleven parts gives 55.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-010",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 9:4 and A equals 27, what is B?",
+        "answer_choices": [
+            "9",
+            "20",
+            "17",
+            "12"
+        ],
+        "correct_answer": "12",
+        "explanation": "27 is 9 parts, so one part is 3. Four parts gives 12.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-011",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 1:4 and A equals 7, what is B?",
+        "answer_choices": [
+            "33",
+            "25",
+            "28",
+            "36"
+        ],
+        "correct_answer": "28",
+        "explanation": "7 is 1 part, so four parts gives 28.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-012",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 8:5 and A equals 24, what is B?",
+        "answer_choices": [
+            "23",
+            "15",
+            "20",
+            "12"
+        ],
+        "correct_answer": "15",
+        "explanation": "24 is 8 parts, so one part is 3. Five parts gives 15.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-rat-013",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If the ratio of A to B is 3:2 and A equals 45, what is B?",
+        "answer_choices": [
+            "35",
+            "38",
+            "30",
+            "27"
+        ],
+        "correct_answer": "30",
+        "explanation": "45 is 3 parts, so one part is 15. Two parts gives 30.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "part_whole_ratio",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "ratio",
+            "proportion"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-lin-001",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 2x + 5 = 17",
+        "answer_choices": [
+            "10",
+            "5",
+            "8",
+            "6"
+        ],
+        "correct_answer": "6",
+        "explanation": "Subtract 5, divide by 2: x = 6.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-002",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 3x − 7 = 14",
+        "answer_choices": [
+            "11",
+            "6",
+            "7",
+            "9"
+        ],
+        "correct_answer": "7",
+        "explanation": "Add 7, divide by 3: x = 7.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-003",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 5x + 10 = 35",
+        "answer_choices": [
+            "4",
+            "5",
+            "9",
+            "7"
+        ],
+        "correct_answer": "5",
+        "explanation": "Subtract 10, divide by 5: x = 5.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-004",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 4x − 12 = 20",
+        "answer_choices": [
+            "8",
+            "12",
+            "7",
+            "10"
+        ],
+        "correct_answer": "8",
+        "explanation": "Add 12, divide by 4: x = 8.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-005",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: x/3 + 2 = 7",
+        "answer_choices": [
+            "17",
+            "15",
+            "14",
+            "19"
+        ],
+        "correct_answer": "15",
+        "explanation": "Subtract 2, multiply by 3: x = 15.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-006",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 2(x + 3) = 18",
+        "answer_choices": [
+            "8",
+            "10",
+            "6",
+            "5"
+        ],
+        "correct_answer": "6",
+        "explanation": "Divide by 2, subtract 3: x = 6.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-007",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 7x = 49",
+        "answer_choices": [
+            "6",
+            "9",
+            "7",
+            "11"
+        ],
+        "correct_answer": "7",
+        "explanation": "Divide both sides by 7: x = 7.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-008",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: x + 15 = 32",
+        "answer_choices": [
+            "16",
+            "21",
+            "17",
+            "19"
+        ],
+        "correct_answer": "17",
+        "explanation": "Subtract 15: x = 17.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-009",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 6x − 4 = 2x + 12",
+        "answer_choices": [
+            "8",
+            "4",
+            "6",
+            "3"
+        ],
+        "correct_answer": "4",
+        "explanation": "4x = 16, so x = 4.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-010",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 3x + 2 = x + 14",
+        "answer_choices": [
+            "10",
+            "5",
+            "6",
+            "8"
+        ],
+        "correct_answer": "6",
+        "explanation": "2x = 12, so x = 6.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-011",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 9 − x = 4",
+        "answer_choices": [
+            "5",
+            "4",
+            "7",
+            "9"
+        ],
+        "correct_answer": "5",
+        "explanation": "x = 9 − 4 = 5.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-012",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 2x + 1 = x + 9",
+        "answer_choices": [
+            "12",
+            "7",
+            "10",
+            "8"
+        ],
+        "correct_answer": "8",
+        "explanation": "x = 8.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-013",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: 5(x − 2) = 25",
+        "answer_choices": [
+            "7",
+            "9",
+            "6",
+            "11"
+        ],
+        "correct_answer": "7",
+        "explanation": "x − 2 = 5, so x = 7.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-lin-014",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Solve for x: x/4 = 3",
+        "answer_choices": [
+            "11",
+            "14",
+            "16",
+            "12"
+        ],
+        "correct_answer": "12",
+        "explanation": "Multiply both sides by 4: x = 12.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "linear_equation",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "algebra",
+            "linear_equation"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-quad-001",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − 5x + 6 = 0?",
+        "answer_choices": [
+            "2 or 3",
+            "6",
+            "5",
+            "3"
+        ],
+        "correct_answer": "2 or 3",
+        "explanation": "Factors to (x−2)(x−3)=0.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-002",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − 9 = 0?",
+        "answer_choices": [
+            "9",
+            "−3",
+            "0",
+            "3 or −3"
+        ],
+        "correct_answer": "3 or −3",
+        "explanation": "Difference of squares: (x−3)(x+3)=0.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-003",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² + 6x + 9 = 0?",
+        "answer_choices": [
+            "−3",
+            "3",
+            "9",
+            "−6"
+        ],
+        "correct_answer": "−3",
+        "explanation": "Perfect square (x+3)²=0.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-004",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − x − 12 = 0?",
+        "answer_choices": [
+            "−3",
+            "4 or −3",
+            "12",
+            "−4"
+        ],
+        "correct_answer": "4 or −3",
+        "explanation": "Factors to (x−4)(x+3)=0.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-005",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy 2x² = 18?",
+        "answer_choices": [
+            "−3",
+            "3 or −3",
+            "9",
+            "6"
+        ],
+        "correct_answer": "3 or −3",
+        "explanation": "x²=9.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-006",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² + 2x − 8 = 0?",
+        "answer_choices": [
+            "−2",
+            "−4",
+            "2 or −4",
+            "4"
+        ],
+        "correct_answer": "2 or −4",
+        "explanation": "Factors to (x+4)(x−2)=0.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-007",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − 16 = 0?",
+        "answer_choices": [
+            "−4",
+            "16",
+            "8",
+            "4 or −4"
+        ],
+        "correct_answer": "4 or −4",
+        "explanation": "Difference of squares.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-008",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² + x − 6 = 0?",
+        "answer_choices": [
+            "−2",
+            "2 or −3",
+            "−3",
+            "3"
+        ],
+        "correct_answer": "2 or −3",
+        "explanation": "Factors to (x+3)(x−2)=0.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-009",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − 4x = 0?",
+        "answer_choices": [
+            "0 or 4",
+            "4",
+            "2",
+            "−4"
+        ],
+        "correct_answer": "0 or 4",
+        "explanation": "x(x−4)=0.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-010",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² + 5x + 6 = 0?",
+        "answer_choices": [
+            "3",
+            "−3",
+            "2",
+            "−2 or −3"
+        ],
+        "correct_answer": "−2 or −3",
+        "explanation": "Factors to (x+2)(x+3)=0.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-011",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² = 25?",
+        "answer_choices": [
+            "5 or −5",
+            "−5",
+            "0",
+            "25"
+        ],
+        "correct_answer": "5 or −5",
+        "explanation": "x = ±5.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-012",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy x² − 2x − 15 = 0?",
+        "answer_choices": [
+            "5 or −3",
+            "−5",
+            "−3",
+            "3"
+        ],
+        "correct_answer": "5 or −3",
+        "explanation": "Factors to (x−5)(x+3)=0.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-quad-013",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which values of x satisfy 3x² − 12 = 0?",
+        "answer_choices": [
+            "4",
+            "−4",
+            "2 or −2",
+            "−2"
+        ],
+        "correct_answer": "2 or −2",
+        "explanation": "x²=4.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "quadratic_roots",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "quadratic",
+            "factoring"
+        ],
+        "estimated_time_seconds": 100
+    },
+    {
+        "id": "gre-foundation-quant-tri-001",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 3 and 4. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "7",
+            "5",
+            "4",
+            "7"
+        ],
+        "correct_answer": "5",
+        "explanation": "3-4-5 triangle: 5²=25.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-002",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 5 and 12. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "17",
+            "13",
+            "15",
+            "12"
+        ],
+        "correct_answer": "13",
+        "explanation": "5-12-13 Pythagorean triple.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-003",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 8 and 15. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "23",
+            "17",
+            "19",
+            "16"
+        ],
+        "correct_answer": "17",
+        "explanation": "8-15-17 Pythagorean triple.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-004",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 6 and 8. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "10",
+            "12",
+            "9",
+            "14"
+        ],
+        "correct_answer": "10",
+        "explanation": "6-8-10 is 3-4-5 scaled by 2.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-005",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 9 and 12. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "15",
+            "14",
+            "17",
+            "21"
+        ],
+        "correct_answer": "15",
+        "explanation": "9-12-15 is 3-4-5 scaled by 3.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-006",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 7 and 24. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "25",
+            "31",
+            "24",
+            "27"
+        ],
+        "correct_answer": "25",
+        "explanation": "7-24-25 Pythagorean triple.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-007",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 10 and 24. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "34",
+            "26",
+            "25",
+            "28"
+        ],
+        "correct_answer": "26",
+        "explanation": "10-24-26 is 5-12-13 scaled by 2.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-008",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 20 and 21. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "29",
+            "31",
+            "41",
+            "28"
+        ],
+        "correct_answer": "29",
+        "explanation": "20-21-29 Pythagorean triple.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-009",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 9 and 40. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "40",
+            "43",
+            "49",
+            "41"
+        ],
+        "correct_answer": "41",
+        "explanation": "9-40-41 Pythagorean triple.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-010",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 12 and 16. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "28",
+            "19",
+            "20",
+            "22"
+        ],
+        "correct_answer": "20",
+        "explanation": "12-16-20 is 3-4-5 scaled by 4.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-011",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 15 and 20. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "27",
+            "24",
+            "35",
+            "25"
+        ],
+        "correct_answer": "25",
+        "explanation": "15-20-25 is 3-4-5 scaled by 5.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-tri-012",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A right triangle has legs 11 and 60. What is the length of the hypotenuse?",
+        "answer_choices": [
+            "63",
+            "61",
+            "60",
+            "71"
+        ],
+        "correct_answer": "61",
+        "explanation": "11-60-61 Pythagorean triple.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "pythagorean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "triangle",
+            "pythagorean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-cir-001",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 3. What is its circumference?",
+        "answer_choices": [
+            "6π",
+            "6π",
+            "3π",
+            "9π"
+        ],
+        "correct_answer": "6π",
+        "explanation": "C = 2πr = 2π(3) = 6π.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-002",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 5. What is its area?",
+        "answer_choices": [
+            "20π",
+            "5π",
+            "25π",
+            "10π"
+        ],
+        "correct_answer": "25π",
+        "explanation": "A = πr² = π(5)² = 25π.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-003",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 7. What is its circumference?",
+        "answer_choices": [
+            "14π",
+            "49π",
+            "7π",
+            "14π"
+        ],
+        "correct_answer": "14π",
+        "explanation": "C = 2πr = 2π(7) = 14π.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-004",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 4. What is its area?",
+        "answer_choices": [
+            "16π",
+            "16π",
+            "4π",
+            "8π"
+        ],
+        "correct_answer": "16π",
+        "explanation": "A = πr² = π(4)² = 16π.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-005",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 6. What is its circumference?",
+        "answer_choices": [
+            "6π",
+            "36π",
+            "12π",
+            "12π"
+        ],
+        "correct_answer": "12π",
+        "explanation": "C = 2πr = 2π(6) = 12π.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-006",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 10. What is its area?",
+        "answer_choices": [
+            "10π",
+            "40π",
+            "20π",
+            "100π"
+        ],
+        "correct_answer": "100π",
+        "explanation": "A = πr² = π(10)² = 100π.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-007",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 2. What is its circumference?",
+        "answer_choices": [
+            "4π",
+            "2π",
+            "4π",
+            "4π"
+        ],
+        "correct_answer": "4π",
+        "explanation": "C = 2πr = 2π(2) = 4π.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-008",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 8. What is its area?",
+        "answer_choices": [
+            "64π",
+            "16π",
+            "8π",
+            "32π"
+        ],
+        "correct_answer": "64π",
+        "explanation": "A = πr² = π(8)² = 64π.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-009",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 9. What is its circumference?",
+        "answer_choices": [
+            "18π",
+            "9π",
+            "18π",
+            "81π"
+        ],
+        "correct_answer": "18π",
+        "explanation": "C = 2πr = 2π(9) = 18π.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-010",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 1. What is its area?",
+        "answer_choices": [
+            "1π",
+            "π",
+            "2π",
+            "4π"
+        ],
+        "correct_answer": "π",
+        "explanation": "A = πr² = π(1)² = π.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-011",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 11. What is its circumference?",
+        "answer_choices": [
+            "22π",
+            "11π",
+            "121π",
+            "22π"
+        ],
+        "correct_answer": "22π",
+        "explanation": "C = 2πr = 2π(11) = 22π.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "circumference",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-cir-012",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A circle has radius 12. What is its area?",
+        "answer_choices": [
+            "144π",
+            "12π",
+            "48π",
+            "24π"
+        ],
+        "correct_answer": "144π",
+        "explanation": "A = πr² = π(12)² = 144π.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "area",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "circle",
+            "geometry"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-di-001",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — 2019: 40 | 2020: 50 | 2021: 65. What is the percent change from 2020 to 2021?",
+        "answer_choices": [
+            "40%",
+            "15%",
+            "25%",
+            "30%"
+        ],
+        "correct_answer": "30%",
+        "explanation": "Increase 15 on base 50.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-002",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Q1: 120 | Q2: 150 | Q3: 135. What is the percent change from Q1 to Q2?",
+        "answer_choices": [
+            "25%",
+            "25%",
+            "40%",
+            "15%"
+        ],
+        "correct_answer": "25%",
+        "explanation": "Increase 30 on base 120.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-003",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — A: 80 | B: 100 | C: 90. What is the percent change from B to C?",
+        "answer_choices": [
+            "15%",
+            "10%",
+            "40%",
+            "25%"
+        ],
+        "correct_answer": "10%",
+        "explanation": "Decrease 10 on base 100.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-004",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Jan: 200 | Feb: 180 | Mar: 216. What is the percent change from Feb to Mar?",
+        "answer_choices": [
+            "40%",
+            "25%",
+            "20%",
+            "15%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 36 on base 180.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-005",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — X: 25 | Y: 40 | Z: 32. What is the percent change from X to Y?",
+        "answer_choices": [
+            "15%",
+            "60%",
+            "25%",
+            "40%"
+        ],
+        "correct_answer": "60%",
+        "explanation": "Increase 15 on base 25.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-006",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — P: 300 | Q: 240 | R: 288. What is the percent change from Q to R?",
+        "answer_choices": [
+            "25%",
+            "40%",
+            "20%",
+            "15%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 48 on base 240.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-007",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — 2019: 40 | 2020: 50 | 2021: 65. What is the percent change from 2020 to 2021?",
+        "answer_choices": [
+            "30%",
+            "25%",
+            "15%",
+            "40%"
+        ],
+        "correct_answer": "30%",
+        "explanation": "Increase 15 on base 50.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-008",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Q1: 120 | Q2: 150 | Q3: 135. What is the percent change from Q1 to Q2?",
+        "answer_choices": [
+            "15%",
+            "25%",
+            "25%",
+            "40%"
+        ],
+        "correct_answer": "25%",
+        "explanation": "Increase 30 on base 120.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-009",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — A: 80 | B: 100 | C: 90. What is the percent change from B to C?",
+        "answer_choices": [
+            "25%",
+            "10%",
+            "15%",
+            "40%"
+        ],
+        "correct_answer": "10%",
+        "explanation": "Decrease 10 on base 100.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-010",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Jan: 200 | Feb: 180 | Mar: 216. What is the percent change from Feb to Mar?",
+        "answer_choices": [
+            "25%",
+            "20%",
+            "15%",
+            "40%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 36 on base 180.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-011",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — X: 25 | Y: 40 | Z: 32. What is the percent change from X to Y?",
+        "answer_choices": [
+            "60%",
+            "40%",
+            "15%",
+            "25%"
+        ],
+        "correct_answer": "60%",
+        "explanation": "Increase 15 on base 25.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-012",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — P: 300 | Q: 240 | R: 288. What is the percent change from Q to R?",
+        "answer_choices": [
+            "15%",
+            "20%",
+            "25%",
+            "40%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 48 on base 240.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-013",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — 2019: 40 | 2020: 50 | 2021: 65. What is the percent change from 2020 to 2021?",
+        "answer_choices": [
+            "25%",
+            "15%",
+            "30%",
+            "40%"
+        ],
+        "correct_answer": "30%",
+        "explanation": "Increase 15 on base 50.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-014",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Q1: 120 | Q2: 150 | Q3: 135. What is the percent change from Q1 to Q2?",
+        "answer_choices": [
+            "25%",
+            "25%",
+            "15%",
+            "40%"
+        ],
+        "correct_answer": "25%",
+        "explanation": "Increase 30 on base 120.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-015",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — A: 80 | B: 100 | C: 90. What is the percent change from B to C?",
+        "answer_choices": [
+            "10%",
+            "25%",
+            "15%",
+            "40%"
+        ],
+        "correct_answer": "10%",
+        "explanation": "Decrease 10 on base 100.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-016",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — Jan: 200 | Feb: 180 | Mar: 216. What is the percent change from Feb to Mar?",
+        "answer_choices": [
+            "25%",
+            "20%",
+            "40%",
+            "15%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 36 on base 180.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-017",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — X: 25 | Y: 40 | Z: 32. What is the percent change from X to Y?",
+        "answer_choices": [
+            "25%",
+            "40%",
+            "15%",
+            "60%"
+        ],
+        "correct_answer": "60%",
+        "explanation": "Increase 15 on base 25.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-di-018",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sales by period — P: 300 | Q: 240 | R: 288. What is the percent change from Q to R?",
+        "answer_choices": [
+            "40%",
+            "15%",
+            "25%",
+            "20%"
+        ],
+        "correct_answer": "20%",
+        "explanation": "Increase 48 on base 240.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "percent_change_table",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "data_interpretation",
+            "percent_change"
+        ],
+        "estimated_time_seconds": 95
+    },
+    {
+        "id": "gre-foundation-quant-prb-001",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 6 equally likely outcomes, 1 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/7",
+            "1/6",
+            "1/8",
+            "2/6"
+        ],
+        "correct_answer": "1/6",
+        "explanation": "One favorable face out of six.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-002",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 6 equally likely outcomes, 2 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/8",
+            "2/7",
+            "3/6",
+            "1/3"
+        ],
+        "correct_answer": "1/3",
+        "explanation": "Two favorable outcomes out of six.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-003",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 10 equally likely outcomes, 3 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/12",
+            "4/10",
+            "3/10",
+            "3/11"
+        ],
+        "correct_answer": "3/10",
+        "explanation": "Three out of ten equally likely.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-004",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 4 equally likely outcomes, 1 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/4",
+            "1/6",
+            "2/4",
+            "1/5"
+        ],
+        "correct_answer": "1/4",
+        "explanation": "One quarter of outcomes.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-005",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 8 equally likely outcomes, 5 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "5/8",
+            "1/10",
+            "6/8",
+            "5/9"
+        ],
+        "correct_answer": "5/8",
+        "explanation": "Five successes out of eight trials.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-006",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 2 equally likely outcomes, 1 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/3",
+            "1/4",
+            "2/2",
+            "1/2"
+        ],
+        "correct_answer": "1/2",
+        "explanation": "Fair coin single flip.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-007",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 5 equally likely outcomes, 3 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "3/6",
+            "1/7",
+            "4/5",
+            "3/5"
+        ],
+        "correct_answer": "3/5",
+        "explanation": "Three of five marbles.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-008",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 9 equally likely outcomes, 4 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "5/9",
+            "1/11",
+            "4/10",
+            "4/9"
+        ],
+        "correct_answer": "4/9",
+        "explanation": "Four favorable of nine.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-009",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 5 equally likely outcomes, 2 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "3/5",
+            "2/6",
+            "1/7",
+            "2/5"
+        ],
+        "correct_answer": "2/5",
+        "explanation": "Two of five.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-010",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 12 equally likely outcomes, 7 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "8/12",
+            "1/14",
+            "7/13",
+            "7/12"
+        ],
+        "correct_answer": "7/12",
+        "explanation": "Seven of twelve.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-011",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 3 equally likely outcomes, 1 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "1/4",
+            "1/5",
+            "1/3",
+            "2/3"
+        ],
+        "correct_answer": "1/3",
+        "explanation": "One of three.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-012",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 6 equally likely outcomes, 5 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "6/6",
+            "1/8",
+            "5/7",
+            "5/6"
+        ],
+        "correct_answer": "5/6",
+        "explanation": "Five of six.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-013",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 4 equally likely outcomes, 3 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "3/4",
+            "4/4",
+            "3/5",
+            "1/6"
+        ],
+        "correct_answer": "3/4",
+        "explanation": "Three of four.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-prb-014",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A fair experiment has 7 equally likely outcomes, 2 of which are favorable. What is the probability of a favorable outcome?",
+        "answer_choices": [
+            "3/7",
+            "1/9",
+            "2/7",
+            "2/8"
+        ],
+        "correct_answer": "2/7",
+        "explanation": "Two of seven.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "basic_probability",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "probability",
+            "fraction"
+        ],
+        "estimated_time_seconds": 75
+    },
+    {
+        "id": "gre-foundation-quant-da-001",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mean of the data set 2, 4, 6, 8, 10?",
+        "answer_choices": [
+            "5.0",
+            "6",
+            "5.0",
+            "7.0"
+        ],
+        "correct_answer": "6",
+        "explanation": "Sum 30 divided by 5.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-002",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the median of the data set 1, 3, 3, 7, 9?",
+        "answer_choices": [
+            "12",
+            "4",
+            "10",
+            "3"
+        ],
+        "correct_answer": "3",
+        "explanation": "Middle value of ordered set.",
+        "difficulty": 0.7,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "median",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "median"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-003",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mode of the data set 5, 5, 2, 8, 5?",
+        "answer_choices": [
+            "10",
+            "5",
+            "4",
+            "12"
+        ],
+        "correct_answer": "5",
+        "explanation": "Most frequent value.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mode",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mode"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-004",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mean of the data set 10, 20, 30?",
+        "answer_choices": [
+            "21.0",
+            "5.0",
+            "19.0",
+            "20"
+        ],
+        "correct_answer": "20",
+        "explanation": "Sum 60 / 3.",
+        "difficulty": 0.35,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-005",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the median of the data set 4, 4, 9, 9, 12?",
+        "answer_choices": [
+            "12",
+            "10",
+            "4",
+            "9"
+        ],
+        "correct_answer": "9",
+        "explanation": "Middle of five values.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "median",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "median"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-006",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mode of the data set 1, 2, 2, 2, 5?",
+        "answer_choices": [
+            "10",
+            "12",
+            "4",
+            "2"
+        ],
+        "correct_answer": "2",
+        "explanation": "Appears three times.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mode",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mode"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-007",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mean of the data set 3, 7, 7, 7, 11?",
+        "answer_choices": [
+            "7",
+            "8.0",
+            "5.0",
+            "6.0"
+        ],
+        "correct_answer": "7",
+        "explanation": "Sum 35 / 5.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-008",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the median of the data set 15, 20, 25, 30, 35?",
+        "answer_choices": [
+            "12",
+            "10",
+            "25",
+            "4"
+        ],
+        "correct_answer": "25",
+        "explanation": "Center value.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "median",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "median"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-009",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mode of the data set 8, 8, 10, 12, 12, 12?",
+        "answer_choices": [
+            "12",
+            "4",
+            "10",
+            "12"
+        ],
+        "correct_answer": "12",
+        "explanation": "Appears three times.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mode",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mode"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-010",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mean of the data set 6, 6, 6, 6, 10?",
+        "answer_choices": [
+            "5.0",
+            "5.8",
+            "7.8",
+            "6.8"
+        ],
+        "correct_answer": "6.8",
+        "explanation": "Sum 34 / 5 = 6.8.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-011",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the median of the data set 2, 5, 8, 11, 14?",
+        "answer_choices": [
+            "10",
+            "8",
+            "4",
+            "12"
+        ],
+        "correct_answer": "8",
+        "explanation": "Middle value.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "median",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "median"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-012",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mode of the data set 3, 3, 5, 7, 7, 7?",
+        "answer_choices": [
+            "4",
+            "10",
+            "7",
+            "12"
+        ],
+        "correct_answer": "7",
+        "explanation": "Most frequent.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mode",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mode"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-da-013",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the mean of the data set 100, 200, 300, 400?",
+        "answer_choices": [
+            "250",
+            "249.0",
+            "251.0",
+            "5.0"
+        ],
+        "correct_answer": "250",
+        "explanation": "Sum 1000 / 4.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "mean",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "statistics",
+            "mean"
+        ],
+        "estimated_time_seconds": 85
+    },
+    {
+        "id": "gre-foundation-quant-wp-001",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A car travels at 60 miles per hour for 3 hours. How many miles does it travel?",
+        "answer_choices": [
+            "90 miles",
+            "180 miles",
+            "160 miles",
+            "210 miles"
+        ],
+        "correct_answer": "180 miles",
+        "explanation": "Distance = rate × time.",
+        "difficulty": 0.8,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "rate_distance",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-002",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A car travels at 45 miles per hour for 4 hours. How many miles does it travel?",
+        "answer_choices": [
+            "90 miles",
+            "210 miles",
+            "160 miles",
+            "180 miles"
+        ],
+        "correct_answer": "180 miles",
+        "explanation": "45 mph for 4 hours.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "rate_distance",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-003",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "A car travels at 50 miles per hour for 2.5 hours. How many miles does it travel?",
+        "answer_choices": [
+            "125 miles",
+            "155 miles",
+            "62 miles",
+            "105 miles"
+        ],
+        "correct_answer": "125 miles",
+        "explanation": "50 × 2.5 = 125 miles.",
+        "difficulty": 0.75,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "rate_distance",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-004",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If 5 pens cost $10, how much do 8 pens cost at the same unit price?",
+        "answer_choices": [
+            "$8",
+            "$12",
+            "$16",
+            "$22"
+        ],
+        "correct_answer": "$16",
+        "explanation": "Unit price $2; 8 pens cost $16.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "unit_price",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-005",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "If 4 notebooks cost $12, how much do 8 notebooks cost at the same unit price?",
+        "answer_choices": [
+            "$12",
+            "$20",
+            "$24",
+            "$30"
+        ],
+        "correct_answer": "$24",
+        "explanation": "Unit price $3; 8 items cost $24.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "unit_price",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-006",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 25. What is the larger integer?",
+        "answer_choices": [
+            "13",
+            "15",
+            "12",
+            "11"
+        ],
+        "correct_answer": "13",
+        "explanation": "The integers are 12 and 13.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-007",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 28. What is the larger integer?",
+        "answer_choices": [
+            "15",
+            "14",
+            "13",
+            "17"
+        ],
+        "correct_answer": "15",
+        "explanation": "The integers are 14 and 15.",
+        "difficulty": 0.5,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-008",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 31. What is the larger integer?",
+        "answer_choices": [
+            "14",
+            "15",
+            "18",
+            "16"
+        ],
+        "correct_answer": "16",
+        "explanation": "The integers are 15 and 16.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-009",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 34. What is the larger integer?",
+        "answer_choices": [
+            "20",
+            "16",
+            "17",
+            "18"
+        ],
+        "correct_answer": "18",
+        "explanation": "The integers are 17 and 18.",
+        "difficulty": 0.85,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-010",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 37. What is the larger integer?",
+        "answer_choices": [
+            "17",
+            "19",
+            "21",
+            "18"
+        ],
+        "correct_answer": "19",
+        "explanation": "The integers are 18 and 19.",
+        "difficulty": 0.4,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-011",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 40. What is the larger integer?",
+        "answer_choices": [
+            "21",
+            "19",
+            "23",
+            "20"
+        ],
+        "correct_answer": "21",
+        "explanation": "The integers are 20 and 21.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-012",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 43. What is the larger integer?",
+        "answer_choices": [
+            "20",
+            "24",
+            "22",
+            "21"
+        ],
+        "correct_answer": "22",
+        "explanation": "The integers are 21 and 22.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-013",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 46. What is the larger integer?",
+        "answer_choices": [
+            "23",
+            "22",
+            "24",
+            "26"
+        ],
+        "correct_answer": "24",
+        "explanation": "The integers are 23 and 24.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-wp-014",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "The sum of two consecutive integers is 49. What is the larger integer?",
+        "answer_choices": [
+            "25",
+            "27",
+            "24",
+            "23"
+        ],
+        "correct_answer": "25",
+        "explanation": "The integers are 24 and 25.",
+        "difficulty": 0.55,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "consecutive_integers",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "word_problem"
+        ],
+        "estimated_time_seconds": 90
+    },
+    {
+        "id": "gre-foundation-quant-np-001",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the smallest prime greater than 20?",
+        "answer_choices": [
+            "23",
+            "21",
+            "22",
+            "24"
+        ],
+        "correct_answer": "23",
+        "explanation": "23 is prime; 21 and 22 are composite.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-002",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the GCD of 24 and 36?",
+        "answer_choices": [
+            "12",
+            "6",
+            "8",
+            "18"
+        ],
+        "correct_answer": "12",
+        "explanation": "Shared divisors up to 12.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-003",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the LCM of 4 and 6?",
+        "answer_choices": [
+            "12",
+            "24",
+            "6",
+            "8"
+        ],
+        "correct_answer": "12",
+        "explanation": "Least common multiple.",
+        "difficulty": 0.65,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-004",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "How many factors does 12 have?",
+        "answer_choices": [
+            "6",
+            "8",
+            "4",
+            "5"
+        ],
+        "correct_answer": "6",
+        "explanation": "1, 2, 3, 4, 6, 12.",
+        "difficulty": 0.3,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-005",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is the remainder when 47 is divided by 5?",
+        "answer_choices": [
+            "4",
+            "1",
+            "2",
+            "3"
+        ],
+        "correct_answer": "2",
+        "explanation": "47 = 9×5 + 2.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-006",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which is divisible by 3?",
+        "answer_choices": [
+            "58",
+            "61",
+            "57",
+            "59"
+        ],
+        "correct_answer": "57",
+        "explanation": "5+7=12, divisible by 3.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-007",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "What is 2⁵?",
+        "answer_choices": [
+            "64",
+            "25",
+            "32",
+            "16"
+        ],
+        "correct_answer": "32",
+        "explanation": "2×2×2×2×2 = 32.",
+        "difficulty": 0.25,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-008",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "How many primes between 10 and 20?",
+        "answer_choices": [
+            "4",
+            "3",
+            "6",
+            "5"
+        ],
+        "correct_answer": "4",
+        "explanation": "11, 13, 17, 19.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-009",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Is 91 prime?",
+        "answer_choices": [
+            "Cannot determine",
+            "Yes",
+            "Only if odd",
+            "No"
+        ],
+        "correct_answer": "No",
+        "explanation": "91 = 7 × 13.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-010",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Units digit of 7⁴?",
+        "answer_choices": [
+            "9",
+            "1",
+            "3",
+            "7"
+        ],
+        "correct_answer": "1",
+        "explanation": "7¹=7, 7²=9, 7³=3, 7⁴=1.",
+        "difficulty": 0.28,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-011",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Sum of first 5 positive integers?",
+        "answer_choices": [
+            "10",
+            "12",
+            "15",
+            "20"
+        ],
+        "correct_answer": "15",
+        "explanation": "1+2+3+4+5=15.",
+        "difficulty": 0.32,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-012",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "How many even integers from 1 to 10?",
+        "answer_choices": [
+            "4",
+            "3",
+            "5",
+            "6"
+        ],
+        "correct_answer": "5",
+        "explanation": "2, 4, 6, 8, 10.",
+        "difficulty": 0.45,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    },
+    {
+        "id": "gre-foundation-quant-np-013",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "prompt": "Which is a perfect square?",
+        "answer_choices": [
+            "45",
+            "49",
+            "63",
+            "54"
+        ],
+        "correct_answer": "49",
+        "explanation": "7² = 49.",
+        "difficulty": 0.6,
+        "source": "GRE Atlas Practice Bank",
+        "subtopic": "number_properties",
+        "question_type": "mcq",
+        "concepts_tested": [
+            "number_properties",
+            "integer"
+        ],
+        "estimated_time_seconds": 80
+    }
+]

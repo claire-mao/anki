@@ -10,6 +10,15 @@ import { capitalizeLabel } from "./summary-metrics";
 /** Matches `MIN_CALIBRATION_HELD_OUT` in rslib calibration (display only). */
 const MIN_CALIBRATION_HELD_OUT = 5;
 
+/** Short hint for the readiness-page track record row (shown only after 5 checks). */
+export const CALIBRATION_EXPLANATION =
+    "How closely past score estimates matched your actual study results.";
+
+/** Whether the track-record metric is meaningful enough to show on Readiness. */
+export function calibrationQualityVisible(stats: ReadinessCalibrationStats): boolean {
+    return stats.sufficientData;
+}
+
 export type CalibrationImprovementItem = {
     id: string;
     label: string;
@@ -18,6 +27,10 @@ export type CalibrationImprovementItem = {
 };
 
 export type CalibrationPresentation = {
+    /** True once enough checks exist for the full panel and track-record row. */
+    showFullPanel: boolean;
+    /** One-line copy for the pre-verification state. */
+    earlyStateSummary: string;
     currentConfidence: string;
     confidenceCaption: string;
     historicalAccuracy: string;
@@ -34,7 +47,7 @@ export type CalibrationPresentation = {
 
 function predictionQualityLabel(stats: ReadinessCalibrationStats): string {
     if (!stats.sufficientData) {
-        return "Unverified";
+        return formatCalibrationChecksProgress(stats);
     }
     if (stats.wellCalibrated) {
         return "Good fit";
@@ -47,16 +60,13 @@ function predictionQualityLabel(stats: ReadinessCalibrationStats): string {
 
 function predictionQualityDetail(stats: ReadinessCalibrationStats): string {
     if (!stats.sufficientData) {
-        return stats.assessment || "Not enough held-out outcomes yet.";
+        return "";
     }
     const parts: string[] = [];
-    if (stats.brierScore !== undefined) {
-        parts.push(`Brier ${stats.brierScore.toFixed(3)}`);
-    }
     if (stats.meanAbsoluteError !== undefined) {
-        parts.push(`${stats.meanAbsoluteError.toFixed(1)} pt error`);
+        parts.push(`${stats.meanAbsoluteError.toFixed(1)} pt average error`);
     }
-    parts.push(`${stats.heldOutCount} held-out pairs`);
+    parts.push(`${stats.heldOutCount} checks completed`);
     return parts.join(" · ");
 }
 
@@ -72,13 +82,19 @@ function historicalAccuracy(stats: ReadinessCalibrationStats): {
     }
     if (stats.heldOutCount > 0) {
         return {
-            value: `${stats.heldOutCount} held-out pairs`,
-            detail: `${stats.resolvedOutcomes} outcomes recorded`,
+            value: formatCalibrationChecksProgress(stats),
+            detail: `${stats.resolvedOutcomes} results compared`,
+        };
+    }
+    if (stats.totalPredictions > 0) {
+        return {
+            value: `${stats.totalPredictions}`,
+            detail: "predictions logged",
         };
     }
     return {
-        value: "Building history",
-        detail: `${stats.totalPredictions} predictions logged`,
+        value: "None yet",
+        detail: "Logs once readiness predictions start",
     };
 }
 
@@ -91,10 +107,10 @@ function confidenceCaption(
         return `Score range ${range}`;
     }
     if (stats.sufficientData && !stats.wellCalibrated && readiness.sufficientData) {
-        return "Calibration capped confidence while accuracy stabilizes";
+        return "Estimates haven't matched results yet — confidence stays cautious";
     }
     if (!readiness.sufficientData) {
-        return readiness.abstainReason || "Unlock readiness to set confidence";
+        return "Provisional until readiness gates clear";
     }
     return readiness.evidenceSummary || "Based on memory, practice, and coverage";
 }
@@ -111,17 +127,33 @@ function confidenceChangeNotes(
         );
     }
 
-    if (stats.sufficientData && !stats.wellCalibrated && readiness.sufficientData) {
-        notes.push("Poor calibration lowers confidence until predictions match outcomes.");
-    } else if (stats.sufficientData && stats.wellCalibrated) {
-        notes.push("Verified calibration supports the current confidence level.");
-    } else if (!stats.sufficientData) {
-        notes.push(
-            `Confidence stays provisional until ${MIN_CALIBRATION_HELD_OUT} held-out outcomes are recorded.`,
-        );
+    if (!readiness.sufficientData) {
+        for (const req of readiness.abstentionRequirements.filter((item) => !item.met)) {
+            const note = req.nextStep || req.status;
+            if (note && !notes.includes(note)) {
+                notes.push(note);
+            }
+        }
     }
 
-    if (readiness.calibrationNote && !notes.some((note) => note.includes(readiness.calibrationNote))) {
+    if (stats.sufficientData && !stats.wellCalibrated && readiness.sufficientData) {
+        notes.push("Past estimates haven't matched your results yet — confidence stays cautious.");
+    } else if (stats.sufficientData && stats.wellCalibrated) {
+        notes.push("Past estimates match your results — confidence is well supported.");
+    } else if (!stats.sufficientData) {
+        const remaining = Math.max(0, MIN_CALIBRATION_HELD_OUT - stats.heldOutCount);
+        if (remaining > 0) {
+            notes.push(
+                `${remaining} more check${remaining === 1 ? "" : "s"} before we can score estimate accuracy.`,
+            );
+        }
+    }
+
+    if (
+        stats.sufficientData
+        && readiness.calibrationNote
+        && !notes.some((note) => note.includes(readiness.calibrationNote))
+    ) {
         notes.push(readiness.calibrationNote);
     }
 
@@ -144,20 +176,17 @@ function improvementItems(
     }
 
     if (!stats.sufficientData) {
-        const remaining = Math.max(0, MIN_CALIBRATION_HELD_OUT - stats.heldOutCount);
         items.push({
             id: "calibration_history",
-            label: "Calibration history",
-            detail: remaining > 0
-                ? `${remaining} more held-out outcome${remaining === 1 ? "" : "s"} needed`
-                : stats.assessment,
+            label: "Estimate checks",
+            detail: formatCalibrationChecksProgress(stats),
             met: stats.sufficientData,
         });
     } else if (!stats.wellCalibrated) {
         items.push({
             id: "calibration_quality",
-            label: "Prediction accuracy",
-            detail: "Keep studying and practicing so later outcomes match predictions",
+            label: "Estimate accuracy",
+            detail: "Keep studying so future results match your score estimates",
             met: false,
         });
     }
@@ -167,15 +196,23 @@ function improvementItems(
 
 function trendCaption(stats: ReadinessCalibrationStats, points: number[]): string {
     if (points.length < 2) {
-        return stats.assessment || "Trend appears after calibration bins fill in";
+        return "Needs more study sessions across different score levels";
     }
     if (stats.wellCalibrated) {
-        return "Outcomes rise with predicted bins — predictions track reality";
+        return "Results track your estimates across score levels";
     }
     if (stats.sufficientData) {
-        return "Outcome trend across predicted score bins";
+        return "How results compare to estimates at each score level";
     }
-    return "Calibration trend building";
+    return "Track record still building";
+}
+
+function earlyStateSummary(stats: ReadinessCalibrationStats): string {
+    const progress = formatCalibrationChecksProgress(stats);
+    if (stats.heldOutCount === 0) {
+        return `We compare past score estimates to your results as you study. ${progress}.`;
+    }
+    return `${progress}. Keep studying — accuracy scoring unlocks after 5 checks.`;
 }
 
 export function presentCalibration(
@@ -191,6 +228,8 @@ export function presentCalibration(
     }
 
     return {
+        showFullPanel: stats.sufficientData,
+        earlyStateSummary: earlyStateSummary(stats),
         currentConfidence,
         confidenceCaption: confidenceCaption(readiness, stats),
         historicalAccuracy: accuracy.value,
@@ -206,6 +245,9 @@ export function presentCalibration(
     };
 }
 
-export function formatCalibrationHeldOutProgress(stats: ReadinessCalibrationStats): string {
-    return `${stats.heldOutCount} / ${MIN_CALIBRATION_HELD_OUT} held-out pairs`;
+export function formatCalibrationChecksProgress(stats: ReadinessCalibrationStats): string {
+    return `${stats.heldOutCount} of ${MIN_CALIBRATION_HELD_OUT} checks completed`;
 }
+
+/** @deprecated Use formatCalibrationChecksProgress */
+export const formatCalibrationHeldOutProgress = formatCalibrationChecksProgress;

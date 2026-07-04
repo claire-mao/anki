@@ -8,7 +8,7 @@ This document describes how the **performance model** is evaluated for the GRE A
 
 The performance model estimates accuracy on **GRE-style practice questions** stored in `greatlas.db` (`bl_performance_attempt`). Each attempt records a topic label and a binary outcome (correct / incorrect).
 
-Live scoring (`compute_performance_score` in `rslib/src/gre_atlas/readiness.rs`) reports **global** accuracy over all attempts with a Wilson confidence interval and abstains until at least 20 attempts exist.
+Live scoring (`compute_performance_score` in `rslib/src/gre_atlas/readiness.rs`) reports **global** accuracy over all attempts with a Wilson confidence interval and abstains until at least 50 attempts exist.
 
 Held-out evaluation uses a **separate train-fit model** for calibration metrics. It does not change live scoring.
 
@@ -86,7 +86,7 @@ These are different targets, different tables, and different held-out splits on 
 | ------------------- | ------------------------------------------------------- | ------------------------------------ |
 | **Data source**     | Anki revlog + FSRS on GRE deck cards                    | `greatlas.db` practice attempts      |
 | **Signal**          | Predicted vs observed card recall                       | Topic-stratified practice accuracy   |
-| **Abstention gate** | FSRS enabled, ≥200 studied cards, ≥50% catalog coverage | ≥20 practice attempts                |
+| **Abstention gate** | FSRS enabled, ≥20 studied cards, ≥50% catalog coverage | ≥50 practice attempts                |
 | **Eval split**      | `revlog.id % 5 == 0`                                    | `bl_performance_attempt.id % 5 == 0` |
 
 A learner can have strong FSRS retrievability on vocabulary cards yet miss novel quant questions, or vice versa. Readiness combines both only when each component has sufficient evidence; eval reports them independently.

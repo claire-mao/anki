@@ -3,9 +3,13 @@
 
 import { getDashboard, getGreStudyStatus, getReadinessCalibration, getStudyPlan } from "@generated/backend";
 
+import { ensureGreAtlasStudyDeck } from "../study-bootstrap";
+
 import type { PageLoad } from "./$types";
 
 export const load = (async () => {
+    await ensureGreAtlasStudyDeck();
+
     const [dashboard, plan, status, readinessCalibration] = await Promise.all([
         getDashboard({
             recentActivityLimit: 5,

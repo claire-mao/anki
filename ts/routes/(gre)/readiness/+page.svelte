@@ -4,8 +4,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
     import GrePageHeader from "../GrePageHeader.svelte";
-    import GreCalibrationPanel from "../ui/GreCalibrationPanel.svelte";
     import GreSection from "../ui/GreSection.svelte";
+    import GreButton from "../ui/GreButton.svelte";
+    import GreButtonRow from "../ui/GreButtonRow.svelte";
+    import { greNavAction, greNavItem, GRE_CTA_PRACTICE, GRE_CTA_REVIEW } from "../gre-navigation";
     import { presentReadinessPage } from "../readiness-page-presentation";
     import ReadinessEstimatePanel from "./ReadinessEstimatePanel.svelte";
     import type { PageData } from "./$types";
@@ -30,28 +32,31 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         weakTopics: data.dashboard.weakTopics,
         computedAtMillis: response.computedAtMillis,
     });
-
-    function formatTimestampMillis(millis: bigint): string {
-        return new Date(Number(millis)).toLocaleString(undefined, {
-            dateStyle: "medium",
-            timeStyle: "short",
-        });
-    }
 </script>
 
 <GrePageHeader
     title="Readiness"
     icon="readiness"
-    subtitle="How much evidence supports your GRE readiness estimate."
-    meta="Last updated {formatTimestampMillis(response.computedAtMillis)}"
+    subtitle="Score estimate details — study first, inspect when curious."
 />
 
 <GreSection>
+    <section class="readiness-launch">
+        <GreButtonRow>
+            <GreButton variant="primary" navAction={greNavAction(greNavItem("study"))}>
+                {GRE_CTA_REVIEW}
+            </GreButton>
+            <GreButton navAction={greNavAction(greNavItem("practice"))}>
+                {GRE_CTA_PRACTICE}
+            </GreButton>
+        </GreButtonRow>
+    </section>
+
     <ReadinessEstimatePanel {model} />
-    <GreCalibrationPanel
-        {readiness}
-        {calibration}
-        variant="full"
-        showImprovements={false}
-    />
 </GreSection>
+
+<style lang="scss">
+    .readiness-launch {
+        margin-bottom: var(--gre-space-4);
+    }
+</style>

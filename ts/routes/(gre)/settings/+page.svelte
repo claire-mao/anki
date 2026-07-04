@@ -6,6 +6,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import type { Preferences } from "@generated/anki/config_pb";
     import { Preferences_Scheduling_NewReviewMix } from "@generated/anki/config_pb";
     import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
+    import { scheduleGreAtlasAutoSync, syncGreAtlasPractice } from "../gre-sync";
 
     import GrePageHeader from "../GrePageHeader.svelte";
     import { greDeckOptionsAction, runGreNavAction } from "../gre-navigation";
@@ -156,17 +157,17 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePageHeader
     title="Settings"
     icon="settings"
-    subtitle="Study, practice, predictions, and account."
+    subtitle="Review rhythm, practice sessions, and sync."
 />
 
 <div class="settings-page">
     <SettingsSection
         title="Study"
-        description="Daily review rhythm and what you see while studying flashcards."
+        description="Review rhythm and what you see during flashcard sessions."
     >
         <SettingsNumber
             label="Next day starts at"
-            description="When Anki rolls over to the next study day."
+            description="When a new study day begins."
             bind:value={rollover}
             min={0}
             max={23}
@@ -192,7 +193,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 )}
         />
         <SettingsToggle
-            label="Show next review time on answer buttons"
+            label="Show next review on answer buttons"
             bind:checked={preferences.reviewing!.showIntervalsOnButtons}
             on:change={() =>
                 updateReviewing(
@@ -216,13 +217,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         />
     </SettingsSection>
 
-    <SettingsSection
-        title="Practice"
-        description="Session pacing for GRE practice questions."
-    >
+    <SettingsSection title="Practice" description="Time limits for practice sessions.">
         <SettingsNumber
             label="Session time limit"
-            description="Optional cap for a review or practice session. 0 disables the limit."
+            description="Optional cap per session. Set to 0 for no limit."
             bind:value={timeLimitMins}
             min={0}
             max={9999}
@@ -231,55 +229,32 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         />
     </SettingsSection>
 
-    <SettingsSection
-        title="Prediction"
-        description="Scheduling and deck options that power GRE Atlas score predictions."
-    >
-        <GreMetricRow label="FSRS" value={fsrsLabel} />
-        {#if activePreset}
-            <GreMetricRow
-                label="Desired retention"
-                value={formatPercent(
-                    Math.round((activePreset.desiredRetention ?? 0.9) * 100),
-                )}
-            />
-            <GreMetricRow
-                label="Daily new cards"
-                value={String(activePreset.newPerDay)}
-            />
-            <GreMetricRow
-                label="Daily review limit"
-                value={String(activePreset.reviewsPerDay)}
-            />
-        {:else}
-            <GreText variant="caption" muted>
-                Create the "{data.studyStatus.deckName}" deck to configure prediction
-                settings.
-            </GreText>
-        {/if}
-        {#if canOpenDeckOptions}
-            <GreButtonRow className="settings-actions">
-                <GreButton
-                    variant="primary"
-                    on:click={() => runGreNavAction(greDeckOptionsAction())}
-                >
-                    Open GRE deck options
-                </GreButton>
-            </GreButtonRow>
-        {/if}
+    <SettingsSection title="Practice sync" description="Cross-device GRE Atlas practice data.">
+        <GreText variant="body">
+            Syncs practice attempts, sessions, generated questions, and calibration
+            history via your Anki sync server. This requires a self-hosted sync server
+            with GRE Atlas routes enabled; AnkiWeb sign-in alone is not enough. Set a
+            custom sync server under Account → Sync &amp; account details, sign in,
+            then sync here.
+        </GreText>
+        <GreButtonRow className="settings-actions">
+            <GreButton variant="primary" on:click={() => syncGreAtlasPractice()}>
+                Sync practice data now
+            </GreButton>
+        </GreButtonRow>
     </SettingsSection>
 
-    <SettingsSection title="Account" description="Sync, backups, and AnkiWeb sign-in.">
+    <SettingsSection title="Account" description="Cloud sync and sign-in.">
         <GreText variant="body">
-            Manage AnkiWeb sync and account details in Anki’s account preferences.
+            Sign in to sync your GRE Atlas collection across devices.
         </GreText>
         <GreButtonRow className="settings-actions">
             <GreButton variant="primary" on:click={() => runBridge("greSyncLogin")}>
-                Sign in to AnkiWeb
+                Sign in
             </GreButton>
             <GreButton on:click={() => runBridge("greSyncLogout")}>Sign out</GreButton>
             <GreButton on:click={() => runBridge("greOpenAnkiPreferences")}>
-                Account & sync settings
+                Sync & account details
             </GreButton>
         </GreButtonRow>
     </SettingsSection>
@@ -288,11 +263,49 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <summary class="settings-advanced-summary">
             <span class="settings-advanced-title">Advanced</span>
             <span class="settings-advanced-hint">
-                Editing, backups, scheduling extras, and global Anki options
+                Prediction, scheduling, editing, and backups
             </span>
         </summary>
 
         <div class="settings-advanced-body">
+            <SettingsSection
+                title="Prediction"
+                description="Deck options that power GRE Atlas score predictions."
+            >
+                <GreMetricRow label="FSRS" value={fsrsLabel} />
+                {#if activePreset}
+                    <GreMetricRow
+                        label="Desired retention"
+                        value={formatPercent(
+                            Math.round((activePreset.desiredRetention ?? 0.9) * 100),
+                        )}
+                    />
+                    <GreMetricRow
+                        label="Daily new cards"
+                        value={String(activePreset.newPerDay)}
+                    />
+                    <GreMetricRow
+                        label="Daily review limit"
+                        value={String(activePreset.reviewsPerDay)}
+                    />
+                {:else}
+                    <GreText variant="caption" muted>
+                        Open Study once to load built-in GRE flashcards, then return
+                        here to configure prediction settings.
+                    </GreText>
+                {/if}
+                {#if canOpenDeckOptions}
+                    <GreButtonRow className="settings-actions">
+                        <GreButton
+                            variant="primary"
+                            on:click={() => runGreNavAction(greDeckOptionsAction())}
+                        >
+                            Open GRE deck options
+                        </GreButton>
+                    </GreButtonRow>
+                {/if}
+            </SettingsSection>
+
             <SettingsSection title="Scheduling">
                 <SettingsSelect
                     label="New/review card order"
@@ -426,14 +439,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 />
             </SettingsSection>
 
-            <SettingsSection title="All Anki preferences">
+            <SettingsSection title="More options">
                 <GreText variant="caption" muted>
-                    Appearance, language, answer keys, updates, video driver, and other
-                    global options live in Anki’s full preferences window.
+                    Appearance, language, answer keys, updates, and other app-wide
+                    settings open in a separate preferences window.
                 </GreText>
                 <GreButtonRow className="settings-actions">
                     <GreButton on:click={() => runBridge("greOpenAnkiPreferences")}>
-                        Open all Anki preferences…
+                        Open more preferences…
                     </GreButton>
                 </GreButtonRow>
             </SettingsSection>

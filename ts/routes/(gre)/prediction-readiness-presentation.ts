@@ -9,13 +9,13 @@ import type {
     ReadinessScore,
 } from "@generated/anki/brainlift_pb";
 
-import { settingsNavAction } from "./gre-navigation";
+import { greNavAction, greNavItem, GRE_CTA_REVIEW } from "./gre-navigation";
 import { clampPercent } from "./indicator-utils";
 import { topicDetailsPath } from "./topic-link";
 
 /** Display-only thresholds matching rslib abstention / calibration gates. */
-const MIN_STUDIED_CARDS = 200;
-const MIN_PRACTICE_ATTEMPTS = 20;
+const MIN_STUDIED_CARDS = 20;
+const MIN_PRACTICE_ATTEMPTS = 50;
 const MIN_COVERAGE_RATIO = 0.5;
 const MIN_CALIBRATION_HELD_OUT = 5;
 
@@ -135,12 +135,13 @@ function buildNextAction(
     const calibration = categories.find((cat) => cat.id === "calibration")!;
 
     if (!input.deckExists) {
-        const settings = settingsNavAction();
+        const startStudy = greNavAction(greNavItem("study"));
+        startStudy.label = GRE_CTA_REVIEW;
         return {
-            label: `Set up "${input.deckName}" in Settings`,
-            buttonLabel: "Set up deck",
-            href: settings.href!,
-            bridge: settings.bridge,
+            label: "Open Study to load your GRE flashcards",
+            buttonLabel: "Start studying",
+            href: startStudy.href!,
+            bridge: startStudy.bridge,
             estimatedImpact: impactFromCategoryGap(memory.percent),
         };
     }
@@ -270,7 +271,7 @@ export function presentPredictionReadiness(
             },
             {
                 id: "calibration",
-                label: "Calibration",
+                label: "Estimate checks",
                 percent: calibrationCategoryPercent(input.readiness, input.calibration),
             },
         ]
@@ -278,7 +279,7 @@ export function presentPredictionReadiness(
             { id: "memory", label: "Memory", percent: 0 },
             { id: "practice", label: "Practice", percent: 0 },
             { id: "coverage", label: "Coverage", percent: 0 },
-            { id: "calibration", label: "Calibration", percent: 0 },
+            { id: "calibration", label: "Estimate checks", percent: 0 },
         ];
 
     const evidencePercent = averagePercent(categories.map((cat) => cat.percent));

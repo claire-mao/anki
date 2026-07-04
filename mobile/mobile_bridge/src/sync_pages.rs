@@ -8,6 +8,9 @@ use anki_proto::brainlift::BrainLiftSyncPullResponse;
 use anki_proto::brainlift::BrainLiftSyncPushRequest;
 use anki_proto::brainlift::BrainLiftSyncPushResponse;
 use anki_proto::brainlift::BrainLiftSyncStatus;
+use anki_proto::brainlift::PerformGreAtlasSyncRequest;
+use anki_proto::brainlift::PerformGreAtlasSyncResponse;
+use anki_proto::sync::SyncAuth;
 use anki_proto::generic::Empty;
 use prost::Message;
 use serde::Deserialize;
@@ -86,6 +89,32 @@ pub struct GreAtlasSyncPushView {
     pub conflicts: Vec<GreAtlasSyncConflictView>,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GreAtlasSyncAuthView {
+    pub hkey: String,
+    pub endpoint: Option<String>,
+    pub io_timeout_secs: Option<u32>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GreAtlasPerformSyncInput {
+    pub auth: Option<GreAtlasSyncAuthView>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreAtlasPerformSyncView {
+    pub success: bool,
+    pub message: String,
+    pub downloaded_count: u32,
+    pub uploaded_count: u32,
+    pub applied_count: u32,
+    pub conflicts: Vec<GreAtlasSyncConflictView>,
+    pub status: Option<GreAtlasSyncStatusView>,
+}
+
 pub fn load_sync_status(backend: &Backend) -> Result<GreAtlasSyncStatusView, Vec<u8>> {
     let status = invoke_proto::<BrainLiftSyncStatus>(
         backend,
@@ -138,6 +167,24 @@ pub fn push_sync_changes(
     Ok(response.into())
 }
 
+pub fn perform_gre_atlas_sync(
+    backend: &Backend,
+    input: GreAtlasPerformSyncInput,
+) -> Result<GreAtlasPerformSyncView, Vec<u8>> {
+    let auth = input.auth.map(|a| SyncAuth {
+        hkey: a.hkey,
+        endpoint: a.endpoint,
+        io_timeout_secs: a.io_timeout_secs,
+    });
+    let response = invoke_proto::<PerformGreAtlasSyncResponse>(
+        backend,
+        GRE_ATLAS_SERVICE,
+        "perform_gre_atlas_sync",
+        &PerformGreAtlasSyncRequest { auth }.encode_to_vec(),
+    )?;
+    Ok(response.into())
+}
+
 impl From<BrainLiftSyncStatus> for GreAtlasSyncStatusView {
     fn from(status: BrainLiftSyncStatus) -> Self {
         Self {
@@ -171,6 +218,24 @@ impl From<BrainLiftSyncPushResponse> for GreAtlasSyncPushView {
                 .into_iter()
                 .map(GreAtlasSyncConflictView::from_proto)
                 .collect(),
+        }
+    }
+}
+
+impl From<PerformGreAtlasSyncResponse> for GreAtlasPerformSyncView {
+    fn from(response: PerformGreAtlasSyncResponse) -> Self {
+        Self {
+            success: response.success,
+            message: response.message,
+            downloaded_count: response.downloaded_count,
+            uploaded_count: response.uploaded_count,
+            applied_count: response.applied_count,
+            conflicts: response
+                .conflicts
+                .into_iter()
+                .map(GreAtlasSyncConflictView::from_proto)
+                .collect(),
+            status: response.status.map(Into::into),
         }
     }
 }

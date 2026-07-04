@@ -191,7 +191,7 @@
         grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
-    .progress-charts {
+    .progress-charts:not(.progress-charts-advanced) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -201,7 +201,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .progress-charts {
+    .progress-charts:not(.progress-charts-advanced) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -217,6 +217,11 @@
 
     .progress-charts {
         grid-template-columns: 1fr;
+    }
+
+    .progress-charts-advanced :global(.progress-chart-extra-tall .progress-chart) {
+        max-height: 26rem;
+        min-height: 18rem;
     }
 
     .progress-chart-card .progress-chart {

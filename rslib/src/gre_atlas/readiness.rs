@@ -317,8 +317,8 @@ mod test {
 
     fn sufficient_performance() -> PerformanceScore {
         compute_performance_score(&PerformanceInputs {
-            correct: 16,
-            total: 20,
+            correct: 40,
+            total: 50,
         })
     }
 
@@ -339,7 +339,7 @@ mod test {
         let req = &score.abstention_requirements[0];
         assert_eq!(req.id, REQ_PRACTICE_ATTEMPTS);
         assert!(!req.met);
-        assert!(req.next_step.contains("20"));
+        assert!(req.next_step.contains("50"));
     }
 
     #[test]

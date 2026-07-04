@@ -9,11 +9,16 @@ use std::path::PathBuf;
 use rusqlite::params;
 use rusqlite::Connection;
 use rusqlite::OptionalExtension;
+use tracing::debug;
 
 use crate::error::Result;
 use crate::timestamp::TimestampSecs;
 
-pub(crate) const SCHEMA_VERSION: u32 = 4;
+fn log_sync_write(table: &str, op: &str, detail: &str) {
+    debug!(target: "gre_atlas::sync", table, op, detail);
+}
+
+pub(crate) const SCHEMA_VERSION: u32 = 5;
 
 /// Sidecar SQLite filename beside the collection profile (GRE Atlas practice
 /// data).
@@ -21,6 +26,15 @@ pub const GRE_ATLAS_DB_NAME: &str = "greatlas.db";
 /// Legacy sidecar filename; migrated to [`GRE_ATLAS_DB_NAME`] on open when
 /// present.
 pub const LEGACY_BRAINLIFT_DB_NAME: &str = "brainlift.db";
+
+mod sync_bundle;
+
+pub use sync_bundle::ApplyBundleResult;
+pub use sync_bundle::SyncBundle;
+pub use sync_bundle::SyncPredictionRow;
+pub use sync_bundle::SyncQuestionRow;
+pub use sync_bundle::SyncSessionRow;
+pub use sync_bundle::META_LAST_DOWNLOADED_USN;
 
 #[derive(Debug, Clone)]
 pub struct StoredQuestion {
@@ -37,6 +51,15 @@ pub struct StoredQuestion {
     pub source_section: Option<String>,
     pub generated_at_secs: Option<i64>,
     pub generation_confidence: Option<f32>,
+    /// Specific source excerpt/section id that grounded generation.
+    pub source_document: Option<String>,
+    /// Real model id (e.g. `gpt-4o-mini`) or `template_v1` for offline
+    /// templates. `None` for legacy/foundation rows.
+    pub model_version: Option<String>,
+    /// `ai_generated` or `offline_template`. `None` for legacy/foundation rows.
+    pub provenance: Option<String>,
+    /// Grounding gate result, e.g. `approved` or `rejected_hallucination`.
+    pub evaluation_status: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -116,7 +139,7 @@ impl From<anki_proto::brainlift::BrainLiftSyncAttempt> for SyncAttemptRow {
             correct: value.correct,
             response_time_ms: value.response_time_ms,
             confidence: value.confidence,
-            session_id: value.session_id,
+            session_id: value.session_id.filter(|s| !s.is_empty()),
             usn: value.usn,
             mtime_secs: TimestampSecs(value.mtime_secs),
         }
@@ -163,11 +186,14 @@ impl GreAtlasStorage {
         let db = Connection::open(&db_path)?;
         db.busy_timeout(std::time::Duration::from_secs(5))?;
         db.pragma_update(None, "journal_mode", "wal")?;
+        db.pragma_update(None, "foreign_keys", true)?;
         db.set_prepared_statement_cache_capacity(20);
 
         let storage = Self { db };
         storage.migrate(collection_path)?;
         storage.seed_questions_if_empty()?;
+        crate::gre_atlas::questions::purge_invalid_questions(&storage)?;
+        crate::gre_atlas::questions::ensure_exam_length_bank(&storage)?;
         Ok(storage)
     }
 
@@ -207,6 +233,9 @@ impl GreAtlasStorage {
         if ver < 4 {
             self.db.execute_batch(include_str!("upgrade_3_to_4.sql"))?;
         }
+        if ver < 5 {
+            self.db.execute_batch(include_str!("upgrade_4_to_5.sql"))?;
+        }
         Ok(())
     }
 
@@ -226,29 +255,28 @@ impl GreAtlasStorage {
             return Ok(());
         }
 
-        let seed: Vec<SeedQuestion> =
-            serde_json::from_str(include_str!("../questions/seed_gre.json")).map_err(|err| {
-                crate::error::AnkiError::InvalidInput {
-                    source: snafu::FromString::without_source(format!("seed questions: {err}")),
-                }
-            })?;
+        let foundation =
+            crate::gre_atlas::questions::foundation::load_foundation_bank();
         let now = TimestampSecs::now().0;
-        for q in seed {
+        for q in foundation {
+            let choices = q.choice_list();
             self.db.execute(
                 "INSERT INTO bl_question
                 (id, topic, section, format, stem, choices_json, correct_answer, explanation,
-                 difficulty, usn, mtime_secs)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+                 difficulty, source_name, source_section, usn, mtime_secs)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
                 params![
                     q.id,
                     q.topic,
                     q.section,
                     q.format,
-                    q.stem,
-                    serde_json::to_string(&q.choices).unwrap(),
+                    q.stem_text(),
+                    serde_json::to_string(choices).unwrap(),
                     q.correct_answer,
-                    q.explanation,
+                    q.stored_explanation(),
                     q.difficulty,
+                    q.source_name(),
+                    q.subtopic.as_deref().unwrap_or("foundation"),
                     now,
                 ],
             )?;
@@ -264,10 +292,11 @@ impl GreAtlasStorage {
         } else {
             source
         };
+        let usn = self.next_usn()?;
         self.db.execute(
             "INSERT INTO bl_session (id, started_at_secs, source, usn, mtime_secs)
-             VALUES (?, ?, ?, -1, ?)",
-            params![id, now.0, source, now.0],
+             VALUES (?, ?, ?, ?, ?)",
+            params![id, now.0, source, usn, now.0],
         )?;
         Ok(PracticeSession {
             id,
@@ -288,14 +317,51 @@ impl GreAtlasStorage {
             .map_err(Into::into)
     }
 
+    pub fn question_exists(&self, question_id: &str) -> Result<bool> {
+        self.db
+            .query_row(
+                "SELECT 1 FROM bl_question WHERE id = ?",
+                [question_id],
+                |_| Ok(()),
+            )
+            .optional()
+            .map(|opt| opt.is_some())
+            .map_err(Into::into)
+    }
+
+    pub fn session_count(&self) -> Result<u64> {
+        let count: i64 = self
+            .db
+            .query_row("SELECT COUNT(*) FROM bl_session", [], |row| row.get(0))?;
+        Ok(count.max(0) as u64)
+    }
+
     pub fn list_questions(&self, topic_prefix: &str, limit: u32) -> Result<Vec<StoredQuestion>> {
         let limit = limit.max(1) as i64;
+        // Deprioritize questions the learner has already answered: order by attempt
+        // count (least-answered first), then hardest-first by difficulty, then
+        // least-recently answered. A stable `id` tie-break keeps ordering
+        // deterministic across devices, which mobile/desktop FFI parity relies on.
         let mut stmt = self.db.prepare_cached(
-            "SELECT id, topic, section, format, stem, choices_json, correct_answer, explanation,
-                    difficulty, source_name, source_section, generated_at_secs, generation_confidence
-             FROM bl_question
-             WHERE (?1 = '' OR topic = ?1 OR topic LIKE ?1 || '::%')
-             ORDER BY id
+            "SELECT q.id, q.topic, q.section, q.format, q.stem, q.choices_json, q.correct_answer,
+                    q.explanation, q.difficulty, q.source_name, q.source_section,
+                    q.generated_at_secs, q.generation_confidence, q.source_document,
+                    q.model_version, q.provenance, q.evaluation_status
+             FROM bl_question q
+             LEFT JOIN (
+                 SELECT question_id, COUNT(*) AS attempts, MAX(answered_at_secs) AS last_answered
+                 FROM bl_performance_attempt
+                 GROUP BY question_id
+             ) a ON a.question_id = q.id
+             WHERE (?1 = '' OR q.topic = ?1 OR q.topic LIKE ?1 || '::%')
+               -- Rejected AI candidates must never reach learners; legacy/
+               -- foundation/approved rows have NULL or non-'rejected' status.
+               AND (q.evaluation_status IS NULL OR q.evaluation_status NOT LIKE 'rejected%')
+             ORDER BY COALESCE(a.attempts, 0) ASC,
+                      CASE WHEN COALESCE(q.difficulty, 0.5) >= 0.5 THEN 0 ELSE 1 END ASC,
+                      COALESCE(q.difficulty, 0.5) DESC,
+                      COALESCE(a.last_answered, 0) ASC,
+                      q.id ASC
              LIMIT ?2",
         )?;
 
@@ -310,7 +376,8 @@ impl GreAtlasStorage {
             .query_row(
                 "SELECT id, topic, section, format, stem, choices_json, correct_answer,
                         explanation, difficulty, source_name, source_section, generated_at_secs,
-                        generation_confidence
+                        generation_confidence, source_document, model_version, provenance,
+                        evaluation_status
                  FROM bl_question WHERE id = ?",
                 [question_id],
                 row_to_stored_question,
@@ -319,17 +386,45 @@ impl GreAtlasStorage {
             .map_err(Into::into)
     }
 
-    pub fn insert_generated_question(
+    pub fn question_count(&self) -> Result<u64> {
+        let count: i64 = self
+            .db
+            .query_row("SELECT COUNT(*) FROM bl_question", [], |row| row.get(0))?;
+        Ok(count.max(0) as u64)
+    }
+
+    pub fn question_counts_by_topic(&self) -> Result<HashMap<String, u32>> {
+        let mut stmt = self
+            .db
+            .prepare_cached("SELECT topic, COUNT(*) FROM bl_question GROUP BY topic")?;
+        let rows = stmt.query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, u32>(1)?))
+        })?;
+        rows.collect::<std::result::Result<HashMap<_, _>, _>>()
+            .map_err(Into::into)
+    }
+
+    pub fn insert_generated_question_if_new(
         &self,
         draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
-    ) -> Result<()> {
+    ) -> Result<bool> {
+        self.insert_generated_question_if_new_with_meta(draft, &default_template_metadata(draft))
+    }
+
+    /// Insert a generated question with explicit provenance/eval metadata,
+    /// skipping if a row with the same id already exists.
+    pub fn insert_generated_question_if_new_with_meta(
+        &self,
+        draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
+        meta: &crate::gre_atlas::questions::metadata::QuestionMetadata,
+    ) -> Result<bool> {
         let now = TimestampSecs::now().0;
-        self.db.execute(
-            "INSERT INTO bl_question
+        let rows = self.db.execute(
+            "INSERT OR IGNORE INTO bl_question
             (id, topic, section, format, stem, choices_json, correct_answer, explanation,
              difficulty, source_name, source_section, generated_at_secs, generation_confidence,
-             usn, mtime_secs)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+             source_document, model_version, provenance, evaluation_status, usn, mtime_secs)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
             params![
                 draft.id,
                 draft.topic,
@@ -344,9 +439,106 @@ impl GreAtlasStorage {
                 draft.attribution.source_section,
                 draft.attribution.generated_at_secs,
                 draft.confidence,
+                meta.source_document,
+                meta.model_version,
+                meta.provenance.as_str(),
+                meta.evaluation_status.as_str(),
                 now,
             ],
         )?;
+        Ok(rows > 0)
+    }
+
+    pub fn insert_generated_question(
+        &self,
+        draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
+    ) -> Result<()> {
+        self.insert_generated_question_with_meta(draft, &default_template_metadata(draft))
+    }
+
+    /// Insert a generated question with explicit provenance/eval metadata.
+    pub fn insert_generated_question_with_meta(
+        &self,
+        draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
+        meta: &crate::gre_atlas::questions::metadata::QuestionMetadata,
+    ) -> Result<()> {
+        let now = TimestampSecs::now().0;
+        self.db.execute(
+            "INSERT INTO bl_question
+            (id, topic, section, format, stem, choices_json, correct_answer, explanation,
+             difficulty, source_name, source_section, generated_at_secs, generation_confidence,
+             source_document, model_version, provenance, evaluation_status, usn, mtime_secs)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            params![
+                draft.id,
+                draft.topic,
+                draft.section,
+                draft.format,
+                draft.stem,
+                serde_json::to_string(&draft.choices).unwrap(),
+                draft.correct_answer,
+                draft.explanation,
+                draft.difficulty,
+                draft.attribution.source_name,
+                draft.attribution.source_section,
+                draft.attribution.generated_at_secs,
+                draft.confidence,
+                meta.source_document,
+                meta.model_version,
+                meta.provenance.as_str(),
+                meta.evaluation_status.as_str(),
+                now,
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Append a per-candidate evaluation row for pass/reject metrics. Rejected
+    /// candidates are logged here but never inserted into `bl_question`.
+    pub fn record_generation_eval(
+        &self,
+        row: &crate::gre_atlas::questions::eval_pipeline::GenerationEvalRecord,
+    ) -> Result<()> {
+        let now = TimestampSecs::now().0;
+        self.db.execute(
+            "INSERT INTO bl_generation_eval
+            (candidate_id, topic, model_version, provenance, status, reason, confidence,
+             evaluated_at_secs)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            params![
+                row.candidate_id,
+                row.topic,
+                row.model_version,
+                row.provenance.as_str(),
+                row.status.as_str(),
+                row.reason,
+                row.confidence,
+                now,
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Count generation-eval rows grouped by status (for metrics reporting).
+    pub fn generation_eval_counts(&self) -> Result<HashMap<String, u32>> {
+        let mut stmt = self
+            .db
+            .prepare_cached("SELECT status, COUNT(*) FROM bl_generation_eval GROUP BY status")?;
+        let rows = stmt.query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, u32>(1)?))
+        })?;
+        rows.collect::<std::result::Result<HashMap<_, _>, _>>()
+            .map_err(Into::into)
+    }
+
+    pub fn delete_question(&self, question_id: &str) -> Result<()> {
+        let tx = self.db.unchecked_transaction()?;
+        tx.execute(
+            "DELETE FROM bl_performance_attempt WHERE question_id = ?1",
+            [question_id],
+        )?;
+        tx.execute("DELETE FROM bl_question WHERE id = ?1", [question_id])?;
+        tx.commit()?;
         Ok(())
     }
 
@@ -470,6 +662,7 @@ impl GreAtlasStorage {
         let mut applied_count = 0u32;
         let mut conflicts = Vec::new();
         for row in incoming {
+            self.ensure_fk_prerequisites_for_attempt(row)?;
             if row.id == 0 {
                 self.insert_sync_attempt(row)?;
                 applied_count += 1;
@@ -479,6 +672,12 @@ impl GreAtlasStorage {
             match existing {
                 None => {
                     self.insert_sync_attempt_with_id(row)?;
+                    applied_count += 1;
+                }
+                Some(local) if attempt_identity_differs(&local, row) => {
+                    // Auto-increment ids are per-device; same id on two profiles is a
+                    // collision, not the same attempt row.
+                    self.insert_sync_attempt(row)?;
                     applied_count += 1;
                 }
                 Some(local) => {
@@ -504,6 +703,76 @@ impl GreAtlasStorage {
         })
     }
 
+    /// Ensure FK parent rows exist before inserting or updating an attempt.
+    pub(crate) fn ensure_fk_prerequisites_for_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
+        self.ensure_session_for_attempt(row)?;
+        self.ensure_question_for_attempt(row)?;
+        Ok(())
+    }
+
+    /// Ensure `bl_session` exists before inserting an attempt that references it.
+    /// Used when session rows were not bundled (e.g. server USN filter).
+    pub(crate) fn ensure_session_for_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
+        let Some(session_id) = row.session_id.as_deref() else {
+            return Ok(());
+        };
+        if self.session_exists(session_id)? {
+            return Ok(());
+        }
+        let usn = self.next_usn()?;
+        log_sync_write(
+            "bl_session",
+            "ensure_session_for_attempt",
+            &format!(
+                "id={session_id} started_at_secs={} mtime_secs={}",
+                row.answered_at_secs.0, row.mtime_secs.0
+            ),
+        );
+        self.db.execute(
+            "INSERT INTO bl_session (id, started_at_secs, source, usn, mtime_secs)
+             VALUES (?, ?, 'practice', ?, ?)",
+            params![
+                session_id,
+                row.answered_at_secs.0,
+                usn,
+                row.mtime_secs.0,
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Ensure `bl_question` exists before inserting an attempt that references it.
+    /// Used when question rows were not bundled (e.g. server USN filter).
+    pub(crate) fn ensure_question_for_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
+        if self.question_exists(&row.question_id)? {
+            return Ok(());
+        }
+        let usn = self.next_usn()?;
+        log_sync_write(
+            "bl_question",
+            "ensure_question_for_attempt",
+            &format!(
+                "id={} topic={} mtime_secs={}",
+                row.question_id, row.topic, row.mtime_secs.0
+            ),
+        );
+        self.db.execute(
+            "INSERT INTO bl_question
+            (id, topic, section, format, stem, choices_json, correct_answer, explanation,
+             difficulty, usn, mtime_secs)
+            VALUES (?, ?, 'sync', 'mcq', '[synced practice row]', '[]', ?, '', ?, ?, ?)",
+            params![
+                row.question_id,
+                row.topic,
+                row.answer,
+                row.difficulty,
+                usn,
+                row.mtime_secs.0,
+            ],
+        )?;
+        Ok(())
+    }
+
     fn get_sync_attempt(&self, id: i64) -> Result<Option<SyncAttemptRow>> {
         self.db
             .query_row(
@@ -519,6 +788,14 @@ impl GreAtlasStorage {
 
     fn insert_sync_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
+        log_sync_write(
+            "bl_performance_attempt",
+            "insert_sync_attempt",
+            &format!(
+                "question_id={} session_id={:?} answered_at_secs={}",
+                row.question_id, row.session_id, row.answered_at_secs.0
+            ),
+        );
         self.db.execute(
             "INSERT INTO bl_performance_attempt
             (question_id, topic, difficulty, answered_at_secs, answer, correct, response_time_ms,
@@ -543,6 +820,14 @@ impl GreAtlasStorage {
 
     fn insert_sync_attempt_with_id(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
+        log_sync_write(
+            "bl_performance_attempt",
+            "insert_sync_attempt_with_id",
+            &format!(
+                "id={} question_id={} session_id={:?}",
+                row.id, row.question_id, row.session_id
+            ),
+        );
         self.db.execute(
             "INSERT INTO bl_performance_attempt
             (id, question_id, topic, difficulty, answered_at_secs, answer, correct, response_time_ms,
@@ -568,6 +853,14 @@ impl GreAtlasStorage {
 
     fn update_sync_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
+        log_sync_write(
+            "bl_performance_attempt",
+            "update_sync_attempt",
+            &format!(
+                "id={} question_id={} session_id={:?} mtime_secs={}",
+                row.id, row.question_id, row.session_id, row.mtime_secs.0
+            ),
+        );
         self.db.execute(
             "UPDATE bl_performance_attempt SET
                 question_id = ?, topic = ?, difficulty = ?, answered_at_secs = ?, answer = ?,
@@ -718,12 +1011,13 @@ impl GreAtlasStorage {
         }
 
         let now = TimestampSecs::now().0;
+        let usn = self.next_usn()?;
         self.db.execute(
             "INSERT INTO bl_readiness_prediction
             (predicted_at_secs, projected_score, projected_score_low, projected_score_high,
              memory_score, performance_score, coverage_ratio, confidence_level, model_version,
              usn, mtime_secs)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, -1, ?)",
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             params![
                 now,
                 snapshot.projected_score,
@@ -734,6 +1028,7 @@ impl GreAtlasStorage {
                 snapshot.coverage_ratio,
                 snapshot.confidence_level,
                 READINESS_MODEL_VERSION,
+                usn,
                 now,
             ],
         )?;
@@ -778,11 +1073,12 @@ impl GreAtlasStorage {
             } else {
                 inputs.performance_score
             };
+            let usn = self.next_usn()?;
             self.db.execute(
                 "UPDATE bl_readiness_prediction
                  SET outcome_score = ?, outcome_observed_at_secs = ?,
                      outcome_memory_score = ?, outcome_performance_score = ?,
-                     practice_correct = ?, practice_total = ?, mtime_secs = ?
+                     practice_correct = ?, practice_total = ?, usn = ?, mtime_secs = ?
                  WHERE id = ?",
                 params![
                     outcome_score,
@@ -791,6 +1087,7 @@ impl GreAtlasStorage {
                     perf_score,
                     practice.0,
                     practice.1,
+                    usn,
                     now.0,
                     prediction.id,
                 ],
@@ -853,6 +1150,12 @@ fn row_to_readiness_prediction(
     })
 }
 
+fn attempt_identity_differs(local: &SyncAttemptRow, remote: &SyncAttemptRow) -> bool {
+    local.question_id != remote.question_id
+        || local.answered_at_secs != remote.answered_at_secs
+        || local.session_id != remote.session_id
+}
+
 fn row_to_sync_attempt(row: &rusqlite::Row<'_>) -> rusqlite::Result<SyncAttemptRow> {
     let correct: i32 = row.get(6)?;
     Ok(SyncAttemptRow {
@@ -894,7 +1197,23 @@ fn row_to_stored_question(row: &rusqlite::Row<'_>) -> rusqlite::Result<StoredQue
         source_section: row.get(10)?,
         generated_at_secs: row.get(11)?,
         generation_confidence: row.get(12)?,
+        source_document: row.get(13)?,
+        model_version: row.get(14)?,
+        provenance: row.get(15)?,
+        evaluation_status: row.get(16)?,
     })
+}
+
+/// Metadata for a template draft when no explicit metadata is provided (the
+/// deterministic bank top-up path). Uses the draft's own model version so
+/// callers that predate the metadata columns keep sensible provenance.
+fn default_template_metadata(
+    draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
+) -> crate::gre_atlas::questions::metadata::QuestionMetadata {
+    crate::gre_atlas::questions::metadata::QuestionMetadata::offline_template(
+        crate::gre_atlas::questions::ai_gen::AI_GENERATION_MODEL_VERSION,
+        draft.attribution.source_section.clone(),
+    )
 }
 
 fn new_session_id() -> String {
@@ -930,6 +1249,7 @@ fn migrate_legacy_db_filename(db_path: &Path) -> Result<()> {
 }
 
 #[derive(serde::Deserialize)]
+#[allow(dead_code)]
 struct SeedQuestion {
     id: String,
     topic: String,
@@ -985,8 +1305,53 @@ mod test {
         assert!(verbal.iter().all(|q| q.topic.starts_with("gre::verbal")));
         assert!(verbal.len() >= 2);
         let linear = storage.list_questions("gre::quant::algebra::linear", 100)?;
-        assert_eq!(linear.len(), 1);
-        assert_eq!(linear[0].id, "gre-quant-alg-001");
+        assert!(linear
+            .iter()
+            .all(|q| q.topic == "gre::quant::algebra::linear"));
+        assert!(linear.iter().any(|q| q.id.starts_with("gre-foundation-quant-lin")));
+        Ok(())
+    }
+
+    #[test]
+    fn list_questions_deprioritizes_answered_questions() -> Result<()> {
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        let storage = GreAtlasStorage::open(&col_path)?;
+
+        let all = storage.list_questions("", 500)?;
+        assert!(
+            all.len() >= 2,
+            "seed bank should contain multiple questions"
+        );
+        let answered_id = all[0].id.clone();
+        let answered_topic = all[0].topic.clone();
+        let session = storage.create_session("practice")?;
+        storage.record_attempt(
+            &answered_id,
+            &answered_topic,
+            None,
+            "answer",
+            true,
+            1000,
+            None,
+            Some(&session.id),
+        )?;
+
+        // Once answered, the question moves into a higher attempt-count tier and
+        // must sort after every still-unanswered question.
+        let ordered = storage.list_questions("", 500)?;
+        let answered_pos = ordered
+            .iter()
+            .position(|q| q.id == answered_id)
+            .expect("answered question should still be listed");
+        assert_eq!(
+            answered_pos,
+            ordered.len() - 1,
+            "answered question should be deprioritized to the end of the list"
+        );
         Ok(())
     }
 
@@ -999,11 +1364,57 @@ mod test {
         CollectionBuilder::new(&col_path).build()?;
         let storage = GreAtlasStorage::open(&col_path)?;
         let questions = storage.list_questions("", 100)?;
-        assert!(questions.len() >= 9);
+        assert!(
+            questions.len() >= crate::gre_atlas::questions::exam_bank_question_count() as usize,
+            "question bank should reach exam length"
+        );
         assert!(questions.iter().any(|q| q.section == "quant"));
         assert!(questions.iter().any(|q| q.section == "verbal"));
         assert!(questions.iter().any(|q| q.section == "awa"));
         Ok(())
+    }
+
+    #[test]
+    fn seed_bank_is_valid_and_covers_every_leaf_topic() {
+        let seed = crate::gre_atlas::questions::foundation::load_foundation_bank();
+
+        assert!(
+            seed.len() >= crate::gre_atlas::questions::foundation::MIN_FOUNDATION_VERBAL
+                + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_QUANT
+                + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_AWA,
+            "foundation bank should meet minimum counts, got {}",
+            seed.len()
+        );
+
+        let mut ids = std::collections::HashSet::new();
+        for q in &seed {
+            assert!(ids.insert(q.id.as_str()), "duplicate seed id: {}", q.id);
+            let choices = q.choice_list();
+            assert!(!choices.is_empty(), "{} has no choices", q.id);
+            assert!(
+                crate::gre_atlas::questions::variants::correct_answer_in_choices(
+                    &q.correct_answer,
+                    choices
+                ),
+                "{}: correct_answer {:?} is not among its choices",
+                q.id,
+                q.correct_answer
+            );
+            assert!(
+                crate::gre_atlas::GreCatalog::topic_by_id(&q.topic).is_some(),
+                "{}: topic {:?} is not in the catalog",
+                q.id,
+                q.topic
+            );
+        }
+
+        for leaf in crate::gre_atlas::GreCatalog::leaf_topics() {
+            assert!(
+                seed.iter().any(|q| q.topic == leaf.id),
+                "no foundation question covers leaf topic {}",
+                leaf.id
+            );
+        }
     }
 
     #[test]
@@ -1109,16 +1520,215 @@ mod test {
     }
 
     #[test]
+    fn migrates_schema_v4_to_v5_adds_ai_metadata_columns_and_eval_table() -> Result<()> {
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let db_path = dir.path().join(LEGACY_BRAINLIFT_DB_NAME);
+        let db = Connection::open(&db_path)?;
+        // A realistic v4 sidecar: bl_question exists with the v4 attribution
+        // columns but none of the v5 AI-metadata columns.
+        db.execute_batch(
+            "CREATE TABLE bl_meta (key TEXT PRIMARY KEY, val TEXT NOT NULL);
+             CREATE TABLE bl_question (
+               id TEXT PRIMARY KEY, topic TEXT NOT NULL, section TEXT NOT NULL,
+               format TEXT NOT NULL, stem TEXT NOT NULL, choices_json TEXT,
+               correct_answer TEXT NOT NULL, explanation TEXT NOT NULL,
+               difficulty REAL, source_name TEXT, source_section TEXT,
+               generated_at_secs INTEGER, generation_confidence REAL,
+               usn INTEGER NOT NULL DEFAULT 0, mtime_secs INTEGER NOT NULL
+             );
+             INSERT INTO bl_meta (key, val) VALUES ('schema_version', '4');",
+        )?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        let storage = GreAtlasStorage::open(&col_path)?;
+        assert_eq!(storage.schema_version()?, SCHEMA_VERSION);
+        let ai_cols: i64 = storage.db.query_row(
+            "SELECT COUNT(*) FROM pragma_table_info('bl_question')
+             WHERE name IN ('source_document', 'model_version', 'provenance', 'evaluation_status')",
+            [],
+            |row| row.get(0),
+        )?;
+        assert_eq!(ai_cols, 4);
+        let eval_table: i64 = storage.db.query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'bl_generation_eval'",
+            [],
+            |row| row.get(0),
+        )?;
+        assert_eq!(eval_table, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn migration_is_idempotent_across_reopens() -> Result<()> {
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        // Opening repeatedly must not error (no duplicate ALTERs, etc.) and must
+        // stay at the current schema version.
+        for _ in 0..3 {
+            let storage = GreAtlasStorage::open(&col_path)?;
+            assert_eq!(storage.schema_version()?, SCHEMA_VERSION);
+            drop(storage);
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn stores_and_reads_ai_generation_metadata() -> Result<()> {
+        use crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft;
+        use crate::gre_atlas::questions::ai_gen::QuestionAttribution;
+        use crate::gre_atlas::questions::metadata::EvaluationStatus;
+        use crate::gre_atlas::questions::metadata::Provenance;
+        use crate::gre_atlas::questions::metadata::QuestionMetadata;
+
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        let storage = GreAtlasStorage::open(&col_path)?;
+
+        let draft = GeneratedQuestionDraft {
+            id: "ai-llm-meta-test".into(),
+            topic: "gre::quant::algebra::linear".into(),
+            section: "quant".into(),
+            format: "mcq".into(),
+            stem: "If 2x = 10, what is x?".into(),
+            choices: vec!["3".into(), "4".into(), "5".into(), "6".into()],
+            correct_answer: "5".into(),
+            explanation: "Divide by 2.".into(),
+            difficulty: Some(0.4),
+            confidence: 0.8,
+            attribution: QuestionAttribution {
+                source_name: "ETS Official GRE Prep Material".into(),
+                source_section: "Quantitative Reasoning — Linear equations".into(),
+                generated_at_secs: 42,
+            },
+        };
+        let meta = QuestionMetadata {
+            provenance: Provenance::AiGenerated,
+            model_version: "gpt-4o-mini".into(),
+            source_document: "Quantitative Reasoning — Linear equations".into(),
+            evaluation_status: EvaluationStatus::Approved,
+        };
+        storage.insert_generated_question_with_meta(&draft, &meta)?;
+
+        let stored = storage.get_question("ai-llm-meta-test")?.unwrap();
+        assert_eq!(stored.provenance.as_deref(), Some("ai_generated"));
+        assert_eq!(stored.model_version.as_deref(), Some("gpt-4o-mini"));
+        assert_eq!(stored.evaluation_status.as_deref(), Some("approved"));
+        assert_eq!(
+            stored.source_document.as_deref(),
+            Some("Quantitative Reasoning — Linear equations")
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn list_questions_excludes_rejected_candidates() -> Result<()> {
+        use crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft;
+        use crate::gre_atlas::questions::ai_gen::QuestionAttribution;
+        use crate::gre_atlas::questions::metadata::EvaluationStatus;
+        use crate::gre_atlas::questions::metadata::Provenance;
+        use crate::gre_atlas::questions::metadata::QuestionMetadata;
+
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        let storage = GreAtlasStorage::open(&col_path)?;
+
+        let draft = GeneratedQuestionDraft {
+            id: "ai-rejected-row".into(),
+            topic: "gre::quant::algebra::linear".into(),
+            section: "quant".into(),
+            format: "mcq".into(),
+            stem: "A rejected candidate that must never surface.".into(),
+            choices: vec!["1".into(), "2".into(), "3".into(), "4".into()],
+            correct_answer: "1".into(),
+            explanation: "n/a".into(),
+            difficulty: Some(0.4),
+            confidence: 0.1,
+            attribution: QuestionAttribution {
+                source_name: "ETS Official GRE Prep Material".into(),
+                source_section: "Quantitative Reasoning — Linear equations".into(),
+                generated_at_secs: 1,
+            },
+        };
+        let meta = QuestionMetadata {
+            provenance: Provenance::AiGenerated,
+            model_version: "gpt-4o-mini".into(),
+            source_document: "Quantitative Reasoning — Linear equations".into(),
+            evaluation_status: EvaluationStatus::RejectedHallucination,
+        };
+        storage.insert_generated_question_with_meta(&draft, &meta)?;
+
+        let listed = storage.list_questions("", u32::MAX)?;
+        assert!(
+            !listed.iter().any(|q| q.id == "ai-rejected-row"),
+            "rejected AI candidate must not reach learners"
+        );
+        // But it is still directly retrievable for auditing.
+        assert!(storage.get_question("ai-rejected-row")?.is_some());
+        Ok(())
+    }
+
+    #[test]
+    fn records_and_counts_generation_eval() -> Result<()> {
+        use crate::gre_atlas::questions::eval_pipeline::GenerationEvalRecord;
+        use crate::gre_atlas::questions::metadata::EvaluationStatus;
+        use crate::gre_atlas::questions::metadata::Provenance;
+
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let col_path = dir.path().join("test.anki2");
+        CollectionBuilder::new(&col_path).build()?;
+        let storage = GreAtlasStorage::open(&col_path)?;
+
+        storage.record_generation_eval(&GenerationEvalRecord {
+            candidate_id: "c1".into(),
+            topic: "gre::quant::algebra::linear".into(),
+            model_version: "gpt-4o-mini".into(),
+            provenance: Provenance::AiGenerated,
+            status: EvaluationStatus::Approved,
+            reason: String::new(),
+            confidence: Some(0.9),
+        })?;
+        storage.record_generation_eval(&GenerationEvalRecord {
+            candidate_id: "c2".into(),
+            topic: "gre::quant::algebra::linear".into(),
+            model_version: "gpt-4o-mini".into(),
+            provenance: Provenance::AiGenerated,
+            status: EvaluationStatus::RejectedDuplicate,
+            reason: "near-duplicate".into(),
+            confidence: Some(0.2),
+        })?;
+
+        let counts = storage.generation_eval_counts()?;
+        assert_eq!(counts.get("approved").copied(), Some(1));
+        assert_eq!(counts.get("rejected_duplicate").copied(), Some(1));
+        Ok(())
+    }
+
+    #[test]
     fn migrates_legacy_brainlift_db_filename() -> Result<()> {
         let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
             source: snafu::FromString::without_source(e.to_string()),
         })?;
         let legacy_path = dir.path().join(LEGACY_BRAINLIFT_DB_NAME);
         let db = Connection::open(&legacy_path)?;
-        db.execute_batch(
+        // This test only exercises the filename rename, so pin the sidecar at
+        // the current schema version (no upgrade path is under test here).
+        db.execute_batch(&format!(
             "CREATE TABLE bl_meta (key TEXT PRIMARY KEY, val TEXT NOT NULL);
-             INSERT INTO bl_meta (key, val) VALUES ('schema_version', '4');",
-        )?;
+             INSERT INTO bl_meta (key, val) VALUES ('schema_version', '{SCHEMA_VERSION}');",
+        ))?;
         let col_path = dir.path().join("test.anki2");
         CollectionBuilder::new(&col_path).build()?;
         let _storage = GreAtlasStorage::open(&col_path)?;
@@ -1190,3 +1800,4 @@ mod test {
         Ok(())
     }
 }
+

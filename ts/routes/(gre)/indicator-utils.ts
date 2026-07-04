@@ -33,20 +33,72 @@ export function confidenceVisual(confidence: string): ConfidenceVisual {
     return "medium";
 }
 
-export function rollingAccuracySeries(
+export type AccuracyTrendHorizon = "1d" | "3d" | "7d" | "30d" | "all";
+
+export interface AccuracyTrendPoint {
+    answeredAtSecs: number;
+    accuracy: number;
+}
+
+const SECONDS_PER_DAY = 86_400;
+
+export function filterAttemptsByHorizon(
+    attempts: PerformanceAttempt[],
+    horizon: AccuracyTrendHorizon,
+    nowSecs = Math.floor(Date.now() / 1000),
+): PerformanceAttempt[] {
+    if (horizon === "all") {
+        return attempts;
+    }
+    const horizonDays: Record<Exclude<AccuracyTrendHorizon, "all">, number> = {
+        "1d": 1,
+        "3d": 3,
+        "7d": 7,
+        "30d": 30,
+    };
+    const cutoff = BigInt(nowSecs - horizonDays[horizon] * SECONDS_PER_DAY);
+    return attempts.filter((attempt) => attempt.answeredAtSecs >= cutoff);
+}
+
+export function rollingAccuracyTrendPoints(
     attempts: PerformanceAttempt[],
     windowSize = 5,
-): number[] {
+): AccuracyTrendPoint[] {
     if (attempts.length === 0) {
         return [];
     }
     const ordered = [...attempts].reverse();
-    return ordered.map((_, index) => {
+    return ordered.map((attempt, index) => {
         const start = Math.max(0, index - windowSize + 1);
         const slice = ordered.slice(start, index + 1);
-        const correct = slice.filter((attempt) => attempt.correct).length;
-        return clampPercent((correct / slice.length) * 100);
+        const correct = slice.filter((item) => item.correct).length;
+        return {
+            answeredAtSecs: Number(attempt.answeredAtSecs),
+            accuracy: clampPercent((correct / slice.length) * 100),
+        };
     });
+}
+
+export function rollingAccuracySeries(
+    attempts: PerformanceAttempt[],
+    windowSize = 5,
+): number[] {
+    return rollingAccuracyTrendPoints(attempts, windowSize).map((point) => point.accuracy);
+}
+
+export function accuracyHorizonLabel(horizon: AccuracyTrendHorizon): string {
+    switch (horizon) {
+        case "1d":
+            return "Last 1 day accuracy";
+        case "3d":
+            return "Last 3 days accuracy";
+        case "7d":
+            return "Last 7 days accuracy";
+        case "30d":
+            return "Last 30 days accuracy";
+        case "all":
+            return "All-time accuracy";
+    }
 }
 
 export function calibrationOutcomeSeries(bins: ReadinessCalibrationBin[]): number[] {

@@ -1,6 +1,7 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
+mod gre_atlas_sync;
 mod handlers;
 mod logging;
 mod media_manager;
@@ -247,6 +248,7 @@ impl SimpleServer {
             Router::new()
                 .nest("/sync", collection_sync_router())
                 .nest("/msync", media_sync_router())
+                .nest("/gre/sync", gre_atlas_sync::gre_atlas_sync_router())
                 .route("/health", get(health_check_handler))
                 .with_state(server)
                 .layer(DefaultBodyLimit::max(*MAXIMUM_SYNC_PAYLOAD_BYTES))

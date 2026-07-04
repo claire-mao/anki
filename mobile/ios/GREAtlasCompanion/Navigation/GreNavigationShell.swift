@@ -6,10 +6,10 @@ import SwiftUI
 /// Root GRE shell: five primary sections matching desktop `greNavItems`.
 struct GreNavigationShell: View {
     @EnvironmentObject private var engine: AnkiMobileEngine
-    @State private var selectedTab: GreNavTab = .dashboard
+    @EnvironmentObject private var tabRouter: GreTabRouter
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $tabRouter.selectedTab) {
             ForEach(GreNavTab.allCases) { tab in
                 tabContent(for: tab)
                     .tabItem {

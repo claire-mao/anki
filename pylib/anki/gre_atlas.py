@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from anki import brainlift_pb2
+from anki import sync_pb2
 
 if TYPE_CHECKING:
     from anki.collection import Collection
@@ -101,6 +102,12 @@ def get_gre_study_status(col: Collection) -> brainlift_pb2.GreStudyStatusRespons
     return col._backend.get_gre_study_status()
 
 
+def prepare_demo_collection(
+    col: Collection,
+) -> brainlift_pb2.PrepareDemoCollectionResponse:
+    return col._backend.prepare_demo_collection()
+
+
 def get_study_plan(
     col: Collection,
     *,
@@ -150,6 +157,23 @@ def generate_question(
     return col._backend.generate_question(topic_id=topic_id, persist=persist)
 
 
+def explain_answer(
+    col: Collection,
+    *,
+    question_id: str,
+    selected_answer: str = "",
+) -> brainlift_pb2.AnswerExplanation:
+    """Post-answer explanation for a stored question.
+
+    Uses the optional LLM path when ``GRE_ATLAS_OPENAI_API_KEY`` is set and the
+    provider is reachable; otherwise falls back to a deterministic templated
+    explanation. Never raises for AI-unavailability.
+    """
+    return col._backend.explain_answer(
+        question_id=question_id, selected_answer=selected_answer
+    )
+
+
 def get_gre_atlas_sync_status(col: Collection) -> brainlift_pb2.BrainLiftSyncStatus:
     return col._backend.get_brain_lift_sync_status()
 
@@ -164,3 +188,33 @@ def push_gre_atlas_changes(
     col: Collection, attempts: list[brainlift_pb2.BrainLiftSyncAttempt]
 ) -> brainlift_pb2.BrainLiftSyncPushResponse:
     return col._backend.push_brain_lift_changes(attempts=attempts)
+
+
+def pull_gre_atlas_sync_bundle(
+    col: Collection, *, after_usn: int = 0, limit: int = 5000
+) -> brainlift_pb2.BrainLiftSyncBundleResponse:
+    return col._backend.pull_brain_lift_sync_bundle(after_usn=after_usn, limit=limit)
+
+
+def push_gre_atlas_sync_bundle(
+    col: Collection, bundle: brainlift_pb2.BrainLiftSyncBundle
+) -> brainlift_pb2.BrainLiftSyncBundlePushResponse:
+    return col._backend.push_brain_lift_sync_bundle(bundle=bundle)
+
+
+def perform_gre_atlas_sync(
+    col: Collection,
+    *,
+    hkey: str | None = None,
+    endpoint: str | None = None,
+    io_timeout_secs: int | None = None,
+) -> brainlift_pb2.PerformGreAtlasSyncResponse:
+    """Download remote GRE Atlas changes, merge locally, and upload pending rows.
+
+    When ``hkey`` is omitted, performs a local status refresh only.
+    """
+    auth = None
+    if hkey:
+        auth = sync_pb2.SyncAuth(hkey=hkey, endpoint=endpoint, io_timeout_secs=io_timeout_secs)
+    request = brainlift_pb2.PerformGreAtlasSyncRequest(auth=auth)
+    return col._backend.perform_gre_atlas_sync(request)

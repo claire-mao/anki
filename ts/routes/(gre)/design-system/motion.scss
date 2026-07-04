@@ -50,14 +50,40 @@
     }
 }
 
-@keyframes gre-success-in-incorrect {
+@keyframes gre-error-in {
     from {
-        background: color-mix(in srgb, var(--state-review) 12%, var(--gre-surface-bg-muted));
+        background: color-mix(in srgb, var(--gre-error) 18%, var(--gre-surface-bg-muted));
     }
 
     to {
-        background: var(--gre-surface-bg-muted);
+        background: var(--gre-error-soft);
     }
+}
+
+@mixin gre-disclosure-panel {
+    summary {
+        transition: color var(--gre-motion-fast) ease;
+    }
+
+    summary:hover {
+        color: var(--fg);
+    }
+
+    &[open] > :not(summary) {
+        animation: gre-fade-in var(--gre-motion-base) ease both;
+    }
+}
+
+@mixin gre-reveal-in {
+    animation: gre-fade-in var(--gre-motion-base) ease both;
+}
+
+.gre-disclosure {
+    @include gre-disclosure-panel;
+}
+
+.gre-reveal-in {
+    @include gre-reveal-in;
 }
 
 .gre-animate-in {
@@ -164,7 +190,9 @@
     .gre-animate-fade,
     .gre-stagger > :global(*),
     .gre-page-skeleton,
-    .gre-skeleton {
+    .gre-skeleton,
+    .gre-disclosure[open] > :not(summary),
+    .gre-reveal-in {
         animation: none !important;
     }
 

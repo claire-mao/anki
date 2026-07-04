@@ -8,6 +8,7 @@ option java_multiple_files = true;
 package anki.brainlift;
 
 import "anki/generic.proto";
+import "anki/sync.proto";
 
 service BrainLiftService {
   rpc ListQuestions(ListQuestionsRequest) returns (ListQuestionsResponse);
@@ -28,6 +29,10 @@ service BrainLiftService {
       returns (BrainLiftAiEvalReportResponse);
   rpc GenerateQuestion(GenerateQuestionRequest)
       returns (GenerateQuestionResponse);
+  // Post-answer explanation for a stored question. Uses the optional LLM path
+  // when enabled/reachable, otherwise a deterministic templated explanation.
+  // Never errors for AI-unavailability; falls back and marks provenance.
+  rpc ExplainAnswer(ExplainAnswerRequest) returns (ExplainAnswerResponse);
   rpc GetTopicDetails(GetTopicDetailsRequest) returns (TopicDetailsResponse);
   // Incremental sync for brainlift.db (practice attempts). Collection sync uses
   // SyncService.
@@ -36,6 +41,14 @@ service BrainLiftService {
       returns (BrainLiftSyncPullResponse);
   rpc PushBrainLiftChanges(BrainLiftSyncPushRequest)
       returns (BrainLiftSyncPushResponse);
+  // Full sidecar sync bundle (sessions, questions, attempts, calibration rows).
+  rpc PullBrainLiftSyncBundle(BrainLiftSyncPullRequest)
+      returns (BrainLiftSyncBundleResponse);
+  rpc PushBrainLiftSyncBundle(BrainLiftSyncBundlePushRequest)
+      returns (BrainLiftSyncBundlePushResponse);
+  // Download remote changes, merge locally, upload pending local changes.
+  rpc PerformGreAtlasSync(PerformGreAtlasSyncRequest)
+      returns (PerformGreAtlasSyncResponse);
   // Idempotent demo bootstrap: GRE deck, flashcards, and sample practice
   // history.
   rpc PrepareDemoCollection(generic.Empty)
@@ -59,6 +72,14 @@ message QuestionAttribution {
   string source_section = 2;
   int64 generated_at_secs = 3;
   optional float confidence = 4;
+  // "ai_generated" or "offline_template". Empty for legacy/foundation rows.
+  string provenance = 5;
+  // Real model id (e.g. "gpt-4o-mini") or "template_v1" for offline templates.
+  string model_version = 6;
+  // Grounding gate result, e.g. "approved" or "rejected_hallucination".
+  string evaluation_status = 7;
+  // Specific source excerpt/section id that grounded generation.
+  string source_document = 8;
 }
 
 message GenerateQuestionRequest {
@@ -72,6 +93,47 @@ message GenerateQuestionResponse {
   string rejection_reason = 3;
   optional Question question = 4;
   optional QuestionAttribution attribution = 5;
+  // "ai_generated" or "offline_template" — how the returned question was made.
+  string provenance = 6;
+  string model_version = 7;
+  string evaluation_status = 8;
+  // Human-readable provenance note, e.g. "Generated using offline templates."
+  string provenance_note = 9;
+}
+
+message ExplainAnswerRequest {
+  string question_id = 1;
+  // The answer the learner selected (may differ from the correct answer).
+  string selected_answer = 2;
+}
+
+// Per-choice reasoning for the post-answer explanation.
+message AnswerChoiceExplanation {
+  string choice = 1;
+  bool is_correct = 2;
+  string reasoning = 3;
+}
+
+message AnswerExplanation {
+  // Why the correct answer is correct.
+  string summary = 1;
+  // Reasoning for each presented choice (correct + every distractor).
+  repeated AnswerChoiceExplanation choices = 2;
+  string correct_answer = 3;
+  // Citation of the grounding source.
+  string citation_source_name = 4;
+  string citation_source_section = 5;
+  string citation_excerpt = 6;
+  // "ai_generated" or "offline_template".
+  string provenance = 7;
+  // Human-readable note; exactly "Generated using offline templates." for the
+  // deterministic fallback.
+  string provenance_note = 8;
+  string model_version = 9;
+}
+
+message ExplainAnswerResponse {
+  AnswerExplanation explanation = 1;
 }
 
 message ListQuestionsRequest {
@@ -455,6 +517,96 @@ message BrainLiftSyncPushResponse {
   int32 current_usn = 1;
   repeated BrainLiftSyncConflict conflicts = 2;
   uint32 applied_count = 3;
+}
+
+message BrainLiftSyncSession {
+  string id = 1;
+  int64 started_at_secs = 2;
+  optional int64 ended_at_secs = 3;
+  string source = 4;
+  int32 usn = 5;
+  int64 mtime_secs = 6;
+}
+
+message BrainLiftSyncQuestion {
+  string id = 1;
+  string topic = 2;
+  string section = 3;
+  string format = 4;
+  string stem = 5;
+  repeated string choices = 6;
+  string correct_answer = 7;
+  string explanation = 8;
+  optional float difficulty = 9;
+  optional string source_name = 10;
+  optional string source_section = 11;
+  optional int64 generated_at_secs = 12;
+  optional float generation_confidence = 13;
+  optional string source_document = 14;
+  optional string model_version = 15;
+  optional string provenance = 16;
+  optional string evaluation_status = 17;
+  int32 usn = 18;
+  int64 mtime_secs = 19;
+}
+
+message BrainLiftSyncPrediction {
+  int64 id = 1;
+  int64 predicted_at_secs = 2;
+  float projected_score = 3;
+  optional float projected_score_low = 4;
+  optional float projected_score_high = 5;
+  float memory_score = 6;
+  float performance_score = 7;
+  float coverage_ratio = 8;
+  string confidence_level = 9;
+  string model_version = 10;
+  optional float outcome_score = 11;
+  optional int64 outcome_observed_at_secs = 12;
+  optional float outcome_memory_score = 13;
+  optional float outcome_performance_score = 14;
+  optional int32 practice_correct = 15;
+  optional int32 practice_total = 16;
+  int32 usn = 17;
+  int64 mtime_secs = 18;
+}
+
+message BrainLiftSyncBundle {
+  repeated BrainLiftSyncSession sessions = 1;
+  repeated BrainLiftSyncQuestion questions = 2;
+  repeated BrainLiftSyncAttempt attempts = 3;
+  repeated BrainLiftSyncPrediction predictions = 4;
+  int32 current_usn = 5;
+  int64 last_modified_secs = 6;
+}
+
+message BrainLiftSyncBundleResponse {
+  BrainLiftSyncBundle bundle = 1;
+}
+
+message BrainLiftSyncBundlePushRequest {
+  BrainLiftSyncBundle bundle = 1;
+}
+
+message BrainLiftSyncBundlePushResponse {
+  int32 current_usn = 1;
+  uint32 applied_count = 2;
+  repeated BrainLiftSyncConflict conflicts = 3;
+}
+
+message PerformGreAtlasSyncRequest {
+  // When omitted, returns a local-only status refresh (no network).
+  optional anki.sync.SyncAuth auth = 1;
+}
+
+message PerformGreAtlasSyncResponse {
+  bool success = 1;
+  string message = 2;
+  uint32 downloaded_count = 3;
+  uint32 uploaded_count = 4;
+  uint32 applied_count = 5;
+  repeated BrainLiftSyncConflict conflicts = 6;
+  BrainLiftSyncStatus status = 7;
 }
 
 message PrepareDemoCollectionResponse {

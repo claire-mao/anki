@@ -270,7 +270,7 @@ fn focus_topic_task(recommendation: &StudyPlanRecommendation) -> StudyPlanDailyT
             id: TASK_FOCUS_TOPIC.into(),
             title: format!("Cover {}", recommendation.display_name),
             detail: format!(
-                "Add {FOCUS_ADD_CARDS_TARGET} flashcards tagged {} ({:.0}% exam weight)",
+                "Answer {FOCUS_ADD_CARDS_TARGET} practice questions on {} ({:.0}% exam weight)",
                 recommendation.topic_id,
                 recommendation.exam_weight * 100.0
             ),

@@ -10,7 +10,7 @@ import type {
 } from "@generated/anki/brainlift_pb";
 
 import { emptyStateContent } from "./empty-states";
-import { settingsNavAction } from "./gre-navigation";
+import { greDeckOptionsAction, GRE_CTA_PRACTICE, GRE_CTA_REVIEW, GRE_CTA_STUDY_PLAN, studyPlanNavAction } from "./gre-navigation";
 import { formatGreScoreRange, formatPercent, formatRange } from "./score-format";
 import { capitalizeLabel, estimatedGreConfidence, unmetRequirements } from "./summary-metrics";
 
@@ -35,7 +35,8 @@ export function readinessUnlocked(readiness: ReadinessScore): boolean {
 
 export function estimatedGreWhy(estimate: EstimatedGreScore): string {
     if (estimate.combinedScore === undefined) {
-        return "Combines memory, practice, and coverage into the 260–340 GRE scale.";
+        return estimate.abstainReason
+            || "Complete unlock milestones to build enough evidence for a GRE score estimate.";
     }
     if (estimate.preliminary) {
         return "Early Quant + Verbal mapping from partial evidence.";
@@ -72,7 +73,7 @@ export function estimatedGreNextAction(
         return { label: "View progress", href: "/progress" };
     }
     if (estimate.preliminary) {
-        return { label: "View study plan", href: "/study-plan" };
+        return studyPlanNavAction(GRE_CTA_STUDY_PLAN);
     }
     const unmet = unmetRequirements(requirements);
     return actionForRequirements(unmet, emptyStateContent("estimatedGre").action);
@@ -143,7 +144,7 @@ export function readinessNextAction(readiness: ReadinessScore): PredictionAction
             readiness.confidenceLevel === "low"
             || readiness.coverageRatio < 0.5
         ) {
-            return { label: "Expand coverage", href: "/study-plan" };
+            return studyPlanNavAction("Expand coverage");
         }
         return { label: "View calibration", href: "/readiness" };
     }
@@ -188,13 +189,13 @@ function actionForRequirements(
     }
     switch (next.id) {
         case "practice_attempts":
-            return { label: "Start practice", href: "/practice" };
+            return { label: GRE_CTA_PRACTICE, href: "/practice" };
         case "studied_cards":
-            return { label: "Start review", href: "/review" };
+            return { label: GRE_CTA_REVIEW, href: "/review" };
         case "topic_coverage":
-            return { label: "View study plan", href: "/study-plan" };
+            return studyPlanNavAction(GRE_CTA_STUDY_PLAN);
         case "fsrs_enabled":
-            return { ...settingsNavAction(), label: "Set up deck" };
+            return { ...greDeckOptionsAction(), label: "Enable FSRS" };
         default:
             return fallback;
     }
@@ -226,10 +227,10 @@ export function topicGlobalReadinessNextAction(
     practiceTotal: number,
 ): PredictionAction {
     if (!covered) {
-        return { label: "Start review", href: "/review" };
+        return { label: GRE_CTA_REVIEW, href: "/review" };
     }
     if (practiceTotal === 0) {
-        return { label: "Start practice", href: "/practice" };
+        return { label: GRE_CTA_PRACTICE, href: "/practice" };
     }
     return { label: "View calibration", href: "/readiness" };
 }

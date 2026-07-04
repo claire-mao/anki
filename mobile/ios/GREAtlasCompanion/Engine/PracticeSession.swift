@@ -3,6 +3,11 @@
 
 import Foundation
 
+private enum PracticeSessionLimits {
+    /// Matches `DAILY_PRACTICE_TARGET` in `rslib/src/gre_atlas/study_plan.rs`.
+    static let topicSessionSize = 5
+}
+
 enum PracticeSectionFilter: String, CaseIterable, Identifiable {
     case all
     case quant
@@ -43,13 +48,17 @@ extension GrePracticeScoreStripView {
 final class PracticeSession: ObservableObject {
     @Published private(set) var scoreStrip: GrePracticeScoreStripView?
     @Published var sectionFilter: PracticeSectionFilter = .all
+    @Published private(set) var topicFilter = ""
+    @Published private(set) var topicTitle = ""
     @Published private(set) var queue: [GreQuestionView] = []
     @Published private(set) var questionIndex = 0
+    @Published private(set) var questionsCompleted = 0
     @Published var selectedAnswer = ""
     @Published private(set) var attemptResult: GreRecordAttemptResultView?
     @Published private(set) var responseTimeMs: UInt = 0
     @Published private(set) var sessionComplete = false
     @Published private(set) var attemptsRecorded = 0
+    @Published private(set) var sessionAttempts: [PracticeAttemptRecord] = []
     @Published private(set) var submitting = false
     @Published var submitError: String?
 
@@ -65,13 +74,15 @@ final class PracticeSession: ObservableObject {
     var progressPercent: Int {
         guard !queue.isEmpty else { return 0 }
         if sessionComplete { return 100 }
-        return Int((Double(questionIndex + 1) / Double(queue.count) * 100).rounded())
+        let number = min(questionsCompleted + 1, queue.count)
+        return Int((Double(number) / Double(queue.count) * 100).rounded())
     }
 
     var progressLabel: String {
-        guard !queue.isEmpty else { return "No questions for this filter" }
+        guard !queue.isEmpty else { return "No questions here" }
         if sessionComplete { return "Session complete" }
-        return "Question \(questionIndex + 1) of \(queue.count)"
+        let number = min(questionsCompleted + 1, queue.count)
+        return "Question \(number) of \(queue.count)"
     }
 
     func syncBootstrap(_ bootstrap: GrePracticeBootstrapView) {
@@ -81,21 +92,53 @@ final class PracticeSession: ObservableObject {
         scoreStrip = GrePracticeScoreStripView(from: bootstrap)
         sectionFilter = .all
         attemptsRecorded = 0
-        applySectionFilter(.all, queues: bootstrap.queuesBySection)
+        sessionAttempts = []
+        rebuildQueue(from: bootstrap.queuesBySection)
+    }
+
+    func applyTopicFocus(
+        topicId: String,
+        topicTitle: String?,
+        from bootstrap: GrePracticeBootstrapView
+    ) {
+        topicFilter = topicId.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.topicTitle = topicTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        sectionFilter = .all
+        rebuildQueue(from: bootstrap.queuesBySection)
+    }
+
+    func clearTopicFocus(from bootstrap: GrePracticeBootstrapView) {
+        topicFilter = ""
+        topicTitle = ""
+        rebuildQueue(from: bootstrap.queuesBySection)
     }
 
     func applySectionFilter(_ filter: PracticeSectionFilter, queues: GrePracticeQueuesView) {
         sectionFilter = filter
+        rebuildQueue(from: queues)
+    }
+
+    private func rebuildQueue(from queues: GrePracticeQueuesView) {
         let ids: [String]
-        switch filter {
+        switch sectionFilter {
         case .all: ids = queues.all
         case .quant: ids = queues.quant
         case .verbal: ids = queues.verbal
         case .awa: ids = queues.awa
         }
-        queue = ids.compactMap { questionById[$0] }
+        var nextQueue = ids.compactMap { questionById[$0] }
+        if !topicFilter.isEmpty {
+            nextQueue = nextQueue.filter { question in
+                question.topic == topicFilter || question.topic.hasPrefix("\(topicFilter)::")
+            }
+            nextQueue = Self.buildTopicPracticeQueue(nextQueue)
+        }
+        queue = nextQueue
         questionIndex = 0
+        questionsCompleted = 0
         sessionComplete = queue.isEmpty
+        attemptsRecorded = 0
+        sessionAttempts = []
         resetQuestionState()
     }
 
@@ -132,9 +175,13 @@ final class PracticeSession: ObservableObject {
             attemptResult = result
             responseTimeMs = elapsedMs
             attemptsRecorded += 1
+            questionsCompleted += 1
+            sessionAttempts.append(
+                PracticeAttemptRecord(topic: result.topic, correct: result.correct)
+            )
             scoreStrip = try await engine.refreshPracticeScoreStrip()
         } catch {
-            submitError = error.localizedDescription
+            submitError = "Could not record this attempt. Please try again."
         }
     }
 
@@ -148,7 +195,29 @@ final class PracticeSession: ObservableObject {
         questionIndex = nextIndex
     }
 
+    func skipQuestion() {
+        questionsCompleted += 1
+        nextQuestion()
+    }
+
     func restart(from bootstrap: GrePracticeBootstrapView) {
         syncBootstrap(bootstrap)
+    }
+
+    private static func buildTopicPracticeQueue(
+        _ questions: [GreQuestionView],
+        sessionSize: Int = PracticeSessionLimits.topicSessionSize
+    ) -> [GreQuestionView] {
+        guard !questions.isEmpty, sessionSize > 0 else { return [] }
+        if questions.count >= sessionSize {
+            return Array(questions.prefix(sessionSize))
+        }
+
+        var queue: [GreQuestionView] = []
+        queue.reserveCapacity(sessionSize)
+        for index in 0..<sessionSize {
+            queue.append(questions[index % questions.count])
+        }
+        return queue
     }
 }

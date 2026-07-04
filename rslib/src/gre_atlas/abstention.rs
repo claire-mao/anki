@@ -3,9 +3,9 @@
 
 use anki_proto::brainlift::AbstentionRequirement;
 
-pub(crate) const MIN_STUDIED_CARDS: u32 = 200;
+pub(crate) const MIN_STUDIED_CARDS: u32 = 20;
 pub(crate) const MIN_COVERAGE_RATIO: f32 = 0.5;
-pub(crate) const MIN_PERFORMANCE_ATTEMPTS: u32 = 20;
+pub(crate) const MIN_PERFORMANCE_ATTEMPTS: u32 = 50;
 
 pub(crate) const REQ_FSRS_ENABLED: &str = "fsrs_enabled";
 pub(crate) const REQ_STUDIED_CARDS: &str = "studied_cards";
@@ -157,11 +157,11 @@ mod test {
 
     #[test]
     fn insufficient_studied_cards_abstains() {
-        let reqs = memory_requirements(true, 150, 0.8);
+        let reqs = memory_requirements(true, 15, 0.8);
         assert!(!sufficient_from_requirements(&reqs));
         assert_eq!(unmet_ids(&reqs), vec![REQ_STUDIED_CARDS]);
-        assert!(reqs[1].status.contains("150"));
-        assert!(reqs[1].status.contains("200"));
+        assert!(reqs[1].status.contains("15"));
+        assert!(reqs[1].status.contains("20"));
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod test {
         assert!(!sufficient_from_requirements(&reqs));
         assert_eq!(unmet_ids(&reqs), vec![REQ_PRACTICE_ATTEMPTS]);
         assert!(reqs[0].status.contains("8"));
-        assert!(reqs[0].status.contains("20"));
+        assert!(reqs[0].status.contains("50"));
     }
 
     #[test]
@@ -206,7 +206,7 @@ mod test {
 
     #[test]
     fn readiness_lists_all_unmet_requirements() {
-        let memory = memory_requirements(false, 50, 0.1);
+        let memory = memory_requirements(false, 10, 0.1);
         let performance = performance_requirements(3);
         let readiness = readiness_requirements(&memory, &performance);
         assert_eq!(readiness.len(), 4);

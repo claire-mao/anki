@@ -5,17 +5,22 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import { defaultGraphBounds, type GraphBounds } from "../../graphs/graph-helpers";
 
-    export let title: string;
+    export let title: string | null = null;
+    export let ariaLabel: string | null = null;
     export let subtitle: string | null = null;
     export let renderChart: ((svg: SVGElement, bounds: GraphBounds) => void) | null =
         null;
+    export let bounds: GraphBounds = defaultGraphBounds();
     export let wide = false;
     export let tall = false;
-
-    const bounds = defaultGraphBounds();
+    export let extraTall = false;
+    export let scrollable = false;
     let svg: SVGElement | null = null;
 
-    $: chartId = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    $: chartId = (title ?? ariaLabel ?? "chart")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-");
+    $: accessibleLabel = title ?? ariaLabel ?? "Chart";
 
     $: if (svg && renderChart) {
         renderChart(svg, bounds);
@@ -26,20 +31,25 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     class="gre-ds-chart-card progress-chart-card"
     class:progress-chart-wide={wide}
     class:progress-chart-tall={tall}
+    class:progress-chart-extra-tall={extraTall}
+    class:progress-chart-scrollable={scrollable}
 >
-    <header class="progress-chart-header">
-        <h3 class="progress-chart-title" id="chart-title-{chartId}">{title}</h3>
-        {#if subtitle}
-            <p class="progress-chart-subtitle" id="chart-subtitle-{chartId}">
-                {subtitle}
-            </p>
-        {/if}
-    </header>
+    {#if title}
+        <header class="progress-chart-header">
+            <h3 class="progress-chart-title" id="chart-title-{chartId}">{title}</h3>
+            {#if subtitle}
+                <p class="progress-chart-subtitle" id="chart-subtitle-{chartId}">
+                    {subtitle}
+                </p>
+            {/if}
+        </header>
+    {/if}
     <div
         class="progress-chart-body"
         role="img"
-        aria-labelledby="chart-title-{chartId}"
-        aria-describedby={subtitle ? `chart-subtitle-${chartId}` : undefined}
+        aria-label={title ? undefined : accessibleLabel}
+        aria-labelledby={title ? `chart-title-${chartId}` : undefined}
+        aria-describedby={title && subtitle ? `chart-subtitle-${chartId}` : undefined}
     >
         <svg
             bind:this={svg}
@@ -105,13 +115,39 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             font-size: var(--gre-chart-font-caption);
         }
 
+        :global(.chart-axis-label) {
+            fill: var(--fg-subtle);
+            font-size: var(--gre-chart-font-caption);
+        }
+
         :global(.tick text) {
             fill: var(--fg-subtle);
             font-size: var(--gre-chart-font-tick);
+        }
+
+        :global(.value-unstudied) {
+            fill: var(--fg-subtle);
+            font-size: var(--gre-chart-font-caption);
         }
     }
 
     .progress-chart-tall .progress-chart {
         max-height: 18rem;
+    }
+
+    .progress-chart-extra-tall .progress-chart {
+        max-height: 30rem;
+        min-height: 22rem;
+    }
+
+    .progress-chart-scrollable .progress-chart-body {
+        max-height: 28rem;
+        overflow-y: auto;
+        align-items: flex-start;
+    }
+
+    .progress-chart-scrollable .progress-chart {
+        max-height: none;
+        min-height: 0;
     }
 </style>

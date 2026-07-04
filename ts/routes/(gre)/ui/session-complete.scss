@@ -1,0 +1,59 @@
+.session-complete {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+}
+
+.session-complete-title {
+    margin: 0;
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: var(--gre-lh-h2);
+}
+
+.session-complete-subline {
+    margin: 0;
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+    color: var(--fg-subtle);
+}
+
+.session-complete-rows {
+    display: grid;
+    gap: var(--gre-space-2);
+    margin: 0;
+    padding: var(--gre-space-3) var(--gre-space-4);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-inset);
+}
+
+.session-complete-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--gre-space-3);
+}
+
+.session-complete-row dt {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.session-complete-row dd {
+    margin: 0;
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-label);
+    text-align: right;
+}
+
+.session-complete-next {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.session-complete-actions {
+    margin-top: var(--gre-space-1);
+}

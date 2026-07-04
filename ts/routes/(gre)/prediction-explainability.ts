@@ -165,15 +165,15 @@ function calibrationImprovement(
     if (readiness?.calibrationSufficientData && !readiness.calibrationWellCalibrated) {
         return {
             id: "calibration",
-            label: "Calibration",
-            detail: readiness.calibrationNote || "More resolved predictions needed for calibration.",
+            label: "Estimate accuracy",
+            detail: readiness.calibrationNote || "More study sessions needed to verify estimates.",
         };
     }
     if (calibration && calibration.resolvedOutcomes > 0 && !calibration.wellCalibrated) {
         return {
             id: "calibration",
-            label: "Calibration",
-            detail: calibration.assessment || "Prediction accuracy still stabilizing.",
+            label: "Estimate accuracy",
+            detail: calibration.assessment || "Score estimates still stabilizing.",
         };
     }
     return null;

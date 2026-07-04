@@ -237,4 +237,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         text-align: right;
         max-width: 16rem;
     }
+
+    .gre-prediction-details-body :global(.gre-ds-metric-value-text) {
+        display: block;
+    }
 </style>

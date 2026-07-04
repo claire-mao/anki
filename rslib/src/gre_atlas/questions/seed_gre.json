@@ -5,10 +5,47 @@
         "section": "quant",
         "format": "mcq",
         "stem": "A store marks down an $80 item by 25%. What is the sale price?",
-        "choices": ["$55", "$60", "$65", "$70"],
+        "choices": [
+            "$55",
+            "$60",
+            "$65",
+            "$70"
+        ],
         "correct_answer": "$60",
-        "explanation": "25% of $80 is $20, so the sale price is $80 − $20 = $60.",
+        "explanation": "25% of $80 is $20, so the sale price is $80 \u2212 $20 = $60.",
         "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-pct-002",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is 15% of 60?",
+        "choices": [
+            "6",
+            "9",
+            "12",
+            "15"
+        ],
+        "correct_answer": "9",
+        "explanation": "0.15 \u00d7 60 = 9.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-pct-003",
+        "topic": "gre::quant::arithmetic::percent",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A subscription price rises from $50 to $65. What is the percent increase?",
+        "choices": [
+            "15%",
+            "25%",
+            "30%",
+            "35%"
+        ],
+        "correct_answer": "30%",
+        "explanation": "The increase is $15. (65 \u2212 50) / 50 = 15 / 50 = 0.30 = 30%.",
+        "difficulty": 0.4
     },
     {
         "id": "gre-quant-rat-001",
@@ -16,10 +53,47 @@
         "section": "quant",
         "format": "mcq",
         "stem": "If the ratio of boys to girls in a class is 3:5 and there are 24 boys, how many girls are there?",
-        "choices": ["30", "32", "40", "45"],
+        "choices": [
+            "30",
+            "32",
+            "40",
+            "45"
+        ],
         "correct_answer": "40",
         "explanation": "24 boys represent 3 parts, so one part is 8. Five parts of girls gives 40.",
         "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-rat-002",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A recipe uses flour and sugar in a 2:3 ratio. If 6 cups of flour are used, how many cups of sugar are needed?",
+        "choices": [
+            "4",
+            "6",
+            "9",
+            "12"
+        ],
+        "correct_answer": "9",
+        "explanation": "6 cups of flour equal 2 parts, so 1 part is 3 cups. Sugar is 3 parts = 9 cups.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-rat-003",
+        "topic": "gre::quant::arithmetic::ratio",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "Which of the following is the ratio 12:18 written in lowest terms?",
+        "choices": [
+            "2:3",
+            "3:4",
+            "4:6",
+            "6:9"
+        ],
+        "correct_answer": "2:3",
+        "explanation": "Divide both terms by their greatest common divisor, 6: 12 \u00f7 6 = 2 and 18 \u00f7 6 = 3.",
+        "difficulty": 0.3
     },
     {
         "id": "gre-quant-alg-001",
@@ -27,10 +101,95 @@
         "section": "quant",
         "format": "mcq",
         "stem": "If 3x + 7 = 22, what is the value of x?",
-        "choices": ["3", "4", "5", "6"],
+        "choices": [
+            "3",
+            "4",
+            "5",
+            "6"
+        ],
         "correct_answer": "5",
         "explanation": "Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5.",
         "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-alg-002",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If 2x \u2212 5 = 11, what is the value of x?",
+        "choices": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "correct_answer": "8",
+        "explanation": "Add 5 to both sides: 2x = 16. Divide by 2: x = 8.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-alg-003",
+        "topic": "gre::quant::algebra::linear",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If 5(x \u2212 2) = 20, what is the value of x?",
+        "choices": [
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "correct_answer": "6",
+        "explanation": "Divide both sides by 5: x \u2212 2 = 4, so x = 6.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-quad-001",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What are the solutions to x\u00b2 \u2212 5x + 6 = 0?",
+        "choices": [
+            "x = 1 or x = 6",
+            "x = 2 or x = 3",
+            "x = \u22122 or x = \u22123",
+            "x = 1 or x = 5"
+        ],
+        "correct_answer": "x = 2 or x = 3",
+        "explanation": "Factor: (x \u2212 2)(x \u2212 3) = 0, so x = 2 or x = 3.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-quant-quad-002",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If x\u00b2 = 49 and x > 0, what is the value of x?",
+        "choices": [
+            "6",
+            "7",
+            "\u22127",
+            "24.5"
+        ],
+        "correct_answer": "7",
+        "explanation": "The positive square root of 49 is 7.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-quad-003",
+        "topic": "gre::quant::algebra::quadratic",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What are the solutions to (x \u2212 3)(x + 4) = 0?",
+        "choices": [
+            "x = 3 or x = 4",
+            "x = \u22123 or x = 4",
+            "x = 3 or x = \u22124",
+            "x = \u22123 or x = \u22124"
+        ],
+        "correct_answer": "x = 3 or x = \u22124",
+        "explanation": "Set each factor equal to 0: x \u2212 3 = 0 gives x = 3; x + 4 = 0 gives x = \u22124.",
+        "difficulty": 0.5
     },
     {
         "id": "gre-quant-geo-001",
@@ -38,9 +197,334 @@
         "section": "quant",
         "format": "mcq",
         "stem": "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
-        "choices": ["9", "10", "12", "14"],
+        "choices": [
+            "9",
+            "10",
+            "12",
+            "14"
+        ],
         "correct_answer": "10",
-        "explanation": "By the Pythagorean theorem, √(6² + 8²) = √100 = 10.",
+        "explanation": "By the Pythagorean theorem, \u221a(6\u00b2 + 8\u00b2) = \u221a100 = 10.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-quant-tri-002",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "An equilateral triangle has a side length of 6. What is its perimeter?",
+        "choices": [
+            "12",
+            "15",
+            "18",
+            "24"
+        ],
+        "correct_answer": "18",
+        "explanation": "All three sides are equal, so the perimeter is 3 \u00d7 6 = 18.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-tri-003",
+        "topic": "gre::quant::geometry::triangles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "Two angles of a triangle measure 40\u00b0 and 60\u00b0. What is the measure of the third angle?",
+        "choices": [
+            "70\u00b0",
+            "80\u00b0",
+            "90\u00b0",
+            "100\u00b0"
+        ],
+        "correct_answer": "80\u00b0",
+        "explanation": "The angles of a triangle sum to 180\u00b0, so the third is 180\u00b0 \u2212 40\u00b0 \u2212 60\u00b0 = 80\u00b0.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-cir-001",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A circle has radius 5. What is its area?",
+        "choices": [
+            "5\u03c0",
+            "10\u03c0",
+            "25\u03c0",
+            "50\u03c0"
+        ],
+        "correct_answer": "25\u03c0",
+        "explanation": "Area = \u03c0r\u00b2 = \u03c0(5\u00b2) = 25\u03c0.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-cir-002",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A circle has diameter 10. What is its circumference?",
+        "choices": [
+            "5\u03c0",
+            "10\u03c0",
+            "20\u03c0",
+            "100\u03c0"
+        ],
+        "correct_answer": "10\u03c0",
+        "explanation": "Circumference = \u03c0d = \u03c0(10) = 10\u03c0.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-cir-003",
+        "topic": "gre::quant::geometry::circles",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A circle has radius 4. What is its circumference?",
+        "choices": [
+            "4\u03c0",
+            "8\u03c0",
+            "16\u03c0",
+            "32\u03c0"
+        ],
+        "correct_answer": "8\u03c0",
+        "explanation": "Circumference = 2\u03c0r = 2\u03c0(4) = 8\u03c0.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-di-001",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "data_interpretation",
+        "stem": "A table shows Company A revenue of $40M in 2022 and $50M in 2023. Company B revenue was $30M in 2022 and $36M in 2023. Which company had the greater percent increase?",
+        "choices": [
+            "Company A",
+            "Company B",
+            "They increased by the same percent",
+            "Cannot be determined"
+        ],
+        "correct_answer": "Company A",
+        "explanation": "A: (50 \u2212 40) / 40 = 25%. B: (36 \u2212 30) / 30 = 20%. Company A increased more.",
+        "difficulty": 0.5
+    },
+    {
+        "id": "gre-quant-di-002",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "data_interpretation",
+        "stem": "A bar chart shows monthly sales of $20K, $30K, and $50K over three months. What were the total sales for the three months?",
+        "choices": [
+            "$90K",
+            "$100K",
+            "$110K",
+            "$120K"
+        ],
+        "correct_answer": "$100K",
+        "explanation": "Add the bars: 20 + 30 + 50 = 100, so $100K.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-di-003",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "data_interpretation",
+        "stem": "A pie chart shows that 25% of a $200 monthly budget is spent on marketing. How much is spent on marketing?",
+        "choices": [
+            "$25",
+            "$40",
+            "$50",
+            "$75"
+        ],
+        "correct_answer": "$50",
+        "explanation": "0.25 \u00d7 $200 = $50.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-prob-001",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A fair six-sided die is rolled once. What is the probability of rolling an even number?",
+        "choices": [
+            "1/6",
+            "1/3",
+            "1/2",
+            "2/3"
+        ],
+        "correct_answer": "1/2",
+        "explanation": "Three of the six outcomes (2, 4, 6) are even, so 3/6 = 1/2.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-prob-002",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A bag contains 3 red marbles and 2 blue marbles. If one marble is drawn at random, what is the probability it is red?",
+        "choices": [
+            "2/5",
+            "1/2",
+            "3/5",
+            "2/3"
+        ],
+        "correct_answer": "3/5",
+        "explanation": "There are 3 red out of 5 total marbles, so the probability is 3/5.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-prob-003",
+        "topic": "gre::quant::statistics::probability",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "Two fair coins are flipped. What is the probability that both land heads?",
+        "choices": [
+            "1/8",
+            "1/4",
+            "1/2",
+            "3/4"
+        ],
+        "correct_answer": "1/4",
+        "explanation": "The flips are independent: 1/2 \u00d7 1/2 = 1/4.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-quant-da-001",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is the arithmetic mean of 4, 8, 10, 10, and 8?",
+        "choices": [
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "correct_answer": "8",
+        "explanation": "The sum is 40 and there are 5 values, so the mean is 40 / 5 = 8.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-da-002",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is the median of the data set 3, 7, 9, 12, 15?",
+        "choices": [
+            "7",
+            "9",
+            "10",
+            "12"
+        ],
+        "correct_answer": "9",
+        "explanation": "With five ordered values, the median is the middle (third) value, which is 9.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-da-003",
+        "topic": "gre::quant::statistics::data_analysis",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is the mode of the data set 2, 3, 3, 5, 7?",
+        "choices": [
+            "2",
+            "3",
+            "5",
+            "7"
+        ],
+        "correct_answer": "3",
+        "explanation": "The mode is the value that appears most often, which is 3.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-wp-001",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "A train travels at a constant 60 miles per hour for 3 hours. How far does it travel?",
+        "choices": [
+            "120 miles",
+            "150 miles",
+            "180 miles",
+            "210 miles"
+        ],
+        "correct_answer": "180 miles",
+        "explanation": "Distance = rate \u00d7 time = 60 \u00d7 3 = 180 miles.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-wp-002",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "If 5 pens cost $10, how much do 8 pens cost at the same unit price?",
+        "choices": [
+            "$12",
+            "$14",
+            "$16",
+            "$18"
+        ],
+        "correct_answer": "$16",
+        "explanation": "Each pen costs $10 / 5 = $2, so 8 pens cost 8 \u00d7 $2 = $16.",
+        "difficulty": 0.35
+    },
+    {
+        "id": "gre-quant-wp-003",
+        "topic": "gre::quant::word_problems",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "The sum of two consecutive integers is 27. What is the larger integer?",
+        "choices": [
+            "12",
+            "13",
+            "14",
+            "15"
+        ],
+        "correct_answer": "14",
+        "explanation": "The integers are 13 and 14 (13 + 14 = 27), so the larger is 14.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-np-001",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is the smallest prime number greater than 10?",
+        "choices": [
+            "11",
+            "12",
+            "13",
+            "15"
+        ],
+        "correct_answer": "11",
+        "explanation": "11 has no divisors other than 1 and itself, and it is the first prime above 10.",
+        "difficulty": 0.3
+    },
+    {
+        "id": "gre-quant-np-002",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "What is the greatest common divisor of 12 and 18?",
+        "choices": [
+            "2",
+            "3",
+            "6",
+            "9"
+        ],
+        "correct_answer": "6",
+        "explanation": "The divisors shared by 12 and 18 are 1, 2, 3, and 6; the greatest is 6.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-quant-np-003",
+        "topic": "gre::quant::number_properties",
+        "section": "quant",
+        "format": "mcq",
+        "stem": "Which of the following is a prime number?",
+        "choices": [
+            "51",
+            "53",
+            "55",
+            "57"
+        ],
+        "correct_answer": "53",
+        "explanation": "51 = 3 \u00d7 17, 55 = 5 \u00d7 11, and 57 = 3 \u00d7 19, while 53 has no factors other than 1 and itself.",
         "difficulty": 0.45
     },
     {
@@ -49,10 +533,47 @@
         "section": "verbal",
         "format": "text_completion",
         "stem": "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
-        "choices": ["equivocal", "compelling", "peripheral", "tenuous"],
+        "choices": [
+            "equivocal",
+            "compelling",
+            "peripheral",
+            "tenuous"
+        ],
         "correct_answer": "compelling",
-        "explanation": "Skeptics changing their minds implies the evidence was convincing — compelling.",
+        "explanation": "Skeptics changing their minds implies the evidence was convincing \u2014 compelling.",
         "difficulty": 0.5
+    },
+    {
+        "id": "gre-verbal-tc-002",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "Despite her ______ manner in public, the negotiator was famously ruthless at the bargaining table.",
+        "choices": [
+            "genial",
+            "abrasive",
+            "hostile",
+            "brusque"
+        ],
+        "correct_answer": "genial",
+        "explanation": "\"Despite\" signals a contrast with ruthlessness, so the public manner must be pleasant \u2014 genial.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-verbal-tc-003",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "The critic's review was so ______ that the author felt encouraged rather than discouraged.",
+        "choices": [
+            "scathing",
+            "laudatory",
+            "dismissive",
+            "caustic"
+        ],
+        "correct_answer": "laudatory",
+        "explanation": "Feeling encouraged points to praise, so the review was laudatory.",
+        "difficulty": 0.55
     },
     {
         "id": "gre-verbal-se-001",
@@ -60,9 +581,52 @@
         "section": "verbal",
         "format": "sentence_equivalence",
         "stem": "Although the CEO's apology was ______, many employees remained skeptical of the company's reforms.",
-        "choices": ["heartfelt", "perfunctory", "sincere", "grudging", "elaborate", "cursory"],
+        "choices": [
+            "heartfelt",
+            "perfunctory",
+            "sincere",
+            "grudging",
+            "elaborate",
+            "cursory"
+        ],
         "correct_answer": "heartfelt",
-        "explanation": "The contrast with continued skepticism suggests the apology seemed genuine — heartfelt (or sincere).",
+        "explanation": "The contrast with continued skepticism suggests the apology seemed genuine \u2014 heartfelt (or sincere).",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-verbal-se-002",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "stem": "The valley's ______ rainfall supported unusually dense and varied forests.",
+        "choices": [
+            "scarce",
+            "abundant",
+            "meager",
+            "plentiful",
+            "sparse",
+            "erratic"
+        ],
+        "correct_answer": "abundant",
+        "explanation": "Dense forests require a great deal of rain, so the two fitting words are abundant and plentiful.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-verbal-se-003",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "stem": "Her explanation was admirably ______, conveying the entire idea in just a few words.",
+        "choices": [
+            "verbose",
+            "succinct",
+            "rambling",
+            "concise",
+            "elaborate",
+            "tedious"
+        ],
+        "correct_answer": "succinct",
+        "explanation": "\"A few words\" signals brevity, so the two fitting words are succinct and concise.",
         "difficulty": 0.55
     },
     {
@@ -78,19 +642,136 @@
             "Urban planners ignore housing prices entirely."
         ],
         "correct_answer": "Convenience may trade off with affordability.",
-        "explanation": "The passage contrasts reduced commutes with higher housing costs — a convenience vs. affordability tradeoff.",
+        "explanation": "The passage contrasts reduced commutes with higher housing costs \u2014 a convenience vs. affordability tradeoff.",
         "difficulty": 0.6
     },
     {
-        "id": "gre-quant-di-001",
-        "topic": "gre::quant::data_interpretation",
-        "section": "quant",
-        "format": "data_interpretation",
-        "stem": "A table shows Company A revenue of $40M in 2022 and $50M in 2023. Company B revenue was $30M in 2022 and $36M in 2023. Which company had the greater percent increase?",
-        "choices": ["Company A", "Company B", "They increased by the same percent", "Cannot be determined"],
-        "correct_answer": "Company A",
-        "explanation": "A: (50−40)/40 = 25%. B: (36−30)/30 = 20%. Company A increased more.",
-        "difficulty": 0.5
+        "id": "gre-verbal-inf-002",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: A new policy sharply reduced emissions from the city's factories, yet nearby residents reported little change in air quality. Independent monitors later found that the pollution had shifted to communities downwind. Which is best inferred?",
+        "choices": [
+            "The policy eliminated all pollution.",
+            "Emissions controls can relocate pollution rather than remove it.",
+            "Residents were mistaken about the air quality.",
+            "Downwind communities have no pollution."
+        ],
+        "correct_answer": "Emissions controls can relocate pollution rather than remove it.",
+        "explanation": "Pollution shifting downwind implies it moved rather than disappeared.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-verbal-mi-001",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: Whereas early telescopes simply magnified distant objects, modern observatories combine light gathered by many instruments and reconstruct images no single lens could form. This shift turned astronomy into as much a computational discipline as an observational one. What is the main idea?",
+        "choices": [
+            "Telescopes exist only to magnify objects.",
+            "Modern astronomy depends on combining and computing data, not just magnification.",
+            "Early telescopes were essentially useless.",
+            "Observatories are too expensive to build."
+        ],
+        "correct_answer": "Modern astronomy depends on combining and computing data, not just magnification.",
+        "explanation": "The passage's central claim is that astronomy has shifted from simple magnification to combining and computing data.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-verbal-det-001",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: The 1876 Centennial Exhibition in Philadelphia drew nearly 30,000 exhibitors from 37 nations and introduced the telephone to a mass audience for the first time. According to the passage, what was introduced to a mass audience at the exhibition?",
+        "choices": [
+            "The telegraph",
+            "The telephone",
+            "The radio",
+            "The light bulb"
+        ],
+        "correct_answer": "The telephone",
+        "explanation": "The passage states directly that the telephone was introduced to a mass audience at the exhibition.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-verbal-fn-001",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: (1) When it opened, critics insisted the suspension bridge would never withstand heavy traffic. (2) Yet after twenty years of daily use by thousands of vehicles, not one of its supports has failed. In the passage, the second sentence primarily serves to:",
+        "choices": [
+            "introduce the critics' main argument",
+            "provide evidence that undercuts the critics' claim",
+            "describe the bridge's construction method",
+            "propose building a new bridge"
+        ],
+        "correct_answer": "provide evidence that undercuts the critics' claim",
+        "explanation": "The second sentence offers real-world evidence (\"not one support has failed\") that rebuts the critics introduced in sentence one.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-verbal-vc-001",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "In the sentence \"The committee adopted a novel approach to the problem,\" the word \"novel\" most nearly means:",
+        "choices": [
+            "fictional",
+            "new",
+            "lengthy",
+            "difficult"
+        ],
+        "correct_answer": "new",
+        "explanation": "In this context, a \"novel approach\" is a new or original one, not a work of fiction.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-verbal-vc-002",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "In the sentence \"Few crops survive in the region's arid climate,\" the word \"arid\" most nearly means:",
+        "choices": [
+            "humid",
+            "dry",
+            "cold",
+            "fertile"
+        ],
+        "correct_answer": "dry",
+        "explanation": "Crops struggling to survive and the word's meaning both indicate a dry climate.",
+        "difficulty": 0.4
+    },
+    {
+        "id": "gre-verbal-va-001",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "\"Ephemeral\" most nearly means:",
+        "choices": [
+            "permanent",
+            "fleeting",
+            "abundant",
+            "obscure"
+        ],
+        "correct_answer": "fleeting",
+        "explanation": "Ephemeral describes something that lasts a very short time \u2014 fleeting.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-verbal-va-002",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "\"Garrulous\" most nearly means:",
+        "choices": [
+            "talkative",
+            "silent",
+            "angry",
+            "generous"
+        ],
+        "correct_answer": "talkative",
+        "explanation": "Garrulous describes someone who talks a great deal \u2014 talkative.",
+        "difficulty": 0.65
     },
     {
         "id": "gre-awa-issue-001",
@@ -105,7 +786,265 @@
             "Governments should ignore environmental issues."
         ],
         "correct_answer": "Prevention and technological innovation can complement each other.",
-        "explanation": "The best critique notes a false dichotomy — prevention and tech fixes are not mutually exclusive.",
+        "explanation": "The best critique notes a false dichotomy \u2014 prevention and tech fixes are not mutually exclusive.",
         "difficulty": 0.65
+    },
+    {
+        "id": "gre-awa-issue-002",
+        "topic": "gre::awa::issue",
+        "section": "awa",
+        "format": "essay_prompt",
+        "stem": "Issue prompt: \"Universities should require every student to study a broad range of subjects rather than allowing early specialization.\" What is the strongest critique of requiring broad study?",
+        "choices": [
+            "Broad requirements can delay the depth of expertise that some fields demand.",
+            "Students generally dislike course requirements.",
+            "Specialization is always superior to breadth.",
+            "Universities should not teach anything at all."
+        ],
+        "correct_answer": "Broad requirements can delay the depth of expertise that some fields demand.",
+        "explanation": "A strong critique identifies a real tradeoff: mandatory breadth can postpone the deep, specialized training certain careers require.",
+        "difficulty": 0.65
+    },
+    {
+        "id": "gre-awa-arg-001",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "stem": "Argument prompt: \"Our store's sales fell in the month after we changed the logo, so the new logo caused the decline.\" What is the strongest objection to this argument?",
+        "choices": [
+            "Correlation does not establish causation; other factors could explain the decline.",
+            "The new logo is unattractive.",
+            "Store sales always fall every month.",
+            "Logos never affect sales in any way."
+        ],
+        "correct_answer": "Correlation does not establish causation; other factors could explain the decline.",
+        "explanation": "The argument assumes the logo caused the drop simply because it came first, ignoring other possible causes \u2014 a correlation-causation flaw.",
+        "difficulty": 0.65
+    },
+    {
+        "id": "gre-awa-arg-002",
+        "topic": "gre::awa::argument",
+        "section": "awa",
+        "format": "essay_prompt",
+        "stem": "Argument prompt: \"A survey of our website's visitors found that 90% are satisfied, so nearly all of our customers are satisfied.\" What is the strongest objection to this argument?",
+        "choices": [
+            "Website visitors may not be a representative sample of all customers.",
+            "Ninety percent is not a large number.",
+            "Surveys can never be trusted.",
+            "Customers are impossible to satisfy."
+        ],
+        "correct_answer": "Website visitors may not be a representative sample of all customers.",
+        "explanation": "The argument generalizes from a possibly biased sample (only website visitors) to all customers \u2014 a sampling flaw.",
+        "difficulty": 0.65
+    },
+    {
+        "id": "gre-seed-data_interpretation-004",
+        "topic": "gre::quant::data_interpretation",
+        "section": "quant",
+        "format": "data_interpretation",
+        "stem": "Sales grew from $40K to $52K. What is the percent increase?",
+        "choices": [
+            "20%",
+            "25%",
+            "30%",
+            "35%"
+        ],
+        "correct_answer": "30%",
+        "explanation": "(52-40)/40 = 12/40 = 30%.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-seed-inference-003",
+        "topic": "gre::verbal::reading::inference",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: Mixed-use zoning reduces commute times but critics say it raises housing costs. Which inference is best supported?",
+        "choices": [
+            "Zoning always lowers housing costs.",
+            "Convenience may trade off with affordability.",
+            "Critics deny any commute benefit.",
+            "Housing prices are unrelated to zoning."
+        ],
+        "correct_answer": "Convenience may trade off with affordability.",
+        "explanation": "The passage contrasts commute benefits with higher housing costs.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-seed-main_idea-002",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: Modern observatories combine light from many instruments and reconstruct images no single lens could form. What is the main idea?",
+        "choices": [
+            "Telescopes exist only to magnify objects.",
+            "Modern astronomy depends on combining and computing data.",
+            "Early telescopes were useless.",
+            "Observatories are too expensive to build."
+        ],
+        "correct_answer": "Modern astronomy depends on combining and computing data.",
+        "explanation": "The passage contrasts simple magnification with computational combination.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-seed-main_idea-003",
+        "topic": "gre::verbal::reading::main_idea",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: Early conservationists saved species by protecting habitats, but climate change now forces relocation of entire ecosystems. What is the main idea?",
+        "choices": [
+            "Habitat protection is unnecessary.",
+            "Climate change is forcing conservation strategies to adapt.",
+            "Species never need relocation.",
+            "Conservation has always failed."
+        ],
+        "correct_answer": "Climate change is forcing conservation strategies to adapt.",
+        "explanation": "The passage moves from habitat protection to forced relocation.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-seed-detail-002",
+        "topic": "gre::verbal::reading::detail",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: The expedition lasted eighteen months and crossed three continents. How long did the expedition last?",
+        "choices": [
+            "twelve months",
+            "fifteen months",
+            "eighteen months",
+            "twenty-four months"
+        ],
+        "correct_answer": "eighteen months",
+        "explanation": "The passage explicitly states eighteen months.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-seed-text_completion-004",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
+        "choices": [
+            "equivocal",
+            "compelling",
+            "peripheral",
+            "tenuous"
+        ],
+        "correct_answer": "compelling",
+        "explanation": "Skeptics changing their minds implies convincing evidence.",
+        "difficulty": 0.5
+    },
+    {
+        "id": "gre-seed-text_completion-005",
+        "topic": "gre::verbal::text_completion",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "Although the instructions were ______, the team completed the assembly without errors.",
+        "choices": [
+            "ambiguous",
+            "lucid",
+            "cryptic",
+            "obscure"
+        ],
+        "correct_answer": "lucid",
+        "explanation": "Successful completion implies clear instructions.",
+        "difficulty": 0.5
+    },
+    {
+        "id": "gre-seed-sentence_equivalence-004",
+        "topic": "gre::verbal::sentence_equivalence",
+        "section": "verbal",
+        "format": "sentence_equivalence",
+        "stem": "The historian's account was surprisingly ______, given the contentious subject matter.",
+        "choices": [
+            "dispassionate",
+            "inflammatory",
+            "neutral",
+            "biased",
+            "polemical",
+            "temperate"
+        ],
+        "correct_answer": "dispassionate",
+        "explanation": "Surprisingly calm tone fits dispassionate.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-seed-context-003",
+        "topic": "gre::verbal::vocabulary::context",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "In the sentence \"The committee adopted a novel approach to the problem,\" the word \"novel\" most nearly means:",
+        "choices": [
+            "fictional",
+            "new",
+            "lengthy",
+            "difficult"
+        ],
+        "correct_answer": "new",
+        "explanation": "In this context, a novel approach is a new or original one.",
+        "difficulty": 0.45
+    },
+    {
+        "id": "gre-seed-advanced-003",
+        "topic": "gre::verbal::vocabulary::advanced",
+        "section": "verbal",
+        "format": "text_completion",
+        "stem": "\"Obdurate\" most nearly means:",
+        "choices": [
+            "stubborn",
+            "generous",
+            "fleeting",
+            "talkative"
+        ],
+        "correct_answer": "stubborn",
+        "explanation": "Obdurate describes someone stubbornly resistant to change.",
+        "difficulty": 0.6
+    },
+    {
+        "id": "gre-seed-function-002",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: (1) The policy reduced emissions locally. (2) Nevertheless, pollution increased downwind. What is the function of sentence 2?",
+        "choices": [
+            "It introduces a limitation on the optimistic claim.",
+            "It defines emissions.",
+            "It summarizes the passage.",
+            "It provides unrelated history."
+        ],
+        "correct_answer": "It introduces a limitation on the optimistic claim.",
+        "explanation": "\"Nevertheless\" signals a contrast with the local reduction.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-seed-function-003",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: (1) Solar costs have fallen sharply. (2) Still, storage remains expensive. What is the function of sentence 2?",
+        "choices": [
+            "It qualifies the optimistic claim in sentence 1.",
+            "It defines solar power.",
+            "It summarizes the passage.",
+            "It introduces an unrelated topic."
+        ],
+        "correct_answer": "It qualifies the optimistic claim in sentence 1.",
+        "explanation": "\"Still\" signals a remaining obstacle despite progress.",
+        "difficulty": 0.55
+    },
+    {
+        "id": "gre-seed-function-004",
+        "topic": "gre::verbal::reading::function",
+        "section": "verbal",
+        "format": "reading_comprehension",
+        "stem": "Passage: (1) The drug showed promise in early trials. (2) Nevertheless, regulators demanded a larger study. What is the function of sentence 2?",
+        "choices": [
+            "It introduces a limitation on the optimistic claim.",
+            "It summarizes the entire passage.",
+            "It defines the drug.",
+            "It provides unrelated history."
+        ],
+        "correct_answer": "It introduces a limitation on the optimistic claim.",
+        "explanation": "\"Nevertheless\" signals a contrast with the early promise.",
+        "difficulty": 0.55
     }
 ]

@@ -3,45 +3,30 @@
 .practice-page {
     display: flex;
     flex-direction: column;
-    gap: var(--gre-section-gap);
-    max-width: var(--gre-content-max);
+    gap: var(--gre-space-3);
+    max-width: 42rem;
     margin: 0 auto;
-    min-height: calc(100dvh - var(--gre-header-height) - var(--gre-space-8));
 }
 
-.practice-toolbar {
+.practice-page :global(.gre-page-header) {
+    margin-bottom: var(--gre-space-2);
+}
+
+/* Slim top bar: progress and session stats on the left, section control on the right. */
+.practice-topbar {
     display: flex;
-    flex-direction: column;
-    gap: var(--gre-space-3);
-    width: 100%;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--gre-space-2) var(--gre-space-4);
 }
 
 .practice-progress {
+    flex: 1 1 14rem;
+    min-width: 11rem;
     display: flex;
     flex-direction: column;
-    gap: var(--gre-space-2);
-}
-
-.practice-progress-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--gre-space-2);
-}
-
-.practice-progress-label {
-    font-size: var(--gre-font-caption);
-    font-weight: var(--gre-weight-label);
-    line-height: var(--gre-lh-caption);
-    color: var(--fg);
-}
-
-.practice-progress-count {
-    font-size: var(--gre-font-caption);
-    font-weight: var(--gre-weight-label);
-    line-height: var(--gre-lh-caption);
-    color: var(--fg-subtle);
-    font-variant-numeric: tabular-nums;
+    gap: var(--gre-space-1);
 }
 
 .practice-progress-track {
@@ -52,202 +37,409 @@
     @include gre-progress-fill;
 }
 
-.practice-filters {
+.practice-progress-meta {
     display: flex;
     flex-wrap: wrap;
+    align-items: baseline;
     gap: var(--gre-space-2);
 }
 
-.practice-question-wrap {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+.practice-progress-label {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--fg);
 }
 
-.practice-question-stage {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--gre-space-4);
-    min-height: min(100%, 24rem);
-    padding: var(--gre-space-2) 0 var(--gre-space-6);
-}
-
-.question-meta {
-    margin: 0;
-    font-size: var(--gre-font-h3);
-    font-weight: var(--gre-weight-h3);
-    line-height: var(--gre-lh-h3);
+.practice-session-stats {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-1);
+    font-size: var(--gre-font-caption);
     color: var(--fg-subtle);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
 }
 
-.practice-question-stage :global(.question-stem) {
+.practice-sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-1);
+    opacity: 0.82;
+}
+
+.practice-sections :global(.gre-ds-chip) {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    min-height: 1.75rem;
+    border-color: color-mix(in srgb, var(--border) 88%, transparent);
+    color: var(--fg-subtle);
+}
+
+.practice-sections :global(.gre-ds-chip-active) {
+    opacity: 1;
+}
+
+/* The focused question card. */
+.practice-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-4);
+    padding: var(--gre-card-padding);
+    border-radius: var(--gre-radius-lg);
+    border: 1px solid var(--border);
+    background: var(--canvas);
+    box-shadow: var(--gre-shadow-sm);
+}
+
+.question-focus {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+}
+
+.question-stem {
     margin: 0;
+    max-width: 38rem;
     font-size: var(--gre-font-prompt);
     font-weight: var(--gre-weight-h2);
-    line-height: var(--gre-lh-prompt);
+    line-height: 1.45;
     letter-spacing: -0.01em;
+    color: var(--fg);
     word-break: break-word;
+}
+
+.question-metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+}
+
+.question-metadata-row {
+    margin: 0;
+}
+
+.question-metadata dd {
+    margin: 0;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    color: var(--fg-subtle);
 }
 
 .choices {
     display: flex;
     flex-direction: column;
-    gap: var(--gre-space-3);
-    margin: var(--gre-space-2) 0 0;
+    gap: var(--gre-space-2);
+    margin: 0;
+    max-width: 38rem;
 }
 
 .choice {
     display: flex;
     align-items: flex-start;
     gap: var(--gre-space-3);
-    padding: var(--gre-card-padding-compact);
-    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    min-height: 3rem;
+    padding: var(--gre-space-3) var(--gre-space-4);
+    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
     border-radius: var(--gre-radius-md);
-    background: var(--gre-surface-bg);
-    box-shadow: var(--gre-shadow-sm);
+    background: var(--canvas);
     cursor: pointer;
     transition:
         border-color var(--gre-motion-fast) ease,
         background var(--gre-motion-fast) ease,
         box-shadow var(--gre-motion-fast) ease,
         transform var(--gre-motion-fast) ease;
-
-    &:hover {
-        border-color: color-mix(in srgb, var(--fg-link) 50%, var(--border));
-        box-shadow: var(--gre-shadow-md);
-    }
-
-    &:active {
-        transform: scale(0.995);
-    }
 }
 
-.choice-selected {
-    border-color: var(--fg-link);
-    background: color-mix(in srgb, var(--fg-link) 8%, var(--canvas));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg-link) 20%, transparent);
+.choice:active:not(.choice-locked) {
+    transform: scale(0.995);
 }
 
-.choice:focus-within {
-    border-color: var(--fg-link);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--fg-link) 22%, transparent);
+.choice:hover:not(.choice-locked) {
+    border-color: color-mix(in srgb, var(--gre-accent) 35%, var(--border));
+    background: color-mix(in srgb, var(--gre-accent) 4%, var(--canvas));
 }
 
+/* Visually hidden but accessible radio (keyboard + screen readers). */
 .choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.choice-letter {
     flex-shrink: 0;
-    margin-top: 0.2rem;
-    accent-color: var(--fg-link);
+    display: inline-grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    margin-top: 0.05rem;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--border) 90%, transparent);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-hero);
+    color: var(--fg-subtle);
+    transition:
+        background var(--gre-motion-fast) ease,
+        border-color var(--gre-motion-fast) ease,
+        color var(--gre-motion-fast) ease;
 }
 
 .choice-text {
     flex: 1;
-    min-width: 0;
     font-size: var(--gre-font-body);
-    line-height: var(--gre-lh-body);
+    line-height: 1.45;
+    color: var(--fg);
     word-break: break-word;
 }
 
-.practice-submit,
-.practice-continue {
-    align-self: stretch;
-    width: 100%;
-    max-width: none;
-    margin-top: var(--gre-space-2);
+.choice input:focus-visible + .choice-letter {
+    outline: 2px solid var(--gre-accent);
+    outline-offset: 2px;
 }
 
+.choice-selected {
+    border-color: var(--gre-accent);
+    background: color-mix(in srgb, var(--gre-accent) 6%, var(--canvas));
+}
+
+.choice-selected .choice-letter {
+    background: var(--gre-accent);
+    border-color: var(--gre-accent);
+    color: var(--canvas);
+}
+
+.choice-locked {
+    cursor: default;
+}
+
+.choice-locked:not(.choice-correct):not(.choice-incorrect):not(.choice-correct-reveal) {
+    opacity: 0.72;
+}
+
+.choice-correct {
+    border-color: var(--gre-success);
+    background: color-mix(in srgb, var(--gre-success) 10%, var(--canvas));
+}
+
+.choice-correct .choice-letter {
+    background: var(--gre-success);
+    border-color: var(--gre-success);
+    color: var(--canvas);
+}
+
+.choice-incorrect {
+    border-color: var(--gre-error);
+    background: color-mix(in srgb, var(--gre-error) 10%, var(--canvas));
+}
+
+.choice-incorrect .choice-letter {
+    background: var(--gre-error);
+    border-color: var(--gre-error);
+    color: var(--canvas);
+}
+
+.choice-correct-reveal {
+    border-color: var(--gre-success);
+    background: color-mix(in srgb, var(--gre-success) 6%, var(--canvas));
+}
+
+.choice-correct-reveal .choice-letter {
+    border-color: var(--gre-success);
+    color: var(--gre-success);
+}
+
+.practice-actions-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
+}
+
+.practice-page :global(.practice-secondary-actions) {
+    justify-content: center;
+}
+
+/* Immediate explanation. */
 .result-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-3);
     padding: var(--gre-card-padding-compact);
-    border: none;
     border-radius: var(--gre-radius-md);
     background: var(--gre-surface-bg-muted);
-    border-left: 4px solid var(--border);
-    animation: gre-fade-up var(--gre-motion-enter) ease both;
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
 }
 
 .result-panel.correct {
-    border-left-color: var(--state-new);
-    animation:
-        gre-fade-up var(--gre-motion-enter) ease both,
-        gre-success-in var(--gre-motion-enter) ease both;
+    border-left: 3px solid var(--gre-success);
+    animation: gre-success-in var(--gre-motion-base) ease both;
 }
 
 .result-panel.incorrect {
-    border-left-color: var(--state-review);
-    animation:
-        gre-fade-up var(--gre-motion-enter) ease both,
-        gre-success-in-incorrect var(--gre-motion-enter) ease both;
-}
-
-.result-heading {
-    margin: 0 0 var(--gre-space-2);
-    font-size: var(--gre-font-body);
-    font-weight: var(--gre-weight-label);
+    border-left: 3px solid var(--gre-error);
+    background: var(--gre-error-soft);
+    animation: gre-error-in var(--gre-motion-base) ease both;
 }
 
 .result-status {
-    display: inline-block;
-    animation: gre-fade-in var(--gre-motion-fast) ease both;
+    margin: 0;
+    font-size: var(--gre-font-h3);
+    font-weight: var(--gre-weight-h2);
 }
 
 .result-panel.correct .result-status {
-    color: var(--state-new);
+    color: var(--gre-success);
 }
 
 .result-panel.incorrect .result-status {
-    color: var(--state-review);
+    color: var(--gre-error);
+}
+
+.result-correct-answer {
+    margin: 0;
+    font-size: var(--gre-font-body);
+    color: var(--fg);
 }
 
 .result-explanation {
-    margin: 0 0 var(--gre-space-2);
+    margin: 0;
     font-size: var(--gre-font-body);
     line-height: var(--gre-lh-body);
+    color: var(--fg);
 }
 
-.result-topic {
+.result-choice-breakdown {
+    display: grid;
+    gap: var(--gre-space-2);
     margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.result-choice-breakdown li {
+    display: grid;
+    gap: 2px;
+    padding: var(--gre-space-2);
+    border-radius: var(--gre-radius-sm, 8px);
+    background: color-mix(in srgb, var(--canvas) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.result-choice-breakdown li.breakdown-correct {
+    border-color: color-mix(in srgb, var(--gre-success, #2e7d32) 55%, transparent);
+    background: color-mix(in srgb, var(--gre-success, #2e7d32) 12%, transparent);
+}
+
+.breakdown-choice {
+    display: flex;
+    align-items: center;
+    gap: var(--gre-space-2);
+    font-weight: var(--gre-weight-label);
     font-size: var(--gre-font-caption);
-    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.breakdown-tag {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--gre-success, #2e7d32);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.breakdown-reasoning {
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-body);
     color: var(--fg-subtle);
 }
 
+.result-citation {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.result-provenance-note {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    font-style: italic;
+    color: var(--fg-subtle);
+}
+
+.result-details {
+    display: grid;
+    gap: var(--gre-space-2);
+    margin: 0;
+    padding-top: var(--gre-space-2);
+    border-top: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+}
+
+.result-details-row {
+    display: grid;
+    grid-template-columns: minmax(6rem, 8rem) minmax(0, 1fr);
+    gap: var(--gre-space-2);
+    margin: 0;
+}
+
+.result-details dt {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--fg-subtle);
+}
+
+.result-details dd {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    color: var(--fg);
+}
+
+.practice-page :global(.practice-cta) {
+    align-self: stretch;
+    width: 100%;
+}
+
+.practice-error {
+    margin: 0;
+    color: var(--state-review);
+}
+
 .practice-complete {
-    margin-top: var(--gre-space-4);
+    margin-top: var(--gre-space-2);
+}
+
+.practice-complete :global(.session-complete) {
+    animation: gre-fade-in var(--gre-motion-base) ease both;
 }
 
 .practice-actions {
     margin-top: var(--gre-space-4);
 }
 
-.practice-error {
-    margin: var(--gre-space-2) 0 0;
-    color: var(--state-review);
-}
-
-@media (max-width: 767px) {
-    .practice-page {
-        min-height: calc(100dvh - var(--gre-header-height) - var(--gre-space-4));
-    }
-
-    .practice-question-stage {
-        min-height: 0;
-        padding-bottom: var(--gre-space-4);
-    }
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .result-panel,
+    .choice,
+    .choice-letter,
     .result-panel.correct,
-    .result-panel.incorrect {
+    .result-panel.incorrect,
+    .practice-complete :global(.session-complete) {
         transition: none;
         animation: none !important;
-    }
-
-    .choice:active {
         transform: none;
     }
 }

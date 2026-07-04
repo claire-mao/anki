@@ -3,6 +3,12 @@
 
 import type { DashboardCoverage } from "@generated/anki/brainlift_pb";
 
+/** Plain-language explanation of weighted GRE topic coverage (shared across UI). */
+export const COVERAGE_EXPLANATION =
+    "A topic counts as covered once you've reviewed its flashcards at least once—practice alone doesn't count. "
+    + "The weighted % reflects exam section weights (Quant and Verbal 47% each, AWA 6%)—"
+    + "not a simple average of the three section numbers.";
+
 export type CoverageSectionPresentation = {
     label: string;
     percent: number;

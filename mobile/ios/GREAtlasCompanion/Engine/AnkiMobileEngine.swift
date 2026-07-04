@@ -105,6 +105,11 @@ actor GreBridgeLoader {
         return try client.pushGREAtlasChanges(input)
     }
 
+    func performGREAtlasSync(_ input: GREAtlasPerformSyncInput) throws -> GREAtlasPerformSyncView {
+        try ensureReady()
+        return try client.performGREAtlasSync(input)
+    }
+
     func prepareDemoCollection() throws -> GreDemoCollectionView {
         try ensureReady()
         return try client.prepareDemoCollection()
@@ -266,6 +271,10 @@ final class AnkiMobileEngine: ObservableObject {
         try await loader.pushGREAtlasChanges(
             GREAtlasSyncPushInput(attempts: attempts)
         )
+    }
+
+    func performGREAtlasSync(auth: GREAtlasSyncAuthInput?) async throws -> GREAtlasPerformSyncView {
+        try await loader.performGREAtlasSync(GREAtlasPerformSyncInput(auth: auth))
     }
 
     func reloadDemoCollection() async {

@@ -50,11 +50,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePredictionBrief
     title="Estimated GRE"
     score={estimatedGreHero(estimate)}
-    scoreRange={formatGreScoreRange(
-        estimate.combinedScoreLow,
-        estimate.combinedScoreHigh,
-    )}
+    scoreRange={estimatedGreUnlocked(estimate)
+        ? formatGreScoreRange(
+            estimate.combinedScoreLow,
+            estimate.combinedScoreHigh,
+        )
+        : null}
     unlocked={estimatedGreUnlocked(estimate)}
+    showScoreHeader={estimatedGreUnlocked(estimate)}
     confidence={estimatedGreConfidenceLabel(estimate, readiness)}
     why={estimatedGreWhy(estimate)}
     evidence={estimatedGreEvidence(estimate, memory, performance)}

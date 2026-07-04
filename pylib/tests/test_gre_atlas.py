@@ -18,6 +18,7 @@ from anki.gre_atlas import (
     get_study_plan,
     get_topic_details,
     list_questions,
+    perform_gre_atlas_sync,
     record_attempt,
 )
 from tests.shared import getEmptyCol
@@ -43,8 +44,10 @@ def test_list_questions_filters_by_topic() -> None:
     assert quant.questions
     assert all(q.topic.startswith("gre::quant") for q in quant.questions)
     linear = list_questions(col, limit=10, topic_prefix="gre::quant::algebra::linear")
-    assert len(linear.questions) == 1
-    assert linear.questions[0].id == "gre-quant-alg-001"
+    assert linear.questions
+    assert all(
+        q.topic.startswith("gre::quant::algebra::linear") for q in linear.questions
+    )
 
 
 def test_get_question_returns_protobuf() -> None:
@@ -342,3 +345,13 @@ def test_gre_atlas_sync_pull_push_roundtrip() -> None:
     assert len(pulled.attempts) == 1
     push = col._backend.push_brain_lift_changes(attempts=[])
     assert push.applied_count == 0
+
+
+def test_perform_gre_atlas_sync_offline_without_credentials() -> None:
+    col = isolated_col()
+    response = perform_gre_atlas_sync(col)
+    assert not response.success
+    assert response.message.startswith("Sync credentials not configured.")
+    assert "self-hosted" in response.message
+    assert response.status is not None
+    assert response.status.pending_upload_count >= 0

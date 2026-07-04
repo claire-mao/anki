@@ -30,7 +30,7 @@ Legend: **Req ID** groups related deliverables from the product architecture, Sp
 | ☐ | B1     | TopicMastery in Rust (not Python hot path) | `cargo test topic_mastery` / `just test-rust`              | `rslib/src/stats/mastery.rs`                                                       |
 | ☐ | B2     | FSRS retrievability per GRE topic tag      | Progress page + `topic_mastery()` response                 | `StatsService.TopicMastery`, `(gre)/progress`                                      |
 | ☐ | B3     | Exam-weighted catalog coverage             | Coverage % matches GRE catalog weights                     | `rslib/src/gre_atlas/domain/coverage.rs`                                           |
-| ☐ | B4     | Memory abstention gates                    | Sparse profile → no memory score; requirements listed      | 200 cards, 50% coverage, FSRS — `rslib/src/gre_atlas/abstention.rs`                |
+| ☐ | B4     | Memory abstention gates                    | Sparse profile → no memory score; requirements listed      | 20 cards, 50% coverage, FSRS — `rslib/src/gre_atlas/abstention.rs`                |
 | ☐ | B5     | Performance at scale (Speedrun)            | `just bench-gre-atlas` on large collection; p95 documented | `scripts/eval/gre_atlas_benchmark.py`, `docs/gre-atlas-topic-mastery-rust-note.md` |
 
 ---
@@ -40,7 +40,7 @@ Legend: **Req ID** groups related deliverables from the product architecture, Sp
 | ✓ | Req ID | Requirement                                              | How to verify                                           | Evidence                                                        |
 | - | ------ | -------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
 | ☐ | C1     | Performance from practice attempts only                  | Global accuracy after attempts; Wilson CI when unlocked | `compute_performance_score`, `docs/models/performance-model.md` |
-| ☐ | C2     | Performance abstention (<20 attempts)                    | Fresh profile → performance abstains                    | `MIN_PERFORMANCE_ATTEMPTS = 20`                                 |
+| ☐ | C2     | Performance abstention (<50 attempts)                    | Fresh profile → performance abstains                    | `MIN_PERFORMANCE_ATTEMPTS = 50`                                 |
 | ☐ | C3     | Readiness composite formula                              | 45% memory + 45% performance + 10% coverage             | `readiness.rs`, `docs/models/readiness-model.md`                |
 | ☐ | C4     | Readiness abstention inherits memory + performance gates | Unmet requirements listed on readiness page             | `GetReadinessCalibration`, `(gre)/readiness`                    |
 | ☐ | C5     | Confidence levels (high/medium/low)                      | Sufficient profile shows confidence on readiness        | `readiness.rs::confidence_level`                                |

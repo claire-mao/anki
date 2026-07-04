@@ -3,6 +3,7 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
+    import { COVERAGE_EXPLANATION } from "../coverage-presentation";
     import type { ReadinessPagePresentation } from "../readiness-page-presentation";
     import { runGreNavAction } from "../gre-navigation";
     import GreButton from "../ui/GreButton.svelte";
@@ -33,23 +34,51 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <div class="readiness-estimate-hero">
             <span class="readiness-estimate-hero-label">Readiness score</span>
             <span class="readiness-estimate-hero-value">{model.readinessScore}</span>
+            <span class="readiness-estimate-hero-hint">
+                How ready your study evidence says you are (0–100).
+            </span>
         </div>
     {/if}
 
     <div class="readiness-estimate-metrics">
-        <GreMetricRow label="Estimated GRE" value={model.estimatedGre} />
-        {#if model.estimatedGreDetail}
-            <p class="readiness-estimate-detail">{model.estimatedGreDetail}</p>
-        {/if}
-        <GreMetricRow label="Confidence interval" value={model.confidenceInterval} />
-        <div class="readiness-estimate-confidence-row">
-            <span class="gre-ds-metric-label">Confidence level</span>
-            <GreConfidenceIndicator confidence={model.confidenceLevel} />
+        <div class="readiness-estimate-metric-group">
+            <GreMetricRow
+                label="Estimated GRE"
+                value={model.estimatedGre}
+                hint={model.estimatedGreAvailable
+                    ? "Your projected GRE score, built from the signals below."
+                    : undefined}
+            />
+            {#if model.estimatedGreDetail}
+                <p class="readiness-estimate-detail">{model.estimatedGreDetail}</p>
+            {/if}
         </div>
-        <GreMetricRow label="Coverage" value={model.coverage} />
-        <GreMetricRow label="Memory" value={model.memory} />
-        <GreMetricRow label="Performance" value={model.performance} />
-        <GreMetricRow label="Calibration quality" value={model.calibrationQuality} />
+        <GreMetricRow
+            label="Score range"
+            value={model.confidenceInterval}
+            hint="The range your score is likely to fall within."
+        />
+        <GreMetricRow
+            label="Confidence"
+            hint="How reliable this estimate is right now."
+        >
+            <GreConfidenceIndicator confidence={model.confidenceLevel} />
+        </GreMetricRow>
+        <GreMetricRow
+            label="Coverage"
+            structuredValue={model.coverage}
+            hint={COVERAGE_EXPLANATION}
+        />
+        <GreMetricRow
+            label="Memory"
+            structuredValue={model.memory}
+            hint="How well you'll recall your studied flashcards."
+        />
+        <GreMetricRow
+            label="Performance"
+            structuredValue={model.performance}
+            hint="How accurately you answer practice questions."
+        />
         <GreMetricRow label="Last updated" value={model.lastUpdated} />
     </div>
 
@@ -196,28 +225,33 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         color: var(--fg);
     }
 
-    .readiness-estimate-metrics {
-        display: flex;
-        flex-direction: column;
-        gap: var(--gre-space-2);
-        padding-top: var(--gre-space-2);
-        border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
-    }
-
-    .readiness-estimate-detail {
-        margin: calc(-1 * var(--gre-space-1)) 0 0;
-        padding-left: 0;
+    .readiness-estimate-hero-hint {
         font-size: var(--gre-font-caption);
         line-height: var(--gre-lh-caption);
         color: var(--fg-subtle);
+        max-width: 30rem;
     }
 
-    .readiness-estimate-confidence-row {
+    .readiness-estimate-metrics {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
         gap: var(--gre-space-3);
-        padding: var(--gre-space-1) 0;
+        padding-top: var(--gre-space-3);
+        border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+    }
+
+    .readiness-estimate-metric-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gre-space-1);
+    }
+
+    .readiness-estimate-detail {
+        margin: 0;
+        padding: 0 var(--gre-space-3) var(--gre-space-1);
+        font-size: var(--gre-font-caption);
+        line-height: var(--gre-lh-caption);
+        color: color-mix(in srgb, var(--fg) 68%, var(--fg-subtle));
     }
 
     .readiness-estimate-evidence {

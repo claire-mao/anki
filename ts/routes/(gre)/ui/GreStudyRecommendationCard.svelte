@@ -39,6 +39,28 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </div>
     </dl>
 
+    {#if recommendation.progress}
+        <div class="gre-study-recommendation-progress">
+            <span class="gre-study-recommendation-progress-label">
+                {recommendation.progress.current}/{recommendation.progress.target}
+                {recommendation.progress.unit}
+            </span>
+            <div
+                class="gre-ds-progress-track gre-study-recommendation-progress-track"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax={recommendation.progress.target}
+                aria-valuenow={recommendation.progress.current}
+                aria-label="{recommendation.title} progress"
+            >
+                <div
+                    class="gre-ds-progress-fill gre-study-recommendation-progress-fill"
+                    style:width="{recommendation.progress.percent}%"
+                ></div>
+            </div>
+        </div>
+    {/if}
+
     {#if recommendation.action.bridge}
         <GreButton
             variant="primary"
@@ -123,6 +145,20 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         font-size: var(--gre-font-caption);
         line-height: var(--gre-lh-caption);
         color: var(--fg);
+    }
+
+    .gre-study-recommendation-progress {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gre-space-2);
+    }
+
+    .gre-study-recommendation-progress-label {
+        font-size: var(--gre-font-caption);
+        font-weight: var(--gre-weight-label);
+        line-height: var(--gre-lh-caption);
+        color: var(--fg);
+        font-variant-numeric: tabular-nums;
     }
 
     .gre-study-recommendation :global(.gre-study-recommendation-action) {

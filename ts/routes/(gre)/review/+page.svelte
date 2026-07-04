@@ -7,18 +7,35 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { fade } from "svelte/transition";
 
     import GrePageHeader from "../GrePageHeader.svelte";
-    import { runGreNavAction, settingsNavAction } from "../gre-navigation";
+    import { GRE_CTA_REVIEW, GRE_CTA_STUDY_PLAN } from "../gre-navigation";
+    import { buildStudyCaughtUpSummary } from "../session-completion";
+    import { greMotionDuration } from "../motion";
     import GreButton from "../ui/GreButton.svelte";
     import GrePanel from "../ui/GrePanel.svelte";
+    import GreSessionCompletePanel from "../ui/GreSessionCompletePanel.svelte";
     import GreText from "../ui/GreText.svelte";
+    import { shouldAutoLaunchReview } from "./study-launch";
     import type { PageData } from "./$types";
 
     import { onMount } from "svelte";
+    import "../ui/session-complete.scss";
+    import "./study.scss";
 
     export let data: PageData;
 
     const status = data.status;
+    const dashboard = data.dashboard;
+    const dueTotal = status.newCount + status.learnCount + status.reviewCount;
     let launched = false;
+
+    $: studySummary = buildStudyCaughtUpSummary({
+        weakTopics: dashboard.weakTopics,
+        recommendedTopics: dashboard.recommendedTopics,
+        dueTotal,
+        deckName: status.deckName,
+        studiedCards: dashboard.memory?.studiedCards ?? 0,
+        coveredLeafCount: dashboard.coverage?.coveredLeafCount ?? 0,
+    });
 
     function startReview(): void {
         if (bridgeCommandsAvailable()) {
@@ -27,7 +44,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     }
 
     onMount(() => {
-        if (bridgeCommandsAvailable()) {
+        if (bridgeCommandsAvailable() && shouldAutoLaunchReview(status)) {
             launched = true;
             startReview();
         }
@@ -37,57 +54,42 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePageHeader
     title="Study"
     icon="study"
-    subtitle="Flashcard review for the GRE Atlas deck."
+    subtitle="Built-in GRE flashcards."
 />
 
-<GrePanel>
-    {#if launched}
-        <div
-            class="gre-loading"
-            role="status"
-            aria-live="polite"
-            transition:fade={{ duration: 180 }}
-        >
+{#if launched}
+    <GrePanel>
+        <div class="study-loading" role="status" aria-live="polite" transition:fade={{ duration: greMotionDuration(160) }}>
             <div class="gre-loading-spinner" aria-hidden="true"></div>
-            <GreText variant="caption" muted className="gre-loading-caption">
-                Opening your GRE review session…
-            </GreText>
+            <GreText variant="caption" muted>Opening your review session…</GreText>
         </div>
-    {:else if !status.deckExists}
-        <GreText variant="body" muted>
-            Create a deck named "{status.deckName}" and add GRE flashcards tagged with
-            <code>gre::</code>
-            topics.
-        </GreText>
-        <GreButton
-            variant="primary"
-            className="gre-ds-btn-spaced"
-            on:click={() => runGreNavAction(settingsNavAction())}
-        >
-            Set up deck
+    </GrePanel>
+{:else if !status.deckExists}
+    <GrePanel className="study-guide">
+        <h2 class="study-guide-title">Couldn't load your GRE flashcards</h2>
+        <p class="study-guide-body">
+            GRE Atlas includes starter flashcards. Reload this page to try again.
+        </p>
+        <GreButton variant="primary" on:click={() => location.reload()}>
+            Try again
         </GreButton>
-    {:else}
-        <GreText variant="body">Due now across your GRE deck:</GreText>
-        <div class="study-due-grid gre-stagger" aria-label="Due card counts">
-            <div class="study-due-stat">
-                <strong>{status.newCount}</strong>
-                <span>New</span>
-            </div>
-            <div class="study-due-stat">
-                <strong>{status.learnCount}</strong>
-                <span>Learning</span>
-            </div>
-            <div class="study-due-stat">
-                <strong>{status.reviewCount}</strong>
-                <span>Review</span>
-            </div>
-        </div>
-        <GreButton
-            variant="primary"
-            className="gre-ds-btn-spaced"
-            on:click={startReview}
-        >
-            Start review
+    </GrePanel>
+{:else if dueTotal > 0}
+    <GrePanel className="study-guide study-guide-active">
+        <h2 class="study-guide-title">Ready to review</h2>
+        <p class="study-guide-body">
+            You have {dueTotal} card{dueTotal === 1 ? "" : "s"} ready. A few minutes now
+            keeps this material fresh for test day.
+        </p>
+        <GreButton variant="primary" size="lg" on:click={startReview}>
+            {GRE_CTA_REVIEW}
         </GreButton>
-    {/if}
-</GrePanel>
+    </GrePanel>
+{:else}
+    <GrePanel className="study-guide study-caught-up">
+        <GreSessionCompletePanel
+            summary={studySummary}
+            secondaryLabel={studySummary.secondaryAction?.label ?? GRE_CTA_STUDY_PLAN}
+        />
+    </GrePanel>
+{/if}

@@ -1,0 +1,138 @@
+.study-guide-title {
+    margin: 0 0 var(--gre-space-2);
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+}
+
+.study-guide-subtitle {
+    margin: 0 0 var(--gre-space-2);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-subtle);
+}
+
+.study-guide-body {
+    margin: 0 0 var(--gre-space-4);
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+    color: var(--fg-subtle);
+    max-width: 36rem;
+}
+
+.study-celebrate {
+    display: flex;
+    align-items: center;
+    gap: var(--gre-space-3);
+    margin-bottom: var(--gre-space-2);
+}
+
+.study-celebrate .study-guide-title {
+    margin: 0;
+}
+
+.study-celebrate-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--gre-success-soft);
+    color: var(--gre-success);
+}
+
+.study-caught-up {
+    border-color: color-mix(in srgb, var(--gre-success) 25%, var(--border));
+    background: color-mix(in srgb, var(--gre-success-soft) 40%, var(--canvas));
+}
+
+.study-caught-up :global(.session-complete) {
+    animation: gre-fade-in var(--gre-motion-base) ease both;
+}
+
+.study-next {
+    margin-bottom: var(--gre-space-4);
+    padding: var(--gre-space-3) var(--gre-space-4);
+    border-radius: var(--gre-radius-md);
+    background: color-mix(in srgb, var(--canvas) 70%, transparent);
+}
+
+.study-next-label {
+    margin: 0 0 var(--gre-space-1);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-subtle);
+}
+
+.study-next-hint {
+    margin: 0;
+    font-size: var(--gre-font-body);
+    line-height: var(--gre-lh-body);
+    color: var(--fg);
+}
+
+.study-next-hint a {
+    color: var(--fg-link);
+    font-weight: var(--gre-weight-label);
+    text-decoration: none;
+}
+
+.study-next-hint a:hover {
+    text-decoration: underline;
+}
+
+.study-guide-active {
+    border-color: color-mix(in srgb, var(--gre-success) 25%, var(--border));
+    background: color-mix(in srgb, var(--gre-success-soft) 50%, var(--canvas));
+}
+
+.study-guide-options {
+    margin-bottom: var(--gre-space-4);
+    padding: var(--gre-space-3);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+}
+
+.study-guide-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.study-guide-list a {
+    color: var(--fg-link);
+    font-weight: var(--gre-weight-label);
+    text-decoration: none;
+}
+
+.study-guide-list a:hover {
+    text-decoration: underline;
+}
+
+.study-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gre-space-3);
+    padding: var(--gre-space-6);
+}
+
+.study-guide :global(.study-guide-actions),
+.study-guide :global(.study-caught-up-actions) {
+    flex-wrap: wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .study-caught-up :global(.session-complete) {
+        animation: none !important;
+    }
+}

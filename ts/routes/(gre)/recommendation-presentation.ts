@@ -3,13 +3,26 @@
 
 import type { DashboardTopicInsight, StudyPlanDailyTask, StudyPlanRecommendation } from "@generated/anki/brainlift_pb";
 
+import {
+    type DailyMissionProgressContext,
+    missionProgressCounts,
+} from "./daily-mission";
+import { GRE_CTA_PRACTICE, GRE_CTA_PRACTICE_TOPIC, GRE_CTA_STUDY_TOPIC } from "./gre-navigation";
+import { clampPercent } from "./indicator-utils";
 import { formatPercent } from "./score-format";
-import { topicDetailsPath } from "./topic-link";
+import { practicePathForTopic, topicDetailsPath } from "./topic-link";
 
 export type StudyRecommendationAction = {
     label: string;
     href?: string;
     bridge?: string;
+};
+
+export type StudyRecommendationProgress = {
+    current: number;
+    target: number;
+    unit: string;
+    percent: number;
 };
 
 export type StudyRecommendationPresentation = {
@@ -18,6 +31,7 @@ export type StudyRecommendationPresentation = {
     expectedImpact: string;
     action: StudyRecommendationAction;
     topicId?: string;
+    progress?: StudyRecommendationProgress;
 };
 
 const FACTOR_PRIORITY = [
@@ -34,14 +48,6 @@ const FACTOR_REASON: Record<string, string> = {
     low_performance: "Low practice accuracy",
     no_practice: "No practice evidence yet",
     high_importance: "High exam importance",
-};
-
-const FACTOR_IMPACT: Record<string, string> = {
-    coverage_gap: "Expands GRE catalog coverage",
-    low_mastery: "Raises memory retention",
-    low_performance: "Improves practice accuracy",
-    no_practice: "Builds practice evidence",
-    high_importance: "High-weight exam topic",
 };
 
 function primaryFactor(factors: string[]): string {
@@ -70,25 +76,25 @@ function priorityImpactLabel(priorityScore: number, maxPriority: number): string
 function recommendationAction(rec: StudyPlanRecommendation): StudyRecommendationAction {
     if (rec.factors.includes("coverage_gap")) {
         return {
-            label: "Add cards",
-            href: topicDetailsPath(rec.topicId),
+            label: GRE_CTA_PRACTICE_TOPIC,
+            href: practicePathForTopic(rec.topicId),
         };
     }
     if (rec.factors.includes("low_mastery")) {
         return {
-            label: "Start review",
+            label: GRE_CTA_STUDY_TOPIC,
             href: topicDetailsPath(rec.topicId),
         };
     }
     if (rec.factors.includes("low_performance") || rec.factors.includes("no_practice")) {
         return {
-            label: "Start practice",
-            href: "/practice",
+            label: GRE_CTA_PRACTICE,
+            href: practicePathForTopic(rec.topicId),
         };
     }
     return {
-        label: "Study topic",
-        href: topicDetailsPath(rec.topicId),
+        label: GRE_CTA_PRACTICE_TOPIC,
+        href: practicePathForTopic(rec.topicId),
     };
 }
 
@@ -96,13 +102,7 @@ function formatExpectedImpact(
     rec: StudyPlanRecommendation,
     maxPriority: number,
 ): string {
-    const factor = primaryFactor(rec.factors);
-    const parts = [
-        priorityImpactLabel(rec.priorityScore, maxPriority),
-        FACTOR_IMPACT[factor] ?? FACTOR_IMPACT.high_importance,
-        `${formatPercent(rec.examWeight * 100)} exam weight`,
-    ];
-    return parts.join(" · ");
+    return priorityImpactLabel(rec.priorityScore, maxPriority);
 }
 
 export function presentStudyPlanRecommendation(
@@ -144,11 +144,11 @@ export function presentTopicInsight(topic: DashboardTopicInsight): StudyRecommen
 
     let action: StudyRecommendationAction;
     if (!topic.covered) {
-        action = { label: "Add cards", href: topicDetailsPath(topic.topicId) };
+        action = { label: GRE_CTA_STUDY_TOPIC, href: topicDetailsPath(topic.topicId) };
     } else if (topic.practiceAccuracy === undefined) {
-        action = { label: "Start practice", href: "/practice" };
+        action = { label: GRE_CTA_PRACTICE, href: "/practice" };
     } else {
-        action = { label: "Start review", href: topicDetailsPath(topic.topicId) };
+        action = { label: GRE_CTA_STUDY_TOPIC, href: topicDetailsPath(topic.topicId) };
     }
 
     return {
@@ -166,7 +166,10 @@ export function presentTopicInsights(
     return topics.map(presentTopicInsight);
 }
 
-export function presentDailyFocusTask(task: StudyPlanDailyTask): StudyRecommendationPresentation | null {
+export function presentDailyFocusTask(
+    task: StudyPlanDailyTask,
+    progressContext?: DailyMissionProgressContext,
+): StudyRecommendationPresentation | null {
     if (task.id !== "focus_topic" || !task.topicId) {
         return null;
     }
@@ -184,18 +187,33 @@ export function presentDailyFocusTask(task: StudyPlanDailyTask): StudyRecommenda
 
     let expectedImpact = "Focused topic impact";
     if (task.targetCount > 0) {
-        const unit = task.title.startsWith("Practice") ? "questions" : "cards";
+        const unit = task.title.startsWith("Practice") || task.title.startsWith("Cover")
+            ? "questions"
+            : "cards";
         expectedImpact = `Target ${task.targetCount} ${unit}`;
     }
 
     let action: StudyRecommendationAction;
-    if (task.title.startsWith("Cover")) {
-        action = { label: "Add cards", href: topicDetailsPath(task.topicId) };
-    } else if (task.title.startsWith("Strengthen")) {
-        action = { label: "Start review", href: topicDetailsPath(task.topicId) };
+    if (task.title.startsWith("Strengthen")) {
+        action = { label: GRE_CTA_STUDY_TOPIC, href: topicDetailsPath(task.topicId) };
+    } else if (task.topicId) {
+        action = {
+            label: task.title.startsWith("Practice") ? GRE_CTA_PRACTICE : GRE_CTA_PRACTICE_TOPIC,
+            href: practicePathForTopic(task.topicId),
+        };
     } else {
-        action = { label: "Start practice", href: "/practice" };
+        action = { label: GRE_CTA_PRACTICE, href: "/practice" };
     }
+
+    const counts = missionProgressCounts(task, progressContext);
+    const progress = counts
+        ? {
+            current: counts.current,
+            target: counts.target,
+            unit: counts.unit,
+            percent: clampPercent((counts.current / counts.target) * 100),
+        }
+        : undefined;
 
     return {
         title,
@@ -203,5 +221,6 @@ export function presentDailyFocusTask(task: StudyPlanDailyTask): StudyRecommenda
         expectedImpact,
         action,
         topicId: task.topicId,
+        progress,
     };
 }

@@ -9,10 +9,17 @@ use crate::gre_atlas::questions::ai_gen::generate_question_for_topic;
 use crate::gre_atlas::questions::ai_gen::keyword_overlap;
 use crate::gre_atlas::questions::ai_gen::keyword_retrieve;
 use crate::gre_atlas::questions::ai_gen::load_gold_eval_set;
+use crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft;
 use crate::gre_atlas::questions::ai_gen::GenerationOutcome;
 use crate::gre_atlas::questions::ai_gen::GoldEvalQuestion;
+use crate::gre_atlas::questions::ai_gen::GoldEvalSet;
+use crate::gre_atlas::questions::ai_gen::QuestionAttribution;
 use crate::gre_atlas::questions::ai_gen::AI_GENERATION_MODEL_VERSION;
 use crate::gre_atlas::questions::ai_gen::MIN_GENERATION_CONFIDENCE;
+use crate::gre_atlas::questions::eval_pipeline::evaluate_draft;
+use crate::gre_atlas::questions::eval_pipeline::normalize_stem;
+use crate::gre_atlas::questions::metadata::EvaluationStatus;
+use crate::gre_atlas::questions::source::source_section_for_topic;
 use crate::gre_atlas::questions::source::GENERATION_SOURCE_NAME;
 use crate::timestamp::TimestampSecs;
 
@@ -27,7 +34,22 @@ pub struct GreAtlasAiEvalReport {
     pub methodology: AiEvalMethodology,
     pub baseline_keyword_retrieval: KeywordRetrievalEval,
     pub template_generation: TemplateGenerationEval,
+    pub rejection_pipeline: RejectionPipelineEval,
     pub limitations: Vec<String>,
+}
+
+/// Metrics for the pre-exposure evaluation gate (hallucination / duplicate /
+/// unsupported / approval). Runs fully offline over the gold set plus crafted
+/// negative cases so the four rejection rules are exercised deterministically.
+#[derive(Debug, Clone, Serialize)]
+pub struct RejectionPipelineEval {
+    pub evaluated_count: u32,
+    pub approved_count: u32,
+    pub rejected_hallucination: u32,
+    pub rejected_duplicate: u32,
+    pub rejected_unsupported: u32,
+    /// A few representative rejection reasons for transparency.
+    pub sample_reasons: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -70,19 +92,143 @@ pub fn build_ai_eval_report() -> Result<GreAtlasAiEvalReport> {
     let gold = load_gold_eval_set()?;
     let baseline = evaluate_keyword_baseline(&gold.questions);
     let generation = evaluate_template_generation(&gold.questions);
+    let rejection_pipeline = evaluate_rejection_pipeline(&gold);
 
     Ok(GreAtlasAiEvalReport {
         generated_at_millis: TimestampSecs::now().0 * 1000,
         model_version: AI_GENERATION_MODEL_VERSION.into(),
         source_name: GENERATION_SOURCE_NAME.into(),
-        gold_set_label: gold.label,
+        gold_set_label: gold.label.clone(),
         gold_question_count: gold.questions.len() as u32,
         confidence_threshold: MIN_GENERATION_CONFIDENCE,
         methodology: ai_eval_methodology(),
         baseline_keyword_retrieval: baseline,
         template_generation: generation,
+        rejection_pipeline,
         limitations: ai_eval_limitations(),
     })
+}
+
+/// Exercise the four-rule evaluation gate deterministically and offline.
+///
+/// Each gold topic's deterministic template draft should pass all gates
+/// (approved). Three crafted negatives — an answer not among the choices, an
+/// ungrounded stem, and an exact duplicate — must be rejected with the matching
+/// status. This proves the gate both admits valid grounded items and rejects
+/// hallucinated / unsupported / duplicate ones.
+fn evaluate_rejection_pipeline(gold: &GoldEvalSet) -> RejectionPipelineEval {
+    let now = TimestampSecs(1_700_000_000);
+    let mut approved = 0u32;
+    let mut hallucination = 0u32;
+    let mut duplicate = 0u32;
+    let mut unsupported = 0u32;
+    let mut sample_reasons: Vec<String> = Vec::new();
+    let mut evaluated = 0u32;
+
+    for question in &gold.questions {
+        let Some(source) = source_section_for_topic(&question.topic) else {
+            continue;
+        };
+        let outcome = generate_question_for_topic(&question.topic, now);
+        let GenerationOutcome::Accepted(draft) = outcome else {
+            continue;
+        };
+        evaluated += 1;
+        let report = evaluate_draft(&draft, source, gold, &[]);
+        match report.status {
+            EvaluationStatus::Approved => approved += 1,
+            EvaluationStatus::RejectedHallucination => hallucination += 1,
+            EvaluationStatus::RejectedDuplicate => duplicate += 1,
+            EvaluationStatus::RejectedUnsupported => unsupported += 1,
+            EvaluationStatus::Pending => {}
+        }
+    }
+
+    // Crafted negatives, one per rejection rule, over a known-good topic.
+    let topic = "gre::quant::algebra::linear";
+    if let Some(source) = source_section_for_topic(topic) {
+        // Hallucination: correct answer absent from choices.
+        let bad = negative_draft(
+            topic,
+            "Solve the linear equation 2x + 3 = 11 for x.",
+            &["1", "2", "4", "5"],
+            "3",
+            "x = 4.",
+        );
+        let report = evaluate_draft(&bad, source, gold, &[]);
+        evaluated += 1;
+        if report.status == EvaluationStatus::RejectedHallucination {
+            hallucination += 1;
+            push_reason(&mut sample_reasons, &report.reason);
+        }
+
+        // Unsupported: ungrounded nonsense stem.
+        let ungrounded = negative_draft(
+            topic,
+            "Which mythical creature prefers Tuesdays over rainbows?",
+            &["Griffin", "Unicorn", "Phoenix", "Dragon"],
+            "Unicorn",
+            "Purely fictional.",
+        );
+        let report = evaluate_draft(&ungrounded, source, gold, &[]);
+        evaluated += 1;
+        if report.status == EvaluationStatus::RejectedUnsupported {
+            unsupported += 1;
+            push_reason(&mut sample_reasons, &report.reason);
+        }
+
+        // Duplicate: exact copy of an existing (grounded, valid) stem.
+        let dup_stem = "Solve the linear equation 4x + 8 = 20 for the variable x.";
+        let dup = negative_draft(topic, dup_stem, &["1", "2", "3", "4"], "3", "x = 3.");
+        let existing = vec![normalize_stem(dup_stem)];
+        let report = evaluate_draft(&dup, source, gold, &existing);
+        evaluated += 1;
+        if report.status == EvaluationStatus::RejectedDuplicate {
+            duplicate += 1;
+            push_reason(&mut sample_reasons, &report.reason);
+        }
+    }
+
+    RejectionPipelineEval {
+        evaluated_count: evaluated,
+        approved_count: approved,
+        rejected_hallucination: hallucination,
+        rejected_duplicate: duplicate,
+        rejected_unsupported: unsupported,
+        sample_reasons,
+    }
+}
+
+fn negative_draft(
+    topic: &str,
+    stem: &str,
+    choices: &[&str],
+    correct: &str,
+    explanation: &str,
+) -> GeneratedQuestionDraft {
+    GeneratedQuestionDraft {
+        id: format!("eval-neg-{topic}"),
+        topic: topic.into(),
+        section: "quant".into(),
+        format: "mcq".into(),
+        stem: stem.into(),
+        choices: choices.iter().map(|c| c.to_string()).collect(),
+        correct_answer: correct.into(),
+        explanation: explanation.into(),
+        difficulty: Some(0.4),
+        confidence: 0.5,
+        attribution: QuestionAttribution {
+            source_name: GENERATION_SOURCE_NAME.into(),
+            source_section: "Quantitative Reasoning — Linear equations".into(),
+            generated_at_secs: 1,
+        },
+    }
+}
+
+fn push_reason(reasons: &mut Vec<String>, reason: &str) {
+    if reasons.len() < 5 && !reason.is_empty() {
+        reasons.push(reason.to_string());
+    }
 }
 
 fn evaluate_keyword_baseline(gold: &[GoldEvalQuestion]) -> KeywordRetrievalEval {
@@ -137,9 +283,9 @@ fn evaluate_template_generation(gold: &[GoldEvalQuestion]) -> TemplateGeneration
 
 fn ai_eval_methodology() -> AiEvalMethodology {
     AiEvalMethodology {
-        summary: "Compare keyword retrieval baseline against deterministic template generation on the static gold set.".into(),
+        summary: "Compare keyword retrieval baseline against deterministic template generation on the static gold set, and exercise the four-rule pre-exposure evaluation gate.".into(),
         generation_path: format!(
-            "Template generation from `{GENERATION_SOURCE_NAME}` with confidence threshold {MIN_GENERATION_CONFIDENCE}"
+            "Template generation from `{GENERATION_SOURCE_NAME}` with confidence threshold {MIN_GENERATION_CONFIDENCE}; optional LLM path gated behind GRE_ATLAS_OPENAI_API_KEY shares the same gate."
         ),
         baseline_description: "For each gold question, score every bundled source section by keyword overlap and pick the best match.".into(),
         metrics: vec![
@@ -147,17 +293,19 @@ fn ai_eval_methodology() -> AiEvalMethodology {
             "mean_keyword_recall (baseline)".into(),
             "mean_keyword_overlap (generation)".into(),
             "acceptance_rate / rejection_rate".into(),
+            "rejection pipeline: approved / hallucination / duplicate / unsupported".into(),
         ],
-        reproducibility: "Gold eval uses a fixed timestamp (1700000000) for generation IDs and does not call external LLM APIs.".into(),
+        reproducibility: "Gold eval uses a fixed timestamp (1700000000) for generation IDs and does not call external LLM APIs; the LLM path is mocked in unit tests.".into(),
     }
 }
 
 fn ai_eval_limitations() -> Vec<String> {
     vec![
-        "Template generation is not a large language model; optional LLM enhancement is env-gated and excluded from this eval.".into(),
+        "The default eval path is deterministic template generation; the optional LLM enhancement is env-gated (GRE_ATLAS_OPENAI_API_KEY) and excluded from this eval for reproducibility.".into(),
         "Keyword baseline is a simple bag-of-words overlap, not semantic retrieval.".into(),
         "Gold questions are manually verified in-repo labels but do not measure live learner outcomes.".into(),
         "Topic match for generation is trivially high when a template exists for each gold topic.".into(),
+        "Grounding and duplicate checks are lexical (keyword overlap / Jaccard), not semantic.".into(),
     ]
 }
 
@@ -232,6 +380,35 @@ pub fn render_ai_eval_markdown(report: &GreAtlasAiEvalReport) -> String {
         report.template_generation.mean_keyword_overlap
     ));
 
+    out.push_str("## Rejection pipeline (evaluation gate)\n\n");
+    out.push_str(&format!(
+        "- Evaluated: {}\n",
+        report.rejection_pipeline.evaluated_count
+    ));
+    out.push_str(&format!(
+        "- Approved: {}\n",
+        report.rejection_pipeline.approved_count
+    ));
+    out.push_str(&format!(
+        "- Rejected (hallucination): {}\n",
+        report.rejection_pipeline.rejected_hallucination
+    ));
+    out.push_str(&format!(
+        "- Rejected (duplicate): {}\n",
+        report.rejection_pipeline.rejected_duplicate
+    ));
+    out.push_str(&format!(
+        "- Rejected (unsupported): {}\n",
+        report.rejection_pipeline.rejected_unsupported
+    ));
+    if !report.rejection_pipeline.sample_reasons.is_empty() {
+        out.push_str("- Sample rejection reasons:\n");
+        for reason in &report.rejection_pipeline.sample_reasons {
+            out.push_str(&format!("  - {reason}\n"));
+        }
+    }
+    out.push('\n');
+
     out.push_str("## Limitations\n\n");
     for limitation in &report.limitations {
         out.push_str(&format!("- {limitation}\n"));
@@ -266,6 +443,20 @@ mod test {
         let md = render_ai_eval_markdown(&report);
         assert!(md.contains("Baseline: keyword retrieval"));
         assert!(md.contains("Template generation"));
+        assert!(md.contains("Rejection pipeline"));
         assert!(md.contains("Limitations"));
+    }
+
+    #[test]
+    fn rejection_pipeline_admits_grounded_and_rejects_each_negative() {
+        let report = build_ai_eval_report().unwrap();
+        let pipeline = &report.rejection_pipeline;
+        // Every gold-topic template plus three crafted negatives were evaluated.
+        assert!(pipeline.approved_count > 0);
+        // Each crafted negative must be caught by its matching rule.
+        assert!(pipeline.rejected_hallucination >= 1);
+        assert!(pipeline.rejected_duplicate >= 1);
+        assert!(pipeline.rejected_unsupported >= 1);
+        assert!(!pipeline.sample_reasons.is_empty());
     }
 }
