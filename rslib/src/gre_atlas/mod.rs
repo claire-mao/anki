@@ -22,6 +22,8 @@ pub mod storage;
 mod study_plan;
 mod sync;
 #[cfg(test)]
+mod sync_http;
+#[cfg(test)]
 mod sync_parity;
 pub mod sync_transport;
 mod topic_details;

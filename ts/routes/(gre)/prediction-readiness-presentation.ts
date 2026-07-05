@@ -9,12 +9,12 @@ import type {
     ReadinessScore,
 } from "@generated/anki/brainlift_pb";
 
-import { greNavAction, greNavItem, GRE_CTA_REVIEW } from "./gre-navigation";
+import { GRE_CTA_REVIEW, greNavAction, greNavItem } from "./gre-navigation";
 import { clampPercent } from "./indicator-utils";
 import { topicDetailsPath } from "./topic-link";
 
 /** Display-only thresholds matching rslib abstention / calibration gates. */
-const MIN_STUDIED_CARDS = 20;
+const MIN_STUDIED_CARDS = 50;
 const MIN_PRACTICE_ATTEMPTS = 50;
 const MIN_COVERAGE_RATIO = 0.5;
 const MIN_CALIBRATION_HELD_OUT = 5;

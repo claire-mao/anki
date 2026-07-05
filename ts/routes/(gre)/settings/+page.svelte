@@ -6,7 +6,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import type { Preferences } from "@generated/anki/config_pb";
     import { Preferences_Scheduling_NewReviewMix } from "@generated/anki/config_pb";
     import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
-    import { scheduleGreAtlasAutoSync, syncGreAtlasPractice } from "../gre-sync";
+    import { syncGreAtlasPractice } from "../gre-sync";
 
     import GrePageHeader from "../GrePageHeader.svelte";
     import { greDeckOptionsAction, runGreNavAction } from "../gre-navigation";
@@ -229,13 +229,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         />
     </SettingsSection>
 
-    <SettingsSection title="Practice sync" description="Cross-device GRE Atlas practice data.">
+    <SettingsSection
+        title="Practice sync"
+        description="Cross-device GRE Atlas practice data."
+    >
         <GreText variant="body">
             Syncs practice attempts, sessions, generated questions, and calibration
             history via your Anki sync server. This requires a self-hosted sync server
             with GRE Atlas routes enabled; AnkiWeb sign-in alone is not enough. Set a
-            custom sync server under Account → Sync &amp; account details, sign in,
-            then sync here.
+            custom sync server under Account → Sync &amp; account details, sign in, then
+            sync here.
         </GreText>
         <GreButtonRow className="settings-actions">
             <GreButton variant="primary" on:click={() => syncGreAtlasPractice()}>

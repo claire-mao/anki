@@ -17,10 +17,10 @@ import {
     coverageReadinessReason,
     presentCoverageSummary,
 } from "./coverage-presentation";
+import { studyPlanNavAction } from "./gre-navigation";
 import { buildReadinessExplainability } from "./prediction-explainability";
 import type { PredictionAction } from "./prediction-presentation";
 import { readinessNextAction } from "./prediction-presentation";
-import { studyPlanNavAction } from "./gre-navigation";
 import { formatGreScoreRange, formatPercent, formatRange, formatRatio } from "./score-format";
 import { capitalizeLabel, estimatedGreHero, memoryHero, performanceHero, unmetRequirements } from "./summary-metrics";
 import type { GreMetricStructuredValue } from "./ui/metric-value";

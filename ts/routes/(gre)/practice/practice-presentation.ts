@@ -2,15 +2,13 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 import { formatPercent } from "../score-format";
-import { formatSectionLabel, type PracticeSectionFilter } from "./practice-session";
 import type { SessionAttemptRecord } from "../session-completion";
+import { formatSectionLabel, type PracticeSectionFilter } from "./practice-session";
 
-const ETS_STEM_PREFIX =
-    /^Based on ETS Official GRE Prep Material[.:]?\s*/i;
+const ETS_STEM_PREFIX = /^Based on ETS Official GRE Prep Material[.:]?\s*/i;
 
 /** Legacy generated stems prefix section and task before the prompt. */
-const SECTION_TASK_STEM_PREFIX =
-    /^\([^)]+\):\s*/;
+const SECTION_TASK_STEM_PREFIX = /^\([^)]+\):\s*/;
 
 const PRACTICE_BANK_SOURCE = "GRE Atlas Practice Bank";
 
@@ -230,8 +228,7 @@ export function resolveCorrectChoice(input: {
     const matches = [...input.choices]
         .filter((choice) => choice.trim() && input.explanation.includes(choice))
         .sort((left, right) => {
-            const positionDelta =
-                input.explanation.lastIndexOf(right) - input.explanation.lastIndexOf(left);
+            const positionDelta = input.explanation.lastIndexOf(right) - input.explanation.lastIndexOf(left);
             if (positionDelta !== 0) {
                 return positionDelta;
             }

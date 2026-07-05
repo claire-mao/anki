@@ -9,13 +9,9 @@ pub mod foundation;
 pub mod generator;
 pub mod llm;
 pub mod metadata;
+pub mod retrieval;
 pub mod source;
 pub mod variants;
-
-pub use bank::ensure_exam_length_bank;
-pub use bank::exam_bank_question_count;
-pub use bank::purge_invalid_questions;
-pub use bank::target_count_for_topic;
 
 use anki_proto::brainlift::AnswerChoiceExplanation;
 use anki_proto::brainlift::AnswerExplanation;
@@ -23,6 +19,10 @@ use anki_proto::brainlift::ExplainAnswerResponse;
 use anki_proto::brainlift::GenerateQuestionResponse;
 use anki_proto::brainlift::Question;
 use anki_proto::brainlift::QuestionAttribution;
+pub use bank::ensure_exam_length_bank;
+pub use bank::exam_bank_question_count;
+pub use bank::purge_invalid_questions;
+pub use bank::target_count_for_topic;
 
 use crate::collection::Collection;
 use crate::error::OrInvalid;
@@ -112,7 +112,8 @@ impl Collection {
             }
             if persist {
                 if let Some(question) = &attempt.question {
-                    storage.insert_generated_question_with_meta(&question.draft, &question.metadata)?;
+                    storage
+                        .insert_generated_question_with_meta(&question.draft, &question.metadata)?;
                 }
             }
         }
@@ -159,7 +160,8 @@ impl Collection {
 /// (feature disabled) unless `GRE_ATLAS_OPENAI_API_KEY` is set — this is what
 /// keeps the default build/test path fully offline.
 fn build_ai_client() -> Option<Box<dyn LlmClient>> {
-    GreAtlasAiConfig::from_env().map(|config| Box::new(OpenAiLlmClient::new(config)) as Box<dyn LlmClient>)
+    GreAtlasAiConfig::from_env()
+        .map(|config| Box::new(OpenAiLlmClient::new(config)) as Box<dyn LlmClient>)
 }
 
 /// Map an approved generated question into the RPC response, including
@@ -370,6 +372,18 @@ mod test {
         assert!(!explanation.summary.is_empty());
         assert!(!explanation.correct_answer.is_empty());
         assert!(!explanation.citation_source_name.is_empty());
+        // Foundation bank items cite the practice bank; generated items cite ETS.
+        let is_generated = question.provenance.as_deref() == Some("offline_template")
+            || question.provenance.as_deref() == Some("ai_generated")
+            || question.source_name.as_deref() == Some("ETS Official GRE Prep Material");
+        if is_generated {
+            assert_eq!(
+                explanation.citation_source_name,
+                "ETS Official GRE Prep Material"
+            );
+        } else {
+            assert_eq!(explanation.citation_source_name, "GRE Atlas Practice Bank");
+        }
         if !ai_enabled {
             assert_eq!(explanation.provenance, "offline_template");
             assert_eq!(explanation.provenance_note, OFFLINE_TEMPLATE_NOTE);

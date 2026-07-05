@@ -3,7 +3,7 @@
 
 use anki_proto::brainlift::AbstentionRequirement;
 
-pub(crate) const MIN_STUDIED_CARDS: u32 = 20;
+pub(crate) const MIN_STUDIED_CARDS: u32 = 50;
 pub(crate) const MIN_COVERAGE_RATIO: f32 = 0.5;
 pub(crate) const MIN_PERFORMANCE_ATTEMPTS: u32 = 50;
 
@@ -157,11 +157,11 @@ mod test {
 
     #[test]
     fn insufficient_studied_cards_abstains() {
-        let reqs = memory_requirements(true, 15, 0.8);
+        let reqs = memory_requirements(true, 45, 0.8);
         assert!(!sufficient_from_requirements(&reqs));
         assert_eq!(unmet_ids(&reqs), vec![REQ_STUDIED_CARDS]);
-        assert!(reqs[1].status.contains("15"));
-        assert!(reqs[1].status.contains("20"));
+        assert!(reqs[1].status.contains("45"));
+        assert!(reqs[1].status.contains("50"));
     }
 
     #[test]

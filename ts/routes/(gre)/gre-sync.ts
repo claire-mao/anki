@@ -3,10 +3,7 @@
 
 import type { PerformGreAtlasSyncResponse } from "@generated/anki/brainlift_pb";
 import type { SyncAuth } from "@generated/anki/sync_pb";
-import {
-    getBrainLiftSyncStatus,
-    performGreAtlasSync,
-} from "@generated/backend";
+import { getBrainLiftSyncStatus, performGreAtlasSync } from "@generated/backend";
 import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
 
 /** Best-effort GRE Atlas sidecar sync. Never throws. */

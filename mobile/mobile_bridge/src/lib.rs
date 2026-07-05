@@ -305,6 +305,34 @@ pub unsafe extern "C" fn anki_mobile_gre_record_attempt_json(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn anki_mobile_gre_explain_answer_json(
+    backend: *mut AnkiMobileBackend,
+    input: *const u8,
+    input_len: usize,
+    out_bytes: *mut *mut u8,
+    out_len: *mut usize,
+) -> c_int {
+    if backend.is_null() || input.is_null() || out_bytes.is_null() || out_len.is_null() {
+        return ANKI_MOBILE_INVALID_INPUT;
+    }
+    let input_bytes = slice::from_raw_parts(input, input_len);
+    let request: gre_pages::GreExplainAnswerInput = match serde_json::from_slice(input_bytes) {
+        Ok(value) => value,
+        Err(_) => return ANKI_MOBILE_INVALID_INPUT,
+    };
+    with_backend(
+        backend,
+        |backend| match gre_pages::explain_practice_answer(backend, request) {
+            Ok(view) => write_json(&view, out_bytes, out_len),
+            Err(err_bytes) => {
+                write_bytes(err_bytes, out_bytes, out_len);
+                ANKI_MOBILE_BACKEND_ERROR
+            }
+        },
+    )
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn anki_mobile_gre_practice_scores_json(
     backend: *mut AnkiMobileBackend,
     out_bytes: *mut *mut u8,
@@ -503,15 +531,16 @@ pub unsafe extern "C" fn anki_mobile_brainlift_sync_perform_json(
         Ok(value) => value,
         Err(_) => return ANKI_MOBILE_INVALID_INPUT,
     };
-    with_backend(backend, |backend| {
-        match sync_pages::perform_gre_atlas_sync(backend, request) {
+    with_backend(
+        backend,
+        |backend| match sync_pages::perform_gre_atlas_sync(backend, request) {
             Ok(view) => write_json(&view, out_bytes, out_len),
             Err(err_bytes) => {
                 write_bytes(err_bytes, out_bytes, out_len);
                 ANKI_MOBILE_BACKEND_ERROR
             }
-        }
-    })
+        },
+    )
 }
 
 #[no_mangle]

@@ -1,11 +1,7 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type {
-    DashboardCoverage,
-    EstimatedGreScore,
-    ReadinessScore,
-} from "@generated/anki/brainlift_pb";
+import type { DashboardCoverage, EstimatedGreScore, ReadinessScore } from "@generated/anki/brainlift_pb";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -16,8 +12,7 @@ import {
     estimatedGreHero,
 } from "./summary-metrics";
 
-const coverage = (readinessAvailable: boolean): DashboardCoverage =>
-    ({ readinessAvailable }) as DashboardCoverage;
+const coverage = (readinessAvailable: boolean): DashboardCoverage => ({ readinessAvailable }) as DashboardCoverage;
 
 describe("dashboard hero metrics", () => {
     test("shows estimated GRE only when readiness is unlocked", () => {

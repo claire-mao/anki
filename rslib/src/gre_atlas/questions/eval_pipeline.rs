@@ -71,8 +71,8 @@ pub struct GenerationEvalRecord {
     pub confidence: Option<f32>,
 }
 
-/// Run all four gates against a candidate draft. Returns the first failing gate,
-/// or an approval if every gate passes.
+/// Run all four gates against a candidate draft. Returns the first failing
+/// gate, or an approval if every gate passes.
 pub fn evaluate_draft(
     draft: &GeneratedQuestionDraft,
     source: &SourceSection,
@@ -227,7 +227,12 @@ mod test {
     use crate::gre_atlas::questions::source::source_section_for_topic;
     use crate::gre_atlas::questions::source::GENERATION_SOURCE_NAME;
 
-    fn draft(stem: &str, choices: &[&str], correct: &str, explanation: &str) -> GeneratedQuestionDraft {
+    fn draft(
+        stem: &str,
+        choices: &[&str],
+        correct: &str,
+        explanation: &str,
+    ) -> GeneratedQuestionDraft {
         GeneratedQuestionDraft {
             id: "cand-1".into(),
             topic: "gre::quant::algebra::linear".into(),
@@ -261,7 +266,12 @@ mod test {
             "Subtract 3 then divide by 2: x = 4.",
         );
         let report = evaluate_draft(&d, source(), &gold, &[]);
-        assert_eq!(report.status, EvaluationStatus::Approved, "{}", report.reason);
+        assert_eq!(
+            report.status,
+            EvaluationStatus::Approved,
+            "{}",
+            report.reason
+        );
     }
 
     #[test]
@@ -294,7 +304,12 @@ mod test {
     fn rejects_near_duplicate() {
         let gold = load_gold_eval_set().unwrap();
         let stem = "Solve the linear equation 2x + 3 = 11 for the variable x.";
-        let d = draft(stem, &["3", "4", "5", "6"], "4", "x = 4 by isolating the variable.");
+        let d = draft(
+            stem,
+            &["3", "4", "5", "6"],
+            "4",
+            "x = 4 by isolating the variable.",
+        );
         let existing = vec![normalize_stem(stem)];
         let report = evaluate_draft(&d, source(), &gold, &existing);
         assert_eq!(report.status, EvaluationStatus::RejectedDuplicate);

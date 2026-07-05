@@ -189,7 +189,7 @@ message AbstentionRequirement {
   // "practice_attempts".
   string id = 1;
   string label = 2;
-  // Current progress when unmet, e.g. "150 of 200 studied cards".
+  // Current progress when unmet, e.g. "35 of 50 studied cards".
   string status = 3;
   // What the student should do next when this requirement is unmet.
   string next_step = 4;

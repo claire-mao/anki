@@ -49,7 +49,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     $: hasFlashcards = details.totalCards > 0;
     $: hasPracticeQuestions = details.practiceQuestions.length > 0;
     $: flashcardStatus = flashcardStatusLine(details);
-    $: primaryOutcome = primaryOutcomeCopy(details, hasFlashcards, hasPracticeQuestions);
+    $: primaryOutcome = primaryOutcomeCopy(
+        details,
+        hasFlashcards,
+        hasPracticeQuestions,
+    );
 
     function flashcardStatusLine(d: typeof details): string {
         if (d.totalCards === 0) {
@@ -123,7 +127,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 />
 
 <section class="topic-learn gre-panel">
-    <p class="topic-flashcard-status" class:topic-flashcard-status-empty={!hasFlashcards}>
+    <p
+        class="topic-flashcard-status"
+        class:topic-flashcard-status-empty={!hasFlashcards}
+    >
         {flashcardStatus}
     </p>
 
@@ -209,13 +216,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         />
                     {/if}
                     {#if details.memoryScore !== undefined}
-                        <GreTopicMasteryBar label="Recall likelihood" value={details.memoryScore} />
+                        <GreTopicMasteryBar
+                            label="Recall likelihood"
+                            value={details.memoryScore}
+                        />
                     {/if}
                 </div>
                 {#if details.totalReviews > 0 || formatRange(details.avgRetrievabilityLow, details.avgRetrievabilityHigh)}
                     <p class="topic-measurement-caption">
                         {#if details.totalReviews > 0}
-                            {details.totalReviews} review{details.totalReviews === 1 ? "" : "s"}
+                            {details.totalReviews} review{details.totalReviews === 1
+                                ? ""
+                                : "s"}
                         {/if}
                         {#if formatRange(details.avgRetrievabilityLow, details.avgRetrievabilityHigh)}
                             {#if details.totalReviews > 0}
@@ -242,16 +254,21 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <section class="gre-panel">
             <h2>Performance</h2>
             {#if details.practiceAccuracy !== undefined}
-                <GreTopicMasteryBar label="Practice accuracy" value={details.practiceAccuracy} />
+                <GreTopicMasteryBar
+                    label="Practice accuracy"
+                    value={details.practiceAccuracy}
+                />
                 <p class="topic-measurement-caption">
-                    {details.practiceCorrect} correct of {details.practiceTotal} attempt{details.practiceTotal === 1
+                    {details.practiceCorrect} correct of {details.practiceTotal} attempt{details.practiceTotal ===
+                    1
                         ? ""
                         : "s"}
                 </p>
             {:else if details.practiceTotal > 0}
                 <p class="topic-measurement-caption">
-                    {details.practiceTotal} attempt{details.practiceTotal === 1 ? "" : "s"} — accuracy
-                    builds with more answers
+                    {details.practiceTotal} attempt{details.practiceTotal === 1
+                        ? ""
+                        : "s"} — accuracy builds with more answers
                 </p>
             {:else}
                 <GreEmptyState
@@ -272,7 +289,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     formatPercent,
                 )}
                 unlocked={details.globalReadinessScore !== undefined}
-                confidence={topicGlobalReadinessConfidence(details.globalReadinessScore)}
+                confidence={topicGlobalReadinessConfidence(
+                    details.globalReadinessScore,
+                )}
                 confidenceAsText={true}
                 why={readinessWhy()}
                 evidence={topicGlobalReadinessEvidence(
@@ -299,7 +318,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     },
                     {
                         label: "Topic total",
-                        value: formatContribution(contribution.estimatedTotalContribution),
+                        value: formatContribution(
+                            contribution.estimatedTotalContribution,
+                        ),
                     },
                 ]}
                 variant="inline"

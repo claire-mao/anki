@@ -3,16 +3,16 @@
 
 import type { DashboardTopicInsight } from "@generated/anki/brainlift_pb";
 
-import { formatPercent } from "./score-format";
 import {
-    greNavAction,
-    greNavItem,
     GRE_CTA_PRACTICE,
     GRE_CTA_REVIEW,
     GRE_CTA_STUDY_PLAN,
-    studyPlanNavAction,
     type GreNavAction,
+    greNavAction,
+    greNavItem,
+    studyPlanNavAction,
 } from "./gre-navigation";
+import { formatPercent } from "./score-format";
 
 export type SessionAttemptRecord = {
     topic: string;
@@ -193,8 +193,7 @@ export function buildStudyCaughtUpSummary(input: {
         practiceAction.label = GRE_CTA_PRACTICE;
         return {
             headline: "Your GRE flashcards are ready",
-            subline:
-                "GRE Atlas includes built-in flashcards — no Anki import needed.",
+            subline: "GRE Atlas includes built-in flashcards — no Anki import needed.",
             rows: [
                 {
                     label: "Flashcards reviewed",
@@ -202,8 +201,7 @@ export function buildStudyCaughtUpSummary(input: {
                 },
             ],
             nextAction: startStudy,
-            nextActionDetail:
-                "Tap Start review to open your first cards and begin building memory evidence.",
+            nextActionDetail: "Tap Start review to open your first cards and begin building memory evidence.",
             secondaryAction: practiceAction,
         };
     }
@@ -238,14 +236,12 @@ export function buildStudyCaughtUpSummary(input: {
     }
 
     const nextAction = studyPlanNavAction(GRE_CTA_STUDY_PLAN);
-    let nextActionDetail =
-        "Nothing due right now. Open your study plan to see what to add or review next.";
+    let nextActionDetail = "Nothing due right now. Open your study plan to see what to add or review next.";
 
     if (weakest) {
         nextActionDetail = `Nothing due right now. Your study plan suggests more flashcards on ${weakest}.`;
     } else if (input.studiedCards > 0) {
-        nextActionDetail =
-            "You're caught up for now. Check your study plan for what to work on next.";
+        nextActionDetail = "You're caught up for now. Check your study plan for what to work on next.";
     }
 
     const secondaryAction = greNavAction(greNavItem("practice"));
@@ -253,10 +249,9 @@ export function buildStudyCaughtUpSummary(input: {
 
     return {
         headline: input.dueTotal === 0 ? "Review complete" : "Session complete",
-        subline:
-            input.dueTotal === 0
-                ? "You're caught up on flashcards due right now."
-                : "Nice pause point — you can pick up remaining cards later.",
+        subline: input.dueTotal === 0
+            ? "You're caught up on flashcards due right now."
+            : "Nice pause point — you can pick up remaining cards later.",
         rows,
         nextAction,
         nextActionDetail,

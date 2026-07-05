@@ -34,7 +34,8 @@ use crate::gre_atlas::questions::source::SourceSection;
 use crate::gre_atlas::questions::source::GENERATION_SOURCE_NAME;
 use crate::timestamp::TimestampSecs;
 
-/// A generated question that passed the eval gate and is ready to persist/serve.
+/// A generated question that passed the eval gate and is ready to
+/// persist/serve.
 #[derive(Debug, Clone)]
 pub struct GeneratedQuestion {
     pub draft: GeneratedQuestionDraft,
@@ -119,14 +120,16 @@ impl QuestionGenerator for LlmQuestionGenerator<'_> {
             temperature: self.temperature,
         };
         match self.client.complete(&request) {
-            Ok(content) => match parse_generated_question_json(&content, topic_id, source, now, variant) {
-                Ok(draft) => GenerationOutcome::Accepted(draft),
-                Err(reason) => GenerationOutcome::Rejected {
-                    confidence: 0.0,
-                    reason,
-                    attribution: source_attribution(source, now),
-                },
-            },
+            Ok(content) => {
+                match parse_generated_question_json(&content, topic_id, source, now, variant) {
+                    Ok(draft) => GenerationOutcome::Accepted(draft),
+                    Err(reason) => GenerationOutcome::Rejected {
+                        confidence: 0.0,
+                        reason,
+                        attribution: source_attribution(source, now),
+                    },
+                }
+            }
             Err(err) => GenerationOutcome::Rejected {
                 confidence: 0.0,
                 reason: err.to_string(),
@@ -147,8 +150,8 @@ impl QuestionGenerator for LlmQuestionGenerator<'_> {
 /// Orchestrate generation with automatic, silent fallback to templates.
 ///
 /// * When `ai` is `Some`, try the LLM path and run the eval gate. On approval,
-///   return the AI question. On rejection or any error, log the outcome and fall
-///   back.
+///   return the AI question. On rejection or any error, log the outcome and
+///   fall back.
 /// * When `ai` is `None` (feature disabled) or the LLM path fails, return the
 ///   deterministic template question with offline-template provenance.
 pub fn generate_with_fallback(
@@ -211,16 +214,17 @@ pub fn generate_with_fallback(
     }
 
     // Deterministic fallback (also the default path when AI is disabled).
+    // Templates already pass the confidence gate in `ai_gen`; do not re-run the
+    // pre-exposure eval gate here — keyword overlap is tuned for LLM drafts and
+    // would incorrectly reject terse, pre-authored template stems.
     let template = TemplateQuestionGenerator;
     match template.generate(topic_id, variant, now) {
         GenerationOutcome::Accepted(draft) => {
             let source_document = source
                 .map(|s| s.section.to_string())
                 .unwrap_or_else(|| draft.attribution.source_section.clone());
-            let metadata = QuestionMetadata::offline_template(
-                template.model_version(),
-                source_document,
-            );
+            let metadata =
+                QuestionMetadata::offline_template(template.model_version(), source_document);
             let evaluation = EvaluationReport::approved(draft.confidence, 0.0);
             GenerationAttempt {
                 question: Some(GeneratedQuestion {
@@ -307,7 +311,8 @@ pub fn parse_generated_question_json(
     now: TimestampSecs,
     variant: u32,
 ) -> Result<GeneratedQuestionDraft, String> {
-    let json_slice = extract_json_object(content).ok_or_else(|| "no JSON object in reply".to_string())?;
+    let json_slice =
+        extract_json_object(content).ok_or_else(|| "no JSON object in reply".to_string())?;
     let parsed: LlmQuestionJson =
         serde_json::from_str(json_slice).map_err(|e| format!("invalid JSON: {e}"))?;
 
@@ -394,10 +399,11 @@ fn new_llm_id(topic_id: &str, variant: u32, now: TimestampSecs) -> String {
 
 #[cfg(test)]
 mod test {
+    use std::sync::Mutex;
+
     use super::*;
     use crate::gre_atlas::questions::ai_gen::load_gold_eval_set;
     use crate::gre_atlas::questions::llm::LlmError;
-    use std::sync::Mutex;
 
     /// Stub client returning a fixed reply or a fixed error — no network.
     struct StubClient {

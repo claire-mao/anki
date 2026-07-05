@@ -3,10 +3,7 @@
 
 import type { DashboardTopicInsight, StudyPlanDailyTask, StudyPlanRecommendation } from "@generated/anki/brainlift_pb";
 
-import {
-    type DailyMissionProgressContext,
-    missionProgressCounts,
-} from "./daily-mission";
+import { type DailyMissionProgressContext, missionProgressCounts } from "./daily-mission";
 import { GRE_CTA_PRACTICE, GRE_CTA_PRACTICE_TOPIC, GRE_CTA_STUDY_TOPIC } from "./gre-navigation";
 import { clampPercent } from "./indicator-utils";
 import { formatPercent } from "./score-format";

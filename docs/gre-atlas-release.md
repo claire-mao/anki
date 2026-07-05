@@ -130,6 +130,10 @@ Verify locally before publishing:
 2. `tools/build-installer` completes without error
 3. Install from `out/installer/dist/` and smoke-test GRE shell at `/home` plus one practice attempt
 
+**Clean-machine install steps:** [gre-atlas-submission/INSTALL.md](./gre-atlas-submission/INSTALL.md)
+
+**Full release checklist (desktop + iOS + Wednesday deliverables):** [gre-atlas-submission/RELEASE-CHECKLIST.md](./gre-atlas-submission/RELEASE-CHECKLIST.md)
+
 Full public release workflow: [releasing.md](./releasing.md) and `just release::help`.
 
 ## Key source locations
@@ -146,10 +150,15 @@ docs/gre-atlas-*.md              Architecture and release docs
 
 ## Release checklist
 
+See the full matrix in [gre-atlas-submission/RELEASE-CHECKLIST.md](./gre-atlas-submission/RELEASE-CHECKLIST.md). Summary:
+
 - [ ] `just check` green on release branch
+- [ ] `just eval-gre-atlas-ai` passes (AI release gate on held-out gold set)
 - [ ] No untracked GRE source files (all `rslib/src/gre_atlas/*`, `ts/routes/(gre)/*` committed)
 - [ ] Proto bindings regenerated after any `.proto` change
-- [ ] Installer builds (`tools/build-installer`)
+- [ ] Installer builds (`tools/build-installer`) → artifact in `out/installer/dist/`
+- [ ] Clean-machine install smoke test ([INSTALL.md](./gre-atlas-submission/INSTALL.md))
+- [ ] iOS companion builds ([mobile/ios/README.md](../mobile/ios/README.md))
 - [ ] Smoke test: GRE dialog, practice attempt, dashboard refresh after review
 - [ ] Readiness abstention shows missing requirements when data is sparse
 - [ ] Documentation updated for route and API changes

@@ -121,6 +121,9 @@ jobs:
           just lint
           just test --coverage
 
+      - name: GRE Atlas AI release gate
+        run: just eval-gre-atlas-ai
+
       - name: Run complexipy diff
         id: complexipy
         continue-on-error: true

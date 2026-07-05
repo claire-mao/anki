@@ -1,7 +1,8 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-//! Exam-length practice bank targets and automatic top-up from template generation.
+//! Exam-length practice bank targets and automatic top-up from template
+//! generation.
 
 use crate::error::Result;
 use crate::gre_atlas::domain::GreCatalog;
@@ -23,9 +24,7 @@ pub const EXAM_AWA_PER_TOPIC: u32 = 2;
 /// Total target practice items across all scored GRE sections (Quant + Verbal +
 /// AWA prompts).
 pub fn exam_bank_question_count() -> u32 {
-    GreCatalog::leaf_topics()
-        .map(target_count_for_topic)
-        .sum()
+    GreCatalog::leaf_topics().map(target_count_for_topic).sum()
 }
 
 /// Target question count for a catalog leaf, proportional to official exam

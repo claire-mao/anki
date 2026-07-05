@@ -379,6 +379,40 @@ fn gre_progress_page_matches_between_mobile_ffi_and_direct_backend() {
 }
 
 #[test]
+fn gre_explain_answer_matches_between_mobile_ffi_and_direct_backend() {
+    let harness = unsafe { ParityHarness::new("explain-answer") };
+    let bootstrap =
+        gre_pages::load_practice_bootstrap(&harness.direct).expect("practice bootstrap");
+    let question = bootstrap
+        .questions
+        .first()
+        .expect("expected at least one practice question");
+    let selected = question
+        .choices
+        .first()
+        .cloned()
+        .unwrap_or_else(|| "A".into());
+    let input = gre_pages::GreExplainAnswerInput {
+        question_id: question.id.clone(),
+        selected_answer: selected,
+    };
+    let mobile_view = gre_pages::explain_practice_answer(
+        unsafe { harness.mobile_backend().backend() },
+        input.clone(),
+    )
+    .expect("mobile explain answer");
+    let direct_view =
+        gre_pages::explain_practice_answer(&harness.direct, input).expect("direct explain answer");
+    assert_eq!(mobile_view, direct_view);
+    assert!(!mobile_view.summary.is_empty());
+    assert_eq!(
+        mobile_view.choices.iter().filter(|c| c.is_correct).count(),
+        1
+    );
+    assert!(!mobile_view.citation_source_name.is_empty());
+}
+
+#[test]
 fn gre_practice_bootstrap_matches_between_mobile_ffi_and_direct_backend() {
     let harness = unsafe { ParityHarness::new("practice-page") };
     let mut mobile_view =

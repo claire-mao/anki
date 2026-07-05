@@ -16,21 +16,21 @@ const emptyStats = {
     heldOutCount: 0,
     resolvedOutcomes: 0,
     calibrationCurve: [],
-} as ReadinessCalibrationStats;
+} as unknown as ReadinessCalibrationStats;
 
 const lockedReadiness = {
     sufficientData: false,
-    abstainReason: "8/20 cards studied · 40% coverage",
+    abstainReason: "8/50 cards studied · 40% coverage",
     abstentionRequirements: [
         {
             id: "studied_cards",
             label: "Studied cards",
-            status: "8 / 20 cards",
-            nextStep: "Review 12 more cards",
+            status: "8 / 50 cards",
+            nextStep: "Review 42 more cards",
             met: false,
         },
     ],
-} as ReadinessScore;
+} as unknown as ReadinessScore;
 
 describe("presentCalibration", () => {
     test("early state uses a single summary instead of the full panel", () => {
@@ -39,7 +39,7 @@ describe("presentCalibration", () => {
         expect(model.showFullPanel).toBe(false);
         expect(model.earlyStateSummary).toMatch(/0 of 5 checks completed/);
         expect(model.confidenceCaption).toBe("Provisional until readiness gates clear");
-        expect(model.confidenceCaption).not.toContain("8/20");
+        expect(model.confidenceCaption).not.toContain("8/50");
         expect(model.historicalAccuracy).toBe("None yet");
         expect(model.historicalAccuracyDetail).toMatch(/predictions start/);
         expect(model.predictionQuality).toBe("0 of 5 checks completed");
@@ -51,7 +51,7 @@ describe("presentCalibration", () => {
     test("surfaces gate and check guidance once in confidence notes", () => {
         const model = presentCalibration(lockedReadiness, emptyStats);
 
-        expect(model.confidenceChangeNotes).toContain("Review 12 more cards");
+        expect(model.confidenceChangeNotes).toContain("Review 42 more cards");
         expect(model.confidenceChangeNotes.some((note) => note.includes("check"))).toBe(
             true,
         );
@@ -66,7 +66,7 @@ describe("presentCalibration", () => {
                 sufficientData: true,
                 confidenceLevel: "medium",
                 abstentionRequirements: [],
-            } as ReadinessScore,
+            } as unknown as ReadinessScore,
             {
                 sufficientData: true,
                 wellCalibrated: true,
@@ -76,7 +76,7 @@ describe("presentCalibration", () => {
                 heldOutCount: 6,
                 brierScore: 0.08,
                 calibrationCurve: [],
-            } as ReadinessCalibrationStats,
+            } as unknown as ReadinessCalibrationStats,
         );
 
         expect(model.showFullPanel).toBe(true);
@@ -89,7 +89,7 @@ describe("presentCalibration", () => {
 
 describe("formatCalibrationChecksProgress", () => {
     test("formats check progress against the verification threshold", () => {
-        expect(formatCalibrationChecksProgress({ heldOutCount: 2 } as ReadinessCalibrationStats)).toBe(
+        expect(formatCalibrationChecksProgress({ heldOutCount: 2 } as unknown as ReadinessCalibrationStats)).toBe(
             "2 of 5 checks completed",
         );
     });
@@ -99,7 +99,7 @@ describe("calibrationQualityVisible", () => {
     test("hides track record until sufficient checks exist", () => {
         expect(calibrationQualityVisible(emptyStats)).toBe(false);
         expect(
-            calibrationQualityVisible({ sufficientData: true } as ReadinessCalibrationStats),
+            calibrationQualityVisible({ sufficientData: true } as unknown as ReadinessCalibrationStats),
         ).toBe(true);
     });
 });

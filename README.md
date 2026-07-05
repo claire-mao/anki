@@ -20,6 +20,7 @@ This fork additionally ships **GRE Atlas** — a graduate-exam study layer built
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Graders / submission review** | [GRE Atlas submission package](./docs/gre-atlas-submission/README.md) — build, demo, eval, grading checklist                                                                           |
 | **Developers**                  | [GRE Atlas release guide](./docs/gre-atlas-release.md) · [architecture](./docs/gre-atlas-architecture.md) · [development](./docs/development.md#gre-atlas-gre)                         |
+| **Release / installer**         | [Release checklist](./docs/gre-atlas-submission/RELEASE-CHECKLIST.md) · [clean-machine install](./docs/gre-atlas-submission/INSTALL.md)                                                |
 | **Models & metrics**            | [Memory](./docs/models/memory-model.md) · [Performance](./docs/models/performance-model.md) · [Readiness](./docs/models/readiness-model.md) · [Eval harness](./scripts/eval/README.md) |
 
 Quick start after clone:

@@ -167,6 +167,63 @@ Default output directory (`just eval-gre-atlas` and `--output-dir docs/gre-atlas
 
 Generated files are local artifacts; commit them only if you intentionally want to snapshot a benchmark run.
 
+## AI question-generation release gate
+
+Read-only evaluation on the bundled **held-out gold set** (`rslib/src/gre_atlas/questions/gold_eval_set.json`). Gold labels are never fed into generation — only each question's topic id is used to pick a candidate.
+
+```bash
+just eval-gre-atlas-ai
+```
+
+Or directly:
+
+```bash
+PYTHONPATH=out/pylib out/pyenv/bin/python scripts/eval/gre_atlas_ai_eval.py \
+  --output-dir docs/gre-atlas-submission/results
+```
+
+### Metrics (held-out only)
+
+| Metric                | Definition                                                                                           |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Accuracy**          | Share of gold topics producing a candidate that passes the confidence cutoff and four-rule eval gate |
+| **Wrong-answer rate** | Share rejected for hallucination (marked answer not among choices / not derivable)                   |
+| **Acceptance cutoff** | Minimum generation confidence before the eval gate runs (default `0.55`)                             |
+
+### Configurable thresholds
+
+Override via CLI flags or environment variables (CLI wins when both are set):
+
+| Variable / flag                                                       | Default | Purpose                       |
+| --------------------------------------------------------------------- | ------- | ----------------------------- |
+| `GRE_ATLAS_AI_EVAL_MIN_ACCURACY` / `--min-accuracy`                   | `0.95`  | Minimum held-out accuracy     |
+| `GRE_ATLAS_AI_EVAL_MAX_WRONG_ANSWER_RATE` / `--max-wrong-answer-rate` | `0.0`   | Maximum wrong-answer rate     |
+| `GRE_ATLAS_AI_EVAL_ACCEPTANCE_CUTOFF` / `--acceptance-cutoff`         | `0.55`  | Minimum generation confidence |
+
+### Baseline comparison (stem-only retrieval)
+
+The report also compares **keyword**, **BM25**, and **TF-IDF vector** retrieval baselines against catalog-aware **AI retrieval** and the full **AI generation pipeline** on the same 50 gold questions (query = stem only; keywords withheld).
+
+| Metric                      | Definition                                                              |
+| --------------------------- | ----------------------------------------------------------------------- |
+| **Accuracy**                | Share of questions where the predicted GRE topic matches the gold label |
+| **Precision / recall / F1** | Macro-averaged one-vs-rest topic classification                         |
+| **Failure rate**            | Share of queries where retrieval returned no confident match            |
+| **Keyword recall**          | Mean overlap between gold keywords and retrieved section metadata       |
+
+Implementation: `rslib/src/gre_atlas/questions/retrieval.rs`.
+
+### Pass / fail
+
+The harness writes `gre-atlas-ai-eval.{json,md}` and exits **non-zero** when the release gate fails (failed models are rejected). CI runs this step after `just build`. Use `--allow-fail` to write the report without suppressing the non-zero exit code.
+
+### Outputs
+
+- `docs/gre-atlas-submission/results/gre-atlas-ai-eval.json` — machine-readable report (includes `held_out_quality`, `verdict`)
+- `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md` — human-readable summary with release verdict
+
+Implementation: `rslib/src/gre_atlas/ai_eval.rs`, `scripts/eval/gre_atlas_ai_eval.py`.
+
 ## Tests
 
 Rust unit tests in `rslib/src/gre_atlas/eval.rs`, `rslib/src/gre_atlas/ablation_eval.rs`, `rslib/src/gre_atlas/calibration.rs`, `rslib/src/gre_atlas/memory_eval.rs`, and `rslib/src/gre_atlas/performance_eval.rs` cover deterministic recomputation and report formatting. Run:

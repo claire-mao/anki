@@ -56,7 +56,7 @@ Memory abstains unless **all** requirements are met (`rslib/src/gre_atlas/absten
 | Requirement       | Threshold                                |
 | ----------------- | ---------------------------------------- |
 | FSRS scheduling   | FSRS enabled on the collection           |
-| Studied GRE cards | ≥ 200 cards with at least one review     |
+| Studied GRE cards | ≥ 50 cards with at least one review      |
 | Topic coverage    | ≥ 50% exam-weighted GRE catalog coverage |
 
 If any gate fails, `sufficient_data = false` and the UI should show requirements and `next_step` guidance rather than a numeric score.

@@ -1,100 +1,97 @@
-# GRE Atlas — submission package
+# GRE Atlas submission — package index
 
-This folder is the **grader entry point** for the GRE Atlas layer built on Anki. It summarizes what was delivered, how to build and run it, how to reproduce evaluation artifacts, and how to score the project against requirements.
+**Grader entry point.** One-page summary: [SUBMISSION.md](./SUBMISSION.md). **Your remaining tasks:** [SUBMISSION-CHECKLIST.md](./SUBMISSION-CHECKLIST.md).
 
-**One-page summary:** [SUBMISSION.md](./SUBMISSION.md)
+**Commit (2026-07-05 verification):** `1323b37859cc9baaa5a8a1a850a20fe76d3c0e8f`
 
-## Table of contents
+---
 
-| Document                                       | Purpose                                                               |
-| ---------------------------------------------- | --------------------------------------------------------------------- |
-| [SUBMISSION.md](./SUBMISSION.md)               | One-page grader quick start — commands, artifacts, manual checks      |
-| [BUILD.md](./BUILD.md)                         | Clean checkout → `just check` → `just run`                            |
-| [EVALUATION.md](./EVALUATION.md)               | Reproducible eval + benchmark commands and outputs                    |
-| [ARCHITECTURE.md](./ARCHITECTURE.md)           | System diagram (Mermaid) and layer responsibilities                   |
-| [FEATURE-INDEX.md](./FEATURE-INDEX.md)         | Feature → Rust source → tests → doc section                           |
-| [PERFORMANCE-MODEL.md](./PERFORMANCE-MODEL.md) | Performance model eval methodology (held-out split, metrics)          |
-| [AI.md](./AI.md)                               | Template-based question generation, gold-set eval, source attribution |
-| [DEMO-CHECKLIST.md](./DEMO-CHECKLIST.md)       | Live demo script for reviewers                                        |
-| [GRADING-CHECKLIST.md](./GRADING-CHECKLIST.md) | Requirement → evidence mapping                                        |
-| [SCREENSHOTS.md](./SCREENSHOTS.md)             | Screenshot capture checklist and filenames                            |
-| [screenshots/](./screenshots/)                 | PNG captures for UI evidence (gitignored)                             |
-| [results/](./results/)                         | Submission eval outputs (`performance-eval.md`)                       |
+## Required core documents
 
-## What GRE Atlas is
+| Document                                                 | Purpose                                                          |
+| -------------------------------------------------------- | ---------------------------------------------------------------- |
+| [SUBMISSION.md](./SUBMISSION.md)                         | One-page grader quick start                                      |
+| [SUBMISSION-CHECKLIST.md](./SUBMISSION-CHECKLIST.md)     | **Your** pre-upload checklist (screenshots, recordings, install) |
+| [PATH-AUDIT.md](./PATH-AUDIT.md)                         | Link + artifact path verification (0 broken links)               |
+| [INSTALL.md](./INSTALL.md)                               | Desktop installer + clean-machine smoke test                     |
+| [AI.md](./AI.md)                                         | AI design, eval gate, attribution, AI-off mode                   |
+| [ARCHITECTURE.md](./ARCHITECTURE.md)                     | BrainLiftService diagram + RPC table                             |
+| [RELEASE-CHECKLIST.md](./RELEASE-CHECKLIST.md)           | Full release / submission verification matrix                    |
+| [SYNC-VERIFICATION.md](./SYNC-VERIFICATION.md)           | Sync scenarios + conflict documentation                          |
+| [WEDNESDAY-PHONE-REVIEW.md](./WEDNESDAY-PHONE-REVIEW.md) | iOS simulator / phone recording steps                            |
+| [FRIDAY-DELIVERABLES.md](./FRIDAY-DELIVERABLES.md)       | Friday bundle index + eval numbers                               |
 
-GRE Atlas is a GRE study product embedded in this Anki fork. It adds:
+---
 
-- A **GRE web shell** (SvelteKit pages under `ts/routes/(gre)/`)
-- A **parallel data path** (`greatlas.db` for practice + calibration; `collection.anki2` for FSRS)
-- Three scores — **Memory**, **Performance**, **Readiness** — with honest **abstention** when evidence is insufficient
-- **Study plan** topic-priority recommendations
-- **Read-only evaluation** (calibration, FSRS memory eval, performance eval, ablation, benchmarks)
-- **AI question generation** (template pipeline from named ETS source, gold-set eval, confidence rejection)
+## Evidence folders
 
-Anki’s reviewer and FSRS scheduler are **not modified** by GRE practice.
+| Folder                         | Contents                             | Regenerate                                                                         |
+| ------------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------- |
+| [results/](./results/)         | Eval, benchmark, AI eval JSON/MD     | `just eval-gre-atlas`, `just eval-gre-atlas-ai`, `just bench-gre-atlas`            |
+| [logs/](./logs/)               | Raw `wednesday-*.log` command output | Re-run commands in [build.md](./build.md), [tests.md](./tests.md)                  |
+| [screenshots/](./screenshots/) | UI PNG captures                      | [SCREENSHOTS.md](./SCREENSHOTS.md), [screenshots/pending/](./screenshots/pending/) |
+| [recordings/](./recordings/)   | Demo `.mov` files (gitignored)       | [RECORDINGS.md](./RECORDINGS.md), [recordings/pending/](./recordings/pending/)     |
 
-## Deep reference (existing docs)
+---
 
-| Topic                                   | Location                                                                           |
-| --------------------------------------- | ---------------------------------------------------------------------------------- |
-| Codebase map                            | [../gre-atlas-architecture.md](../gre-atlas-architecture.md)                       |
-| Product design & phases                 | [../gre-atlas-product-architecture.md](../gre-atlas-product-architecture.md)       |
-| Release & installer                     | [../gre-atlas-release.md](../gre-atlas-release.md)                                 |
-| Memory / performance / readiness models | [../models/](../models/)                                                           |
-| Eval methodology (full)                 | [../../scripts/eval/README.md](../../scripts/eval/README.md)                       |
-| TopicMastery Rust note                  | [../gre-atlas-topic-mastery-rust-note.md](../gre-atlas-topic-mastery-rust-note.md) |
-| iOS companion                           | [../gre-atlas-mobile.md](../gre-atlas-mobile.md)                                   |
+## Wednesday automated proof
+
+| Document                                                   | Purpose                                        |
+| ---------------------------------------------------------- | ---------------------------------------------- |
+| [build.md](./build.md)                                     | `just build`, iOS simulator, installer paths   |
+| [tests.md](./tests.md)                                     | cargo / pytest / vitest results                |
+| [artifacts.md](./artifacts.md)                             | DMG, `.app`, mobile bridge sizes               |
+| [release.md](./release.md)                                 | Release checklist + install/recording overview |
+| [wednesday-release-proof.md](./wednesday-release-proof.md) | Requirement matrix                             |
+| [wednesday-test-output.txt](./wednesday-test-output.txt)   | Combined test command output                   |
+
+---
+
+## Evaluation & demo
+
+| Document                                       | Purpose                      |
+| ---------------------------------------------- | ---------------------------- |
+| [EVALUATION.md](./EVALUATION.md)               | Eval + benchmark commands    |
+| [DEMO-CHECKLIST.md](./DEMO-CHECKLIST.md)       | Live demo script             |
+| [SCREENSHOTS.md](./SCREENSHOTS.md)             | Screenshot filenames         |
+| [RECORDINGS.md](./RECORDINGS.md)               | Recording filenames          |
+| [GRADING-CHECKLIST.md](./GRADING-CHECKLIST.md) | Requirement → evidence map   |
+| [FEATURE-INDEX.md](./FEATURE-INDEX.md)         | Feature → source → test      |
+| [PERFORMANCE-MODEL.md](./PERFORMANCE-MODEL.md) | Performance eval methodology |
+
+---
 
 ## Quick start (reviewers)
 
 ```bash
-# Prerequisites: see docs/development.md
-just check          # format, build, test
-just run            # opens Anki → GRE shell at /home
-
-# Optional: regenerate evaluation report (read-only)
-just eval-gre-atlas /path/to/collection.anki2
-
-# Optional: benchmark production APIs
-just bench-gre-atlas --synthetic-cards 10000
-
-# Optional: AI gold-set eval (read-only, no collection required)
+just check          # optional; needs CONTRIBUTORS entry
+just run            # GRE shell at /home
+just eval-gre-atlas mobile/ios/GREAtlasCompanion/Resources/DemoBundle/collection.anki2
 just eval-gre-atlas-ai
+just bench-gre-atlas --synthetic-cards 10000
 ```
 
-## Key deliverables map
+---
 
-| Deliverable                   | Primary location                                                          |
-| ----------------------------- | ------------------------------------------------------------------------- |
-| Protobuf API                  | `proto/anki/brainlift.proto` (+ `StatsService.TopicMastery`)              |
-| Rust engine                   | `rslib/src/gre_atlas/`                                                    |
-| Topic mastery (memory signal) | `rslib/src/stats/mastery.rs`                                              |
-| Python wrappers               | `pylib/anki/gre_atlas.py`                                                 |
-| GRE UI                        | `ts/routes/(gre)/`                                                        |
-| Qt shell                      | `qt/aqt/gre_dashboard.py`, `qt/aqt/gre_atlas.py`                          |
-| Eval harness                  | `scripts/eval/`, `rslib/src/gre_atlas/eval.rs`                            |
-| AI generation + eval          | `rslib/src/gre_atlas/questions/ai_gen.rs`, `ai_eval.rs`, [AI.md](./AI.md) |
-| Tests                         | `rslib/src/gre_atlas/**` test modules, `pylib/tests/test_gre_atlas*.py`   |
+## External references (outside this folder)
 
-## RPC inventory (18 + TopicMastery)
+| Topic              | Path                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Upstream dev setup | [../development.md](../development.md)                                                                         |
+| Release overview   | [../gre-atlas-release.md](../gre-atlas-release.md)                                                             |
+| Model docs         | [../models/](../models/)                                                                                       |
+| Eval harness       | [../../scripts/eval/README.md](../../scripts/eval/README.md)                                                   |
+| iOS companion      | [../../mobile/ios/README.md](../../mobile/ios/README.md), [../../mobile/ios/DEMO.md](../../mobile/ios/DEMO.md) |
+| Protobuf API       | [../../proto/anki/brainlift.proto](../../proto/anki/brainlift.proto)                                           |
 
-`BrainLiftService`: practice, dashboard, scores, study plan, readiness calibration, topic details, eval reports (full + AI), question generation, sync (3), demo bootstrap.
+---
 
-`StatsService.TopicMastery`: FSRS retrievability aggregation by GRE topic tags.
+## Screenshot & recording status (2026-07-05)
 
-Full list and layer wiring: [ARCHITECTURE.md](./ARCHITECTURE.md).
+| Asset type       | Present                                                           | Missing                                                                    |
+| ---------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Screenshots      | `08-eval-report.png`, `10-benchmark-output.png`                   | `01`–`07`, `09`, `11` — see [screenshots/pending/](./screenshots/pending/) |
+| Recordings       | _(none in repo)_                                                  | `01`–`08` `.mov` — see [recordings/pending/](./recordings/pending/)        |
+| Installer binary | `out/installer/dist/anki-26.05-mac-apple.dmg` (local, gitignored) | Clean-machine recording                                                    |
 
-## Screenshots
-
-Capture checklist: [SCREENSHOTS.md](./SCREENSHOTS.md). Example filenames: `screenshots/01-gre-home.png`, `screenshots/05-readiness-scores.png`.
-
-## Entry points (desktop)
-
-| Surface                 | Default route                                  | How to reach                           |
-| ----------------------- | ---------------------------------------------- | -------------------------------------- |
-| Main GRE shell          | `/home`                                        | Collection open (`greDashboard` state) |
-| GRE modal dialog        | `/dashboard`                                   | Congrats CTAs, `open_gre_atlas()`      |
-| Toolbar (outside shell) | `/home`, `/practice`, `/progress`, `/settings` | Quick links when not in GRE shell      |
-
-The Qt menu bar exposes **GRE → Debug** (Deck Browser, Browse, etc.). There is no separate “Open GRE” menu item — the product opens into the GRE shell automatically.
+**Do not fabricate** missing PNG/MOV files. Follow [SUBMISSION-CHECKLIST.md](./SUBMISSION-CHECKLIST.md).

@@ -5,8 +5,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from anki import brainlift_pb2
-from anki import sync_pb2
+from anki import brainlift_pb2, sync_pb2
 
 if TYPE_CHECKING:
     from anki.collection import Collection
@@ -192,7 +191,7 @@ def push_gre_atlas_changes(
 
 def pull_gre_atlas_sync_bundle(
     col: Collection, *, after_usn: int = 0, limit: int = 5000
-) -> brainlift_pb2.BrainLiftSyncBundleResponse:
+) -> brainlift_pb2.BrainLiftSyncBundle:
     return col._backend.pull_brain_lift_sync_bundle(after_usn=after_usn, limit=limit)
 
 
@@ -215,6 +214,8 @@ def perform_gre_atlas_sync(
     """
     auth = None
     if hkey:
-        auth = sync_pb2.SyncAuth(hkey=hkey, endpoint=endpoint, io_timeout_secs=io_timeout_secs)
+        auth = sync_pb2.SyncAuth(
+            hkey=hkey, endpoint=endpoint, io_timeout_secs=io_timeout_secs
+        )
     request = brainlift_pb2.PerformGreAtlasSyncRequest(auth=auth)
     return col._backend.perform_gre_atlas_sync(request)

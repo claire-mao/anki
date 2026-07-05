@@ -49,6 +49,7 @@ Swift declares the C ABI with `@_silgen_name` in `MobileBridgeClient.swift`:
 - `anki_mobile_gre_progress_json`
 - `anki_mobile_gre_practice_bootstrap_json`
 - `anki_mobile_gre_record_attempt_json`
+- `anki_mobile_gre_explain_answer_json`
 - `anki_mobile_gre_practice_scores_json`
 - `anki_mobile_gre_study_json`
 - `anki_mobile_gre_study_review_json`
@@ -73,6 +74,7 @@ The full C header (including generic `anki_mobile_backend_command`) is at `mobil
 | `anki_mobile_gre_*_json(…)`                              | GRE page loaders → camelCase JSON                          |
 | `anki_mobile_gre_study_answer_json(input, …)`            | `AnswerCard` RPC → next card / completion                  |
 | `anki_mobile_gre_record_attempt_json(input, …)`          | `RecordAttempt` RPC → result JSON                          |
+| `anki_mobile_gre_explain_answer_json(input, …)`          | `ExplainAnswer` RPC → structured explanation JSON          |
 | `anki_mobile_prepare_demo_json(…)`                       | `PrepareDemoCollection` → demo deck/cards/attempts         |
 | `anki_mobile_brainlift_sync_status_json(…)`              | `GetBrainLiftSyncStatus` → USN / pending count             |
 | `anki_mobile_brainlift_sync_pull_json(input, …)`         | `PullBrainLiftChanges` → export attempts                   |
@@ -123,7 +125,7 @@ cd mobile/ios
 xcodebuild \
   -project GREAtlasCompanion.xcodeproj \
   -scheme GREAtlasCompanion \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
   build
 ```
 

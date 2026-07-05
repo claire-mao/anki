@@ -2,6 +2,10 @@
 
 **Start here:** [README.md](./README.md) (full table of contents)
 
+**Your remaining tasks before upload:** [SUBMISSION-CHECKLIST.md](./SUBMISSION-CHECKLIST.md)
+
+**Wednesday submission evidence (2026-07-05):** [build.md](./build.md) · [tests.md](./tests.md) · [artifacts.md](./artifacts.md) · [release.md](./release.md) · commit `1323b37859cc9baaa5a8a1a850a20fe76d3c0e8f`
+
 ## What was built
 
 GRE Atlas is a GRE study layer on this Anki fork: practice MCQs, three abstaining scores (Memory / Performance / Readiness), study-plan recommendations, readiness calibration, and read-only evaluation. GRE practice writes to `greatlas.db` only — FSRS / revlog are unchanged.
@@ -20,7 +24,7 @@ just eval-gre-atlas-ai                                  # AI gold-set eval (read
 ## What to verify manually
 
 1. **Shell:** `just run` → main window loads GRE at `/home` (header: Dashboard, Study, Practice, Progress, Settings).
-2. **Abstention:** Fresh profile → Progress / Readiness show missing requirements (FSRS, 20 cards, 50% coverage, 50 practice attempts).
+2. **Abstention:** Fresh profile → Progress / Readiness show missing requirements (FSRS, 50 cards, 50% coverage, 50 practice attempts).
 3. **Practice isolation:** Answer one MCQ → performance count rises; revlog unchanged (`pylib/tests/test_gre_atlas.py::test_gre_atlas_record_attempt_does_not_modify_revlog`).
 4. **Study plan:** `/study-plan` shows ranked recommendations with factor explanations.
 5. **Modal entry:** Congrats screen → Practice / Dashboard opens GRE modal at `/dashboard`.

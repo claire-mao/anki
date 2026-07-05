@@ -92,7 +92,7 @@ flowchart LR
     Perf --> Ready
 ```
 
-**Abstention:** Memory requires FSRS + ≥20 studied GRE cards + ≥50% weighted catalog coverage. Performance requires ≥50 practice attempts. Readiness requires both.
+**Abstention:** Memory requires FSRS + ≥50 studied GRE cards + ≥50% weighted catalog coverage. Performance requires ≥50 practice attempts. Readiness requires both.
 
 ## RPC surface
 

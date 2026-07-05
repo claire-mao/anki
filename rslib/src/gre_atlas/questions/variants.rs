@@ -26,13 +26,44 @@ pub(crate) fn build_variant_draft(
 
     match topic_id {
         "gre::quant::arithmetic::percent" => {
-            let scenarios = [
+            let discount_scenarios = [
                 (200, 15, "$170", "15% of $200 is $30; $200 − $30 = $170."),
                 (80, 25, "$60", "25% of $80 is $20; $80 − $20 = $60."),
                 (50, 30, "$35", "30% of $50 is $15; $50 − $15 = $35."),
                 (120, 10, "$108", "10% of $120 is $12; $120 − $12 = $108."),
             ];
-            let (price, pct, answer, explanation) = scenarios[(variant as usize) % scenarios.len()];
+            let increase_scenarios = [
+                (
+                    "A price increases from $50 to $65. What is the percent increase?",
+                    vec!["15%", "20%", "30%", "35%"],
+                    "30%",
+                    "The increase is $15 on $50, a 30 percent increase.",
+                ),
+                (
+                    "A salary rises from $40,000 to $46,000. What is the percent increase?",
+                    vec!["10%", "12%", "15%", "20%"],
+                    "15%",
+                    "The $6,000 increase on $40,000 is a 15 percent increase.",
+                ),
+            ];
+            if variant % 2 == 1 {
+                let idx = (variant as usize / 2) % increase_scenarios.len();
+                let (stem, choices, answer, explanation) = &increase_scenarios[idx];
+                return mcq(
+                    topic_id,
+                    section,
+                    variant,
+                    now,
+                    stem,
+                    str_choices(choices),
+                    answer,
+                    explanation,
+                    0.35,
+                    attribution,
+                );
+            }
+            let (price, pct, answer, explanation) =
+                discount_scenarios[(variant as usize / 2) % discount_scenarios.len()];
             let wrong = [
                 format!("${}", price - pct),
                 format!("${}", price + pct),
@@ -47,7 +78,10 @@ pub(crate) fn build_variant_draft(
                     "A laptop priced at ${price} \
                      is discounted by {pct}%. What is the sale price?",
                 ),
-                four_choices(answer, &[wrong[0].clone(), wrong[1].clone(), wrong[2].clone()]),
+                four_choices(
+                    answer,
+                    &[wrong[0].clone(), wrong[1].clone(), wrong[2].clone()],
+                ),
                 answer,
                 explanation,
                 0.35,
@@ -61,7 +95,8 @@ pub(crate) fn build_variant_draft(
                 (2, 3, 6, 9, "6 cups of flour equal 2 parts, so 1 part is 3 cups. Sugar is 3 parts = 9 cups."),
                 (4, 7, 20, 35, "20 is 4 parts, so one part is 5. Seven parts gives 35."),
             ];
-            let (a, b, given, answer, explanation) = scenarios[(variant as usize) % scenarios.len()];
+            let (a, b, given, answer, explanation) =
+                scenarios[(variant as usize) % scenarios.len()];
             mcq(
                 topic_id,
                 section,
@@ -80,10 +115,34 @@ pub(crate) fn build_variant_draft(
         }
         "gre::quant::algebra::linear" => {
             let scenarios = [
-                (4, 9, 11, 5, "Add 9 to both sides: 4x = 20. Divide by 4: x = 5."),
-                (3, 7, 22, 5, "Subtract 7 from both sides: 3x = 15. Divide by 3: x = 5."),
-                (2, 5, 11, 8, "Add 5 to both sides: 2x = 16. Divide by 2: x = 8."),
-                (5, 2, 20, 6, "Divide both sides by 5: x − 2 = 4, so x = 6."),
+                (
+                    4,
+                    9,
+                    11,
+                    5,
+                    "Solve the linear equation: add 9 to both sides, 4x = 20, divide by the coefficient 4 to isolate the variable x = 5.",
+                ),
+                (
+                    3,
+                    7,
+                    22,
+                    5,
+                    "Solve the linear equation: subtract 7 from both sides, 3x = 15, divide by 3 to isolate the variable x = 5.",
+                ),
+                (
+                    2,
+                    5,
+                    11,
+                    8,
+                    "Solve the linear equation: add 5 to both sides, 2x = 16, divide by 2 to isolate the variable x = 8.",
+                ),
+                (
+                    5,
+                    2,
+                    20,
+                    6,
+                    "Solve the linear equation: divide both sides by 5, x − 2 = 4, so the variable x = 6.",
+                ),
             ];
             let (a, b, c, answer, explanation) = scenarios[(variant as usize) % scenarios.len()];
             mcq(
@@ -91,9 +150,7 @@ pub(crate) fn build_variant_draft(
                 section,
                 variant,
                 now,
-                &format!(
-                    "If {a}x + {b} = {c}, what is x?",
-                ),
+                &format!("Solve this linear equation for the variable x: {a}x + {b} = {c}.",),
                 four_int_choices(answer, [-3, -1, 2]),
                 &answer.to_string(),
                 explanation,
@@ -217,28 +274,28 @@ pub(crate) fn build_variant_draft(
         "gre::quant::data_interpretation" => {
             let scenarios = [
                 (
-                    "Revenue rose from $50M to $65M. What is the percent increase?",
+                    "According to the chart, revenue rose from $50M to $65M. What is the percent increase?",
                     vec!["15%", "25%", "30%", "35%"],
                     "30%",
-                    "Increase is $15M on $50M → 15/50 = 30%.",
+                    "The chart shows an increase of $15M on $50M → 15/50 = 30%.",
                 ),
                 (
-                    "Monthly sales were $20K, $30K, and $50K. What is the three-month total?",
+                    "The table lists monthly sales of $20K, $30K, and $50K. What is the three-month total?",
                     vec!["$80K", "$90K", "$100K", "$110K"],
                     "$100K",
-                    "Add the bars: 20 + 30 + 50 = 100, so $100K.",
+                    "Add the table values: 20 + 30 + 50 = 100, so $100K.",
                 ),
                 (
-                    "25% of a $200 budget goes to marketing. How much is that?",
+                    "A chart shows 25% of a $200 budget goes to marketing. How much is that?",
                     vec!["$25", "$40", "$50", "$60"],
                     "$50",
-                    "0.25 × $200 = $50.",
+                    "0.25 × $200 = $50 according to the chart.",
                 ),
                 (
-                    "Company A revenue grew 25% while Company B grew 20%. Which grew faster?",
+                    "Compare the chart values: Company A revenue grew 25% while Company B grew 20%. Which grew faster?",
                     vec!["Company A", "Company B", "Both equally", "Cannot determine"],
                     "Company A",
-                    "25% exceeds 20%, so Company A grew faster.",
+                    "Comparing percent increases, 25% exceeds 20%, so Company A grew faster.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -259,28 +316,28 @@ pub(crate) fn build_variant_draft(
         "gre::quant::statistics::probability" => {
             let scenarios = [
                 (
-                    "A bag has 3 red and 7 blue marbles. If one is chosen at random, what is P(red)?",
+                    "What is the probability that a randomly chosen marble from a bag with 3 red and 7 blue marbles is red?",
                     vec!["1/10", "3/10", "3/7", "7/10"],
                     "3/10",
-                    "3 favorable out of 10 total → 3/10.",
+                    "Probability is 3 favorable outcomes out of 10 total → 3/10.",
                 ),
                 (
-                    "A fair die is rolled once. What is P(even)?",
+                    "A fair die is rolled once. What is the probability of an even outcome?",
                     vec!["1/6", "1/3", "1/2", "2/3"],
                     "1/2",
-                    "Three of six outcomes are even → 3/6 = 1/2.",
+                    "Three of six equally likely outcomes are even → 3/6 = 1/2.",
                 ),
                 (
-                    "Two fair coins are flipped. What is P(both heads)?",
+                    "Two fair coins are flipped. What is the probability of both heads?",
                     vec!["1/8", "1/4", "1/3", "1/2"],
                     "1/4",
-                    "Independent flips: 1/2 × 1/2 = 1/4.",
+                    "Independent events: probability 1/2 × 1/2 = 1/4.",
                 ),
                 (
-                    "A bag has 2 red and 3 blue marbles. What is P(red)?",
+                    "A bag has 2 red and 3 blue marbles. What is the probability of drawing red?",
                     vec!["1/5", "2/5", "3/5", "2/3"],
                     "2/5",
-                    "2 favorable out of 5 total → 2/5.",
+                    "2 favorable outcomes out of 5 total → 2/5.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -427,34 +484,34 @@ pub(crate) fn build_variant_draft(
         "gre::verbal::text_completion" => {
             let scenarios = [
                 (
-                    "The committee's report was so ______ that even dissenting members accepted its conclusions.",
+                    "In context, the committee's report was so ______ that even dissenting members accepted its conclusions.",
                     vec!["equivocal", "persuasive", "opaque", "fragmentary"],
                     "persuasive",
-                    "Dissenters accepting conclusions implies the report was convincing.",
+                    "Dissenters accepting conclusions implies the report was convincing in context.",
                 ),
                 (
-                    "Despite her ______ manner in public, the negotiator was famously ruthless at the bargaining table.",
+                    "Given the logical contrast in context, despite her ______ manner in public, the negotiator was famously ruthless at the bargaining table.",
                     vec!["genial", "abrasive", "hostile", "brusque"],
                     "genial",
-                    "\"Despite\" signals a contrast with ruthlessness.",
+                    "\"Despite\" signals a contrast with ruthlessness in context.",
                 ),
                 (
-                    "The scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
+                    "In context, the scientist's findings were so ______ that even skeptical reviewers revised their conclusions.",
                     vec!["equivocal", "compelling", "peripheral", "tenuous"],
                     "compelling",
-                    "Skeptics changing their minds implies convincing evidence.",
+                    "Skeptics changing their minds implies convincing evidence in context.",
                 ),
                 (
-                    "The critic's review was so ______ that the author felt encouraged rather than discouraged.",
+                    "From context, the critic's review was so ______ that the author felt encouraged rather than discouraged.",
                     vec!["scathing", "laudatory", "dismissive", "caustic"],
                     "laudatory",
-                    "Feeling encouraged points to praise.",
+                    "Feeling encouraged points to supportive praise in context.",
                 ),
                 (
-                    "Although the instructions were ______, the team completed the assembly without errors.",
+                    "Using context clues, although the instructions were ______, the team completed the assembly without errors.",
                     vec!["ambiguous", "lucid", "cryptic", "obscure"],
                     "lucid",
-                    "Successful completion implies the instructions were clear.",
+                    "Context clues show successful completion implies clear instructions.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -475,31 +532,31 @@ pub(crate) fn build_variant_draft(
         "gre::verbal::sentence_equivalence" => {
             let scenarios = [
                 (
-                    "The historian's account was surprisingly ______, given the contentious subject matter.",
+                    "Select two equivalent words: the historian's account was surprisingly ______, given the contentious subject matter.",
                     vec![
                         "dispassionate", "inflammatory", "neutral", "biased", "polemical",
                         "temperate",
                     ],
                     "dispassionate",
-                    "Surprisingly calm tone fits dispassionate.",
+                    "Surprisingly calm tone fits dispassionate; equivalent meaning to neutral tone.",
                 ),
                 (
-                    "Although the CEO's apology was ______, many employees remained skeptical.",
+                    "Select two equivalent words: although the CEO's apology was ______, many employees remained skeptical.",
                     vec!["heartfelt", "perfunctory", "sincere", "grudging", "elaborate", "cursory"],
                     "heartfelt",
-                    "Skepticism contrasts with a seemingly genuine apology.",
+                    "Equivalent meaning to sincere tone contrasts with employee skepticism.",
                 ),
                 (
-                    "The valley's ______ rainfall supported unusually dense forests.",
+                    "Select two equivalent words: the valley's ______ rainfall supported unusually dense forests.",
                     vec!["scarce", "abundant", "meager", "plentiful", "sparse", "erratic"],
                     "abundant",
-                    "Dense forests require plentiful rain.",
+                    "Plentiful is an equivalent synonym for abundant rainfall.",
                 ),
                 (
-                    "Her explanation was admirably ______, conveying the entire idea in just a few words.",
+                    "Select two equivalent words: her explanation was admirably ______, conveying the entire idea in just a few words.",
                     vec!["verbose", "succinct", "rambling", "concise", "elaborate", "tedious"],
                     "succinct",
-                    "\"A few words\" signals brevity.",
+                    "Concise is an equivalent synonym for succinct wording.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -721,10 +778,10 @@ pub(crate) fn build_variant_draft(
         "gre::verbal::vocabulary::context" => {
             let scenarios = [
                 (
-                    "Although the instructions were ______, the team completed the assembly without errors.",
+                    "From context clues in the sentence, although the instructions were ______, the team completed the assembly without errors.",
                     vec!["ambiguous", "lucid", "cryptic", "obscure"],
                     "lucid",
-                    "Successful completion implies clear instructions.",
+                    "Context clues show successful completion implies clear instructions.",
                 ),
                 (
                     "In the sentence \"Few crops survive in the region's arid climate,\" \"arid\" most nearly means:",
@@ -757,22 +814,22 @@ pub(crate) fn build_variant_draft(
         "gre::verbal::vocabulary::advanced" => {
             let scenarios = [
                 (
-                    "The CEO's ______ apology failed to reassure investors who wanted concrete reforms.",
+                    "In advanced vocabulary, the CEO's ______ apology failed to reassure investors who wanted concrete reforms.",
                     vec!["abject", "perfunctory", "sincere", "heartfelt"],
                     "perfunctory",
-                    "Investors wanted substance; a perfunctory apology is superficial.",
+                    "Investors wanted substance; a perfunctory apology shows superficial word choice.",
                 ),
                 (
-                    "\"Ephemeral\" most nearly means:",
+                    "In academic vocabulary, \"ephemeral\" most nearly means:",
                     vec!["permanent", "fleeting", "abundant", "obscure"],
                     "fleeting",
-                    "Ephemeral describes something that lasts a very short time.",
+                    "Ephemeral describes precise vocabulary for something that lasts a very short time.",
                 ),
                 (
-                    "\"Garrulous\" most nearly means:",
+                    "Advanced vocabulary: \"garrulous\" most nearly means:",
                     vec!["talkative", "silent", "angry", "generous"],
                     "talkative",
-                    "Garrulous describes someone who talks a great deal.",
+                    "Garrulous is advanced vocabulary describing someone who talks a great deal.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -945,9 +1002,7 @@ fn mcq(
 
 /// Whether the trimmed correct answer appears among the presented choices.
 pub(crate) fn correct_answer_in_choices(correct: &str, choices: &[String]) -> bool {
-    choices
-        .iter()
-        .any(|choice| choice.trim() == correct.trim())
+    choices.iter().any(|choice| choice.trim() == correct.trim())
 }
 
 fn str_choices(choices: &[&str]) -> Vec<String> {

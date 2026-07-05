@@ -1,0 +1,6 @@
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.16s
+check:pytest:aqt
+n2: ran 1 task, now up to date
+[0m[1m[32m
+Build succeeded in 18.87s.
+[0m

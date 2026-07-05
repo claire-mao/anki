@@ -96,9 +96,10 @@ impl Collection {
         auth: SyncAuth,
         client: Client,
     ) -> Result<PerformGreAtlasSyncResponse> {
-        let endpoint = auth.endpoint.clone().unwrap_or_else(|| {
-            reqwest::Url::try_from("https://sync.ankiweb.net/").unwrap()
-        });
+        let endpoint = auth
+            .endpoint
+            .clone()
+            .unwrap_or_else(|| reqwest::Url::try_from("https://sync.ankiweb.net/").unwrap());
         let storage = gre_atlas_storage(self)?;
 
         if !crate::gre_atlas::sync_transport::endpoint_supports_gre_atlas_sync(&endpoint) {
@@ -135,12 +136,7 @@ impl Collection {
                 + remote.predictions.len()) as u32;
             let merge = storage.apply_sync_bundle(&remote)?;
             applied_count += merge.applied_count;
-            conflicts.extend(
-                merge
-                    .conflicts
-                    .into_iter()
-                    .map(sync_conflict_to_proto),
-            );
+            conflicts.extend(merge.conflicts.into_iter().map(sync_conflict_to_proto));
             storage.set_last_downloaded_usn(remote.current_usn)?;
         }
 
@@ -157,6 +153,7 @@ impl Collection {
 
         let status = storage.sync_status()?;
         storage.mark_synced_through(status.current_usn)?;
+        let status = storage.sync_status()?;
 
         // Invalidate cached GRE signals after sync.
         self.state.gre_atlas_signals_cache = None;
@@ -325,7 +322,8 @@ mod test {
         Ok(())
     }
 
-    /// Simulates desktop → mobile transfer using the full sync bundle (sessions first).
+    /// Simulates desktop → mobile transfer using the full sync bundle (sessions
+    /// first).
     #[test]
     fn bundle_sync_desktop_to_mobile_preserves_attempts() -> Result<()> {
         let mut desktop = isolated_col()?;
@@ -438,25 +436,25 @@ mod test {
             )?;
         }
 
-        let rt = tokio::runtime::Runtime::new().map_err(|e| crate::error::AnkiError::InvalidInput {
-            source: snafu::FromString::without_source(e.to_string()),
-        })?;
+        let rt =
+            tokio::runtime::Runtime::new().map_err(|e| crate::error::AnkiError::InvalidInput {
+                source: snafu::FromString::without_source(e.to_string()),
+            })?;
         let auth = SyncAuth {
             hkey: "test-hkey".into(),
             endpoint: Some(
-                reqwest::Url::parse("https://sync.ankiweb.net/")
-                    .map_err(|e| crate::error::AnkiError::InvalidInput {
+                reqwest::Url::parse("https://sync.ankiweb.net/").map_err(|e| {
+                    crate::error::AnkiError::InvalidInput {
                         source: snafu::FromString::without_source(e.to_string()),
-                    })?,
+                    }
+                })?,
             ),
             io_timeout_secs: Some(30),
         };
         let response = rt.block_on(col.gre_atlas_perform_sync(auth, reqwest::Client::new()))?;
         assert!(!response.success);
         assert!(
-            response
-                .message
-                .contains("self-hosted"),
+            response.message.contains("self-hosted"),
             "unexpected message: {}",
             response.message
         );
@@ -472,7 +470,8 @@ mod test {
         storage.session_count()
     }
 
-    /// Profile A → B → A via `apply_sync_bundle`, including stale-session export.
+    /// Profile A → B → A via `apply_sync_bundle`, including stale-session
+    /// export.
     #[test]
     fn two_profile_roundtrip_preserves_attempts_without_fk_or_duplicate_sessions() -> Result<()> {
         let mut col_a = isolated_col()?;
@@ -558,6 +557,95 @@ mod test {
         storage.push_changes(&[row])?;
         assert!(storage.session_exists(&remote_session)?);
         assert_eq!(attempt_count(storage)?, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn push_cross_device_id_collision_inserts_as_new_attempt() -> Result<()> {
+        let mut col = isolated_col()?;
+        let q2 = {
+            let storage = gre_atlas_storage(&mut col)?;
+            let q1 = storage.list_questions("", 1)?.pop().unwrap();
+            let q2 = storage.list_questions("", 2)?.into_iter().nth(1).unwrap();
+            let session_local = storage.create_session("practice")?;
+            storage.record_attempt(
+                &q1.id,
+                &q1.topic,
+                q1.difficulty,
+                "local-device",
+                true,
+                600,
+                None,
+                Some(&session_local.id),
+            )?;
+            q2
+        };
+        let local = col.gre_atlas_pull_changes(0, 10)?;
+        assert_eq!(local.attempts.len(), 1);
+        assert_eq!(local.attempts[0].id, 1);
+
+        let remote_session = "remote-device-session".to_string();
+        let remote = SyncAttemptRow {
+            id: 1,
+            question_id: q2.id.clone(),
+            topic: q2.topic.clone(),
+            difficulty: q2.difficulty,
+            answered_at_secs: TimestampSecs(1_700_000_500),
+            answer: "remote-device".into(),
+            correct: false,
+            response_time_ms: 700,
+            confidence: None,
+            session_id: Some(remote_session.clone()),
+            usn: 99,
+            mtime_secs: TimestampSecs(1_700_000_500),
+        };
+        let push = {
+            let storage = gre_atlas_storage(&mut col)?;
+            storage.push_changes(&[remote])?
+        };
+        let storage = gre_atlas_storage(&mut col)?;
+        assert_eq!(push.applied_count, 1);
+        assert!(push.conflicts.is_empty());
+        assert_eq!(attempt_count(storage)?, 2);
+        assert!(storage.session_exists(&remote_session)?);
+
+        let all = col.gre_atlas_pull_changes(-1, 100)?;
+        assert_eq!(all.attempts.len(), 2);
+        let answers: Vec<_> = all.attempts.iter().map(|a| a.answer.as_str()).collect();
+        assert!(answers.contains(&"local-device"));
+        assert!(answers.contains(&"remote-device"));
+        Ok(())
+    }
+
+    #[test]
+    fn push_skips_duplicate_identity_with_different_id() -> Result<()> {
+        let mut col = isolated_col()?;
+        {
+            let storage = gre_atlas_storage(&mut col)?;
+            let q = storage.list_questions("", 1)?.pop().unwrap();
+            let session = storage.create_session("practice")?;
+            storage.record_attempt(
+                &q.id,
+                &q.topic,
+                q.difficulty,
+                "original",
+                true,
+                600,
+                None,
+                Some(&session.id),
+            )?;
+        }
+        let local_attempt = gre_atlas_storage(&mut col)?.pull_changes(-1, 10)?.0[0].clone();
+        let remapped = SyncAttemptRow {
+            id: 99,
+            ..local_attempt
+        };
+        let push = {
+            let storage = gre_atlas_storage(&mut col)?;
+            storage.push_changes(&[remapped])?
+        };
+        assert_eq!(push.applied_count, 0);
+        assert_eq!(attempt_count(gre_atlas_storage(&mut col)?)?, 1);
         Ok(())
     }
 

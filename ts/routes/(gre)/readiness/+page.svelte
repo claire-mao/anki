@@ -7,7 +7,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import GreSection from "../ui/GreSection.svelte";
     import GreButton from "../ui/GreButton.svelte";
     import GreButtonRow from "../ui/GreButtonRow.svelte";
-    import { greNavAction, greNavItem, GRE_CTA_PRACTICE, GRE_CTA_REVIEW } from "../gre-navigation";
+    import {
+        greNavAction,
+        greNavItem,
+        GRE_CTA_PRACTICE,
+        GRE_CTA_REVIEW,
+    } from "../gre-navigation";
     import { presentReadinessPage } from "../readiness-page-presentation";
     import ReadinessEstimatePanel from "./ReadinessEstimatePanel.svelte";
     import type { PageData } from "./$types";

@@ -79,19 +79,29 @@ Use this script for a **10–15 minute live demo** or screen recording. Assumes 
 
 ```bash
 just eval-gre-atlas /path/to/profile/collection.anki2
+just eval-gre-atlas-ai
+just bench-gre-atlas --synthetic-cards 10000
 ```
 
 - [ ] Show `docs/gre-atlas-submission/results/gre-atlas-eval.md` sections: calibration, memory, performance, ablation
+- [ ] Show `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md` baseline comparison table
+- [ ] Show `docs/gre-atlas-submission/results/gre-atlas-benchmark.md` p50/p95 table
 - [ ] Optional: show `docs/gre-atlas-submission/results/performance-eval.md` (precision/recall/F1 deep-dive)
 - [ ] Point out held-out rule `id % 5 == 0` and synthetic reference labeling
 
+## 10. Screen recordings (Friday proof)
+
+Follow [RECORDINGS.md](./RECORDINGS.md). Minimum: GRE shell tour, practice isolation, eval artifacts terminal scroll.
+
+Place finished `.mov` files in `recordings/` (gitignored).
+
 ## Demo data shortcuts
 
-| Goal                 | Action                                                       |
-| -------------------- | ------------------------------------------------------------ |
-| Fast abstention demo | Fresh profile, no GRE deck                                   |
-| Fast practice demo   | Open Practice immediately (seeded question bank)             |
-| Unlock performance   | 50+ practice attempts (or use demo seed on mobile)           |
+| Goal                 | Action                                                      |
+| -------------------- | ----------------------------------------------------------- |
+| Fast abstention demo | Fresh profile, no GRE deck                                  |
+| Fast practice demo   | Open Practice immediately (seeded question bank)            |
+| Unlock performance   | 50+ practice attempts (or use demo seed on mobile)          |
 | Unlock memory        | FSRS + 20+ reviewed GRE-tagged cards + 50% catalog coverage |
 
 ## Troubleshooting during demo

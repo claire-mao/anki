@@ -4,11 +4,7 @@
 import type { Question } from "@generated/anki/brainlift_pb";
 import { describe, expect, test } from "vitest";
 
-import {
-    buildQuestionQueue,
-    buildTopicPracticeQueue,
-    TOPIC_PRACTICE_SESSION_SIZE,
-} from "./practice-session";
+import { buildQuestionQueue, buildTopicPracticeQueue, TOPIC_PRACTICE_SESSION_SIZE } from "./practice-session";
 
 function question(id: string, topic: string, section = "quant"): Question {
     return {
@@ -18,14 +14,12 @@ function question(id: string, topic: string, section = "quant"): Question {
         format: "mcq",
         stem: id,
         choices: ["A", "B"],
-    };
+    } as Question;
 }
 
 describe("practice session queue", () => {
     test("topic sessions prefer five questions when the bank is large enough", () => {
-        const bank = Array.from({ length: 8 }, (_, index) =>
-            question(`q-${index}`, "gre::quant::algebra::linear"),
-        );
+        const bank = Array.from({ length: 8 }, (_, index) => question(`q-${index}`, "gre::quant::algebra::linear"));
 
         expect(buildTopicPracticeQueue(bank)).toHaveLength(TOPIC_PRACTICE_SESSION_SIZE);
         expect(buildTopicPracticeQueue(bank).map((item) => item.id)).toEqual([
@@ -54,18 +48,14 @@ describe("practice session queue", () => {
     });
 
     test("general practice keeps the full filtered queue", () => {
-        const bank = Array.from({ length: 12 }, (_, index) =>
-            question(`q-${index}`, "gre::quant::algebra::linear"),
-        );
+        const bank = Array.from({ length: 12 }, (_, index) => question(`q-${index}`, "gre::quant::algebra::linear"));
 
         expect(buildQuestionQueue(bank, "all")).toHaveLength(12);
     });
 
     test("topic filter limits section practice to five topic questions", () => {
         const bank = [
-            ...Array.from({ length: 6 }, (_, index) =>
-                question(`arg-${index}`, "gre::awa::argument", "awa"),
-            ),
+            ...Array.from({ length: 6 }, (_, index) => question(`arg-${index}`, "gre::awa::argument", "awa")),
             question("lin-1", "gre::quant::algebra::linear", "quant"),
         ];
 

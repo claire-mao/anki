@@ -51,15 +51,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     });
 </script>
 
-<GrePageHeader
-    title="Study"
-    icon="study"
-    subtitle="Built-in GRE flashcards."
-/>
+<GrePageHeader title="Study" icon="study" subtitle="Built-in GRE flashcards." />
 
 {#if launched}
     <GrePanel>
-        <div class="study-loading" role="status" aria-live="polite" transition:fade={{ duration: greMotionDuration(160) }}>
+        <div
+            class="study-loading"
+            role="status"
+            aria-live="polite"
+            transition:fade={{ duration: greMotionDuration(160) }}
+        >
             <div class="gre-loading-spinner" aria-hidden="true"></div>
             <GreText variant="caption" muted>Opening your review session…</GreText>
         </div>
@@ -78,8 +79,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     <GrePanel className="study-guide study-guide-active">
         <h2 class="study-guide-title">Ready to review</h2>
         <p class="study-guide-body">
-            You have {dueTotal} card{dueTotal === 1 ? "" : "s"} ready. A few minutes now
-            keeps this material fresh for test day.
+            You have {dueTotal} card{dueTotal === 1 ? "" : "s"} ready. A few minutes now keeps
+            this material fresh for test day.
         </p>
         <GreButton variant="primary" size="lg" on:click={startReview}>
             {GRE_CTA_REVIEW}

@@ -11,8 +11,7 @@ import { capitalizeLabel } from "./summary-metrics";
 const MIN_CALIBRATION_HELD_OUT = 5;
 
 /** Short hint for the readiness-page track record row (shown only after 5 checks). */
-export const CALIBRATION_EXPLANATION =
-    "How closely past score estimates matched your actual study results.";
+export const CALIBRATION_EXPLANATION = "How closely past score estimates matched your actual study results.";
 
 /** Whether the track-record metric is meaningful enough to show on Readiness. */
 export function calibrationQualityVisible(stats: ReadinessCalibrationStats): boolean {

@@ -1,89 +1,79 @@
-# GRE Atlas — build instructions
+# GRE Atlas — build guide
 
-Follow upstream Anki prerequisites first: [../development.md](../development.md#building-from-source).
+**Audit date:** 2026-07-05\
+**Commit:** `1323b37859cc9baaa5a8a1a850a20fe76d3c0e8f`
 
-## Clean checkout (recommended for grading)
+Related: [../development.md](../development.md) (full upstream prerequisites) · [INSTALL.md](./INSTALL.md) (installer) · [tests.md](./tests.md) · [artifacts.md](./artifacts.md) · [SUBMISSION.md](./SUBMISSION.md)
 
-```bash
-git clone <repository-url> anki
-cd anki
+> **Note:** On macOS, `build.md` and `BUILD.md` refer to the same file.
 
-# Full format, build, and test
-just check
-```
+---
 
-`just check` runs formatting, builds pylib + Qt + TypeScript, and executes the main test suite. This is the authoritative green-build gate.
+## 1. Dev build (day-to-day)
 
-## Run the desktop app
+From a configured Anki dev environment ([../development.md](../development.md)):
 
 ```bash
-just run
+just build          # pylib + Qt (./ninja pylib qt)
+just run            # GRE shell at /home
+just check          # format + build + all tests (requires CONTRIBUTORS entry)
 ```
 
-- Builds pylib and Qt if needed, then launches Anki with debugging enabled.
-- On collection open, the app enters the **GRE main-window shell** (`greDashboard` state) at **`/home`**.
-- GRE pages are served at `http://127.0.0.1:40000/_anki/pages/` during development.
+GRE pages are served during `just run` at `http://127.0.0.1:40000/_anki/pages/` (collection open lands on `/home`).
 
-Optimized dev build:
+TypeScript live reload (separate terminal): `just web-watch`
+
+---
+
+## 2. Wednesday build evidence (automated proof)
+
+### `just build` — result
+
+| Field     | Value                                                           |
+| --------- | --------------------------------------------------------------- |
+| Command   | `just build`                                                    |
+| Exit code | **0**                                                           |
+| Targets   | `pylib`, `qt` (SvelteKit GRE pages, reviewer, editor, congrats) |
+
+Raw log: [logs/wednesday-build.log](./logs/wednesday-build.log)
+
+### iOS simulator build
+
+| Field            | Value                                                                                                                                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bridge script    | `mobile/ios/scripts/build-mobile-bridge.sh` (`PLATFORM_NAME=iphonesimulator ARCHS=arm64`)                                                                                                           |
+| Xcode command    | `xcodebuild -project GREAtlasCompanion.xcodeproj -scheme GREAtlasCompanion -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' -derivedDataPath /tmp/GREAtlasCompanion-wednesday-DD build` |
+| Result           | **BUILD SUCCEEDED**                                                                                                                                                                                 |
+| Simulator `.app` | `/tmp/GREAtlasCompanion-wednesday-DD/Build/Products/Debug-iphonesimulator/GREAtlasCompanion.app`                                                                                                    |
+
+Raw logs: [logs/wednesday-mobile-bridge.log](./logs/wednesday-mobile-bridge.log), [logs/wednesday-xcodebuild-simulator.log](./logs/wednesday-xcodebuild-simulator.log)
+
+**Note:** Use an isolated `-derivedDataPath` if another `xcodebuild` holds a lock on default DerivedData.
+
+### Desktop installer build
+
+| Artifact  | Path                                          |
+| --------- | --------------------------------------------- |
+| macOS DMG | `out/installer/dist/anki-26.05-mac-apple.dmg` |
+
+Build command: `tools/build-installer` (same as `RELEASE=2 ./ninja installer`). Details: [artifacts.md](./artifacts.md), [INSTALL.md](./INSTALL.md).
+
+### Abstention constant verification
+
+Memory abstention gate **`MIN_STUDIED_CARDS = 50`** in `rslib/src/gre_atlas/abstention.rs`, `ts/routes/(gre)/empty-states.ts`, `prediction-readiness-presentation.ts`.
+
+---
+
+## 3. Reproduce this audit
 
 ```bash
-just run-optimized
+cd /path/to/anki
+git rev-parse HEAD | tee docs/gre-atlas-submission/logs/wednesday-commit.txt
+just build 2>&1 | tee docs/gre-atlas-submission/logs/wednesday-build.log
+cd mobile/ios
+PLATFORM_NAME=iphonesimulator ARCHS=arm64 ./scripts/build-mobile-bridge.sh
+xcodebuild -project GREAtlasCompanion.xcodeproj -scheme GREAtlasCompanion \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+  -derivedDataPath /tmp/GREAtlasCompanion-wednesday-DD build \
+  2>&1 | tee ../../docs/gre-atlas-submission/logs/wednesday-xcodebuild-simulator.log
 ```
-
-## Targeted builds
-
-| Command          | When to use                                      |
-| ---------------- | ------------------------------------------------ |
-| `just build`     | pylib + Qt only (`./ninja pylib qt`)             |
-| `cargo check`    | Rust compile check (from repo root or `rslib/`)  |
-| `./ninja pylib`  | Python/Rust bridge after Rust changes            |
-| `just test-rust` | GRE Atlas + all Rust unit tests                  |
-| `just test-py`   | Includes `pylib/tests/test_gre_atlas.py`         |
-| `just test-ts`   | Svelte/TypeScript checks                         |
-| `just web-watch` | Live reload for `ts/` while `just run` is active |
-
-## After protobuf changes
-
-```bash
-touch proto/anki/brainlift.proto   # or stats.proto
-./ninja rslib:proto ts:generated:proto pylib:anki:proto
-just build
-```
-
-Generated code lives under `out/` — do not edit by hand.
-
-## Evaluation & benchmark (no UI)
-
-Requires pylib built:
-
-```bash
-just eval-gre-atlas /path/to/collection.anki2
-just bench-gre-atlas --synthetic-cards 10000
-```
-
-See [EVALUATION.md](./EVALUATION.md).
-
-## Installer (optional)
-
-Same as upstream Anki:
-
-```bash
-tools/build-installer
-# artifacts: out/installer/dist/
-```
-
-Smoke test after install: launch app, confirm GRE shell loads, answer one practice question, confirm dashboard updates.
-
-## Common failures
-
-| Symptom                     | Fix                                                                                                                  |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `ModuleNotFoundError: anki` | Run `just build` or `./ninja pylib` first; use `just run` / `just eval-gre-atlas` (they set `PYTHONPATH=out/pylib`). |
-| GRE pages 403 in browser    | Use embedded Qt webview via `just run`, not an external browser tab without API access.                              |
-| Stale generated bindings    | Re-run proto ninja targets after `.proto` edits.                                                                     |
-| `just check` timeout        | Ensure network for first-time dependency fetch; see [../development.md](../development.md).                          |
-
-## Platform notes
-
-- **macOS / Linux:** Standard `just` recipes.
-- **Windows:** Use `just` recipes from repo root; paths are handled in the justfile.

@@ -1,0 +1,12 @@
+just _test-py
+./ninja check:pytest
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.45s
+check:pytest:aqt
+n2: ran 1 task, now up to date
+[0m[1m[32m
+Build succeeded in 27.93s.
+[0m(eval):1: command not found: python

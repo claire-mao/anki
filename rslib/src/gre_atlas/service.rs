@@ -210,11 +210,7 @@ impl crate::services::BrainLiftService for Collection {
         &mut self,
         input: anki_proto::brainlift::BrainLiftSyncPullRequest,
     ) -> error::Result<anki_proto::brainlift::BrainLiftSyncBundleResponse> {
-        let limit = if input.limit == 0 {
-            5000
-        } else {
-            input.limit
-        };
+        let limit = if input.limit == 0 { 5000 } else { input.limit };
         self.gre_atlas_pull_sync_bundle(input.after_usn, limit)
     }
 
@@ -222,9 +218,7 @@ impl crate::services::BrainLiftService for Collection {
         &mut self,
         input: anki_proto::brainlift::BrainLiftSyncBundlePushRequest,
     ) -> error::Result<anki_proto::brainlift::BrainLiftSyncBundlePushResponse> {
-        let bundle = input
-            .bundle
-            .or_invalid("missing sync bundle")?;
+        let bundle = input.bundle.or_invalid("missing sync bundle")?;
         self.gre_atlas_push_sync_bundle(bundle)
     }
 

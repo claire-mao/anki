@@ -275,8 +275,9 @@ mod test {
         Ok(())
     }
 
-    /// When collections diverge, sidecar metrics still match but memory/coverage
-    /// differ — documents iOS PARTIAL parity without collection sync.
+    /// When collections diverge, sidecar metrics still match but
+    /// memory/coverage differ — documents iOS PARTIAL parity without
+    /// collection sync.
     #[test]
     fn divergent_collections_sidecar_matches_collection_differs() -> Result<()> {
         use crate::config::BoolKey;
@@ -294,7 +295,10 @@ mod test {
 
         let desktop_collection = capture_collection_metrics(&mut desktop)?;
         let mobile_collection = capture_collection_metrics(&mut mobile)?;
-        assert_eq!(desktop_collection.memory_studied_cards, mobile_collection.memory_studied_cards);
+        assert_eq!(
+            desktop_collection.memory_studied_cards,
+            mobile_collection.memory_studied_cards
+        );
         assert_eq!(
             desktop_collection.memory_coverage_ratio,
             mobile_collection.memory_coverage_ratio

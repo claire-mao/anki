@@ -11,16 +11,58 @@ use rusqlite::params;
 use rusqlite::OptionalExtension;
 use tracing::debug;
 
+use super::sync_execute;
 use super::GreAtlasStorage;
 use super::SyncAttemptRow;
 use super::SyncConflict;
+use super::SyncFkContext;
 use crate::error::Result;
 use crate::timestamp::TimestampSecs;
 
 pub const META_LAST_DOWNLOADED_USN: &str = "last_downloaded_usn";
 
-fn log_sync_write(table: &str, op: &str, detail: &str) {
-    debug!(target: "gre_atlas::sync", table, op, detail);
+impl SyncBundle {
+    /// Incremental export filter used by the sync server download handler.
+    ///
+    /// Rows with `usn > after_usn` are included, plus any `bl_session` /
+    /// `bl_question` parents referenced by exported attempts even when those
+    /// parents were created before the watermark (avoids orphan attempts).
+    pub fn filter_after_usn(self, after_usn: i32) -> SyncBundle {
+        let attempts: Vec<_> = self
+            .attempts
+            .into_iter()
+            .filter(|row| row.usn > after_usn)
+            .collect();
+        let session_ids: HashSet<String> = attempts
+            .iter()
+            .filter_map(|row| row.session_id.clone())
+            .collect();
+        let question_ids: HashSet<String> =
+            attempts.iter().map(|row| row.question_id.clone()).collect();
+        let sessions: Vec<_> = self
+            .sessions
+            .into_iter()
+            .filter(|row| row.usn > after_usn || session_ids.contains(&row.id))
+            .collect();
+        let questions: Vec<_> = self
+            .questions
+            .into_iter()
+            .filter(|row| row.usn > after_usn || question_ids.contains(&row.id))
+            .collect();
+        let predictions: Vec<_> = self
+            .predictions
+            .into_iter()
+            .filter(|row| row.usn > after_usn)
+            .collect();
+        SyncBundle {
+            sessions,
+            questions,
+            attempts,
+            predictions,
+            current_usn: self.current_usn,
+            last_modified_secs: self.last_modified_secs,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -122,9 +164,10 @@ impl GreAtlasStorage {
 
     /// Export rows changed since `after_usn` across all syncable tables.
     ///
-    /// Attempt rows always include their referenced `bl_session` and `bl_question`
-    /// rows even when those USNs are at or below `after_usn` (e.g. parent row
-    /// created before the last push, new attempt added later).
+    /// Attempt rows always include their referenced `bl_session` and
+    /// `bl_question` rows even when those USNs are at or below `after_usn`
+    /// (e.g. parent row created before the last push, new attempt added
+    /// later).
     pub fn pull_sync_bundle(&self, after_usn: i32, limit: u32) -> Result<SyncBundle> {
         let limit = limit.max(1) as i64;
         let status = self.sync_status()?;
@@ -360,9 +403,7 @@ impl GreAtlasStorage {
                 confidence_level: row.get(8)?,
                 model_version: row.get(9)?,
                 outcome_score: row.get(10)?,
-                outcome_observed_at_secs: row
-                    .get::<_, Option<i64>>(11)?
-                    .map(TimestampSecs),
+                outcome_observed_at_secs: row.get::<_, Option<i64>>(11)?.map(TimestampSecs),
                 outcome_memory_score: row.get(12)?,
                 outcome_performance_score: row.get(13)?,
                 practice_correct: row.get(14)?,
@@ -387,15 +428,14 @@ impl GreAtlasStorage {
         match existing {
             None => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_session",
                     "merge_session",
                     &format!(
                         "insert id={} started_at_secs={} mtime_secs={}",
                         row.id, row.started_at_secs.0, row.mtime_secs.0
                     ),
-                );
-                self.db.execute(
                     "INSERT INTO bl_session (id, started_at_secs, ended_at_secs, source, usn, mtime_secs)
                      VALUES (?, ?, ?, ?, ?, ?)",
                     params![
@@ -406,17 +446,17 @@ impl GreAtlasStorage {
                         usn,
                         row.mtime_secs.0,
                     ],
+                    &SyncFkContext::default(),
                 )?;
                 Ok(true)
             }
             Some((local_mtime, _)) if row.mtime_secs.0 > local_mtime => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_session",
                     "merge_session",
                     &format!("update id={} mtime_secs={}", row.id, row.mtime_secs.0),
-                );
-                self.db.execute(
                     "UPDATE bl_session SET started_at_secs = ?, ended_at_secs = ?, source = ?,
                      usn = ?, mtime_secs = ? WHERE id = ?",
                     params![
@@ -427,6 +467,7 @@ impl GreAtlasStorage {
                         row.mtime_secs.0,
                         row.id,
                     ],
+                    &SyncFkContext::default(),
                 )?;
                 Ok(true)
             }
@@ -447,12 +488,14 @@ impl GreAtlasStorage {
         match existing_mtime {
             None => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_question",
                     "merge_question",
-                    &format!("insert id={} topic={} mtime_secs={}", row.id, row.topic, row.mtime_secs.0),
-                );
-                self.db.execute(
+                    &format!(
+                        "insert id={} topic={} mtime_secs={}",
+                        row.id, row.topic, row.mtime_secs.0
+                    ),
                     "INSERT INTO bl_question
                     (id, topic, section, format, stem, choices_json, correct_answer, explanation,
                      difficulty, source_name, source_section, generated_at_secs,
@@ -480,17 +523,20 @@ impl GreAtlasStorage {
                         usn,
                         row.mtime_secs.0,
                     ],
+                    &SyncFkContext {
+                        question_id: Some(row.id.clone()),
+                        ..Default::default()
+                    },
                 )?;
                 Ok(true)
             }
             Some(local_mtime) if row.mtime_secs.0 > local_mtime => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_question",
                     "merge_question",
                     &format!("update id={} mtime_secs={}", row.id, row.mtime_secs.0),
-                );
-                self.db.execute(
                     "UPDATE bl_question SET topic = ?, section = ?, format = ?, stem = ?,
                      choices_json = ?, correct_answer = ?, explanation = ?, difficulty = ?,
                      source_name = ?, source_section = ?, generated_at_secs = ?,
@@ -518,6 +564,10 @@ impl GreAtlasStorage {
                         row.mtime_secs.0,
                         row.id,
                     ],
+                    &SyncFkContext {
+                        question_id: Some(row.id.clone()),
+                        ..Default::default()
+                    },
                 )?;
                 Ok(true)
             }
@@ -538,15 +588,14 @@ impl GreAtlasStorage {
         match existing {
             None if row.id == 0 => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_readiness_prediction",
                     "merge_prediction",
                     &format!(
                         "insert autoincrement predicted_at_secs={}",
                         row.predicted_at_secs.0
                     ),
-                );
-                self.db.execute(
                     "INSERT INTO bl_readiness_prediction
                     (predicted_at_secs, projected_score, projected_score_low, projected_score_high,
                      memory_score, performance_score, coverage_ratio, confidence_level,
@@ -573,17 +622,20 @@ impl GreAtlasStorage {
                         usn,
                         row.mtime_secs.0,
                     ],
+                    &SyncFkContext::default(),
                 )?;
                 Ok(true)
             }
             None => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_readiness_prediction",
                     "merge_prediction",
-                    &format!("insert id={} predicted_at_secs={}", row.id, row.predicted_at_secs.0),
-                );
-                self.db.execute(
+                    &format!(
+                        "insert id={} predicted_at_secs={}",
+                        row.id, row.predicted_at_secs.0
+                    ),
                     "INSERT INTO bl_readiness_prediction
                     (id, predicted_at_secs, projected_score, projected_score_low,
                      projected_score_high, memory_score, performance_score, coverage_ratio,
@@ -611,17 +663,17 @@ impl GreAtlasStorage {
                         usn,
                         row.mtime_secs.0,
                     ],
+                    &SyncFkContext::default(),
                 )?;
                 Ok(true)
             }
             Some((local_mtime, _)) if row.mtime_secs.0 > local_mtime => {
                 let usn = self.next_usn()?;
-                log_sync_write(
+                sync_execute(
+                    &self.db,
                     "bl_readiness_prediction",
                     "merge_prediction",
                     &format!("update id={} mtime_secs={}", row.id, row.mtime_secs.0),
-                );
-                self.db.execute(
                     "UPDATE bl_readiness_prediction SET
                      predicted_at_secs = ?, projected_score = ?, projected_score_low = ?,
                      projected_score_high = ?, memory_score = ?, performance_score = ?,
@@ -650,42 +702,13 @@ impl GreAtlasStorage {
                         row.mtime_secs.0,
                         row.id,
                     ],
+                    &SyncFkContext::default(),
                 )?;
                 Ok(true)
             }
             Some((local_mtime, _)) if row.mtime_secs.0 < local_mtime => Ok(false),
             Some(_) => Ok(false),
         }
-    }
-
-    /// Assign a monotonic USN to a newly created session row.
-    pub(crate) fn assign_session_usn(&self, session_id: &str) -> Result<()> {
-        let usn = self.next_usn()?;
-        self.db.execute(
-            "UPDATE bl_session SET usn = ? WHERE id = ?",
-            params![usn, session_id],
-        )?;
-        Ok(())
-    }
-
-    /// Assign a monotonic USN to a newly inserted question row.
-    pub(crate) fn bump_question_usn(&self, question_id: &str, mtime: TimestampSecs) -> Result<()> {
-        let usn = self.next_usn()?;
-        self.db.execute(
-            "UPDATE bl_question SET usn = ?, mtime_secs = ? WHERE id = ?",
-            params![usn, mtime.0, question_id],
-        )?;
-        Ok(())
-    }
-
-    /// Assign a monotonic USN to a newly inserted prediction row.
-    pub(crate) fn bump_prediction_usn(&self, prediction_id: i64, mtime: TimestampSecs) -> Result<()> {
-        let usn = self.next_usn()?;
-        self.db.execute(
-            "UPDATE bl_readiness_prediction SET usn = ?, mtime_secs = ? WHERE id = ?",
-            params![usn, mtime.0, prediction_id],
-        )?;
-        Ok(())
     }
 }
 
@@ -827,6 +850,51 @@ mod test {
     }
 
     #[test]
+    fn server_filter_includes_stale_parents_for_incremental_attempt() -> Result<()> {
+        let mut col = isolated_col()?;
+        let storage = gre_atlas_storage(&mut col)?;
+        let q = storage.list_questions("", 1)?.pop().unwrap();
+        let session = storage.create_session("practice")?;
+        storage.record_attempt(
+            &q.id,
+            &q.topic,
+            q.difficulty,
+            "first",
+            true,
+            500,
+            None,
+            Some(&session.id),
+        )?;
+        storage.mark_synced_through(storage.sync_status()?.current_usn)?;
+        storage.record_attempt(
+            &q.id,
+            &q.topic,
+            q.difficulty,
+            "second",
+            false,
+            600,
+            None,
+            Some(&session.id),
+        )?;
+
+        let export = storage.pull_sync_bundle(0, 5000)?;
+        let filtered = export.filter_after_usn(storage.last_pushed_usn()?);
+        assert_eq!(filtered.attempts.len(), 1);
+        assert!(
+            filtered.sessions.iter().any(|s| s.id == session.id),
+            "server filter must retain stale session for incremental attempt"
+        );
+        assert!(
+            filtered
+                .questions
+                .iter()
+                .any(|question| question.id == q.id),
+            "server filter must retain stale question for incremental attempt"
+        );
+        Ok(())
+    }
+
+    #[test]
     fn apply_attempt_without_session_in_bundle_creates_session_stub() -> Result<()> {
         let mut col = isolated_col()?;
         let storage = gre_atlas_storage(&mut col)?;
@@ -854,6 +922,76 @@ mod test {
         storage.apply_sync_bundle(&bundle)?;
         assert!(storage.session_exists(&session_id)?);
         assert!(storage.performance_summary()?.1 >= 1);
+        Ok(())
+    }
+
+    #[test]
+    fn bundle_round_trip_preserves_question_attribution() -> Result<()> {
+        use crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft;
+        use crate::gre_atlas::questions::ai_gen::QuestionAttribution;
+        use crate::gre_atlas::questions::metadata::EvaluationStatus;
+        use crate::gre_atlas::questions::metadata::Provenance;
+        use crate::gre_atlas::questions::metadata::QuestionMetadata;
+        use crate::gre_atlas::questions::source::GENERATION_SOURCE_NAME;
+
+        let mut source_col = isolated_col()?;
+        let source_storage = gre_atlas_storage(&mut source_col)?;
+        let draft = GeneratedQuestionDraft {
+            id: "sync-attribution-test".into(),
+            topic: "gre::quant::algebra::linear".into(),
+            section: "quant".into(),
+            format: "mcq".into(),
+            stem: "If 3x = 15, what is x?".into(),
+            choices: vec!["3".into(), "4".into(), "5".into(), "6".into()],
+            correct_answer: "5".into(),
+            explanation: "Divide both sides by 3.".into(),
+            difficulty: Some(0.4),
+            confidence: 0.82,
+            attribution: QuestionAttribution {
+                source_name: GENERATION_SOURCE_NAME.into(),
+                source_section: "Quantitative Reasoning — Linear equations".into(),
+                generated_at_secs: 1_700_000_000,
+            },
+        };
+        let meta = QuestionMetadata {
+            provenance: Provenance::OfflineTemplate,
+            model_version: "template_v1".into(),
+            source_document: "Quantitative Reasoning — Linear equations".into(),
+            evaluation_status: EvaluationStatus::Approved,
+        };
+        source_storage.insert_generated_question_with_meta(&draft, &meta)?;
+        source_storage.mark_synced_through(0)?;
+
+        let bundle = source_storage.pull_sync_bundle(0, 5000)?;
+        let synced = bundle
+            .questions
+            .iter()
+            .find(|q| q.id == "sync-attribution-test")
+            .expect("generated question in bundle");
+        assert_eq!(synced.source_name.as_deref(), Some(GENERATION_SOURCE_NAME));
+        assert_eq!(
+            synced.provenance.as_deref(),
+            Some(Provenance::OfflineTemplate.as_str())
+        );
+        assert_eq!(synced.generation_confidence, Some(0.82));
+
+        let mut target_col = isolated_col()?;
+        let target_storage = gre_atlas_storage(&mut target_col)?;
+        target_storage.apply_sync_bundle(&bundle)?;
+
+        let stored = target_storage
+            .get_question("sync-attribution-test")?
+            .expect("question applied");
+        assert_eq!(stored.source_name.as_deref(), Some(GENERATION_SOURCE_NAME));
+        assert_eq!(
+            stored.provenance.as_deref(),
+            Some(Provenance::OfflineTemplate.as_str())
+        );
+        assert_eq!(stored.generation_confidence, Some(0.82));
+        assert_eq!(
+            stored.source_document.as_deref(),
+            Some("Quantitative Reasoning — Linear equations")
+        );
         Ok(())
     }
 }

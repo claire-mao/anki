@@ -216,7 +216,10 @@ fn score_confidence(draft: &GeneratedQuestionDraft, source: &SourceSection) -> f
     } else {
         0.0
     };
-    let keyword_coverage = keyword_overlap(&draft.stem, &source_keywords(source));
+    let keyword_coverage = keyword_overlap(
+        &format!("{} {}", draft.stem, draft.explanation),
+        &source_keywords(source),
+    );
     let template_validity = if draft.stem.is_empty()
         || draft.choices.is_empty()
         || draft.correct_answer.is_empty()
@@ -228,17 +231,13 @@ fn score_confidence(draft: &GeneratedQuestionDraft, source: &SourceSection) -> f
     } else {
         1.0
     };
-    let exemplar_bonus = if crate::gre_atlas::questions::foundation::exemplars_for_topic(
-        &draft.topic,
-    )
-    .is_empty()
-    {
-        0.0
-    } else {
-        0.05
-    };
-    (0.3 * topic_match + 0.4 * keyword_coverage + 0.3 * template_validity + exemplar_bonus)
-        .min(1.0)
+    let exemplar_bonus =
+        if crate::gre_atlas::questions::foundation::exemplars_for_topic(&draft.topic).is_empty() {
+            0.0
+        } else {
+            0.05
+        };
+    (0.3 * topic_match + 0.4 * keyword_coverage + 0.3 * template_validity + exemplar_bonus).min(1.0)
 }
 
 fn source_keywords(source: &SourceSection) -> Vec<String> {

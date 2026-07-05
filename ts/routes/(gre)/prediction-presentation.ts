@@ -10,7 +10,13 @@ import type {
 } from "@generated/anki/brainlift_pb";
 
 import { emptyStateContent } from "./empty-states";
-import { greDeckOptionsAction, GRE_CTA_PRACTICE, GRE_CTA_REVIEW, GRE_CTA_STUDY_PLAN, studyPlanNavAction } from "./gre-navigation";
+import {
+    GRE_CTA_PRACTICE,
+    GRE_CTA_REVIEW,
+    GRE_CTA_STUDY_PLAN,
+    greDeckOptionsAction,
+    studyPlanNavAction,
+} from "./gre-navigation";
 import { formatGreScoreRange, formatPercent, formatRange } from "./score-format";
 import { capitalizeLabel, estimatedGreConfidence, unmetRequirements } from "./summary-metrics";
 

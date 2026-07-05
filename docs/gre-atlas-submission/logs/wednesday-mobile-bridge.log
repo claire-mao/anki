@@ -1,0 +1,20 @@
+Building mobile_bridge for aarch64-apple-ios-sim (SDK=unknown)...
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m   Compiling[0m ring v0.17.14
+[1m[92m   Compiling[0m zstd-sys v2.0.15+zstd.1.5.7
+[1m[92m   Compiling[0m anki_proto v0.0.0 (/Users/clairemao/anki/rslib/proto)
+[1m[92m   Compiling[0m libsqlite3-sys v0.34.0
+[1m[92m   Compiling[0m rustls-webpki v0.103.13
+[1m[92m   Compiling[0m rustls v0.23.31
+[1m[92m   Compiling[0m zstd-safe v7.2.4
+[1m[92m   Compiling[0m zstd v0.13.3
+[1m[92m   Compiling[0m compression-codecs v0.4.30
+[1m[92m   Compiling[0m async-compression v0.4.30
+[1m[92m   Compiling[0m anki v0.0.0 (/Users/clairemao/anki/rslib)
+[1m[92m   Compiling[0m tokio-rustls v0.26.2
+[1m[92m   Compiling[0m hyper-rustls v0.27.7
+[1m[92m   Compiling[0m reqwest v0.12.23
+[1m[92m   Compiling[0m rusqlite v0.36.0
+[1m[92m   Compiling[0m mobile_bridge v0.0.0 (/Users/clairemao/anki/mobile/mobile_bridge)
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 2m 57s
+Linked library: /Users/clairemao/anki/mobile/ios/out/lib/libmobile_bridge.a

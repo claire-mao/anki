@@ -82,12 +82,12 @@ These are different targets, different tables, and different held-out splits on 
 
 ## Why memory ≠ performance
 
-| Dimension           | Memory model                                            | Performance model                    |
-| ------------------- | ------------------------------------------------------- | ------------------------------------ |
-| **Data source**     | Anki revlog + FSRS on GRE deck cards                    | `greatlas.db` practice attempts      |
-| **Signal**          | Predicted vs observed card recall                       | Topic-stratified practice accuracy   |
-| **Abstention gate** | FSRS enabled, ≥20 studied cards, ≥50% catalog coverage | ≥50 practice attempts                |
-| **Eval split**      | `revlog.id % 5 == 0`                                    | `bl_performance_attempt.id % 5 == 0` |
+| Dimension           | Memory model                                           | Performance model                    |
+| ------------------- | ------------------------------------------------------ | ------------------------------------ |
+| **Data source**     | Anki revlog + FSRS on GRE deck cards                   | `greatlas.db` practice attempts      |
+| **Signal**          | Predicted vs observed card recall                      | Topic-stratified practice accuracy   |
+| **Abstention gate** | FSRS enabled, ≥50 studied cards, ≥50% catalog coverage | ≥50 practice attempts                |
+| **Eval split**      | `revlog.id % 5 == 0`                                   | `bl_performance_attempt.id % 5 == 0` |
 
 A learner can have strong FSRS retrievability on vocabulary cards yet miss novel quant questions, or vice versa. Readiness combines both only when each component has sufficient evidence; eval reports them independently.
 

@@ -13,10 +13,13 @@
 //! used, [`OFFLINE_TEMPLATE_NOTE`] is attached so the UI can surface exactly
 //! "Generated using offline templates.".
 
+use crate::gre_atlas::questions::foundation::FOUNDATION_SOURCE_NAME;
 use crate::gre_atlas::questions::llm::LlmChatRequest;
 use crate::gre_atlas::questions::llm::LlmClient;
 use crate::gre_atlas::questions::metadata::Provenance;
 use crate::gre_atlas::questions::metadata::OFFLINE_TEMPLATE_NOTE;
+use crate::gre_atlas::questions::metadata::PROVENANCE_AI;
+use crate::gre_atlas::questions::metadata::PROVENANCE_TEMPLATE;
 use crate::gre_atlas::questions::source::source_section_for_topic;
 use crate::gre_atlas::questions::source::GENERATION_SOURCE_NAME;
 use crate::gre_atlas::storage::StoredQuestion;
@@ -174,27 +177,48 @@ fn try_llm_explanation(
     })
 }
 
+/// Whether this row was produced by the template/LLM generation pipeline and
+/// should cite the bundled ETS excerpts — not manually authored foundation
+/// items.
+fn question_uses_ets_grounding(question: &StoredQuestion) -> bool {
+    matches!(
+        question.provenance.as_deref(),
+        Some(PROVENANCE_AI) | Some(PROVENANCE_TEMPLATE)
+    ) || question.source_name.as_deref() == Some(GENERATION_SOURCE_NAME)
+}
+
 /// Citation triple: (source_name, source_section, excerpt).
+///
+/// Generated items cite the bundled ETS excerpt they were grounded in.
+/// Foundation bank items cite their stored named source and never fabricate an
+/// ETS excerpt.
 fn citation_for(question: &StoredQuestion) -> (String, String, String) {
-    if let Some(source) = source_section_for_topic(&question.topic) {
-        return (
-            GENERATION_SOURCE_NAME.to_string(),
-            source.section.to_string(),
-            source.excerpt.to_string(),
-        );
+    if question_uses_ets_grounding(question) {
+        if let Some(source) = source_section_for_topic(&question.topic) {
+            let section = question
+                .source_section
+                .as_deref()
+                .filter(|s| !s.is_empty())
+                .unwrap_or(source.section);
+            return (
+                GENERATION_SOURCE_NAME.to_string(),
+                section.to_string(),
+                source.excerpt.to_string(),
+            );
+        }
     }
-    (
-        question
-            .source_name
-            .clone()
-            .unwrap_or_else(|| GENERATION_SOURCE_NAME.to_string()),
-        question
-            .source_section
-            .clone()
-            .or_else(|| question.source_document.clone())
-            .unwrap_or_default(),
-        String::new(),
-    )
+
+    let name = question
+        .source_name
+        .clone()
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| FOUNDATION_SOURCE_NAME.to_string());
+    let section = question
+        .source_section
+        .clone()
+        .or_else(|| question.source_document.clone())
+        .unwrap_or_default();
+    (name, section, String::new())
 }
 
 /// Strip the embedded `<!-- meta: ... -->` block foundation questions append to
@@ -284,7 +308,9 @@ mod test {
 
     #[test]
     fn template_explanation_covers_every_choice_and_cites_source() {
-        let q = stored("Subtract 8 then divide by 4: x = 3.");
+        let mut q = stored("Subtract 8 then divide by 4: x = 3.");
+        q.source_name = Some(GENERATION_SOURCE_NAME.to_string());
+        q.provenance = Some(PROVENANCE_TEMPLATE.to_string());
         let out = build_template_explanation(&q);
         assert_eq!(out.provenance, Provenance::OfflineTemplate);
         assert_eq!(out.provenance_note, OFFLINE_TEMPLATE_NOTE);
@@ -314,5 +340,28 @@ mod test {
         let q = stored("x = 3.");
         let out = build_answer_explanation(&q, "1", None);
         assert_eq!(out.provenance, Provenance::OfflineTemplate);
+    }
+
+    #[test]
+    fn foundation_question_cites_practice_bank_not_ets() {
+        let mut q = stored("20% of $120 is $24; $120 − $24 = $96.");
+        q.source_name = Some(FOUNDATION_SOURCE_NAME.to_string());
+        q.source_section = Some("percent_discount".into());
+        let out = build_template_explanation(&q);
+        assert_eq!(out.citation_source_name, FOUNDATION_SOURCE_NAME);
+        assert_eq!(out.citation_source_section, "percent_discount");
+        assert!(out.citation_excerpt.is_empty());
+        assert_ne!(out.citation_source_name, GENERATION_SOURCE_NAME);
+    }
+
+    #[test]
+    fn generated_question_cites_ets_excerpt() {
+        let mut q = stored("Subtract 8 then divide by 4: x = 3.");
+        q.source_name = Some(GENERATION_SOURCE_NAME.to_string());
+        q.source_section = Some("Quantitative Reasoning — Linear equations".into());
+        q.provenance = Some(PROVENANCE_TEMPLATE.to_string());
+        let out = build_template_explanation(&q);
+        assert_eq!(out.citation_source_name, GENERATION_SOURCE_NAME);
+        assert!(!out.citation_excerpt.is_empty());
     }
 }

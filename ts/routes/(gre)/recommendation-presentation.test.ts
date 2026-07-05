@@ -1,12 +1,12 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type { StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
+import type { PerformanceAttempt, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
 import { describe, expect, test } from "vitest";
 
+import { startOfLocalDaySecs } from "./daily-mission";
 import { GRE_CTA_PRACTICE, GRE_CTA_PRACTICE_TOPIC, GRE_CTA_STUDY_TOPIC } from "./gre-navigation";
 import { presentDailyFocusTask } from "./recommendation-presentation";
-import { startOfLocalDaySecs } from "./daily-mission";
 import { practicePathForTopic, topicDetailsPath } from "./topic-link";
 
 function focusTask(partial: Partial<StudyPlanDailyTask> & Pick<StudyPlanDailyTask, "title">): StudyPlanDailyTask {
@@ -17,7 +17,7 @@ function focusTask(partial: Partial<StudyPlanDailyTask> & Pick<StudyPlanDailyTas
         topicId: "gre::awa::argument",
         topicDisplayName: "Analyze an Argument",
         ...partial,
-    };
+    } as StudyPlanDailyTask;
 }
 
 describe("presentDailyFocusTask", () => {
@@ -98,11 +98,11 @@ describe("presentDailyFocusTask", () => {
                     {
                         questionId: "q1",
                         topic: "gre::awa::argument",
-                        answeredAtSecs: dayStart + 30,
+                        answeredAtSecs: BigInt(dayStart + 30),
                         answer: "A",
                         correct: true,
                         responseTimeMs: 1000,
-                    },
+                    } as unknown as PerformanceAttempt,
                 ],
                 dayStartSecs: dayStart,
             },

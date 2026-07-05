@@ -31,7 +31,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 <GreIcon name="score" size="sm" />
                 Estimated GRE
             </span>
-            <span class="dashboard-hero-value">{dashboardHeroEstimatedGre(estimate, readiness, coverage)}</span>
+            <span class="dashboard-hero-value">
+                {dashboardHeroEstimatedGre(estimate, readiness, coverage)}
+            </span>
             {#if dashboardHeroEstimatedGreAvailable(estimate, readiness, coverage) && formatGreScoreRange(estimate.combinedScoreLow, estimate.combinedScoreHigh)}
                 <span class="dashboard-hero-detail">
                     {formatGreScoreRange(
@@ -70,7 +72,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     </span>
                 {/if}
             </div>
-            <span class="dashboard-hero-hint">How much your study evidence supports that score.</span>
+            <span class="dashboard-hero-hint">
+                How much your study evidence supports that score.
+            </span>
         </div>
     </div>
 </section>

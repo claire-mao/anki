@@ -1,19 +1,15 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type {
-    GreStudyStatusResponse,
-    PerformanceAttempt,
-    StudyPlanDailyTask,
-} from "@generated/anki/brainlift_pb";
+import type { GreStudyStatusResponse, PerformanceAttempt, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
 
 import {
-    type GreNavAction,
     GRE_CTA_PRACTICE,
     GRE_CTA_PRACTICE_TOPIC,
     GRE_CTA_REVIEW,
     GRE_CTA_STUDY_PLAN,
     GRE_CTA_STUDY_TOPIC,
+    type GreNavAction,
     runGreNavAction,
 } from "./gre-navigation";
 import { clampPercent } from "./indicator-utils";
@@ -188,8 +184,7 @@ function reviewCardsCompleted(
     if (!studyStatus) {
         return 0;
     }
-    const baseline =
-        parseReviewBaselineDue(task.detail) ?? storedReviewBaseline(studyStatus);
+    const baseline = parseReviewBaselineDue(task.detail) ?? storedReviewBaseline(studyStatus);
     if (baseline === null) {
         return 0;
     }

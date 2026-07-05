@@ -24,7 +24,7 @@ open mobile/ios/GREAtlasCompanion.xcodeproj
 ```
 
 1. Select scheme **GREAtlasCompanion**
-2. Choose an **iPhone simulator** (e.g. iPhone 16)
+2. Choose an **iPhone simulator** (e.g. iPhone 17)
 3. **Product → Run** (⌘R)
 
 Or from the command line:
@@ -35,7 +35,7 @@ PLATFORM_NAME=iphonesimulator ARCHS=arm64 ./scripts/build-mobile-bridge.sh
 xcodebuild \
   -project GREAtlasCompanion.xcodeproj \
   -scheme GREAtlasCompanion \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
   build
 ```
 

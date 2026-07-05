@@ -24,7 +24,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         rollingAccuracyTrendPoints,
         type AccuracyTrendHorizon,
     } from "../indicator-utils";
-    import { greNavAction, greNavItem, GRE_CTA_PRACTICE, GRE_CTA_REVIEW } from "../gre-navigation";
+    import {
+        greNavAction,
+        greNavItem,
+        GRE_CTA_PRACTICE,
+        GRE_CTA_REVIEW,
+    } from "../gre-navigation";
     import { topicDetailsPath } from "../topic-link";
     import {
         renderAccuracyTrendChart,
@@ -145,7 +150,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 </p>
             </div>
             <GreButtonRow className="progress-next-action-buttons">
-                <GreButton variant="primary" navAction={greNavAction(greNavItem("practice"))}>
+                <GreButton
+                    variant="primary"
+                    navAction={greNavAction(greNavItem("practice"))}
+                >
                     {GRE_CTA_PRACTICE}
                 </GreButton>
                 <GreButton navAction={greNavAction(greNavItem("study"))}>
@@ -198,10 +206,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 {:else}
                     <p class="progress-group-empty">
                         {#if data.recentAttempts.length === 0}
-                            Answer a few more practice questions to see your accuracy trend.
+                            Answer a few more practice questions to see your accuracy
+                            trend.
                         {:else}
-                            Answer a few more practice questions in this period to see your
-                            accuracy trend.
+                            Answer a few more practice questions in this period to see
+                            your accuracy trend.
                         {/if}
                     </p>
                 {/if}
@@ -218,8 +227,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     {/if}
                 {:else}
                     <p class="progress-group-empty">
-                        Your readiness and estimated score changes appear here after your
-                        next study sessions.
+                        Your readiness and estimated score changes appear here after
+                        your next study sessions.
                     </p>
                 {/if}
             </section>
@@ -232,7 +241,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             </section>
 
             <details class="progress-advanced">
-                <summary class="progress-advanced-summary">Advanced measurement</summary>
+                <summary class="progress-advanced-summary">
+                    Advanced measurement
+                </summary>
                 <div class="progress-advanced-body">
                     <div class="progress-charts progress-charts-advanced gre-stagger">
                         <ProgressChart

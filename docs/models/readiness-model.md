@@ -73,7 +73,7 @@ Readiness abstains unless **every** memory **and** performance requirement is sa
 **Memory gates**
 
 - FSRS enabled
-- ≥ 200 studied GRE cards
+- ≥ 50 studied GRE cards
 - ≥ 50% exam-weighted catalog coverage
 
 **Performance gates**

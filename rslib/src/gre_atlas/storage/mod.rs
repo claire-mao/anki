@@ -9,14 +9,14 @@ use std::path::PathBuf;
 use rusqlite::params;
 use rusqlite::Connection;
 use rusqlite::OptionalExtension;
-use tracing::debug;
 
 use crate::error::Result;
 use crate::timestamp::TimestampSecs;
 
-fn log_sync_write(table: &str, op: &str, detail: &str) {
-    debug!(target: "gre_atlas::sync", table, op, detail);
-}
+mod sync_write;
+
+pub(crate) use sync_write::sync_execute;
+pub(crate) use sync_write::SyncFkContext;
 
 pub(crate) const SCHEMA_VERSION: u32 = 5;
 
@@ -255,8 +255,7 @@ impl GreAtlasStorage {
             return Ok(());
         }
 
-        let foundation =
-            crate::gre_atlas::questions::foundation::load_foundation_bank();
+        let foundation = crate::gre_atlas::questions::foundation::load_foundation_bank();
         let now = TimestampSecs::now().0;
         for q in foundation {
             let choices = q.choice_list();
@@ -418,13 +417,17 @@ impl GreAtlasStorage {
         draft: &crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft,
         meta: &crate::gre_atlas::questions::metadata::QuestionMetadata,
     ) -> Result<bool> {
+        if self.question_exists(&draft.id)? {
+            return Ok(false);
+        }
         let now = TimestampSecs::now().0;
+        let usn = self.next_usn()?;
         let rows = self.db.execute(
             "INSERT OR IGNORE INTO bl_question
             (id, topic, section, format, stem, choices_json, correct_answer, explanation,
              difficulty, source_name, source_section, generated_at_secs, generation_confidence,
              source_document, model_version, provenance, evaluation_status, usn, mtime_secs)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             params![
                 draft.id,
                 draft.topic,
@@ -443,6 +446,7 @@ impl GreAtlasStorage {
                 meta.model_version,
                 meta.provenance.as_str(),
                 meta.evaluation_status.as_str(),
+                usn,
                 now,
             ],
         )?;
@@ -463,12 +467,13 @@ impl GreAtlasStorage {
         meta: &crate::gre_atlas::questions::metadata::QuestionMetadata,
     ) -> Result<()> {
         let now = TimestampSecs::now().0;
+        let usn = self.next_usn()?;
         self.db.execute(
             "INSERT INTO bl_question
             (id, topic, section, format, stem, choices_json, correct_answer, explanation,
              difficulty, source_name, source_section, generated_at_secs, generation_confidence,
              source_document, model_version, provenance, evaluation_status, usn, mtime_secs)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             params![
                 draft.id,
                 draft.topic,
@@ -487,6 +492,7 @@ impl GreAtlasStorage {
                 meta.model_version,
                 meta.provenance.as_str(),
                 meta.evaluation_status.as_str(),
+                usn,
                 now,
             ],
         )?;
@@ -663,37 +669,11 @@ impl GreAtlasStorage {
         let mut conflicts = Vec::new();
         for row in incoming {
             self.ensure_fk_prerequisites_for_attempt(row)?;
-            if row.id == 0 {
-                self.insert_sync_attempt(row)?;
+            let (applied, row_conflicts) = self.merge_incoming_attempt(row)?;
+            if applied {
                 applied_count += 1;
-                continue;
             }
-            let existing = self.get_sync_attempt(row.id)?;
-            match existing {
-                None => {
-                    self.insert_sync_attempt_with_id(row)?;
-                    applied_count += 1;
-                }
-                Some(local) if attempt_identity_differs(&local, row) => {
-                    // Auto-increment ids are per-device; same id on two profiles is a
-                    // collision, not the same attempt row.
-                    self.insert_sync_attempt(row)?;
-                    applied_count += 1;
-                }
-                Some(local) => {
-                    if row.mtime_secs.0 > local.mtime_secs.0 {
-                        self.update_sync_attempt(row)?;
-                        applied_count += 1;
-                    } else if row.mtime_secs.0 < local.mtime_secs.0 {
-                        conflicts.push(SyncConflict {
-                            attempt_id: row.id,
-                            reason: "Local copy is newer; remote change rejected".into(),
-                            kept: local,
-                            rejected: row.clone(),
-                        });
-                    }
-                }
-            }
+            conflicts.extend(row_conflicts);
         }
         let status = self.sync_status()?;
         Ok(PushChangesResult {
@@ -710,8 +690,9 @@ impl GreAtlasStorage {
         Ok(())
     }
 
-    /// Ensure `bl_session` exists before inserting an attempt that references it.
-    /// Used when session rows were not bundled (e.g. server USN filter).
+    /// Ensure `bl_session` exists before inserting an attempt that references
+    /// it. Used when session rows were not bundled (e.g. server USN
+    /// filter).
     pub(crate) fn ensure_session_for_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         let Some(session_id) = row.session_id.as_deref() else {
             return Ok(());
@@ -720,43 +701,38 @@ impl GreAtlasStorage {
             return Ok(());
         }
         let usn = self.next_usn()?;
-        log_sync_write(
+        sync_execute(
+            &self.db,
             "bl_session",
             "ensure_session_for_attempt",
             &format!(
                 "id={session_id} started_at_secs={} mtime_secs={}",
                 row.answered_at_secs.0, row.mtime_secs.0
             ),
-        );
-        self.db.execute(
             "INSERT INTO bl_session (id, started_at_secs, source, usn, mtime_secs)
              VALUES (?, ?, 'practice', ?, ?)",
-            params![
-                session_id,
-                row.answered_at_secs.0,
-                usn,
-                row.mtime_secs.0,
-            ],
+            params![session_id, row.answered_at_secs.0, usn, row.mtime_secs.0,],
+            &SyncFkContext::default(),
         )?;
         Ok(())
     }
 
-    /// Ensure `bl_question` exists before inserting an attempt that references it.
-    /// Used when question rows were not bundled (e.g. server USN filter).
+    /// Ensure `bl_question` exists before inserting an attempt that references
+    /// it. Used when question rows were not bundled (e.g. server USN
+    /// filter).
     pub(crate) fn ensure_question_for_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         if self.question_exists(&row.question_id)? {
             return Ok(());
         }
         let usn = self.next_usn()?;
-        log_sync_write(
+        sync_execute(
+            &self.db,
             "bl_question",
             "ensure_question_for_attempt",
             &format!(
                 "id={} topic={} mtime_secs={}",
                 row.question_id, row.topic, row.mtime_secs.0
             ),
-        );
-        self.db.execute(
             "INSERT INTO bl_question
             (id, topic, section, format, stem, choices_json, correct_answer, explanation,
              difficulty, usn, mtime_secs)
@@ -769,6 +745,10 @@ impl GreAtlasStorage {
                 usn,
                 row.mtime_secs.0,
             ],
+            &SyncFkContext {
+                question_id: Some(row.question_id.clone()),
+                ..Default::default()
+            },
         )?;
         Ok(())
     }
@@ -786,17 +766,87 @@ impl GreAtlasStorage {
             .map_err(Into::into)
     }
 
+    fn find_sync_attempt_by_identity(
+        &self,
+        row: &SyncAttemptRow,
+    ) -> Result<Option<SyncAttemptRow>> {
+        let sql = "SELECT id, question_id, topic, difficulty, answered_at_secs, answer, correct,
+                          response_time_ms, confidence, session_id, usn, mtime_secs
+                   FROM bl_performance_attempt
+                   WHERE question_id = ?1 AND answered_at_secs = ?2 AND
+                         ((session_id IS NULL AND ?3 IS NULL) OR session_id = ?3)";
+        self.db
+            .query_row(
+                sql,
+                params![row.question_id, row.answered_at_secs.0, row.session_id,],
+                row_to_sync_attempt,
+            )
+            .optional()
+            .map_err(Into::into)
+    }
+
+    fn merge_incoming_attempt(&self, row: &SyncAttemptRow) -> Result<(bool, Vec<SyncConflict>)> {
+        if row.id == 0 {
+            if let Some(local) = self.find_sync_attempt_by_identity(row)? {
+                return self.maybe_update_existing_attempt(&local, row);
+            }
+            self.insert_sync_attempt(row)?;
+            return Ok((true, vec![]));
+        }
+
+        let existing = self.get_sync_attempt(row.id)?;
+        match existing {
+            None => {
+                if let Some(local) = self.find_sync_attempt_by_identity(row)? {
+                    return self.maybe_update_existing_attempt(&local, row);
+                }
+                self.insert_sync_attempt_with_id(row)?;
+                Ok((true, vec![]))
+            }
+            Some(local) if attempt_identity_differs(&local, row) => {
+                self.insert_sync_attempt(row)?;
+                Ok((true, vec![]))
+            }
+            Some(local) => self.maybe_update_existing_attempt(&local, row),
+        }
+    }
+
+    fn maybe_update_existing_attempt(
+        &self,
+        local: &SyncAttemptRow,
+        row: &SyncAttemptRow,
+    ) -> Result<(bool, Vec<SyncConflict>)> {
+        if row.mtime_secs.0 > local.mtime_secs.0 {
+            let mut updated = row.clone();
+            updated.id = local.id;
+            self.update_sync_attempt(&updated)?;
+            Ok((true, vec![]))
+        } else if row.mtime_secs.0 < local.mtime_secs.0 {
+            Ok((
+                false,
+                vec![SyncConflict {
+                    attempt_id: row.id,
+                    reason: "Local copy is newer; remote change rejected".into(),
+                    kept: local.clone(),
+                    rejected: row.clone(),
+                }],
+            ))
+        } else {
+            Ok((false, vec![]))
+        }
+    }
+
     fn insert_sync_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
-        log_sync_write(
+        let detail = format!(
+            "question_id={} session_id={:?} answered_at_secs={}",
+            row.question_id, row.session_id, row.answered_at_secs.0
+        );
+        sync_execute(
+            &self.db,
             "bl_performance_attempt",
             "insert_sync_attempt",
-            &format!(
-                "question_id={} session_id={:?} answered_at_secs={}",
-                row.question_id, row.session_id, row.answered_at_secs.0
-            ),
-        );
-        self.db.execute(
+            &detail,
             "INSERT INTO bl_performance_attempt
             (question_id, topic, difficulty, answered_at_secs, answer, correct, response_time_ms,
              confidence, session_id, usn, mtime_secs)
@@ -814,21 +864,26 @@ impl GreAtlasStorage {
                 usn,
                 row.mtime_secs.0,
             ],
+            &SyncFkContext {
+                question_id: Some(row.question_id.clone()),
+                session_id: row.session_id.clone(),
+                attempt_id: None,
+            },
         )?;
         Ok(())
     }
 
     fn insert_sync_attempt_with_id(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
-        log_sync_write(
+        let detail = format!(
+            "id={} question_id={} session_id={:?}",
+            row.id, row.question_id, row.session_id
+        );
+        sync_execute(
+            &self.db,
             "bl_performance_attempt",
             "insert_sync_attempt_with_id",
-            &format!(
-                "id={} question_id={} session_id={:?}",
-                row.id, row.question_id, row.session_id
-            ),
-        );
-        self.db.execute(
+            &detail,
             "INSERT INTO bl_performance_attempt
             (id, question_id, topic, difficulty, answered_at_secs, answer, correct, response_time_ms,
              confidence, session_id, usn, mtime_secs)
@@ -847,21 +902,26 @@ impl GreAtlasStorage {
                 usn,
                 row.mtime_secs.0,
             ],
+            &SyncFkContext {
+                question_id: Some(row.question_id.clone()),
+                session_id: row.session_id.clone(),
+                attempt_id: Some(row.id),
+            },
         )?;
         Ok(())
     }
 
     fn update_sync_attempt(&self, row: &SyncAttemptRow) -> Result<()> {
         let usn = self.next_usn()?;
-        log_sync_write(
+        let detail = format!(
+            "id={} question_id={} session_id={:?} mtime_secs={}",
+            row.id, row.question_id, row.session_id, row.mtime_secs.0
+        );
+        sync_execute(
+            &self.db,
             "bl_performance_attempt",
             "update_sync_attempt",
-            &format!(
-                "id={} question_id={} session_id={:?} mtime_secs={}",
-                row.id, row.question_id, row.session_id, row.mtime_secs.0
-            ),
-        );
-        self.db.execute(
+            &detail,
             "UPDATE bl_performance_attempt SET
                 question_id = ?, topic = ?, difficulty = ?, answered_at_secs = ?, answer = ?,
                 correct = ?, response_time_ms = ?, confidence = ?, session_id = ?,
@@ -881,6 +941,11 @@ impl GreAtlasStorage {
                 row.mtime_secs.0,
                 row.id,
             ],
+            &SyncFkContext {
+                question_id: Some(row.question_id.clone()),
+                session_id: row.session_id.clone(),
+                attempt_id: Some(row.id),
+            },
         )?;
         Ok(())
     }
@@ -1150,7 +1215,7 @@ fn row_to_readiness_prediction(
     })
 }
 
-fn attempt_identity_differs(local: &SyncAttemptRow, remote: &SyncAttemptRow) -> bool {
+pub(crate) fn attempt_identity_differs(local: &SyncAttemptRow, remote: &SyncAttemptRow) -> bool {
     local.question_id != remote.question_id
         || local.answered_at_secs != remote.answered_at_secs
         || local.session_id != remote.session_id
@@ -1308,7 +1373,9 @@ mod test {
         assert!(linear
             .iter()
             .all(|q| q.topic == "gre::quant::algebra::linear"));
-        assert!(linear.iter().any(|q| q.id.starts_with("gre-foundation-quant-lin")));
+        assert!(linear
+            .iter()
+            .any(|q| q.id.starts_with("gre-foundation-quant-lin")));
         Ok(())
     }
 
@@ -1379,9 +1446,10 @@ mod test {
         let seed = crate::gre_atlas::questions::foundation::load_foundation_bank();
 
         assert!(
-            seed.len() >= crate::gre_atlas::questions::foundation::MIN_FOUNDATION_VERBAL
-                + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_QUANT
-                + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_AWA,
+            seed.len()
+                >= crate::gre_atlas::questions::foundation::MIN_FOUNDATION_VERBAL
+                    + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_QUANT
+                    + crate::gre_atlas::questions::foundation::MIN_FOUNDATION_AWA,
             "foundation bank should meet minimum counts, got {}",
             seed.len()
         );
@@ -1800,4 +1868,3 @@ mod test {
         Ok(())
     }
 }
-

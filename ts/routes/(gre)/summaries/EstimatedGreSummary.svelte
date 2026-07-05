@@ -51,10 +51,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     title="Estimated GRE"
     score={estimatedGreHero(estimate)}
     scoreRange={estimatedGreUnlocked(estimate)
-        ? formatGreScoreRange(
-            estimate.combinedScoreLow,
-            estimate.combinedScoreHigh,
-        )
+        ? formatGreScoreRange(estimate.combinedScoreLow, estimate.combinedScoreHigh)
         : null}
     unlocked={estimatedGreUnlocked(estimate)}
     showScoreHeader={estimatedGreUnlocked(estimate)}

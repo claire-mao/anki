@@ -19,7 +19,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 </script>
 
 <section class="session-complete" aria-labelledby="session-complete-title">
-    <h2 class="session-complete-title" id="session-complete-title">{summary.headline}</h2>
+    <h2 class="session-complete-title" id="session-complete-title">
+        {summary.headline}
+    </h2>
     <p class="session-complete-subline">{summary.subline}</p>
 
     <dl class="session-complete-rows">

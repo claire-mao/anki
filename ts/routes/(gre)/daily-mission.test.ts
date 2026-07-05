@@ -1,11 +1,7 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type {
-    GreStudyStatusResponse,
-    PerformanceAttempt,
-    StudyPlanDailyTask,
-} from "@generated/anki/brainlift_pb";
+import type { GreStudyStatusResponse, PerformanceAttempt, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -22,7 +18,7 @@ function task(partial: Partial<StudyPlanDailyTask> & Pick<StudyPlanDailyTask, "i
         detail: "",
         targetCount: 5,
         ...partial,
-    };
+    } as StudyPlanDailyTask;
 }
 
 function studyStatus(newCount: number, learnCount: number, reviewCount: number): GreStudyStatusResponse {
@@ -32,7 +28,16 @@ function studyStatus(newCount: number, learnCount: number, reviewCount: number):
         newCount,
         learnCount,
         reviewCount,
-    };
+    } as GreStudyStatusResponse;
+}
+
+function performanceAttempt(
+    partial: Pick<
+        PerformanceAttempt,
+        "questionId" | "topic" | "answeredAtSecs" | "answer" | "correct" | "responseTimeMs"
+    >,
+): PerformanceAttempt {
+    return partial as unknown as PerformanceAttempt;
 }
 
 describe("parseReviewBaselineDue", () => {
@@ -76,31 +81,31 @@ describe("missionProgressCounts", () => {
 
     test("counts practice questions answered today", () => {
         const dayStart = startOfLocalDaySecs(new Date("2026-07-03T00:00:00"));
-        const attempts: PerformanceAttempt[] = [
-            {
+        const attempts = [
+            performanceAttempt({
                 questionId: "q1",
                 topic: "gre::quant::algebra",
-                answeredAtSecs: dayStart + 60,
+                answeredAtSecs: BigInt(dayStart + 60),
                 answer: "A",
                 correct: true,
                 responseTimeMs: 1000,
-            },
-            {
+            }),
+            performanceAttempt({
                 questionId: "q2",
                 topic: "gre::verbal::vocab",
-                answeredAtSecs: dayStart + 120,
+                answeredAtSecs: BigInt(dayStart + 120),
                 answer: "B",
                 correct: false,
                 responseTimeMs: 900,
-            },
-            {
+            }),
+            performanceAttempt({
                 questionId: "q3",
                 topic: "gre::verbal::vocab",
-                answeredAtSecs: dayStart - 60,
+                answeredAtSecs: BigInt(dayStart - 60),
                 answer: "C",
                 correct: true,
                 responseTimeMs: 800,
-            },
+            }),
         ];
 
         expect(
@@ -125,23 +130,23 @@ describe("missionProgressCounts", () => {
 
     test("filters topic practice attempts by topic id", () => {
         const dayStart = startOfLocalDaySecs(new Date("2026-07-03T12:00:00"));
-        const attempts: PerformanceAttempt[] = [
-            {
+        const attempts = [
+            performanceAttempt({
                 questionId: "q1",
                 topic: "gre::quant::data_interpretation",
-                answeredAtSecs: dayStart + 10,
+                answeredAtSecs: BigInt(dayStart + 10),
                 answer: "A",
                 correct: true,
                 responseTimeMs: 1000,
-            },
-            {
+            }),
+            performanceAttempt({
                 questionId: "q2",
                 topic: "gre::verbal::vocab",
-                answeredAtSecs: dayStart + 20,
+                answeredAtSecs: BigInt(dayStart + 20),
                 answer: "B",
                 correct: true,
                 responseTimeMs: 1000,
-            },
+            }),
         ];
 
         expect(
@@ -163,23 +168,23 @@ describe("missionProgressCounts", () => {
 
     test("counts cover task progress from topic practice attempts", () => {
         const dayStart = startOfLocalDaySecs(new Date("2026-07-03T12:00:00"));
-        const attempts: PerformanceAttempt[] = [
-            {
+        const attempts = [
+            performanceAttempt({
                 questionId: "q1",
                 topic: "gre::awa::argument",
-                answeredAtSecs: dayStart + 10,
+                answeredAtSecs: BigInt(dayStart + 10),
                 answer: "A",
                 correct: true,
                 responseTimeMs: 1000,
-            },
-            {
+            }),
+            performanceAttempt({
                 questionId: "q2",
                 topic: "gre::quant::algebra",
-                answeredAtSecs: dayStart + 20,
+                answeredAtSecs: BigInt(dayStart + 20),
                 answer: "B",
                 correct: true,
                 responseTimeMs: 1000,
-            },
+            }),
         ];
 
         expect(

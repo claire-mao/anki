@@ -44,7 +44,7 @@ export type EmptyStateKey =
     | "missionReviewCaughtUp"
     | "deckMissing";
 
-export const MIN_STUDIED_CARDS = 20;
+export const MIN_STUDIED_CARDS = 50;
 export const MIN_PRACTICE_ATTEMPTS = 50;
 export const MIN_COVERAGE_PERCENT = 50;
 

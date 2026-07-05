@@ -42,139 +42,149 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {#if !model.showFullPanel}
         <p class="gre-calibration-early">{model.earlyStateSummary}</p>
     {:else}
-    <div class="gre-calibration-grid">
-        <article class="gre-calibration-metric">
-            <h3 class="gre-calibration-metric-label">Current confidence</h3>
-            <GreConfidenceIndicator confidence={model.currentConfidence} />
-            {#if model.confidenceCaption}
-                <p class="gre-calibration-metric-detail">{model.confidenceCaption}</p>
-            {/if}
-        </article>
-
-        <article class="gre-calibration-metric">
-            <h3 class="gre-calibration-metric-label">Historical accuracy</h3>
-            <p class="gre-calibration-metric-status">{model.historicalAccuracy}</p>
-            {#if model.historicalAccuracyDetail}
-                <p class="gre-calibration-metric-detail">
-                    {model.historicalAccuracyDetail}
-                </p>
-            {/if}
-        </article>
-
-        <article class="gre-calibration-metric">
-            <h3 class="gre-calibration-metric-label">Estimate accuracy</h3>
-            <p class="gre-calibration-metric-status">{model.predictionQuality}</p>
-            {#if model.predictionQualityDetail}
-                <p class="gre-calibration-metric-detail">{model.predictionQualityDetail}</p>
-            {/if}
-        </article>
-
-        <article class="gre-calibration-metric gre-calibration-metric-trend">
-            <h3 class="gre-calibration-metric-label">Accuracy trend</h3>
-            {#if model.trendAvailable}
-                <GreSparkline
-                    points={model.trendPoints}
-                    label="Accuracy trend across score levels"
-                    width={variant === "compact" ? 96 : 120}
-                    height={32}
-                />
-            {:else}
-                <p
-                    class="gre-calibration-metric-status gre-calibration-metric-status-muted"
-                    aria-hidden="true"
-                >
-                    —
-                </p>
-            {/if}
-            <p class="gre-calibration-metric-detail">{model.trendCaption}</p>
-        </article>
-    </div>
-
-    {#if model.showFullPanel && model.confidenceChangeNotes.length > 0}
-        <section class="gre-calibration-section" aria-label="How confidence changes">
-            <h3 class="gre-calibration-section-title">How confidence changes</h3>
-            <ul class="gre-calibration-notes">
-                {#each model.confidenceChangeNotes as note}
-                    <li>{note}</li>
-                {/each}
-            </ul>
-        </section>
-    {/if}
-
-    {#if showImprovements && model.showFullPanel && model.improvementItems.length > 0}
-        <section class="gre-calibration-section" aria-label="What improves confidence">
-            <h3 class="gre-calibration-section-title">What improves confidence</h3>
-            <ul class="gre-calibration-improvements">
-                {#each model.improvementItems as item (item.id)}
-                    <li class:gre-calibration-improvement-met={item.met}>
-                        <span
-                            class="gre-calibration-improvement-mark"
-                            aria-hidden="true"
-                        >
-                            {item.met ? "✓" : "○"}
-                        </span>
-                        <span class="gre-calibration-improvement-copy">
-                            <span class="gre-calibration-improvement-label">
-                                {item.label}
-                            </span>
-                            <span class="gre-calibration-improvement-detail">
-                                {item.detail}
-                            </span>
-                        </span>
-                    </li>
-                {/each}
-            </ul>
-        </section>
-    {/if}
-
-    {#if variant === "full" && model.showFullPanel}
-        <details class="gre-calibration-details">
-            <summary>Estimate checks by score level</summary>
-            {#if calibration.calibrationCurve.length === 0}
-                <GreEmptyState
-                    content={emptyStateContent("calibrationTable")}
-                    compact
-                />
-            {:else}
-                <div class="gre-calibration-table-wrap">
-                    <table class="calibration-table">
-                        <caption class="sr-only">
-                            Predicted score bins compared with observed outcomes
-                        </caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">Predicted bin</th>
-                                <th scope="col">Predicted</th>
-                                <th scope="col">Observed</th>
-                                <th scope="col">Count</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each calibration.calibrationCurve as bin}
-                                {#if bin.count > 0}
-                                    <tr>
-                                        <td>
-                                            {Math.round(bin.binLow)}–{Math.round(
-                                                bin.binHigh,
-                                            )}%
-                                        </td>
-                                        <td>{Math.round(bin.predictedMean)}%</td>
-                                        <td>{Math.round(bin.outcomeMean)}%</td>
-                                        <td>{bin.count}</td>
-                                    </tr>
-                                {/if}
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
-                {#if model.assessment}
-                    <p class="gre-calibration-assessment">{model.assessment}</p>
+        <div class="gre-calibration-grid">
+            <article class="gre-calibration-metric">
+                <h3 class="gre-calibration-metric-label">Current confidence</h3>
+                <GreConfidenceIndicator confidence={model.currentConfidence} />
+                {#if model.confidenceCaption}
+                    <p class="gre-calibration-metric-detail">
+                        {model.confidenceCaption}
+                    </p>
                 {/if}
-            {/if}
-        </details>
-    {:else if model.showFullPanel && model.assessment}
-        <p class="gre-calibration-assessment">{model.assessment}</p>
-    {/if}
+            </article>
+
+            <article class="gre-calibration-metric">
+                <h3 class="gre-calibration-metric-label">Historical accuracy</h3>
+                <p class="gre-calibration-metric-status">{model.historicalAccuracy}</p>
+                {#if model.historicalAccuracyDetail}
+                    <p class="gre-calibration-metric-detail">
+                        {model.historicalAccuracyDetail}
+                    </p>
+                {/if}
+            </article>
+
+            <article class="gre-calibration-metric">
+                <h3 class="gre-calibration-metric-label">Estimate accuracy</h3>
+                <p class="gre-calibration-metric-status">{model.predictionQuality}</p>
+                {#if model.predictionQualityDetail}
+                    <p class="gre-calibration-metric-detail">
+                        {model.predictionQualityDetail}
+                    </p>
+                {/if}
+            </article>
+
+            <article class="gre-calibration-metric gre-calibration-metric-trend">
+                <h3 class="gre-calibration-metric-label">Accuracy trend</h3>
+                {#if model.trendAvailable}
+                    <GreSparkline
+                        points={model.trendPoints}
+                        label="Accuracy trend across score levels"
+                        width={variant === "compact" ? 96 : 120}
+                        height={32}
+                    />
+                {:else}
+                    <p
+                        class="gre-calibration-metric-status gre-calibration-metric-status-muted"
+                        aria-hidden="true"
+                    >
+                        —
+                    </p>
+                {/if}
+                <p class="gre-calibration-metric-detail">{model.trendCaption}</p>
+            </article>
+        </div>
+
+        {#if model.showFullPanel && model.confidenceChangeNotes.length > 0}
+            <section
+                class="gre-calibration-section"
+                aria-label="How confidence changes"
+            >
+                <h3 class="gre-calibration-section-title">How confidence changes</h3>
+                <ul class="gre-calibration-notes">
+                    {#each model.confidenceChangeNotes as note}
+                        <li>{note}</li>
+                    {/each}
+                </ul>
+            </section>
+        {/if}
+
+        {#if showImprovements && model.showFullPanel && model.improvementItems.length > 0}
+            <section
+                class="gre-calibration-section"
+                aria-label="What improves confidence"
+            >
+                <h3 class="gre-calibration-section-title">What improves confidence</h3>
+                <ul class="gre-calibration-improvements">
+                    {#each model.improvementItems as item (item.id)}
+                        <li class:gre-calibration-improvement-met={item.met}>
+                            <span
+                                class="gre-calibration-improvement-mark"
+                                aria-hidden="true"
+                            >
+                                {item.met ? "✓" : "○"}
+                            </span>
+                            <span class="gre-calibration-improvement-copy">
+                                <span class="gre-calibration-improvement-label">
+                                    {item.label}
+                                </span>
+                                <span class="gre-calibration-improvement-detail">
+                                    {item.detail}
+                                </span>
+                            </span>
+                        </li>
+                    {/each}
+                </ul>
+            </section>
+        {/if}
+
+        {#if variant === "full" && model.showFullPanel}
+            <details class="gre-calibration-details">
+                <summary>Estimate checks by score level</summary>
+                {#if calibration.calibrationCurve.length === 0}
+                    <GreEmptyState
+                        content={emptyStateContent("calibrationTable")}
+                        compact
+                    />
+                {:else}
+                    <div class="gre-calibration-table-wrap">
+                        <table class="calibration-table">
+                            <caption class="sr-only">
+                                Predicted score bins compared with observed outcomes
+                            </caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Predicted bin</th>
+                                    <th scope="col">Predicted</th>
+                                    <th scope="col">Observed</th>
+                                    <th scope="col">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {#each calibration.calibrationCurve as bin}
+                                    {#if bin.count > 0}
+                                        <tr>
+                                            <td>
+                                                {Math.round(bin.binLow)}–{Math.round(
+                                                    bin.binHigh,
+                                                )}%
+                                            </td>
+                                            <td>{Math.round(bin.predictedMean)}%</td>
+                                            <td>{Math.round(bin.outcomeMean)}%</td>
+                                            <td>{bin.count}</td>
+                                        </tr>
+                                    {/if}
+                                {/each}
+                            </tbody>
+                        </table>
+                    </div>
+                    {#if model.assessment}
+                        <p class="gre-calibration-assessment">{model.assessment}</p>
+                    {/if}
+                {/if}
+            </details>
+        {:else if model.showFullPanel && model.assessment}
+            <p class="gre-calibration-assessment">{model.assessment}</p>
+        {/if}
     {/if}
 </section>
 

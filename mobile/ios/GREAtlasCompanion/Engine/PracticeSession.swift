@@ -55,6 +55,7 @@ final class PracticeSession: ObservableObject {
     @Published private(set) var questionsCompleted = 0
     @Published var selectedAnswer = ""
     @Published private(set) var attemptResult: GreRecordAttemptResultView?
+    @Published private(set) var structuredExplanation: GreAnswerExplanationView?
     @Published private(set) var responseTimeMs: UInt = 0
     @Published private(set) var sessionComplete = false
     @Published private(set) var attemptsRecorded = 0
@@ -64,6 +65,7 @@ final class PracticeSession: ObservableObject {
 
     private var sessionId = ""
     private var questionById: [String: GreQuestionView] = [:]
+    private var explanationLoadQuestionId = ""
     private var startedAt = Date()
 
     var currentQuestion: GreQuestionView? {
@@ -150,6 +152,8 @@ final class PracticeSession: ObservableObject {
         selectedAnswer = ""
         startedAt = Date()
         attemptResult = nil
+        structuredExplanation = nil
+        explanationLoadQuestionId = ""
         responseTimeMs = 0
         submitError = nil
     }
@@ -180,6 +184,22 @@ final class PracticeSession: ObservableObject {
                 PracticeAttemptRecord(topic: result.topic, correct: result.correct)
             )
             scoreStrip = try await engine.refreshPracticeScoreStrip()
+
+            let questionId = question.id
+            let selected = selectedAnswer
+            explanationLoadQuestionId = questionId
+            Task {
+                do {
+                    let explanation = try await engine.explainAnswer(
+                        questionId: questionId,
+                        selectedAnswer: selected
+                    )
+                    guard explanationLoadQuestionId == questionId, attemptResult != nil else { return }
+                    structuredExplanation = explanation
+                } catch {
+                    // Best-effort; plain recordAttempt explanation remains visible.
+                }
+            }
         } catch {
             submitError = "Could not record this attempt. Please try again."
         }

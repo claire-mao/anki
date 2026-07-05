@@ -101,7 +101,7 @@ Warmup iterations are excluded from p50/p95/worst statistics. Benchmark timestam
 
 ## 3. AI gold-set evaluation
 
-Read-only comparison of **keyword-retrieval baseline** vs **template generation** on a bundled 50-question gold set. Does not require a collection path.
+Read-only comparison of **keyword, BM25, and TF-IDF retrieval baselines** vs **catalog-aware AI retrieval** and the **full AI generation pipeline** (template variants + eval gate) on a bundled 50-question gold set. Does not require a collection path or API key.
 
 ```bash
 just eval-gre-atlas-ai
@@ -116,10 +116,10 @@ PYTHONPATH=out/pylib out/pyenv/bin/python scripts/eval/gre_atlas_ai_eval.py \
 
 ### Outputs
 
-| File                                                       | Contents                                         |
-| ---------------------------------------------------------- | ------------------------------------------------ |
-| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.json` | Topic match, keyword overlap, acceptance metrics |
-| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md`   | Human-readable summary                           |
+| File                                                       | Contents                                                                                    |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.json` | Baseline vs AI accuracy/F1, held-out release gate, rejection pipeline, attribution metadata |
+| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md`   | Human-readable summary                                                                      |
 
 Full methodology, source attribution, and confidence threshold: [AI.md](./AI.md).
 
@@ -146,11 +146,14 @@ Key Rust modules with eval tests:
 
 Thresholds in eval reports should match:
 
-| Model                                             | Doc                                                              |
-| ------------------------------------------------- | ---------------------------------------------------------------- |
-| Memory abstention (FSRS, 20 cards, 50% coverage) | [../models/memory-model.md](../models/memory-model.md)           |
-| Performance abstention (50 attempts)              | [../models/performance-model.md](../models/performance-model.md) |
-| Readiness composite (45/45/10)                    | [../models/readiness-model.md](../models/readiness-model.md)     |
+| Model                                            | Doc                                                              |
+| ------------------------------------------------ | ---------------------------------------------------------------- |
+| Memory abstention (FSRS, 50 cards, 50% coverage) | [../models/memory-model.md](../models/memory-model.md)           |
+| Performance abstention (50 attempts)             | [../models/performance-model.md](../models/performance-model.md) |
+| Readiness composite (45/45/10)                   | [../models/readiness-model.md](../models/readiness-model.md)     |
+| AI generation confidence (0.55)                  | [AI.md](./AI.md), `MIN_GENERATION_CONFIDENCE` in `ai_gen.rs`     |
+| AI eval gate (grounding 0.15, duplicate 0.85)    | [AI.md](./AI.md), `eval_pipeline.rs`                             |
+| AI release gate (≥95% held-out accuracy)         | [AI.md](./AI.md), `DEFAULT_MIN_ACCURACY` in `ai_eval.rs`         |
 
 ## 6. What eval does _not_ measure
 

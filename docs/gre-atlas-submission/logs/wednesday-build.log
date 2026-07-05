@@ -1,0 +1,20 @@
+./ninja pylib qt
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.39s
+build:configure
+ts:reviewer:reviewer.js
+ts:editor
+qt:aqt:data:web:sveltekit
+ts:editable
+ts:congrats
+qt:aqt:data:web:pages
+ts:editor
+qt:aqt:data:web:css
+qt:aqt:data:web:js
+n2: ran 9 tasks, now up to date
+[0m[1m[32m
+Build succeeded in 5.43s.
+[0m

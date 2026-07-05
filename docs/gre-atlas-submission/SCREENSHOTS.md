@@ -2,18 +2,29 @@
 
 Place captured PNGs in [screenshots/](./screenshots/). Reference them from [README.md](./README.md) and [GRADING-CHECKLIST.md](./GRADING-CHECKLIST.md) once added.
 
+**Audit status + per-requirement capture steps:** [screenshots/REQUIREMENT-SCREENSHOT-CHECKLIST.md](./screenshots/REQUIREMENT-SCREENSHOT-CHECKLIST.md).
+
+**Missing captures:** [screenshots/pending/](./screenshots/pending/) (placeholders until you save PNGs).
+
+## Capture status (2026-07-05)
+
+| Status     | Files                                                                      |
+| ---------- | -------------------------------------------------------------------------- |
+| ✅ Present | `08-eval-report.png`, `10-benchmark-output.png`                            |
+| ⚠️ Missing  | `01`–`07`, `09`, `11` — see [screenshots/pending/](./screenshots/pending/) |
+
 ## Required captures
 
-| # | Filename                     | What to show                                                | How to capture                                                                         |
-| - | ---------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| 1 | `01-gre-home.png`            | GRE main shell at `/home` with header nav and daily mission | `just run` → default landing page                                                      |
-| 2 | `02-abstention-progress.png` | Progress page with abstention checklist (sparse profile)    | Fresh dev profile, open Progress                                                       |
-| 3 | `03-practice-question.png`   | Practice MCQ with answer choices                            | `/practice`, one question loaded                                                       |
-| 4 | `04-study-plan.png`          | Ranked recommendations with factor explanations             | `/study-plan`                                                                          |
-| 5 | `05-readiness-scores.png`    | Readiness page: Memory / Performance / Readiness cards      | `/readiness` (seeded profile preferred)                                                |
-| 6 | `06-topic-detail.png`        | Topic drill-down page                                       | Click topic from Progress or study plan                                                |
-| 7 | `07-congrats-cta.png`        | Congrats screen with Practice / Dashboard buttons           | Finish non-GRE deck review                                                             |
-| 8 | `08-eval-report.png`         | Terminal or editor showing `gre-atlas-eval.md` sections     | `just eval-gre-atlas /path/to/collection.anki2` → `docs/gre-atlas-submission/results/` |
+| # | Filename                     | What to show                                                | How to capture                                                                                                                    |
+| - | ---------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | `01-gre-home.png`            | GRE main shell at `/home` with header nav and daily mission | `just run` → default landing page                                                                                                 |
+| 2 | `02-abstention-progress.png` | Progress page with abstention checklist (sparse profile)    | Fresh dev profile, open Progress                                                                                                  |
+| 3 | `03-practice-question.png`   | Practice MCQ with answer choices                            | `/practice`, one question loaded                                                                                                  |
+| 4 | `04-study-plan.png`          | Ranked recommendations with factor explanations             | `/study-plan`                                                                                                                     |
+| 5 | `05-readiness-scores.png`    | Readiness page: Memory / Performance / Readiness cards      | `/readiness` (seeded profile preferred)                                                                                           |
+| 6 | `06-topic-detail.png`        | Topic drill-down page                                       | Click topic from Progress or study plan                                                                                           |
+| 7 | `07-congrats-cta.png`        | Congrats screen with Practice / Dashboard buttons           | Finish non-GRE deck review                                                                                                        |
+| 8 | `08-eval-report.png`         | Terminal or editor showing `gre-atlas-eval.md` sections     | `just eval-gre-atlas /path/to/collection.anki2` → `docs/gre-atlas-submission/results/` (auto-generated excerpt available in repo) |
 
 ## Optional captures
 

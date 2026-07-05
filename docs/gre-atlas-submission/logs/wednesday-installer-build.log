@@ -1,0 +1,36 @@
+# GRE Atlas installer build — 2026-07-05
+# Command: tools/build-installer  (RELEASE=2 ./ninja installer)
+# Commit: 1323b37859cc9baaa5a8a1a850a20fe76d3c0e8f
+# Host: macOS Apple Silicon
+
+$ tools/build-installer
+    Finished `release` profile [optimized] target(s) in 0.54s
+build:configure
+rslib:i18n
+rslib:proto
+qt:aqt:data:web:js
+pylib:rsbridge
+ts:editable
+ts:mathjax
+ts:reviewer:reviewer.js
+ts:congrats
+ts:editor
+qt:aqt:data:web:pages
+qt:aqt:data:web:css
+wheels:aqt
+wheels:anki
+installer:build
+installer:package
+n2: ran 21 tasks, now up to date
+
+Build succeeded in 407.82s.
+
+# Artifacts
+$ ls -lh out/installer/dist/
+total 458760
+-rw-r--r--  1 clairemao  staff   214M Jul  5 14:35 anki-26.05-mac-apple.dmg
+
+$ du -sh out/installer/build/anki/macos/app/Anki.app
+646M	out/installer/build/anki/macos/app/Anki.app
+
+# Exit code: 0

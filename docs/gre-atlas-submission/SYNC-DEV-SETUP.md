@@ -107,24 +107,24 @@ Credentials are stored in `UserDefaults` key `greAtlasSyncCredentials` (JSON: `h
 
 ## 5. End-to-end smoke test
 
-| Step | Action | Expected |
-| --- | --- | --- |
-| A | Practice on desktop → GRE sync | Settings shows merged counts; `$SYNC_BASE/dev/gre_atlas_sync.pb` appears |
-| B | **Sync now** on iOS | Progress attempt count matches desktop |
-| C | Practice on iOS → **Sync now** | Desktop GRE Progress updates |
-| D | Airplane mode on both → practice each → reconnect → sync both | Attempt totals merge (LWW on `mtime_secs`) |
+| Step | Action                                                        | Expected                                                                 |
+| ---- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| A    | Practice on desktop → GRE sync                                | Settings shows merged counts; `$SYNC_BASE/dev/gre_atlas_sync.pb` appears |
+| B    | **Sync now** on iOS                                           | Progress attempt count matches desktop                                   |
+| C    | Practice on iOS → **Sync now**                                | Desktop GRE Progress updates                                             |
+| D    | Airplane mode on both → practice each → reconnect → sync both | Attempt totals merge (LWW on `mtime_secs`)                               |
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
+| Symptom                                                                                       | Fix                                                                                                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | “Email or password was incorrect” / server log `invalid user/pass in get_host_key` (HTTP 403) | Anki is hitting your server but sending the wrong credentials. Use username `dev` and password `dev` — **not** your AnkiWeb email/password. Confirm with the curl in step 2; if curl is 403, restart the server in a shell that has `export SYNC_USER1=dev:dev` (and unset `PASSWORDS_HASHED` unless you intentionally use hashed passwords). |
-| “GRE Atlas practice sync requires a self-hosted…” | Custom sync URL still points at AnkiWeb, or server lacks GRE routes (use this repo’s SimpleServer). |
-| HTTP 404 on upload | Wrong base URL (missing trailing `/`) or old server binary without `/gre/sync/*`. |
-| HTTP 403 on GRE sync (after login works) | Stale hkey — sign out and sign in again, or re-fetch via `/sync/hostKey`. |
-| iOS cannot connect (device) | Use LAN IP, not `127.0.0.1`; check firewall; toggle local network access for the app. |
-| `Address already in use` | Change `SYNC_PORT` (e.g. `18080`) and update client URLs. |
-| Want a clean server state | Stop the server, `rm -rf "$SYNC_BASE"`, recreate the directory, restart with the same `SYNC_USER1`. This resets collections/media, not login rules. |
+| “GRE Atlas practice sync requires a self-hosted…”                                             | Custom sync URL still points at AnkiWeb, or server lacks GRE routes (use this repo’s SimpleServer).                                                                                                                                                                                                                                           |
+| HTTP 404 on upload                                                                            | Wrong base URL (missing trailing `/`) or old server binary without `/gre/sync/*`.                                                                                                                                                                                                                                                             |
+| HTTP 403 on GRE sync (after login works)                                                      | Stale hkey — sign out and sign in again, or re-fetch via `/sync/hostKey`.                                                                                                                                                                                                                                                                     |
+| iOS cannot connect (device)                                                                   | Use LAN IP, not `127.0.0.1`; check firewall; toggle local network access for the app.                                                                                                                                                                                                                                                         |
+| `Address already in use`                                                                      | Change `SYNC_PORT` (e.g. `18080`) and update client URLs.                                                                                                                                                                                                                                                                                     |
+| Want a clean server state                                                                     | Stop the server, `rm -rf "$SYNC_BASE"`, recreate the directory, restart with the same `SYNC_USER1`. This resets collections/media, not login rules.                                                                                                                                                                                           |
 
 ## Reference
 

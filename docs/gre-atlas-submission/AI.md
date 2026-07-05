@@ -2,28 +2,57 @@
 
 Optional AI-assisted GRE practice question generation and post-answer explanations for the GRE Atlas Speedrun rubric. AI **enhances** the experience but is **never required** — the app runs fully offline with deterministic templates when no API key is configured.
 
+## Design rationale
+
+**Why:** The Speedrun AI extension asks for grounded question generation with named-source attribution, a reproducible eval harness, and baseline comparison — without making network access or API keys mandatory for the shipped product.
+
+**What we built:**
+
+- Bundled excerpts from a single named source (`ETS Official GRE Prep Material`) used for all generation and explanations
+- Deterministic template generation as the always-on fallback
+- Optional OpenAI-compatible LLM path (env-gated) with silent fallback on any failure
+- Pre-exposure eval gate (hallucination, duplicate, unsupported) before questions enter the bank
+- Post-answer `ExplainAnswer` RPC (web practice page; template fallback when LLM unavailable)
+- 50-question verified gold set + read-only eval comparing keyword/BM25/TF-IDF baselines vs catalog-aware AI retrieval and the full generation pipeline
+- Schema v5 persistence for attribution, provenance, and `bl_generation_eval` audit rows
+
+**What we skipped (by design):**
+
+- Chat UI or conversational tutoring
+- External RAG, vector database, or runtime PDF retrieval
+- Neural embeddings in the live product path (TF-IDF is eval-only baseline)
+- Live LLM calls in the gold-set eval harness (reproducible template path instead)
+- User-facing AI toggle on GRE web routes (`GenerateQuestion` RPC exists; practice UI uses seeded bank)
+- Structured `ExplainAnswer` on iOS companion (desktop web only today)
+- Automated factual verification against proprietary ETS PDFs
+
+**Scores without AI:** Memory, Performance, and Readiness are computed from FSRS topic mastery, practice attempts, and coverage in `greatlas.db` / the collection. They do **not** depend on LLM availability, API keys, or `GRE_ATLAS_AI_DISABLED`.
+
 ## What is implemented
 
-| Component | Location |
-| --- | --- |
-| Named source excerpts | `rslib/src/gre_atlas/questions/source.rs` |
-| Deterministic template generation (fallback) | `rslib/src/gre_atlas/questions/ai_gen.rs` |
-| Optional LLM client (env-gated) | `rslib/src/gre_atlas/questions/llm.rs` |
-| Generator orchestration + silent fallback | `rslib/src/gre_atlas/questions/generator.rs` |
-| Pre-exposure eval gate | `rslib/src/gre_atlas/questions/eval_pipeline.rs` |
-| Post-answer explanations | `rslib/src/gre_atlas/questions/explanation.rs` |
-| Provenance / evaluation status types | `rslib/src/gre_atlas/questions/metadata.rs` |
-| Gold evaluation set (50 verified questions) | `rslib/src/gre_atlas/questions/gold_eval_set.json` |
-| Eval report (keyword baseline + rejection pipeline) | `rslib/src/gre_atlas/ai_eval.rs` |
-| Persistence (attribution + eval log) | `greatlas.db` schema v5, `bl_question`, `bl_generation_eval` |
-| RPC | `GenerateQuestion`, `ExplainAnswer`, `GenerateBrainLiftAiEvalReport` |
-| Web practice UI | `ts/routes/(gre)/practice/+page.svelte` |
+| Component                                                                | Location                                                             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Named source excerpts                                                    | `rslib/src/gre_atlas/questions/source.rs`                            |
+| Deterministic template generation (fallback)                             | `rslib/src/gre_atlas/questions/ai_gen.rs`                            |
+| Optional LLM client (env-gated)                                          | `rslib/src/gre_atlas/questions/llm.rs`                               |
+| Generator orchestration + silent fallback                                | `rslib/src/gre_atlas/questions/generator.rs`                         |
+| Pre-exposure eval gate                                                   | `rslib/src/gre_atlas/questions/eval_pipeline.rs`                     |
+| Post-answer explanations                                                 | `rslib/src/gre_atlas/questions/explanation.rs`                       |
+| Provenance / evaluation status types                                     | `rslib/src/gre_atlas/questions/metadata.rs`                          |
+| Gold evaluation set (50 verified questions)                              | `rslib/src/gre_atlas/questions/gold_eval_set.json`                   |
+| Retrieval baselines (keyword, BM25, TF-IDF) + catalog-aware AI retrieval | `rslib/src/gre_atlas/questions/retrieval.rs`                         |
+| Eval report (baseline comparison + release gate + rejection pipeline)    | `rslib/src/gre_atlas/ai_eval.rs`                                     |
+| Persistence (attribution + eval log)                                     | `greatlas.db` schema v5, `bl_question`, `bl_generation_eval`         |
+| RPC                                                                      | `GenerateQuestion`, `ExplainAnswer`, `GenerateBrainLiftAiEvalReport` |
+| Web practice UI                                                          | `ts/routes/(gre)/practice/+page.svelte`                              |
 
 ## Offline-first design
 
 1. **Default path (no env vars):** deterministic template generation from bundled ETS excerpts. No network I/O.
-2. **Optional LLM path:** enabled only when `GRE_ATLAS_OPENAI_API_KEY` is set. Tries LLM generation first, runs the eval gate, and on *any* failure or rejection falls back to templates **without surfacing an error**.
-3. **Post-answer explanations:** `ExplainAnswer` RPC tries the LLM when enabled; otherwise builds a structured template explanation. Transport failures are swallowed in the UI.
+2. **Optional LLM path:** enabled only when `GRE_ATLAS_OPENAI_API_KEY` is set and `GRE_ATLAS_AI_DISABLED` is not truthy. Tries LLM generation first, runs the eval gate, and on _any_ failure or rejection falls back to templates **without surfacing an error**.
+3. **AI-off override:** set `GRE_ATLAS_AI_DISABLED=1` (or `true`/`yes`/`on`) to force the template path even when an API key is present. `GreAtlasAiConfig::from_env` in `llm.rs` returns `None` and the orchestrator never attempts network I/O.
+4. **Post-answer explanations:** `ExplainAnswer` RPC tries the LLM when enabled; otherwise builds a structured template explanation. Transport failures are swallowed in the UI.
+5. **Scores unchanged:** practice attempts, dashboard metrics, and readiness/performance/memory scores continue to update normally in all modes above.
 
 When the fallback is used, the response includes the exact note:
 
@@ -71,12 +100,12 @@ Template confidence scoring (unchanged):
 
 Before a generated candidate reaches the practice bank:
 
-| Gate | Rejects when |
-| --- | --- |
+| Gate          | Rejects when                                                      |
+| ------------- | ----------------------------------------------------------------- |
 | Hallucination | Answer not among choices, malformed item, or structurally invalid |
-| Unsupported | Grounding score (keyword overlap with source/gold) below `0.15` |
-| Duplicate | Jaccard similarity to an existing bank stem ≥ `0.85` |
-| Approved | Passes all three |
+| Unsupported   | Grounding score (keyword overlap with source/gold) below `0.15`   |
+| Duplicate     | Jaccard similarity to an existing bank stem ≥ `0.85`              |
+| Approved      | Passes all three                                                  |
 
 Rejected AI candidates are **not** persisted to `bl_question`. Outcomes are logged to `bl_generation_eval` with status, reason, model version, and confidence.
 
@@ -93,28 +122,52 @@ Failures never block the result panel; the plain text from `recordAttempt` remai
 
 ## Baseline comparison (eval harness)
 
-The eval harness compares two approaches on the static gold set:
+The eval harness compares retrieval baselines and the AI pipeline on the static gold set using **stem-only queries** (gold keywords withheld for a fair comparison):
 
 ### 1. Keyword retrieval baseline
 
-For each gold question, score every bundled source section by keyword overlap with the gold question's keyword list. Pick the best section.
+Token overlap between the question stem and bundled source section metadata.
 
-Metrics:
+### 2. BM25 baseline
 
-- **topic_match_rate** — retrieved section's catalog topic equals gold topic
-- **mean_keyword_recall** — matched keywords / gold keywords
+Okapi BM25 over tokenized source excerpts (no external index).
 
-### 2. Template generation
+### 3. TF-IDF vector baseline
 
-For each gold question's topic, run `generate_question_for_topic` with a fixed timestamp (`1700000000`).
+Cosine similarity between query and document TF-IDF vectors (reproducible stand-in for embedding retrieval).
 
-Metrics:
+### 4. AI retrieval
 
-- **acceptance_rate / rejection_rate** — share passing the 0.55 confidence gate
-- **topic_match_rate** — accepted draft topic equals gold topic
-- **mean_keyword_overlap** — gold keywords found in generated stem
+Catalog-aware scoring: BM25 + GRE topic labels + foundation exemplar overlap + query expansion.
 
-### 3. Rejection pipeline (deterministic negatives)
+### 5. AI generation pipeline
+
+AI retrieval → best approved template variant → four-rule eval gate.
+
+Metrics (all systems):
+
+- **accuracy** — correct topic prediction rate
+- **precision / recall / F1** — macro-averaged topic classification
+- **failure_rate** — queries with no confident prediction
+- **mean_keyword_recall** — grounding overlap with gold keywords
+
+The release gate additionally requires **held-out generation accuracy ≥ 95%** with **0% wrong-answer rate** when generating from the gold topic id only.
+
+**Latest run (2026-07-05, `results/gre-atlas-ai-eval.md`):**
+
+| System                 | Accuracy |    F1 |
+| ---------------------- | -------: | ----: |
+| baseline_keyword       |    42.0% | 0.494 |
+| baseline_bm25          |    60.0% | 0.625 |
+| baseline_vector_tfidf  |    52.0% | 0.600 |
+| ai_retrieval           |    62.0% | 0.635 |
+| ai_generation_pipeline |    62.0% | 0.635 |
+
+Release gate: **PASS** — 100% held-out accuracy (50/50), 0% wrong-answer rate, rejection pipeline exercised.
+
+Legacy oracle keyword baseline (keywords provided, reference only): topic match 100%, mean keyword recall 0.902.
+
+### 6. Rejection pipeline (deterministic negatives)
 
 Crafted negative drafts exercise each rejection rule (hallucination, duplicate, unsupported) plus grounded approvals. Reported in `rejection_pipeline` section of the eval JSON.
 
@@ -135,10 +188,11 @@ File: `rslib/src/gre_atlas/questions/gold_eval_set.json`
 
 ## Limitations
 
-- No chat UI, no RAG, no vector DB.
+- No chat UI. Production generation uses bundled source excerpts only — no external RAG or vector database.
+- Eval includes a TF-IDF **baseline** for comparison; it is not used in the live product path.
 - No automated factual verification against ETS PDFs — templates and prompts are hand-authored from public overview material.
 - Eval does not measure learner outcomes or post-generation item response theory.
-- iOS companion uses plain `recordAttempt` explanations today; structured `ExplainAnswer` is wired on the web practice page.
+- iOS companion calls structured `ExplainAnswer` after each practice attempt (same best-effort semantics as the web practice page).
 
 ## How to run
 
@@ -187,10 +241,10 @@ The eval does not read collection-specific data; `--collection` defaults to `:me
 
 ### Outputs
 
-| File | Contents |
-| --- | --- |
+| File                                                       | Contents                 |
+| ---------------------------------------------------------- | ------------------------ |
 | `docs/gre-atlas-submission/results/gre-atlas-ai-eval.json` | Machine-readable metrics |
-| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md` | Human-readable summary |
+| `docs/gre-atlas-submission/results/gre-atlas-ai-eval.md`   | Human-readable summary   |
 
 ### Unit tests
 
@@ -210,13 +264,14 @@ Relevant modules:
 
 ## Environment variables
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| _(none)_ | — | Default offline template generation and template explanations |
-| `GRE_ATLAS_OPENAI_API_KEY` | Optional | Enables real LLM generation and explanations |
-| `GRE_ATLAS_OPENAI_BASE_URL` | Optional | Override API base (default `https://api.openai.com/v1`) |
-| `GRE_ATLAS_OPENAI_MODEL` | Optional | Override model id (default `gpt-4o-mini`) |
-| `GRE_ATLAS_OPENAI_TIMEOUT_SECS` | Optional | Request timeout in seconds (default `20`) |
+| Variable                        | Required | Purpose                                                                             |
+| ------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| _(none)_                        | —        | Default offline template generation and template explanations                       |
+| `GRE_ATLAS_OPENAI_API_KEY`      | Optional | Enables real LLM generation and explanations                                        |
+| `GRE_ATLAS_OPENAI_BASE_URL`     | Optional | Override API base (default `https://api.openai.com/v1`)                             |
+| `GRE_ATLAS_OPENAI_MODEL`        | Optional | Override model id (default `gpt-4o-mini`)                                           |
+| `GRE_ATLAS_OPENAI_TIMEOUT_SECS` | Optional | Request timeout in seconds (default `20`)                                           |
+| `GRE_ATLAS_AI_DISABLED`         | Optional | Set to `1`/`true`/`yes`/`on` to force offline templates even when an API key is set |
 
 ## Schema
 

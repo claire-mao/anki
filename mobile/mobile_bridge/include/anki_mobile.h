@@ -68,6 +68,13 @@ int anki_mobile_gre_record_attempt_json(
     uint8_t **out_bytes,
     size_t *out_len);
 
+int anki_mobile_gre_explain_answer_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
 int anki_mobile_gre_practice_scores_json(
     AnkiMobileBackend *backend,
     uint8_t **out_bytes,

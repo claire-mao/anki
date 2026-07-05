@@ -23,7 +23,8 @@ use crate::sync::request::header_and_stream::SYNC_HEADER_NAME;
 const DOWNLOAD_PATH: &str = "gre/sync/download";
 const UPLOAD_PATH: &str = "gre/sync/upload";
 
-/// Shown when the configured sync server does not expose GRE Atlas sidecar routes.
+/// Shown when the configured sync server does not expose GRE Atlas sidecar
+/// routes.
 pub const GRE_ATLAS_SYNC_UNAVAILABLE_MSG: &str = "GRE Atlas practice sync requires a \
     self-hosted Anki sync server with GRE sync routes enabled. AnkiWeb does not support \
     this feature. Set a custom sync server in Anki preferences (Syncing), sign in, then \
@@ -85,12 +86,11 @@ impl GreAtlasSyncTransport {
         endpoint: Option<String>,
         client: Client,
     ) -> Result<Self> {
-        let endpoint = endpoint
-            .map(|e| Url::parse(&e))
-            .transpose()
-            .map_err(|e| crate::error::AnkiError::InvalidInput {
+        let endpoint = endpoint.map(|e| Url::parse(&e)).transpose().map_err(|e| {
+            crate::error::AnkiError::InvalidInput {
                 source: snafu::FromString::without_source(format!("invalid sync endpoint: {e}")),
-            })?;
+            }
+        })?;
         Ok(GreAtlasSyncTransport::new(
             SyncAuth {
                 hkey,
@@ -148,11 +148,12 @@ impl GreAtlasSyncTransport {
 
     /// POST with the standard sync envelope: `anki-sync` header + zstd body.
     async fn post_zstd(&self, path: &str, body: Vec<u8>) -> Result<reqwest::Response> {
-        let url = self.endpoint.join(path).map_err(|e| {
-            crate::error::AnkiError::InvalidInput {
+        let url = self
+            .endpoint
+            .join(path)
+            .map_err(|e| crate::error::AnkiError::InvalidInput {
                 source: snafu::FromString::without_source(e.to_string()),
-            }
-        })?;
+            })?;
         let header = SyncHeader {
             sync_version: crate::sync::version::SyncVersion::latest(),
             sync_key: self.sync_key.clone(),
@@ -160,11 +161,6 @@ impl GreAtlasSyncTransport {
             session_key: self.session_key.clone(),
         };
         let compressed = compress_sync_body(body)?;
-        println!(
-            "GRE sync compressed: {} bytes, first 8 = {:02x?}",
-            compressed.data.len(),
-            &compressed.data[..compressed.data.len().min(8)]
-        );
         debug!(
             url = %url,
             uncompressed_bytes = compressed.uncompressed_len,
@@ -209,8 +205,7 @@ fn transport_error(err: reqwest::Error) -> crate::error::AnkiError {
 
 fn simple_session_id() -> String {
     use rand::Rng;
-    let mut rng = rand::thread_rng();
-    format!("{:016x}", rng.gen::<u64>())
+    format!("{:016x}", rand::rng().random::<u64>())
 }
 
 pub fn bundle_to_proto(bundle: &SyncBundle) -> BrainLiftSyncBundle {
@@ -393,13 +388,14 @@ pub fn proto_to_bundle(proto: BrainLiftSyncBundle) -> SyncBundle {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use wiremock::matchers::header_exists;
     use wiremock::matchers::method;
     use wiremock::matchers::path;
     use wiremock::Mock;
     use wiremock::MockServer;
     use wiremock::ResponseTemplate;
+
+    use super::*;
 
     #[test]
     fn ankiweb_endpoint_does_not_support_gre_atlas_sync() {
@@ -446,9 +442,10 @@ mod test {
                     .map(|body| body == br#"{"after_usn":0}"#)
                     .unwrap_or(false)
             })
-            .respond_with(ResponseTemplate::new(200).set_body_json(GreAtlasDownloadResponse {
-                bundle: vec![],
-            }))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_json(GreAtlasDownloadResponse { bundle: vec![] }),
+            )
             .mount(&mock_server)
             .await;
 

@@ -209,6 +209,8 @@ Depending on your operating system, this produces a file under `out/installer/di
 
 The installer includes the standard Anki desktop app and embedded GRE web UI. After installing, open a collection — the app enters the **GRE main shell** at `/home` (header navigation: Dashboard, Study, Practice, Progress, Settings).
 
+**GRE Atlas clean-machine verification:** [gre-atlas-submission/INSTALL.md](./gre-atlas-submission/INSTALL.md)
+
 ### Issues During Building
 
 If you are experiencing issues building the installer, make sure that all dependencies

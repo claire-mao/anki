@@ -29,7 +29,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <slot />
         {:else if structuredValue}
             <div class="gre-ds-metric-value-stack">
-                <span class="gre-ds-metric-value-headline">{structuredValue.headline}</span>
+                <span class="gre-ds-metric-value-headline">
+                    {structuredValue.headline}
+                </span>
                 {#if structuredValue.details && structuredValue.details.length > 0}
                     {#if detailLayout === "chips"}
                         <ul

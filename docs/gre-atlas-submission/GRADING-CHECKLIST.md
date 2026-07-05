@@ -30,7 +30,7 @@ Legend: **Req ID** groups related deliverables from the product architecture, Sp
 | ☐ | B1     | TopicMastery in Rust (not Python hot path) | `cargo test topic_mastery` / `just test-rust`              | `rslib/src/stats/mastery.rs`                                                       |
 | ☐ | B2     | FSRS retrievability per GRE topic tag      | Progress page + `topic_mastery()` response                 | `StatsService.TopicMastery`, `(gre)/progress`                                      |
 | ☐ | B3     | Exam-weighted catalog coverage             | Coverage % matches GRE catalog weights                     | `rslib/src/gre_atlas/domain/coverage.rs`                                           |
-| ☐ | B4     | Memory abstention gates                    | Sparse profile → no memory score; requirements listed      | 20 cards, 50% coverage, FSRS — `rslib/src/gre_atlas/abstention.rs`                |
+| ☐ | B4     | Memory abstention gates                    | Sparse profile → no memory score; requirements listed      | 50 cards, 50% coverage, FSRS — `rslib/src/gre_atlas/abstention.rs`                 |
 | ☐ | B5     | Performance at scale (Speedrun)            | `just bench-gre-atlas` on large collection; p95 documented | `scripts/eval/gre_atlas_benchmark.py`, `docs/gre-atlas-topic-mastery-rust-note.md` |
 
 ---
@@ -99,14 +99,14 @@ Legend: **Req ID** groups related deliverables from the product architecture, Sp
 
 ## I. AI question generation (Speedrun extension)
 
-| ✓ | Req ID | Requirement                   | How to verify                                                             | Evidence                                            |
-| - | ------ | ----------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------- |
-| ☐ | I1     | Named source with attribution | Generated rows store `source_name`, `source_section`, `generated_at_secs` | `questions/source.rs`, schema v4, [AI.md](./AI.md)  |
-| ☐ | I2     | Question generation RPC       | `GenerateQuestion(topic_id, persist)` returns MCQ + confidence            | `proto/anki/brainlift.proto`, `questions/ai_gen.rs` |
-| ☐ | I3     | Low-confidence rejection      | Confidence &lt; 0.55 → rejected (no persist)                              | `MIN_GENERATION_CONFIDENCE` in `ai_gen.rs`          |
-| ☐ | I4     | 50-question gold eval set     | `"verified": true` entries in bundled JSON                                | `questions/gold_eval_set.json`                      |
-| ☐ | I5     | Baseline vs generation eval   | `just eval-gre-atlas-ai` → keyword baseline + template metrics            | `ai_eval.rs`, `results/gre-atlas-ai-eval.{json,md}` |
-| ☐ | I6     | No chat / RAG / vector DB     | Docs state template-based offline pipeline                                | [AI.md](./AI.md)                                    |
+| ✓ | Req ID | Requirement                   | How to verify                                                                                                                                                                               | Evidence                                                                       |
+| - | ------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| ☐ | I1     | Named source with attribution | Generated rows store `source_name`, `source_section`, `source_document`, `generated_at_secs`, `model_version`, `provenance`, `evaluation_status`; rejections logged to `bl_generation_eval` | `questions/source.rs`, schema v5, [AI.md § Named source](./AI.md#named-source) |
+| ☐ | I2     | Question generation RPC       | `GenerateQuestion(topic_id, persist)` returns MCQ + confidence + provenance note on fallback                                                                                                | `proto/anki/brainlift.proto`, `questions/generator.rs`                         |
+| ☐ | I3     | Low-confidence rejection      | Confidence &lt; 0.55 → rejected (no persist)                                                                                                                                                | `MIN_GENERATION_CONFIDENCE` in `ai_gen.rs`                                     |
+| ☐ | I4     | 50-question gold eval set     | `"verified": true` entries in bundled JSON                                                                                                                                                  | `questions/gold_eval_set.json`                                                 |
+| ☐ | I5     | Baseline vs generation eval   | `just eval-gre-atlas-ai` → keyword/BM25/TF-IDF baselines vs AI retrieval + generation pipeline; release gate ≥95% held-out accuracy                                                         | `ai_eval.rs`, `retrieval.rs`, `results/gre-atlas-ai-eval.{json,md}`            |
+| ☐ | I6     | No chat / RAG / vector DB     | Docs state template-based offline pipeline; `GRE_ATLAS_AI_DISABLED` forces templates                                                                                                        | [AI.md](./AI.md)                                                               |
 
 ---
 

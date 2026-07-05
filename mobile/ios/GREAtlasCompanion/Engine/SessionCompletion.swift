@@ -53,7 +53,7 @@ enum SessionCompletionBuilder {
 
         var nextActionLabel = "Practice again"
         var nextActionTab: GreNavTab? = .practice
-        var nextActionTopicId: String? = nil
+        let nextActionTopicId: String? = nil
         var nextActionDetail = "Run another short set while this material is fresh."
 
         if let weakest {

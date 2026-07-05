@@ -70,6 +70,11 @@ actor GreBridgeLoader {
         return try client.recordPracticeAttempt(input)
     }
 
+    func explainAnswer(_ input: GreExplainAnswerInput) throws -> GreAnswerExplanationView {
+        try ensureReady()
+        return try client.explainAnswer(input)
+    }
+
     func loadPracticeScoreStrip() throws -> GrePracticeScoreStripView {
         try ensureReady()
         return try client.loadPracticeScoreStrip()
@@ -220,6 +225,12 @@ final class AnkiMobileEngine: ObservableObject {
                 responseTimeMs: responseTimeMs,
                 sessionId: sessionId
             )
+        )
+    }
+
+    func explainAnswer(questionId: String, selectedAnswer: String) async throws -> GreAnswerExplanationView {
+        try await loader.explainAnswer(
+            GreExplainAnswerInput(questionId: questionId, selectedAnswer: selectedAnswer)
         )
     }
 

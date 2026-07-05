@@ -68,6 +68,132 @@ struct GreMetricCard: View {
     }
 }
 
+struct GreAbstentionChecklist: View {
+    let requirements: [GreAbstentionRequirementView]
+    var showProgress = false
+
+    private var visibleRequirements: [GreAbstentionRequirementView] {
+        showProgress ? requirements : requirements.filter { !$0.met }
+    }
+
+    var body: some View {
+        if !visibleRequirements.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(visibleRequirements, id: \.id) { requirement in
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(requirement.met ? "✓" : "○")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(requirement.met ? .green : .secondary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(requirement.label)
+                                .font(.caption.weight(.semibold))
+                            if !showProgress, !requirement.status.isEmpty {
+                                Text(requirement.status)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Unlock requirements")
+        }
+    }
+}
+
+struct GreScoreBriefCard: View {
+    let icon: String
+    let title: String
+    let value: Double?
+    let low: Double?
+    let high: Double?
+    let sufficient: Bool
+    let evidence: String
+    let abstainReason: String
+    let requirements: [GreAbstentionRequirementView]
+
+    private var hero: String {
+        ScoreFormat.scoreHero(
+            value: value,
+            sufficient: sufficient,
+            abstainReason: abstainReason
+        )
+    }
+
+    private var rangeText: String? {
+        guard sufficient else { return nil }
+        return ScoreFormat.formatRange(low: low, high: high)
+    }
+
+    private var evidenceText: String {
+        if !evidence.isEmpty {
+            return evidence
+        }
+        if !abstainReason.isEmpty {
+            return abstainReason
+        }
+        return "Complete unlock milestones to build evidence."
+    }
+
+    private var giveUpRuleText: String? {
+        if sufficient {
+            return requirements.allSatisfy(\.met) ? "All evidence gates passed." : nil
+        }
+        return abstainReason.isEmpty ? nil : abstainReason
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label(title, systemImage: icon)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Text(hero)
+                .font(.title2.weight(.bold))
+                .contentTransition(.numericText())
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let rangeText {
+                Text(rangeText)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Uncertainty range \(rangeText)")
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Evidence")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Text(evidenceText)
+                    .font(.footnote)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Give-up rule")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                if let giveUpRuleText {
+                    Text(giveUpRuleText)
+                        .font(.footnote)
+                        .foregroundStyle(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                GreAbstentionChecklist(
+                    requirements: requirements,
+                    showProgress: sufficient
+                )
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(GreTheme.cardPadding)
+        .background(GreTheme.cardBackground())
+        .accessibilityElement(children: .contain)
+    }
+}
+
 struct GreLoadingShell: View {
     let label: String
 
@@ -346,19 +472,12 @@ private let practiceFilterColumns = [
     GridItem(.flexible(), spacing: 8),
 ]
 
-/// Dashboard focused on four questions: predicted score, reliability, what to
-/// study today, and whether the student is improving. Everything else is behind
-/// an info sheet, expandable sections, and a details panel.
+/// Dashboard shows three honest scores (Memory, Performance, Readiness), today's
+/// study plan with recommendations, and secondary metrics behind disclosure.
 struct DashboardView: View {
     @EnvironmentObject private var engine: AnkiMobileEngine
     @EnvironmentObject private var tabRouter: GreTabRouter
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @State private var showReliabilityInfo = false
     @State private var showStudyPlan = false
-
-    private var predictionScoreSize: CGFloat {
-        dynamicTypeSize.isAccessibilitySize ? 32 : 36
-    }
 
     var body: some View {
         NavigationStack {
@@ -373,14 +492,14 @@ struct DashboardView: View {
                     if let view = engine.dashboard {
                         VStack(alignment: .leading, spacing: GreTheme.sectionSpacing) {
                             studyTodayCard(view)
-                            predictionCard(view)
+                            scoresCard(view)
                             DisclosureGroup {
                                 improvingCard(view)
                             } label: {
                                 Label("Am I improving?", systemImage: "chart.line.uptrend.xyaxis")
                                     .font(.headline)
                             }
-                            evidenceDetails(view)
+                            secondaryMetrics(view)
                         }
                     }
                 }
@@ -400,9 +519,6 @@ struct DashboardView: View {
                     showStudyPlan = true
                     tabRouter.openStudyPlanOnDashboard = false
                 }
-            }
-            .sheet(isPresented: $showReliabilityInfo) {
-                reliabilityInfoSheet(engine.dashboard)
             }
             .sheet(isPresented: $showStudyPlan) {
                 if let view = engine.dashboard {
@@ -433,121 +549,93 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: Q1 + Q2 — predicted score and how reliable it is
+    // MARK: Three scores — Memory, Performance, Readiness
 
     @ViewBuilder
-    private func predictionCard(_ view: GreDashboardView) -> some View {
+    private func scoresCard(_ view: GreDashboardView) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                estimatedGreMetric(view)
-                Divider()
-                readinessMetric(view)
-            }
+            Text("Your scores")
+                .font(.headline)
 
-            HStack(alignment: .center) {
-                Spacer(minLength: 8)
-                Button {
-                    showReliabilityInfo = true
-                } label: {
-                    Label("How reliable is this?", systemImage: "info.circle")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-                .greMinTapTarget()
-                .accessibilityLabel("How this estimate and its reliability are calculated")
-            }
+            GreScoreBriefCard(
+                icon: "brain.head.profile",
+                title: "Memory",
+                value: view.memoryValue,
+                low: view.memoryLow,
+                high: view.memoryHigh,
+                sufficient: view.memorySufficient,
+                evidence: view.memoryDetail,
+                abstainReason: view.memoryAbstainReason,
+                requirements: view.memoryAbstentionRequirements
+            )
+
+            GreScoreBriefCard(
+                icon: "target",
+                title: "Performance",
+                value: view.performanceValue,
+                low: view.performanceLow,
+                high: view.performanceHigh,
+                sufficient: view.performanceSufficient,
+                evidence: view.performanceDetail,
+                abstainReason: view.performanceAbstainReason,
+                requirements: view.performanceAbstentionRequirements
+            )
+
+            GreScoreBriefCard(
+                icon: "flag.checkered",
+                title: "Readiness",
+                value: view.readinessProjected,
+                low: view.readinessLow,
+                high: view.readinessHigh,
+                sufficient: view.readinessSufficient,
+                evidence: view.readinessEvidenceSummary,
+                abstainReason: view.readinessAbstainReason,
+                requirements: view.readinessAbstentionRequirements
+            )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(GreTheme.cardPadding)
-        .background(GreTheme.cardBackground())
     }
+
+    // MARK: Estimated GRE and deck metrics (secondary)
 
     @ViewBuilder
-    private func estimatedGreMetric(_ view: GreDashboardView) -> some View {
-        let available = estimatedGreAvailable(view)
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Estimated GRE", systemImage: "number")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(predictedScore(view))
-                    .font(.system(size: predictionScoreSize, weight: .bold, design: .rounded))
-                    .contentTransition(.numericText())
-                if available && view.estimatedGrePreliminary {
-                    Text("Preliminary")
-                        .font(.caption2.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(Color.secondary.opacity(0.15)))
-                        .foregroundStyle(.secondary)
-                }
+    private func secondaryMetrics(_ view: GreDashboardView) -> some View {
+        DisclosureGroup {
+            VStack(spacing: 12) {
+                GreMetricCard(
+                    icon: "number",
+                    title: "Estimated GRE",
+                    value: ScoreFormat.estimatedGreSummary(
+                        combined: view.estimatedGreCombined,
+                        low: view.estimatedGreLow,
+                        high: view.estimatedGreHigh,
+                        preliminary: view.estimatedGrePreliminary,
+                        fallback: view.readinessAbstainReason.isEmpty
+                            ? "Not enough evidence for a GRE score yet."
+                            : view.readinessAbstainReason
+                    ),
+                    detail: ScoreFormat.formatGreScoreRange(
+                        low: view.estimatedGreLow,
+                        high: view.estimatedGreHigh
+                    )
+                )
+                GreCoveragePanel(coverage: view.coverage)
+                GreMetricCard(
+                    icon: view.deckExists ? "rectangle.stack" : "rectangle.stack.badge.plus",
+                    title: view.deckExists ? view.deckName : "Study deck",
+                    value: view.deckExists
+                        ? "\(view.dueTotal) due · \(view.dueNew) new · \(view.dueLearn) learning · \(view.dueReview) review"
+                        : "Deck not found",
+                    detail: view.deckExists
+                        ? nil
+                        : "Built-in flashcards load when you open Study."
+                )
             }
-            if available,
-               let range = ScoreFormat.formatGreScoreRange(low: view.estimatedGreLow, high: view.estimatedGreHigh) {
-                Text(range)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            Text(
-                available
-                    ? "Your projected GRE score (260–340)."
-                    : (view.readinessSummary.isEmpty ? "Not enough evidence for a GRE score yet." : view.readinessSummary)
-            )
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            .padding(.top, 12)
+        } label: {
+            Label("More metrics", systemImage: "chart.bar.doc.horizontal")
+                .font(.headline)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    @ViewBuilder
-    private func readinessMetric(_ view: GreDashboardView) -> some View {
-        let unlocked = view.coverage.readinessAvailable && view.readinessSufficient
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Readiness", systemImage: "flag.checkered")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(
-                unlocked
-                    ? ScoreFormat.formatPercent(view.readinessProjected ?? 0)
-                    : (view.readinessSummary.isEmpty ? "Not enough evidence yet" : view.readinessSummary)
-            )
-            .font(.system(size: predictionScoreSize, weight: .bold, design: .rounded))
-            .contentTransition(.numericText())
-            if unlocked, let range = ScoreFormat.formatRange(low: view.readinessLow, high: view.readinessHigh) {
-                Text(range)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            Text("How much your study evidence supports that score.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func estimatedGreAvailable(_ view: GreDashboardView) -> Bool {
-        view.coverage.readinessAvailable
-            && view.readinessSufficient
-            && view.estimatedGreCombined != nil
-    }
-
-    private func predictedScore(_ view: GreDashboardView) -> String {
-        guard estimatedGreAvailable(view), let combined = view.estimatedGreCombined else { return "—" }
-        return ScoreFormat.formatGreScore(combined)
-    }
-
-    private func reliabilitySummary(_ view: GreDashboardView) -> String {
-        guard view.readinessSufficient, let projected = view.readinessProjected else {
-            return "Not enough evidence yet"
-        }
-        let base = ScoreFormat.formatPercent(projected)
-        if !view.readinessConfidenceLevel.isEmpty {
-            return "\(base) · \(view.readinessConfidenceLevel.capitalized) confidence"
-        }
-        return base
     }
 
     // MARK: Today's study plan
@@ -666,141 +754,6 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(GreTheme.cardPadding)
         .background(GreTheme.cardBackground())
-    }
-
-    // MARK: Progressive disclosure — full evidence and metrics
-
-    @ViewBuilder
-    private func evidenceDetails(_ view: GreDashboardView) -> some View {
-        DisclosureGroup {
-            VStack(spacing: 12) {
-                GreMetricCard(
-                    icon: "brain.head.profile",
-                    title: "Memory",
-                    value: ScoreFormat.scoreSummary(
-                        value: view.memoryValue,
-                        low: view.memoryLow,
-                        high: view.memoryHigh,
-                        sufficient: view.memorySufficient,
-                        abstainReason: view.memoryDetail
-                    ),
-                    detail: "\(view.memoryStudiedCards) studied cards"
-                )
-                GreMetricCard(
-                    icon: "target",
-                    title: "Performance",
-                    value: ScoreFormat.scoreSummary(
-                        value: view.performanceValue,
-                        low: view.performanceLow,
-                        high: view.performanceHigh,
-                        sufficient: view.performanceSufficient,
-                        abstainReason: view.performanceDetail
-                    ),
-                    detail: "\(view.performanceAttemptCount) attempts"
-                )
-                GreCoveragePanel(coverage: view.coverage)
-                GreMetricCard(
-                    icon: view.deckExists ? "rectangle.stack" : "rectangle.stack.badge.plus",
-                    title: view.deckExists ? view.deckName : "Study deck",
-                    value: view.deckExists
-                        ? "\(view.dueTotal) due · \(view.dueNew) new · \(view.dueLearn) learning · \(view.dueReview) review"
-                        : "Deck not found",
-                    detail: view.deckExists
-                        ? nil
-                        : "Built-in flashcards load when you open Study."
-                )
-            }
-            .padding(.top, 12)
-        } label: {
-            Label("Evidence & metrics", systemImage: "chart.bar.doc.horizontal")
-                .font(.headline)
-        }
-    }
-
-    // MARK: ⓘ reliability detail sheet
-
-    @ViewBuilder
-    private func reliabilityInfoSheet(_ view: GreDashboardView?) -> some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Your Estimated GRE combines three signals from your own study data. Reliability reflects how much evidence supports it.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    if let view {
-                        infoRow(
-                            title: "Reliability",
-                            value: reliabilitySummary(view),
-                            detail: view.readinessSummary.isEmpty ? nil : view.readinessSummary
-                        )
-                        if !view.coverage.readinessAvailable && !view.coverage.readinessReason.isEmpty {
-                            infoRow(title: "Why it's limited", value: view.coverage.readinessReason, detail: nil)
-                        }
-                        infoRow(
-                            title: "Memory",
-                            value: ScoreFormat.scoreSummary(
-                                value: view.memoryValue,
-                                low: view.memoryLow,
-                                high: view.memoryHigh,
-                                sufficient: view.memorySufficient,
-                                abstainReason: view.memoryDetail
-                            ),
-                            detail: "\(view.memoryStudiedCards) studied cards"
-                        )
-                        infoRow(
-                            title: "Performance",
-                            value: ScoreFormat.scoreSummary(
-                                value: view.performanceValue,
-                                low: view.performanceLow,
-                                high: view.performanceHigh,
-                                sufficient: view.performanceSufficient,
-                                abstainReason: view.performanceDetail
-                            ),
-                            detail: "\(view.performanceAttemptCount) attempts"
-                        )
-                        infoRow(
-                            title: "Coverage",
-                            value: ScoreFormat.formatRatio(view.coverage.weightedRatio),
-                            detail: "\(view.coverage.coveredLeafCount)/\(view.coverage.catalogLeafCount) topics"
-                        )
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(GreTheme.pagePadding)
-            }
-            .greScrollContentMargins()
-            .navigationTitle("How reliable is this?")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { showReliabilityInfo = false }
-                }
-            }
-        }
-        .presentationDetents([.medium, .large])
-    }
-
-    private func infoRow(title: String, value: String, detail: String?) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-                .fixedSize(horizontal: false, vertical: true)
-            if let detail, !detail.isEmpty {
-                Text(detail)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(GreTheme.cardBackground())
-        .accessibilityElement(children: .combine)
     }
 }
 
@@ -1193,26 +1146,7 @@ struct PracticeView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             if let result = session.attemptResult {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(
-                        "\(result.correct ? "✓ Correct" : "✗ Incorrect") · \(ScoreFormat.formatResponseTimeMs(session.responseTimeMs))"
-                    )
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(result.correct ? .green : .red)
-
-                    Text(result.explanation)
-                        .font(.body)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text("\(question.section) · \(question.format) · \(result.topic)")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-                .padding(GreTheme.cardPadding)
-                .background(
-                    RoundedRectangle(cornerRadius: GreTheme.cardRadius, style: .continuous)
-                        .fill(result.correct ? Color.green.opacity(0.08) : Color.red.opacity(0.08))
-                )
+                practiceResultPanel(question: question, result: result)
 
                 Button(session.questionIndex + 1 >= session.queue.count ? "Finish session" : "Next question") {
                     session.nextQuestion()
@@ -1259,6 +1193,106 @@ struct PracticeView: View {
         }
         .padding(GreTheme.cardPadding)
         .background(GreTheme.cardBackground())
+    }
+
+    @ViewBuilder
+    private func practiceResultPanel(
+        question: GreQuestionView,
+        result: GreRecordAttemptResultView
+    ) -> some View {
+        let explanation = session.structuredExplanation
+        let choiceRows = explanation.map { PracticePresentation.orderExplanationChoices($0.choices) } ?? []
+        let citation = explanation.flatMap {
+            PracticePresentation.formatExplanationCitation(
+                sourceName: $0.citationSourceName,
+                sourceSection: $0.citationSourceSection
+            )
+        }
+        let provenanceNote = explanation.flatMap {
+            PracticePresentation.resolveExplanationProvenanceNote(
+                provenance: $0.provenance,
+                provenanceNote: $0.provenanceNote
+            )
+        }
+        let correctChoice: String? = {
+            guard !result.correct else { return nil }
+            guard let answer = explanation?.correctAnswer.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !answer.isEmpty else { return nil }
+            return answer
+        }()
+
+        VStack(alignment: .leading, spacing: 8) {
+            Text(
+                "\(result.correct ? "✓ Correct" : "✗ Incorrect") · \(ScoreFormat.formatResponseTimeMs(session.responseTimeMs))"
+            )
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(result.correct ? .green : .red)
+
+            if let correctChoice {
+                Text("Correct answer: \(correctChoice)")
+                    .font(.subheadline.weight(.semibold))
+            }
+
+            if let explanation {
+                Text(explanation.summary)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if !choiceRows.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(choiceRows, id: \.choice) { row in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                    Text(row.choice)
+                                        .font(.subheadline.weight(.semibold))
+                                    if row.isCorrect {
+                                        Text("Correct")
+                                            .font(.caption2.weight(.semibold))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(
+                                                Capsule(style: .continuous)
+                                                    .fill(Color.green.opacity(0.15))
+                                            )
+                                    }
+                                }
+                                Text(row.reasoning)
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                    }
+                }
+
+                if let citation {
+                    Text("Source: \(citation)")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                if let provenanceNote {
+                    Text(provenanceNote)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } else {
+                Text(result.explanation)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Text("\(question.section) · \(question.format) · \(result.topic)")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(GreTheme.cardPadding)
+        .background(
+            RoundedRectangle(cornerRadius: GreTheme.cardRadius, style: .continuous)
+                .fill(result.correct ? Color.green.opacity(0.08) : Color.red.opacity(0.08))
+        )
     }
 }
 

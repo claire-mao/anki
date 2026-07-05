@@ -53,7 +53,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         <p>
             As you review GRE flashcards, GRE Atlas uses the FSRS spaced-repetition
             model to estimate how likely you are to recall each card at test time.
-            Averaged across your deck, that's your <strong>Memory</strong> signal.
+            Averaged across your deck, that's your <strong>Memory</strong>
+             signal.
         </p>
     </details>
 
@@ -64,8 +65,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </summary>
         <p>
             Every GRE-style practice question you answer is recorded.
-            <strong>Performance</strong> is your accuracy on those questions, with a
-            confidence interval that tightens as you answer more.
+            <strong>Performance</strong>
+             is your accuracy on those questions, with a confidence interval that tightens
+            as you answer more.
         </p>
     </details>
 
@@ -75,9 +77,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             Readiness
         </summary>
         <p>
-            <strong>Readiness</strong> combines Memory, Performance, and topic coverage
-            into a projected GRE score, continuously checked against your earlier
-            predictions (calibration).
+            <strong>Readiness</strong>
+             combines Memory, Performance, and topic coverage into a projected GRE score,
+            continuously checked against your earlier predictions (calibration).
         </p>
     </details>
 
@@ -98,9 +100,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             When no estimate is shown
         </summary>
         <p>
-            Without enough evidence, GRE Atlas <strong>abstains</strong> and shows a
-            locked state instead of a number. The estimate stays hidden until you've
-            collected:
+            Without enough evidence, GRE Atlas <strong>abstains</strong>
+             and shows a locked state instead of a number. The estimate stays hidden until
+            you've collected:
         </p>
         <ul class="methodology-thresholds">
             <li>at least {MIN_STUDIED_CARDS} reviewed flashcards,</li>

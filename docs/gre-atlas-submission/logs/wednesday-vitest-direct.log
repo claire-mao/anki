@@ -1,0 +1,30 @@
+
+ RUN  v3.2.4 /Users/clairemao/anki/ts
+
+ ✓ routes/(gre)/practice/practice-session.test.ts (4 tests) 4ms
+ ✓ routes/(gre)/practice/practice-presentation.test.ts (14 tests) 4ms
+ ✓ routes/(gre)/indicator-utils.test.ts (3 tests) 3ms
+ ✓ routes/(gre)/evidence-presentation.test.ts (3 tests) 3ms
+ ✓ html-filter/index.test.ts (9 tests) 15ms
+ ✓ reviewer/lib.test.ts (5 tests) 5ms
+ ✓ routes/(gre)/review/study-launch.test.ts (4 tests) 4ms
+ ✓ lib/domlib/surround/unsurround.test.ts (4 tests) 41ms
+ ✓ lib/domlib/surround/surround.test.ts (17 tests) 56ms
+ ✓ routes/(gre)/motion.test.ts (1 test) 2ms
+ ✓ routes/(gre)/calibration-presentation.test.ts (5 tests) 4ms
+ ✓ routes/(gre)/summary-metrics.test.ts (4 tests) 6ms
+ ✓ routes/(gre)/progress/charts.test.ts (5 tests) 11ms
+ ✓ routes/deck-options/steps.test.ts (4 tests) 3ms
+ ✓ lib/tslib/time.test.ts (2 tests) 2ms
+ ✓ routes/(gre)/session-completion.test.ts (4 tests) 3ms
+ ✓ routes/(gre)/daily-mission.test.ts (8 tests) 9ms
+ ✓ routes/(gre)/recommendation-presentation.test.ts (5 tests) 6ms
+ ✓ routes/deck-options/lib.test.ts (5 tests) 30ms
+ ✓ routes/(gre)/coverage-presentation.test.ts (1 test) 1ms
+ ✓ routes/change-notetype/lib.test.ts (4 tests) 5ms
+
+ Test Files  21 passed (21)
+      Tests  111 passed (111)
+   Start at  14:22:03
+   Duration  1.99s (transform 2.21s, setup 0ms, collect 9.50s, tests 219ms, environment 1.13s, prepare 1.58s)
+

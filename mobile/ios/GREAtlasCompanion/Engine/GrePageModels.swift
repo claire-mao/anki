@@ -66,6 +66,14 @@ struct GreTopicMasteryView: Codable, Equatable {
     let avgRetrievability: Double
 }
 
+struct GreAbstentionRequirementView: Codable, Equatable {
+    let id: String
+    let label: String
+    let status: String
+    let nextStep: String
+    let met: Bool
+}
+
 struct GreDashboardView: Codable, Equatable {
     let computedAtMillis: Int64
     let readinessProjected: Double?
@@ -73,18 +81,25 @@ struct GreDashboardView: Codable, Equatable {
     let readinessHigh: Double?
     let readinessSufficient: Bool
     let readinessSummary: String
+    let readinessEvidenceSummary: String
+    let readinessAbstainReason: String
+    let readinessAbstentionRequirements: [GreAbstentionRequirementView]
     let readinessConfidenceLevel: String
     let memoryValue: Double?
     let memoryLow: Double?
     let memoryHigh: Double?
     let memorySufficient: Bool
     let memoryDetail: String
+    let memoryAbstainReason: String
+    let memoryAbstentionRequirements: [GreAbstentionRequirementView]
     let memoryStudiedCards: UInt
     let performanceValue: Double?
     let performanceLow: Double?
     let performanceHigh: Double?
     let performanceSufficient: Bool
     let performanceDetail: String
+    let performanceAbstainReason: String
+    let performanceAbstentionRequirements: [GreAbstentionRequirementView]
     let performanceAttemptCount: UInt
     let estimatedGreCombined: UInt?
     let estimatedGreLow: UInt?
@@ -181,6 +196,29 @@ struct GreRecordAttemptResultView: Codable, Equatable {
     let correct: Bool
     let explanation: String
     let topic: String
+}
+
+struct GreExplainAnswerInput: Codable, Equatable {
+    let questionId: String
+    let selectedAnswer: String
+}
+
+struct GreAnswerChoiceExplanationView: Codable, Equatable {
+    let choice: String
+    let isCorrect: Bool
+    let reasoning: String
+}
+
+struct GreAnswerExplanationView: Codable, Equatable {
+    let summary: String
+    let choices: [GreAnswerChoiceExplanationView]
+    let correctAnswer: String
+    let citationSourceName: String
+    let citationSourceSection: String
+    let citationExcerpt: String
+    let provenance: String
+    let provenanceNote: String
+    let modelVersion: String
 }
 
 struct GrePracticeBootstrapView: Codable, Equatable {

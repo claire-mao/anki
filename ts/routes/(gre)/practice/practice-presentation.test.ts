@@ -37,9 +37,9 @@ describe("practice presentation", () => {
         ).toBe("What is 15% of 60?");
         expect(
             displayQuestionStem(
-                '(Analytical Writing — Analyze an Argument): Argument: "Downloads rose." What is the flaw?',
+                "(Analytical Writing — Analyze an Argument): Argument: \"Downloads rose.\" What is the flaw?",
             ),
-        ).toBe('Argument: "Downloads rose." What is the flaw?');
+        ).toBe("Argument: \"Downloads rose.\" What is the flaw?");
         expect(displayQuestionStem("What is 15% of 60?")).toBe("What is 15% of 60?");
     });
 

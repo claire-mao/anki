@@ -2,11 +2,15 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 use anki::backend::Backend;
+use anki_proto::brainlift::AbstentionRequirement;
+use anki_proto::brainlift::AnswerExplanation;
 use anki_proto::brainlift::CreateSessionRequest;
 use anki_proto::brainlift::CreateSessionResponse;
 use anki_proto::brainlift::DashboardCoverage;
 use anki_proto::brainlift::DashboardState;
 use anki_proto::brainlift::DashboardTopicInsight;
+use anki_proto::brainlift::ExplainAnswerRequest;
+use anki_proto::brainlift::ExplainAnswerResponse;
 use anki_proto::brainlift::GetDashboardRequest;
 use anki_proto::brainlift::GetScoresResponse;
 use anki_proto::brainlift::GetStudyPlanRequest;
@@ -93,6 +97,16 @@ pub struct GreAttemptView {
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
+pub struct GreAbstentionRequirementView {
+    pub id: String,
+    pub label: String,
+    pub status: String,
+    pub next_step: String,
+    pub met: bool,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct GreDailyTaskView {
     pub id: String,
     pub title: String,
@@ -130,18 +144,25 @@ pub struct GreDashboardView {
     pub readiness_high: Option<f32>,
     pub readiness_sufficient: bool,
     pub readiness_summary: String,
+    pub readiness_evidence_summary: String,
+    pub readiness_abstain_reason: String,
+    pub readiness_abstention_requirements: Vec<GreAbstentionRequirementView>,
     pub readiness_confidence_level: String,
     pub memory_value: Option<f32>,
     pub memory_low: Option<f32>,
     pub memory_high: Option<f32>,
     pub memory_sufficient: bool,
     pub memory_detail: String,
+    pub memory_abstain_reason: String,
+    pub memory_abstention_requirements: Vec<GreAbstentionRequirementView>,
     pub memory_studied_cards: u32,
     pub performance_value: Option<f32>,
     pub performance_low: Option<f32>,
     pub performance_high: Option<f32>,
     pub performance_sufficient: bool,
     pub performance_detail: String,
+    pub performance_abstain_reason: String,
+    pub performance_abstention_requirements: Vec<GreAbstentionRequirementView>,
     pub performance_attempt_count: u32,
     pub estimated_gre_combined: Option<u32>,
     pub estimated_gre_low: Option<u32>,
@@ -248,6 +269,35 @@ pub struct GreRecordAttemptResultView {
     pub correct: bool,
     pub explanation: String,
     pub topic: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GreExplainAnswerInput {
+    pub question_id: String,
+    pub selected_answer: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreAnswerChoiceExplanationView {
+    pub choice: String,
+    pub is_correct: bool,
+    pub reasoning: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreAnswerExplanationView {
+    pub summary: String,
+    pub choices: Vec<GreAnswerChoiceExplanationView>,
+    pub correct_answer: String,
+    pub citation_source_name: String,
+    pub citation_source_section: String,
+    pub citation_excerpt: String,
+    pub provenance: String,
+    pub provenance_note: String,
+    pub model_version: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -381,6 +431,26 @@ pub fn record_practice_attempt(
         explanation: response.explanation,
         topic: response.topic,
     })
+}
+
+pub fn explain_practice_answer(
+    backend: &Backend,
+    input: GreExplainAnswerInput,
+) -> Result<GreAnswerExplanationView, Vec<u8>> {
+    let response = invoke_proto::<ExplainAnswerResponse>(
+        backend,
+        GRE_ATLAS_SERVICE,
+        "explain_answer",
+        &ExplainAnswerRequest {
+            question_id: input.question_id,
+            selected_answer: input.selected_answer,
+        }
+        .encode_to_vec(),
+    )?;
+    let explanation = response
+        .explanation
+        .ok_or_else(|| b"missing explanation".to_vec())?;
+    Ok(answer_explanation_view(explanation))
 }
 
 pub fn load_practice_score_strip(backend: &Backend) -> Result<GrePracticeScoreStripView, Vec<u8>> {
@@ -540,12 +610,53 @@ fn question_view(question: Question) -> GreQuestionView {
     }
 }
 
+fn answer_explanation_view(explanation: AnswerExplanation) -> GreAnswerExplanationView {
+    GreAnswerExplanationView {
+        summary: explanation.summary,
+        choices: explanation
+            .choices
+            .into_iter()
+            .map(|choice| GreAnswerChoiceExplanationView {
+                choice: choice.choice,
+                is_correct: choice.is_correct,
+                reasoning: choice.reasoning,
+            })
+            .collect(),
+        correct_answer: explanation.correct_answer,
+        citation_source_name: explanation.citation_source_name,
+        citation_source_section: explanation.citation_source_section,
+        citation_excerpt: explanation.citation_excerpt,
+        provenance: explanation.provenance,
+        provenance_note: explanation.provenance_note,
+        model_version: explanation.model_version,
+    }
+}
+
 fn topic_mastery_view(entry: TopicMasteryEntry) -> GreTopicMasteryView {
     GreTopicMasteryView {
         topic_id: entry.topic_id,
         display_name: entry.display_name,
         avg_retrievability: entry.avg_retrievability,
     }
+}
+
+fn abstention_requirement_view(req: AbstentionRequirement) -> GreAbstentionRequirementView {
+    GreAbstentionRequirementView {
+        id: req.id,
+        label: req.label,
+        status: req.status,
+        next_step: req.next_step,
+        met: req.met,
+    }
+}
+
+fn abstention_requirements_view(
+    requirements: Vec<AbstentionRequirement>,
+) -> Vec<GreAbstentionRequirementView> {
+    requirements
+        .into_iter()
+        .map(abstention_requirement_view)
+        .collect()
 }
 
 fn rolling_accuracy_series(attempts: &[PerformanceAttempt], window_size: usize) -> Vec<f32> {
@@ -682,22 +793,35 @@ impl GreDashboardView {
             readiness_high: readiness.projected_score_high,
             readiness_sufficient: readiness.sufficient_data,
             readiness_summary: if readiness.sufficient_data {
-                readiness.evidence_summary
+                readiness.evidence_summary.clone()
             } else {
-                readiness.abstain_reason
+                readiness.abstain_reason.clone()
             },
+            readiness_evidence_summary: readiness.evidence_summary,
+            readiness_abstain_reason: readiness.abstain_reason,
+            readiness_abstention_requirements: abstention_requirements_view(
+                readiness.abstention_requirements,
+            ),
             readiness_confidence_level: readiness.confidence_level,
             memory_value: memory.value,
             memory_low: memory.value_low,
             memory_high: memory.value_high,
             memory_sufficient: memory.sufficient_data,
             memory_detail: memory.detail,
+            memory_abstain_reason: memory.abstain_reason,
+            memory_abstention_requirements: abstention_requirements_view(
+                memory.abstention_requirements,
+            ),
             memory_studied_cards: memory.studied_cards,
             performance_value: performance.value,
             performance_low: performance.value_low,
             performance_high: performance.value_high,
             performance_sufficient: performance.sufficient_data,
             performance_detail: performance.detail,
+            performance_abstain_reason: performance.abstain_reason,
+            performance_abstention_requirements: abstention_requirements_view(
+                performance.abstention_requirements,
+            ),
             performance_attempt_count: performance.attempt_count,
             estimated_gre_combined: estimated.combined_score,
             estimated_gre_low: estimated.combined_score_low,
@@ -889,7 +1013,11 @@ pub fn normalize_progress(mut view: GreProgressView) -> GreProgressView {
 
 #[cfg(test)]
 mod test {
+    use anki::backend::Backend;
+    use anki::prelude::I18n;
+
     use super::*;
+    use crate::demo_pages;
 
     #[test]
     fn rolling_accuracy_matches_recent_window() {
@@ -909,5 +1037,44 @@ mod test {
         assert_eq!(series.len(), 2);
         assert!((series[0] - 0.0).abs() < f32::EPSILON);
         assert!((series[1] - 50.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn dashboard_view_exposes_score_abstention_fields() {
+        let backend = Backend::new(I18n::template_only(), false);
+        let dir = std::env::temp_dir().join(format!(
+            "anki-mobile-dashboard-fields-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let _ = std::fs::create_dir_all(&dir);
+        let collection = dir.join("collection.anki2");
+        open_collection(
+            &backend,
+            &collection.to_string_lossy(),
+            &collection.with_extension("media").to_string_lossy(),
+            &collection.with_extension("mdb").to_string_lossy(),
+        )
+        .expect("open collection");
+        demo_pages::prepare_demo_collection(&backend).expect("seed demo");
+        let view = load_dashboard_page(&backend).expect("dashboard page");
+
+        assert!(!view.memory_abstention_requirements.is_empty());
+        assert!(!view.performance_abstention_requirements.is_empty());
+        assert!(!view.readiness_abstention_requirements.is_empty());
+        assert!(
+            !view.readiness_evidence_summary.is_empty()
+                || !view.readiness_abstain_reason.is_empty()
+        );
+        assert!(!view.daily_plan_tasks.is_empty() || !view.recommended_topics.is_empty());
+
+        let json = serde_json::to_string(&view).expect("serialize dashboard");
+        assert!(json.contains("memoryAbstentionRequirements"));
+        assert!(json.contains("readinessEvidenceSummary"));
+
+        let _ = std::fs::remove_dir_all(dir);
     }
 }

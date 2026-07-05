@@ -3,10 +3,7 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type {
-        AnswerExplanation,
-        Question,
-    } from "@generated/anki/brainlift_pb";
+    import type { AnswerExplanation, Question } from "@generated/anki/brainlift_pb";
     import { explainAnswer, recordAttempt } from "@generated/backend";
     import { fade, fly } from "svelte/transition";
 
@@ -62,12 +59,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const questionBank = data.questions;
     const topicFilter = data.topicFilter;
 
-    $: practiceTitle = topicFilter
-        ? formatPracticeTopicLabel(topicFilter)
-        : "Practice";
-    $: practiceSubtitle = topicFilter && currentQuestion
-        ? formatQuestionType(currentQuestion.format)
-        : undefined;
+    $: practiceTitle = topicFilter ? formatPracticeTopicLabel(topicFilter) : "Practice";
+    $: practiceSubtitle =
+        topicFilter && currentQuestion
+            ? formatQuestionType(currentQuestion.format)
+            : undefined;
 
     let sectionFilter: PracticeSectionFilter = "all";
     let queue: Question[] = data.queue;
@@ -275,7 +271,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 <div class="practice-page">
     {#if !sessionComplete && (currentQuestion || queue.length === 0)}
-        <GrePageHeader title={practiceTitle} icon="practice" subtitle={practiceSubtitle} />
+        <GrePageHeader
+            title={practiceTitle}
+            icon="practice"
+            subtitle={practiceSubtitle}
+        />
     {/if}
     {#if sessionComplete}
         <GrePanel interactive={false} className="practice-complete">
@@ -288,7 +288,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {:else}
                 <GreSessionCompletePanel
                     summary={practiceSummary}
-                    secondaryLabel={practiceSummary.nextAction.label === "Practice again"
+                    secondaryLabel={practiceSummary.nextAction.label ===
+                    "Practice again"
                         ? GRE_CTA_STUDY_PLAN
                         : "Practice again"}
                     onSecondary={() => {
@@ -322,12 +323,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 aria-label={progressLabel}
             >
                 <div class="practice-progress-track">
-                    <div class="practice-progress-fill" style:width="{progressPercent}%"></div>
+                    <div
+                        class="practice-progress-fill"
+                        style:width="{progressPercent}%"
+                    ></div>
                 </div>
                 <div class="practice-progress-meta">
                     <span class="practice-progress-label">{progressLabel}</span>
                     {#if !result}
-                        <span class="practice-session-stats" aria-label="Session performance">
+                        <span
+                            class="practice-session-stats"
+                            aria-label="Session performance"
+                        >
                             <span>Streak {sessionStreak}</span>
                             <span aria-hidden="true">·</span>
                             <span>Accuracy {sessionAccuracyLabel}</span>
@@ -370,7 +377,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         {/if}
                         <div class="question-metadata-row">
                             <dt class="sr-only">Question type</dt>
-                            <dd>Question Type: {formatQuestionType(currentQuestion.format)}</dd>
+                            <dd>
+                                Question Type: {formatQuestionType(
+                                    currentQuestion.format,
+                                )}
+                            </dd>
                         </div>
                     </dl>
 
@@ -382,15 +393,15 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         <label
                             class="choice"
                             class:choice-selected={selected === choice && !result}
-                            class:choice-correct={result !== null
-                                && selected === choice
-                                && result.correct}
-                            class:choice-incorrect={result !== null
-                                && selected === choice
-                                && !result.correct}
-                            class:choice-correct-reveal={result !== null
-                                && isCorrectChoice(choice)
-                                && selected !== choice}
+                            class:choice-correct={result !== null &&
+                                selected === choice &&
+                                result.correct}
+                            class:choice-incorrect={result !== null &&
+                                selected === choice &&
+                                !result.correct}
+                            class:choice-correct-reveal={result !== null &&
+                                isCorrectChoice(choice) &&
+                                selected !== choice}
                             class:choice-locked={result !== null}
                         >
                             <input
@@ -399,7 +410,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                                 value={choice}
                                 disabled={result !== null || submitting}
                             />
-                            <span class="choice-letter" aria-hidden="true">{optionLetter(index)}</span>
+                            <span class="choice-letter" aria-hidden="true">
+                                {optionLetter(index)}
+                            </span>
                             <span class="choice-text">{choice}</span>
                         </label>
                     {/each}
@@ -430,16 +443,22 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                                             <span class="breakdown-choice">
                                                 {row.choice}
                                                 {#if row.isCorrect}
-                                                    <span class="breakdown-tag">Correct</span>
+                                                    <span class="breakdown-tag">
+                                                        Correct
+                                                    </span>
                                                 {/if}
                                             </span>
-                                            <span class="breakdown-reasoning">{row.reasoning}</span>
+                                            <span class="breakdown-reasoning">
+                                                {row.reasoning}
+                                            </span>
                                         </li>
                                     {/each}
                                 </ul>
                             {/if}
                             {#if explanationCitation}
-                                <p class="result-citation">Source: {explanationCitation}</p>
+                                <p class="result-citation">
+                                    Source: {explanationCitation}
+                                </p>
                             {/if}
                             {#if explanationNote}
                                 <p class="result-provenance-note">{explanationNote}</p>

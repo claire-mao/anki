@@ -11,10 +11,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     } from "@generated/anki/brainlift_pb";
 
     import { COVERAGE_EXPLANATION } from "../coverage-presentation";
-    import {
-        buildEvidenceItems,
-        buildEvidenceSummary,
-    } from "../evidence-presentation";
+    import { buildEvidenceItems, buildEvidenceSummary } from "../evidence-presentation";
     import { runGreNavAction } from "../gre-navigation";
     import { METHODOLOGY_PAGE_TITLE } from "../methodology-presentation";
     import GreIcon from "../GreIcon.svelte";
@@ -59,7 +56,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <GreIcon name="info" size="sm" />
             {summary}
         </span>
-        <span class="gre-evidence-updated">Updated {relativeTime(computedAtMillis)}</span>
+        <span class="gre-evidence-updated">
+            Updated {relativeTime(computedAtMillis)}
+        </span>
     </summary>
 
     <div class="gre-evidence-body">

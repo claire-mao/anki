@@ -40,7 +40,7 @@ FSRS remains the memory model; this layer only **reads** scheduling state.
 `sufficient_data = true` only when:
 
 1. FSRS is enabled
-2. At least 200 studied cards in search scope
+2. At least 50 studied cards in search scope
 3. Topic coverage ratio ≥ 50% (exam-weighted GRE catalog coverage via `compute_coverage()`)
 
 Otherwise `abstain_reason` explains why readiness scores must not be shown.

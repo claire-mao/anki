@@ -27,6 +27,18 @@ enum ScoreFormat {
         return "\(low)–\(high)"
     }
 
+    static func scoreHero(
+        value: Double?,
+        sufficient: Bool,
+        abstainReason: String,
+        fallback: String = "Not enough evidence yet"
+    ) -> String {
+        guard sufficient, let value else {
+            return abstainReason.isEmpty ? fallback : abstainReason
+        }
+        return formatPercent(value)
+    }
+
     static func scoreSummary(
         value: Double?,
         low: Double?,

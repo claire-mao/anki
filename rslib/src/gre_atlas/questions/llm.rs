@@ -24,14 +24,17 @@ pub const ENV_BASE_URL: &str = "GRE_ATLAS_OPENAI_BASE_URL";
 pub const ENV_MODEL: &str = "GRE_ATLAS_OPENAI_MODEL";
 /// Optional override for the request timeout, in seconds.
 pub const ENV_TIMEOUT_SECS: &str = "GRE_ATLAS_OPENAI_TIMEOUT_SECS";
+/// When set to a truthy value (`1`, `true`, `yes`, `on`), disables the LLM path
+/// even if an API key is present.
+pub const ENV_AI_DISABLED: &str = "GRE_ATLAS_AI_DISABLED";
 
 const DEFAULT_BASE_URL: &str = "https://api.openai.com/v1";
 const DEFAULT_MODEL: &str = "gpt-4o-mini";
 const DEFAULT_TIMEOUT_SECS: u64 = 20;
 
-/// Reason an LLM call did not yield usable output. Callers treat *every* variant
-/// as "AI unavailable" and fall back to deterministic templates — no variant is
-/// ever surfaced to the learner as an error.
+/// Reason an LLM call did not yield usable output. Callers treat *every*
+/// variant as "AI unavailable" and fall back to deterministic templates — no
+/// variant is ever surfaced to the learner as an error.
 #[derive(Debug, Clone)]
 pub enum LlmError {
     /// No API key configured (feature disabled).
@@ -89,8 +92,12 @@ pub struct GreAtlasAiConfig {
 
 impl GreAtlasAiConfig {
     /// Resolve config from the environment. Returns `None` (feature disabled)
-    /// unless [`ENV_API_KEY`] is present and non-empty.
+    /// unless [`ENV_API_KEY`] is present and non-empty, and [`ENV_AI_DISABLED`]
+    /// is not set to a truthy value.
     pub fn from_env() -> Option<Self> {
+        if ai_explicitly_disabled() {
+            return None;
+        }
         let api_key = non_empty_env(ENV_API_KEY)?;
         let base_url = non_empty_env(ENV_BASE_URL).unwrap_or_else(|| DEFAULT_BASE_URL.to_string());
         let model = non_empty_env(ENV_MODEL).unwrap_or_else(|| DEFAULT_MODEL.to_string());
@@ -112,6 +119,12 @@ fn non_empty_env(key: &str) -> Option<String> {
         .ok()
         .map(|v| v.trim().to_string())
         .filter(|v| !v.is_empty())
+}
+
+fn ai_explicitly_disabled() -> bool {
+    non_empty_env(ENV_AI_DISABLED)
+        .map(|v| matches!(v.to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+        .unwrap_or(false)
 }
 
 /// Real OpenAI-compatible chat-completions client. Constructed only when a key
@@ -285,6 +298,24 @@ mod test {
         match prev {
             Some(v) => std::env::set_var(ENV_API_KEY, v),
             None => std::env::remove_var(ENV_API_KEY),
+        }
+    }
+
+    #[test]
+    fn explicit_disable_overrides_api_key() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let prev_key = std::env::var(ENV_API_KEY).ok();
+        let prev_disabled = std::env::var(ENV_AI_DISABLED).ok();
+        std::env::set_var(ENV_API_KEY, "sk-test");
+        std::env::set_var(ENV_AI_DISABLED, "1");
+        assert!(GreAtlasAiConfig::from_env().is_none());
+        match prev_key {
+            Some(v) => std::env::set_var(ENV_API_KEY, v),
+            None => std::env::remove_var(ENV_API_KEY),
+        }
+        match prev_disabled {
+            Some(v) => std::env::set_var(ENV_AI_DISABLED, v),
+            None => std::env::remove_var(ENV_AI_DISABLED),
         }
     }
 }

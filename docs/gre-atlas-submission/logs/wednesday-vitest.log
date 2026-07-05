@@ -1,0 +1,11 @@
+just _test-ts
+./ninja check:vitest
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on build directory
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.41s
+n2: no work to do
+[0m[1m[32m
+Build succeeded in 0.02s.
+[0m

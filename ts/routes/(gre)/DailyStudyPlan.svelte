@@ -23,20 +23,24 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     export let hideHeader = false;
 </script>
 
-<section class="daily-mission" class:daily-mission-compact={compact} class:daily-mission-primary={primary}>
+<section
+    class="daily-mission"
+    class:daily-mission-compact={compact}
+    class:daily-mission-primary={primary}
+>
     {#if !hideHeader}
         <header class="daily-mission-header">
-        <GreText
-            variant="h3"
-            tag="h2"
-            className="daily-mission-heading gre-text-label-row"
-            id="daily-mission-heading"
-        >
-            <GreIcon name="calendar" size="sm" />
-            Today's mission
-        </GreText>
-        <p class="daily-mission-intro">{missionIntro(plan.tasks.length)}</p>
-    </header>
+            <GreText
+                variant="h3"
+                tag="h2"
+                className="daily-mission-heading gre-text-label-row"
+                id="daily-mission-heading"
+            >
+                <GreIcon name="calendar" size="sm" />
+                Today's mission
+            </GreText>
+            <p class="daily-mission-intro">{missionIntro(plan.tasks.length)}</p>
+        </header>
     {/if}
 
     <div class="daily-mission-grid gre-stagger">

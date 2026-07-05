@@ -95,6 +95,18 @@ final class MobileBridgeClient {
         }
     }
 
+    func explainAnswer(_ input: GreExplainAnswerInput) throws -> GreAnswerExplanationView {
+        let payload = try JSONEncoder().encode(input)
+        return try payload.withUnsafeBytes { raw in
+            try loadJSONWithInput(
+                raw.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                payload.count,
+                anki_mobile_gre_explain_answer_json,
+                as: GreAnswerExplanationView.self
+            )
+        }
+    }
+
     func loadPracticeScoreStrip() throws -> GrePracticeScoreStripView {
         try loadJSON(anki_mobile_gre_practice_scores_json, as: GrePracticeScoreStripView.self)
     }
@@ -308,6 +320,15 @@ func anki_mobile_gre_practice_bootstrap_json(
 
 @_silgen_name("anki_mobile_gre_record_attempt_json")
 func anki_mobile_gre_record_attempt_json(
+    _ backend: OpaquePointer?,
+    _ input: UnsafePointer<UInt8>?,
+    _ inputLen: Int,
+    _ outBytes: UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>?,
+    _ outLen: UnsafeMutablePointer<Int>?
+) -> Int32
+
+@_silgen_name("anki_mobile_gre_explain_answer_json")
+func anki_mobile_gre_explain_answer_json(
     _ backend: OpaquePointer?,
     _ input: UnsafePointer<UInt8>?,
     _ inputLen: Int,

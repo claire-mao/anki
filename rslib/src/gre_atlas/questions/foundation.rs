@@ -150,11 +150,12 @@ pub fn difficulty_bucket(d: Option<f32>) -> &'static str {
 
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
+    use std::collections::HashSet;
+
     use super::*;
     use crate::gre_atlas::domain::GreCatalog;
     use crate::gre_atlas::questions::variants::correct_answer_in_choices;
-    use std::collections::HashMap;
-    use std::collections::HashSet;
 
     #[test]
     fn foundation_bank_meets_minimum_counts() {
@@ -185,11 +186,7 @@ mod test {
         let mut ids = HashSet::new();
         for q in &bank {
             assert!(ids.insert(q.id.as_str()), "duplicate id: {}", q.id);
-            assert!(
-                !q.stem_text().is_empty(),
-                "{} missing stem/prompt",
-                q.id
-            );
+            assert!(!q.stem_text().is_empty(), "{} missing stem/prompt", q.id);
             let choices = q.choice_list();
             assert!(!choices.is_empty(), "{} has no choices", q.id);
             assert!(
@@ -223,9 +220,7 @@ mod test {
         let bank = load_foundation_bank();
         let mut buckets: HashMap<&str, u32> = HashMap::new();
         for q in &bank {
-            *buckets
-                .entry(difficulty_bucket(q.difficulty))
-                .or_default() += 1;
+            *buckets.entry(difficulty_bucket(q.difficulty)).or_default() += 1;
         }
         let total = bank.len() as f32;
         let easy_pct = buckets.get("easy").copied().unwrap_or(0) as f32 / total;

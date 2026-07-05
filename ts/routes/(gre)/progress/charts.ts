@@ -3,17 +3,7 @@
 
 import type { EstimatedGreScore, ReadinessCalibrationBin } from "@generated/anki/brainlift_pb";
 import type { TopicMasteryEntry } from "@generated/anki/stats_pb";
-import {
-    axisBottom,
-    axisLeft,
-    line,
-    max,
-    scaleBand,
-    scaleLinear,
-    scaleTime,
-    select,
-    timeFormat,
-} from "d3";
+import { axisBottom, axisLeft, line, max, scaleBand, scaleLinear, scaleTime, select, timeFormat } from "d3";
 
 import type { GraphBounds } from "../../graphs/graph-helpers";
 import { setDataAvailable } from "../../graphs/graph-helpers";
@@ -402,8 +392,9 @@ export function renderTopicMasteryChart(
         .attr("class", (row) => (isStudiedTopic(row) ? "bar bar-studied" : "bar bar-unstudied"))
         .attr("x", 0)
         .attr("y", (row) => y(row.displayName)!)
-        .attr("width", (row) =>
-            isStudiedTopic(row) ? x(row.avgRetrievability * 100) : Math.max(y.bandwidth() * 0.35, 3),
+        .attr(
+            "width",
+            (row) => isStudiedTopic(row) ? x(row.avgRetrievability * 100) : Math.max(y.bandwidth() * 0.35, 3),
         )
         .attr("height", y.bandwidth())
         .attr("rx", 6)
@@ -417,16 +408,10 @@ export function renderTopicMasteryChart(
     g.selectAll("text.value")
         .data(rows)
         .join("text")
-        .attr("class", (row) =>
-            isStudiedTopic(row) ? "value value-studied" : "value value-unstudied",
-        )
-        .attr("x", (row) =>
-            isStudiedTopic(row) ? x(row.avgRetrievability * 100) + 6 : 8,
-        )
+        .attr("class", (row) => isStudiedTopic(row) ? "value value-studied" : "value value-unstudied")
+        .attr("x", (row) => isStudiedTopic(row) ? x(row.avgRetrievability * 100) + 6 : 8)
         .attr("y", (row) => y(row.displayName)! + y.bandwidth() / 2 + 4)
-        .text((row) =>
-            isStudiedTopic(row) ? `${Math.round(row.avgRetrievability * 100)}%` : "Not started",
-        );
+        .text((row) => isStudiedTopic(row) ? `${Math.round(row.avgRetrievability * 100)}%` : "Not started");
 }
 
 export function renderCalibrationCurve(

@@ -1,0 +1,350 @@
+=== GRE Atlas Wednesday Release Test Output ===
+Date: 2026-07-05 19:27:04 UTC
+Commit: 1323b37859cc9baaa5a8a1a850a20fe76d3c0e8f
+
+=== just build ===
+./ninja pylib qt
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.99s
+build:configure
+rslib:i18n
+rslib:proto
+qt:aqt:data:web:js
+qt:aqt:data:web:js
+qt:aqt:data:web:js
+qt:aqt:data:web:js
+rslib:proto
+rslib:i18n
+pylib:rsbridge
+ts:mathjax
+ts:reviewer:reviewer.js
+ts:congrats
+ts:editor
+ts:editable
+ts:congrats
+qt:aqt:data:web:pages
+ts:editor
+qt:aqt:data:web:js
+qt:aqt:data:web:css
+pylib:rsbridge
+pylib:anki:rsbridge
+n2: ran 17 tasks, now up to date
+[0m[1m[32m
+Build succeeded in 25.86s.
+[0m
+=== cargo test -p anki stats::mastery ===
+[1m[92m   Compiling[0m anki_proto v0.0.0 (/Users/clairemao/anki/rslib/proto)
+[1m[92m   Compiling[0m anki v0.0.0 (/Users/clairemao/anki/rslib)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 8.10s
+[1m[92m     Running[0m unittests src/lib.rs (/var/folders/8t/32cckx0j3kz5qz7hzhzmss480000gn/T/cursor-sandbox-cache/af0a8d85874d5ef9a13f7d10352af82a/cargo-target/debug/deps/anki-796446915d16bd8a)
+
+running 12 tests
+test stats::mastery::test::topic_mastery_benchmark ... ignored, manual benchmark; run with cargo test topic_mastery_benchmark -- --ignored
+test stats::mastery::test::multi_tag_card_counts_in_both ... ok
+test stats::mastery::test::empty_collection ... ok
+test stats::mastery::test::leaf_topic_uses_catalog_display_name ... ok
+test stats::mastery::test::cards_with_tags_for_search_returns_tags ... ok
+test stats::mastery::test::gre_deck_search_used_by_eval_harness ... ok
+test stats::mastery::test::unknown_tag_still_reported ... ok
+test stats::mastery::test::single_topic_mastery ... ok
+test stats::mastery::test::confidence_interval_collapses_for_single_card ... ok
+test stats::mastery::test::catalog_coverage_in_summary ... ok
+test stats::mastery::test::mastered_threshold ... ok
+test stats::mastery::test::topic_mastery_scales_to_thousands_of_cards ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 698 filtered out; finished in 0.27s
+
+
+=== cargo test -p anki gre_atlas ===
+[1m[92m   Compiling[0m anki_proto v0.0.0 (/Users/clairemao/anki/rslib/proto)
+[1m[92m   Compiling[0m anki v0.0.0 (/Users/clairemao/anki/rslib)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 6.85s
+[1m[92m     Running[0m unittests src/lib.rs (/var/folders/8t/32cckx0j3kz5qz7hzhzmss480000gn/T/cursor-sandbox-cache/af0a8d85874d5ef9a13f7d10352af82a/cargo-target/debug/deps/anki-796446915d16bd8a)
+
+running 178 tests
+test gre_atlas::abstention::test::performance_sufficient_at_minimum_attempts ... ok
+test gre_atlas::abstention::test::memory_sufficient_when_all_requirements_met ... ok
+test gre_atlas::abstention::test::fsrs_disabled_abstains ... ok
+test gre_atlas::abstention::test::no_practice_attempts_abstains ... ok
+test gre_atlas::abstention::test::insufficient_studied_cards_abstains ... ok
+test gre_atlas::abstention::test::sufficient_data_and_reason_matches_memory_requirements ... ok
+test gre_atlas::abstention::test::insufficient_topic_coverage_abstains ... ok
+test gre_atlas::abstention::test::insufficient_practice_attempts_abstains ... ok
+test gre_atlas::abstention::test::readiness_lists_all_unmet_requirements ... ok
+test gre_atlas::calibration::test::apply_calibration_downgrades_confidence_when_poor ... ok
+test gre_atlas::calibration::test::brier_score_perfect_when_predictions_match ... ok
+test gre_atlas::calibration::test::composite_readiness_score_uses_documented_weights ... ok
+test gre_atlas::calibration::test::held_out_filter_is_deterministic ... ok
+test gre_atlas::calibration::test::calibration_curve_bins_are_deterministic ... ok
+test gre_atlas::calibration::test::insufficient_calibration_data_is_reported_honestly ... ok
+test gre_atlas::calibration::test::poor_calibration_is_not_hidden ... ok
+test gre_atlas::calibration::test::resolve_outcome_requires_age_or_practice ... ok
+test gre_atlas::ablation_eval::test::vanilla_order_is_lexicographic ... ok
+test gre_atlas::coverage_report::test::coverage_readiness_reason_uses_weighted_percent ... ok
+test gre_atlas::ablation_eval::test::random_order_is_deterministic ... ok
+test gre_atlas::ablation_eval::test::gre_atlas_wins_learning_gain_on_synthetic_reference ... ok
+test gre_atlas::ablation_eval::test::synthetic_reference_produces_three_policies ... ok
+test gre_atlas::coverage_report::test::study_label_groups_geometry_leaves ... ok
+test gre_atlas::coverage_report::test::build_dashboard_coverage_includes_sections_and_uncovered ... ok
+test gre_atlas::domain::catalog::test::nearest_topic_for_observed_tags ... ok
+test gre_atlas::dashboard::test::weak_topics_prioritize_uncovered_and_low_memory ... ok
+test gre_atlas::domain::catalog::test::leaf_weights_sum_to_one_per_section ... ok
+test gre_atlas::ablation_eval::test::markdown_includes_ablation_sections ... ok
+test gre_atlas::domain::catalog::test::parent_links_are_valid ... ok
+test gre_atlas::domain::catalog::test::section_weights_sum_to_one ... ok
+test gre_atlas::domain::catalog::test::seed_question_topics_exist_in_catalog ... ok
+test gre_atlas::domain::catalog::test::topic_lookup_and_hierarchy ... ok
+test gre_atlas::domain::coverage::test::empty_observations_have_zero_coverage ... ok
+test gre_atlas::domain::coverage::test::child_tag_covers_ancestor_in_coverage ... ok
+test gre_atlas::domain::coverage::test::exact_leaf_tag_covers_one_topic ... ok
+test gre_atlas::domain::coverage::test::full_section_coverage ... ok
+test gre_atlas::domain::coverage::test::parent_tag_covers_child_catalog_leaves ... ok
+test gre_atlas::domain::coverage::test::seed_topics_partial_coverage ... ok
+test gre_atlas::domain::coverage::test::section_breakdown_sums_weighted_contribution ... ok
+test gre_atlas::domain::coverage::test::weighted_coverage_uses_exam_weights ... ok
+test gre_atlas::estimated_gre::test::maps_readiness_index_to_combined_score ... ok
+test gre_atlas::estimated_gre::test::maps_readiness_index_to_section_score ... ok
+test gre_atlas::estimated_gre::test::preliminary_estimate_when_readiness_abstains ... ok
+test gre_atlas::estimated_gre::test::uses_readiness_interval_when_available ... ok
+test gre_atlas::eval::test::deterministic_report_timestamp_uses_latest_prediction ... ok
+test gre_atlas::eval::test::held_out_split_doc_documents_leakage_safety ... ok
+test gre_atlas::eval::test::eval_report_is_deterministic_for_fixed_rows ... ok
+test gre_atlas::eval::test::normal_mean_ci_is_deterministic ... ok
+test gre_atlas::memory_eval::test::brier_score_perfect_when_predictions_match ... ok
+test gre_atlas::memory_eval::test::calibration_bins_cover_unit_interval ... ok
+test gre_atlas::eval::test::prediction_distribution_bins_all_predictions ... ok
+test gre_atlas::memory_eval::test::held_out_review_filter_is_deterministic ... ok
+test gre_atlas::eval::test::markdown_includes_core_sections ... ok
+test gre_atlas::memory_eval::test::recall_outcome_treats_again_as_zero ... ok
+test gre_atlas::performance_eval::test::confusion_matrix_counts_sum_to_test_attempts ... ok
+test gre_atlas::performance_eval::test::held_out_filter_matches_readiness_pattern ... ok
+test gre_atlas::performance_eval::test::evaluation_is_deterministic ... ok
+test gre_atlas::performance_eval::test::insufficient_test_attempts_is_reported ... ok
+test gre_atlas::performance_eval::test::precision_recall_f1_are_well_defined_on_mixed_test_set ... ok
+test gre_atlas::performance_eval::test::standalone_markdown_documents_split_and_metrics ... ok
+test gre_atlas::performance_eval::test::test_metrics_never_include_training_rows ... ok
+test gre_atlas::questions::ai_gen::test::confidence_threshold_is_documented_minimum ... ok
+test gre_atlas::performance_eval::test::wilson_ci_is_computed_on_held_out_accuracy ... ok
+test gre_atlas::questions::ai_gen::test::gold_set_has_fifty_verified_questions ... ok
+test gre_atlas::questions::ai_gen::test::keyword_retrieval_finds_matching_topic ... ok
+test gre_atlas::questions::ai_gen::test::rejects_unknown_topic ... ok
+test gre_atlas::questions::bank::test::exam_targets_cover_every_leaf ... ok
+test gre_atlas::questions::ai_gen::test::generation_records_source_attribution ... ok
+test gre_atlas::memory_eval::test::predict_retrievability_uses_fsrs_history ... ok
+test gre_atlas::questions::bank::test::ensure_exam_length_bank_tops_up_fresh_collection ... ok
+test gre_atlas::questions::bank::test::purge_invalid_questions_removes_bad_generated_rows ... ok
+test gre_atlas::dashboard::test::get_dashboard_returns_state_for_empty_collection ... ok
+test gre_atlas::eval::test::eval_report_from_collection_is_deterministic ... ok
+test gre_atlas::demo::test::prepare_demo_seeds_deck_cards_and_practice ... ok
+test gre_atlas::questions::eval_pipeline::test::normalize_is_case_and_punctuation_insensitive ... ok
+test gre_atlas::questions::eval_pipeline::test::rejects_answer_not_in_choices_as_hallucination ... ok
+test gre_atlas::questions::eval_pipeline::test::approves_a_grounded_unique_valid_question ... ok
+test gre_atlas::questions::explanation::test::build_uses_template_when_ai_absent ... ok
+test gre_atlas::questions::explanation::test::foundation_question_cites_practice_bank_not_ets ... ok
+test gre_atlas::questions::eval_pipeline::test::rejects_ungrounded_claims_as_unsupported ... ok
+test gre_atlas::questions::explanation::test::generated_question_cites_ets_excerpt ... ok
+test gre_atlas::questions::eval_pipeline::test::rejects_near_duplicate ... ok
+test gre_atlas::questions::explanation::test::template_explanation_strips_meta_comment ... ok
+test gre_atlas::questions::explanation::test::template_explanation_covers_every_choice_and_cites_source ... ok
+test gre_atlas::questions::bank::test::purge_invalid_questions_removes_rows_with_existing_attempts ... ok
+test gre_atlas::questions::foundation::test::foundation_difficulty_distribution ... ok
+test gre_atlas::questions::generator::test::approved_ai_reply_is_used ... ok
+test gre_atlas::questions::foundation::test::foundation_has_unique_ids_across_files ... ok
+test gre_atlas::questions::foundation::test::foundation_bank_meets_minimum_counts ... ok
+test gre_atlas::questions::foundation::test::foundation_covers_every_leaf_topic ... ok
+test gre_atlas::questions::generator::test::parses_json_wrapped_in_prose ... ok
+test gre_atlas::questions::llm::test::blank_api_key_is_treated_as_disabled ... ok
+test gre_atlas::questions::llm::test::config_absent_without_api_key ... ok
+test gre_atlas::questions::llm::test::config_present_with_api_key_uses_defaults ... ok
+test gre_atlas::questions::generator::test::disabled_ai_uses_offline_template ... ok
+test gre_atlas::questions::llm::test::explicit_disable_overrides_api_key ... ok
+test gre_atlas::questions::bank::test::open_purges_invalid_questions_with_attempts ... ok
+test gre_atlas::questions::generator::test::hallucinated_ai_reply_falls_back_to_template ... ok
+test gre_atlas::questions::foundation::test::foundation_bank_is_valid ... ok
+test gre_atlas::questions::generator::test::transport_error_falls_back_silently ... ok
+test gre_atlas::questions::test::topic_prefix_matching ... ok
+test gre_atlas::questions::variants::test::all_variant_drafts_include_correct_choice ... ok
+test gre_atlas::readiness::test::memory_abstains_without_fsrs ... ok
+test gre_atlas::readiness::test::performance_abstains_below_minimum_attempts ... ok
+test gre_atlas::readiness::test::readiness_abstains_when_memory_and_performance_insufficient ... ok
+test gre_atlas::readiness::test::readiness_abstains_without_sufficient_inputs ... ok
+test gre_atlas::readiness::test::readiness_projects_score_when_evidence_is_sufficient ... ok
+test gre_atlas::readiness::test::readiness_weights_sum_to_one ... ok
+test gre_atlas::readiness::test::wilson_interval_is_bounded ... ok
+test gre_atlas::questions::retrieval::test::all_methods_run_on_sample_question ... ok
+test gre_atlas::scores::test::get_scores_abstains_readiness_with_sparse_data ... ok
+test gre_atlas::questions::test::explain_answer_offline_has_citation_and_per_choice_reasoning ... ok
+test gre_atlas::questions::test::generate_question_defaults_to_offline_template_when_ai_disabled ... ok
+test gre_atlas::questions::test::generate_question_persists_attribution ... ok
+test gre_atlas::scores::test::get_scores_includes_evidence_summary_when_abstaining ... ok
+test gre_atlas::signals::test::load_gre_atlas_signals_uses_cache_on_second_call ... ok
+test gre_atlas::storage::sync_bundle::test::apply_attempt_without_session_in_bundle_creates_session_stub ... ok
+test gre_atlas::scores::test::get_scores_readiness_with_practice_attempts_only ... ok
+test gre_atlas::storage::sync_bundle::test::bundle_export_includes_stale_session_for_new_attempt ... ok
+test gre_atlas::storage::sync_bundle::test::bundle_merge_applies_session_before_attempt ... ok
+test gre_atlas::storage::sync_bundle::test::apply_filtered_incremental_bundle_stubs_missing_session_and_question ... ok
+test gre_atlas::storage::sync_bundle::test::server_filter_includes_stale_parents_for_incremental_attempt ... ok
+test gre_atlas::storage::test::list_questions_deprioritizes_answered_questions ... ok
+test gre_atlas::storage::sync_bundle::test::bundle_round_trip_preserves_question_attribution ... ok
+test gre_atlas::storage::test::list_questions_excludes_rejected_candidates ... ok
+test gre_atlas::storage::test::list_questions_filters_by_topic_prefix ... ok
+test gre_atlas::storage::test::migrates_legacy_brainlift_db_filename ... ok
+test gre_atlas::storage::test::migrates_schema_v1_to_current ... ok
+test gre_atlas::storage::test::migrates_schema_v3_to_v4_adds_attribution_columns ... ok
+test gre_atlas::storage::test::migrates_schema_v4_to_v5_adds_ai_metadata_columns_and_eval_table ... ok
+test gre_atlas::storage::test::seed_bank_is_valid_and_covers_every_leaf_topic ... ok
+test gre_atlas::storage::test::migration_is_idempotent_across_reopens ... ok
+test gre_atlas::storage::test::record_attempt_does_not_touch_collection_revlog ... ok
+test gre_atlas::storage::test::records_and_counts_generation_eval ... ok
+test gre_atlas::study_plan::test::daily_practice_target_bootstraps_before_performance_unlocks ... ok
+test gre_atlas::study_plan::test::daily_review_target_caps_due_cards ... ok
+test gre_atlas::study_plan::test::dashboard_and_study_plan_share_candidate_metrics ... ok
+test gre_atlas::study_plan::test::focus_topic_task_maps_factors_to_actions ... ok
+test gre_atlas::storage::test::rejects_unknown_session_id ... ok
+test gre_atlas::study_plan::test::study_plan_includes_low_memory_and_performance ... ok
+test gre_atlas::study_plan::test::study_plan_ranks_uncovered_high_yield_first ... ok
+test gre_atlas::study_plan::test::study_plan_skips_topics_on_track ... ok
+test gre_atlas::storage::test::seeds_and_records_attempts ... ok
+test gre_atlas::storage::test::seeds_sample_gre_questions ... ok
+test gre_atlas::storage::test::stores_and_reads_ai_generation_metadata ... ok
+test gre_atlas::study_plan::test::get_study_plan_returns_ranked_recommendations ... ok
+test gre_atlas::sync::test::mark_synced_through_clears_pending_upload_count ... ok
+test gre_atlas::sync::test::perform_sync_on_ankiweb_returns_unsupported_message ... ok
+test gre_atlas::sync::test::pull_after_local_record_includes_change ... ok
+test gre_atlas::sync::test::bundle_sync_bidirectional_last_write_wins ... ok
+test gre_atlas::sync::test::bundle_sync_desktop_to_mobile_preserves_attempts ... ok
+test gre_atlas::sync::test::push_applies_remote_and_keeps_newer_on_conflict ... ok
+test gre_atlas::sync::test::push_changes_without_question_row_creates_question_stub ... ok
+test gre_atlas::sync::test::push_changes_without_session_row_creates_session_stub ... ok
+test gre_atlas::sync::test::push_cross_device_id_collision_inserts_as_new_attempt ... ok
+test gre_atlas::sync::test::push_rejects_older_remote_with_conflict ... ok
+test gre_atlas::sync::test::push_skips_duplicate_identity_with_different_id ... ok
+test gre_atlas::sync::test::two_profile_roundtrip_preserves_attempts_without_fk_or_duplicate_sessions ... ok
+test gre_atlas::sync_parity::test::bundle_sync_predictions_match_calibration_stats ... ok
+test gre_atlas::sync_parity::test::bundle_sync_sidecar_metrics_match_after_desktop_to_mobile ... ok
+test gre_atlas::sync_transport::test::ankiweb_endpoint_does_not_support_gre_atlas_sync ... ok
+test gre_atlas::sync_transport::test::custom_endpoint_supports_gre_atlas_sync ... ok
+test gre_atlas::sync_transport::test::download_posts_zstd_body_with_sync_header ... ok
+test gre_atlas::sync_transport::test::download_request_body_is_zstd_json ... ok
+test gre_atlas::sync_transport::test::upload_404_error_includes_self_hosted_hint ... ok
+test gre_atlas::topic_details::test::covered_leaf_has_coverage_contribution ... ok
+test gre_atlas::topic_details::test::memory_and_performance_contributions_scale_with_evidence ... ok
+test gre_atlas::sync_parity::test::outcome_resolution_marks_prediction_for_sync ... ok
+test gre_atlas::sync_parity::test::divergent_collections_sidecar_matches_collection_differs ... ok
+test gre_atlas::questions::retrieval::test::ai_retrieval_beats_keyword_on_gold_set ... ok
+test gre_atlas::questions::retrieval::test::ai_retrieval_beats_bm25_on_gold_set ... ok
+test gre_atlas::sync_http::test::friday_sync_loop_desktop_phone_offline_reconnect ... ok
+test gre_atlas::sync_http::test::offline_id_collision_survives_server_merge ... ok
+test gre_atlas::ai_eval::test::ai_pipeline_beats_all_baselines ... ok
+test gre_atlas::ai_eval::test::markdown_includes_comparison_sections ... ok
+test gre_atlas::ai_eval::test::rejection_pipeline_admits_grounded_and_rejects_each_negative ... ok
+test gre_atlas::ai_eval::test::release_verdict_passes_for_current_model ... ok
+test gre_atlas::ai_eval::test::ai_eval_report_is_deterministic_for_fixed_timestamp ... ok
+
+test result: ok. 178 passed; 0 failed; 0 ignored; 0 measured; 532 filtered out; finished in 9.19s
+
+
+=== cargo test -p mobile_bridge ===
+[1m[92m   Compiling[0m anki_proto v0.0.0 (/Users/clairemao/anki/rslib/proto)
+[1m[92m   Compiling[0m anki v0.0.0 (/Users/clairemao/anki/rslib)
+[1m[92m   Compiling[0m mobile_bridge v0.0.0 (/Users/clairemao/anki/mobile/mobile_bridge)
+[1m[92m    Finished[0m `test` profile [unoptimized + debuginfo] target(s) in 6.88s
+[1m[92m     Running[0m unittests src/lib.rs (/var/folders/8t/32cckx0j3kz5qz7hzhzmss480000gn/T/cursor-sandbox-cache/af0a8d85874d5ef9a13f7d10352af82a/cargo-target/debug/deps/mobile_bridge-3d0c9e4b3359f3e9)
+
+running 24 tests
+test ios_demo_bundle::ios_demo_bundle_contains_required_files ... ok
+test gre_pages::test::rolling_accuracy_matches_recent_window ... ok
+test ios_demo_bundle::ios_demo_bundle_collection_is_fully_seeded ... ok
+test parity::gre_study_review_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::gre_study_page_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::mobile_bridge_get_gre_study_status_matches_direct_backend ... ok
+test gre_pages::test::dashboard_view_exposes_score_abstention_fields ... ok
+test ios_demo_bundle::generate_ios_demo_bundle_writes_required_files ... ok
+test parity::mobile_bridge_create_session_matches_direct_backend ... ok
+test parity::gre_atlas_sync_status_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::gre_explain_answer_matches_between_mobile_ffi_and_direct_backend ... ok
+test study_pages::test::grade_buttons_follow_scheduler_labels ... ok
+test sync_pages::test::attempt_roundtrip_preserves_fields ... ok
+test parity::gre_dashboard_page_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::gre_atlas_sync_pull_matches_after_practice_attempt ... ok
+test parity::mobile_bridge_get_dashboard_matches_direct_backend ... ok
+test parity::gre_progress_page_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::gre_practice_bootstrap_matches_between_mobile_ffi_and_direct_backend ... ok
+test parity::mobile_bridge_get_readiness_calibration_matches_direct_backend ... ok
+test parity::mobile_bridge_get_study_plan_matches_direct_backend ... ok
+test parity::mobile_bridge_topic_mastery_matches_direct_backend ... ok
+test parity::mobile_bridge_list_questions_matches_direct_backend ... ok
+test parity::mobile_bridge_matches_backend_get_scores ... ok
+test parity::prepare_demo_collection_matches_between_mobile_ffi_and_direct_backend ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+[1m[92m     Running[0m unittests src/bin/generate_ios_demo_bundle.rs (/var/folders/8t/32cckx0j3kz5qz7hzhzmss480000gn/T/cursor-sandbox-cache/af0a8d85874d5ef9a13f7d10352af82a/cargo-target/debug/deps/generate_ios_demo_bundle-1fcb20984fb6ebcf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+=== just test-py (topic mastery + gre_atlas) ===
+Command: PYTHONPATH=out/pylib out/pyenv/bin/pytest pylib/tests/test_stats.py::test_topic_mastery_* pylib/tests/test_gre_atlas.py -v
+============================= test session starts ==============================
+platform darwin -- Python 3.13.13, pytest-8.4.1, pluggy-1.6.0
+collected 22 items
+
+pylib/tests/test_stats.py::test_topic_mastery_returns_catalog_and_observed_tags PASSED
+pylib/tests/test_stats.py::test_topic_mastery_fsrs_retrievability_and_mastered PASSED
+pylib/tests/test_stats.py::test_topic_mastery_catalog_coverage_partial PASSED
+pylib/tests/test_gre_atlas.py (19 tests) — all PASSED including:
+  test_gre_atlas_record_attempt_does_not_modify_revlog
+  test_dashboard_memory_reflects_gre_deck_reviews
+  test_readiness_abstains_without_minimum_evidence
+  test_readiness_abstention_lists_missing_requirements
+  test_get_readiness_calibration_reports_honest_stats
+
+============================== 22 passed in 0.89s ==============================
+
+=== just eval-gre-atlas (memory model) ===
+Command: just eval-gre-atlas mobile/ios/GREAtlasCompanion/Resources/DemoBundle/collection.anki2
+Wrote docs/gre-atlas-submission/results/gre-atlas-eval.json
+Wrote docs/gre-atlas-submission/results/gre-atlas-eval.md
+Wrote docs/gre-atlas-submission/results/performance-eval.md
+Memory model section: FSRS memory calibration runs (honest abstention on demo — FSRS disabled, 0 reviews)
+
+=== just test-ts ===
+just _test-ts
+./ninja check:vitest
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 0.25s
+n2: no work to do
+[0m[1m[32m
+Build succeeded in 0.02s.
+[0m
+=== cargo check -p mobile_bridge ===
+[1m[92m   Compiling[0m anki_proto v0.0.0 (/Users/clairemao/anki/rslib/proto)
+[1m[92m   Compiling[0m anki v0.0.0 (/Users/clairemao/anki/rslib)
+[1m[92m    Checking[0m mobile_bridge v0.0.0 (/Users/clairemao/anki/mobile/mobile_bridge)
+[1m[92m    Finished[0m `dev` profile [unoptimized + debuginfo] target(s) in 4.37s
+
+=== abstention MIN_STUDIED_CARDS ===
+ts/routes/(gre)/empty-states.ts:export const MIN_STUDIED_CARDS = 50;
+ts/routes/(gre)/empty-states.ts:                return `${MIN_STUDIED_CARDS} reviewed cards`;
+rslib/src/gre_atlas/abstention.rs:pub(crate) const MIN_STUDIED_CARDS: u32 = 50;
+rslib/src/gre_atlas/abstention.rs:    let met = studied_cards >= MIN_STUDIED_CARDS;
+rslib/src/gre_atlas/abstention.rs:            format!("{studied_cards} studied cards (minimum {MIN_STUDIED_CARDS})")
+rslib/src/gre_atlas/abstention.rs:            format!("{studied_cards} of {MIN_STUDIED_CARDS} studied cards (each reviewed at least once)")
+rslib/src/gre_atlas/abstention.rs:            "Review cards in the GRE Atlas deck until at least {MIN_STUDIED_CARDS} cards have one review."
+
+=== Installer artifact ===
+total 458760
+-rw-r--r--@ 1 clairemao  staff   214M Jul  5 14:22 anki-26.05-mac-apple.dmg
+
+=== iOS build (xcodebuild) ===
+    cd /Users/clairemao/anki/mobile/ios
+    builtin-validationUtility /Users/clairemao/Library/Developer/Xcode/DerivedData/GREAtlasCompanion-hhqthvscwzoftxcrkunzlgizohrd/Build/Products/Debug-iphonesimulator/GREAtlasCompanion.app -shallow-bundle -infoplist-subpath Info.plist
+
+** BUILD SUCCEEDED **
+
+=== iOS simulator launch ===
+xcrun simctl install booted .../GREAtlasCompanion.app
+xcrun simctl launch booted org.ankitects.greatlas.companion
+org.ankitects.greatlas.companion: 13122
+

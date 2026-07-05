@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS bl_generation_eval (
   topic TEXT NOT NULL,
   model_version TEXT NOT NULL,
   provenance TEXT NOT NULL,
-  status TEXT NOT NULL,
+  STATUS TEXT NOT NULL,
   reason TEXT NOT NULL DEFAULT '',
   confidence REAL,
   evaluated_at_secs INTEGER NOT NULL
 );
-CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_status ON bl_generation_eval(status);
+CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_status ON bl_generation_eval(STATUS);
 CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_time ON bl_generation_eval(evaluated_at_secs);

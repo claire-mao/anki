@@ -4,17 +4,17 @@ Audit date: 2026-07-03. Scope: readiness-related model inputs across desktop (Qt
 
 ## Executive summary
 
-| Area | Classification | Notes |
-|------|----------------|-------|
-| Performance | **PASS** | `bl_session` + `bl_performance_attempt` sync via bundle; cross-device id collision fixed |
-| Calibration | **PASS** | `bl_readiness_prediction` syncs; outcome resolution now bumps USN |
-| Confidence | **PASS** (sidecar path) | Derived from readiness + calibration rows; matches after sidecar sync when collections match |
-| Readiness | **PARTIAL** | Performance/calibration inputs sync; memory/coverage legs require collection |
-| Memory | **PARTIAL** | FSRS retrievability from `collection.anki2`; no collection sync on iOS |
-| Coverage | **PARTIAL** | `gre::` tag coverage from collection; no collection sync on iOS |
-| Dashboard | **PARTIAL** | Sidecar slices match; weak/recommended topics and coverage diverge without collection |
-| Progress | **PARTIAL** | Uses same RPCs as dashboard/scores/calibration; same split as dashboard |
-| Study plan | **PARTIAL** | Practice targets sync; review due counts and memory-based ranking need collection |
+| Area        | Classification          | Notes                                                                                        |
+| ----------- | ----------------------- | -------------------------------------------------------------------------------------------- |
+| Performance | **PASS**                | `bl_session` + `bl_performance_attempt` sync via bundle; cross-device id collision fixed     |
+| Calibration | **PASS**                | `bl_readiness_prediction` syncs; outcome resolution now bumps USN                            |
+| Confidence  | **PASS** (sidecar path) | Derived from readiness + calibration rows; matches after sidecar sync when collections match |
+| Readiness   | **PARTIAL**             | Performance/calibration inputs sync; memory/coverage legs require collection                 |
+| Memory      | **PARTIAL**             | FSRS retrievability from `collection.anki2`; no collection sync on iOS                       |
+| Coverage    | **PARTIAL**             | `gre::` tag coverage from collection; no collection sync on iOS                              |
+| Dashboard   | **PARTIAL**             | Sidecar slices match; weak/recommended topics and coverage diverge without collection        |
+| Progress    | **PARTIAL**             | Uses same RPCs as dashboard/scores/calibration; same split as dashboard                      |
+| Study plan  | **PARTIAL**             | Practice targets sync; review due counts and memory-based ranking need collection            |
 
 Automated parity tests live in `rslib/src/gre_atlas/sync_parity.rs`. All **155** `gre_atlas` Rust tests pass (`cargo test -p anki gre_atlas`).
 
@@ -22,10 +22,10 @@ Automated parity tests live in `rslib/src/gre_atlas/sync_parity.rs`. All **155**
 
 ## Dual storage model
 
-| Store | Path | Contents | Desktop sync | iOS sync |
-|-------|------|----------|--------------|----------|
-| Collection | `collection.anki2` | Cards, revlog, FSRS, `gre::` tags, deck due counts | AnkiWeb collection sync | **None** |
-| Sidecar | `greatlas.db` beside profile | Practice, sessions, calibration predictions, question bank | GRE Atlas bundle sync (`/gre/sync/`) | GRE Atlas bundle sync |
+| Store      | Path                         | Contents                                                   | Desktop sync                         | iOS sync              |
+| ---------- | ---------------------------- | ---------------------------------------------------------- | ------------------------------------ | --------------------- |
+| Collection | `collection.anki2`           | Cards, revlog, FSRS, `gre::` tags, deck due counts         | AnkiWeb collection sync              | **None**              |
+| Sidecar    | `greatlas.db` beside profile | Practice, sessions, calibration predictions, question bank | GRE Atlas bundle sync (`/gre/sync/`) | GRE Atlas bundle sync |
 
 Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/signals.rs`.
 
@@ -35,11 +35,11 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Memory (45% of readiness)
 
-| Field | Source | Sync channel | Parity requirement |
-|-------|--------|--------------|-------------------|
-| `overall_avg_retrievability` | `StatsService.TopicMastery` on GRE deck + `gre::` tags | Collection only | Identical collection state |
-| `studied_cards`, topic retrievability | FSRS revlog in `collection.anki2` | Collection only | Identical collection state |
-| `coverage_ratio` (memory leg) | Leaf topics with studied cards / catalog | Derived from collection | Identical collection state |
+| Field                                 | Source                                                 | Sync channel            | Parity requirement         |
+| ------------------------------------- | ------------------------------------------------------ | ----------------------- | -------------------------- |
+| `overall_avg_retrievability`          | `StatsService.TopicMastery` on GRE deck + `gre::` tags | Collection only         | Identical collection state |
+| `studied_cards`, topic retrievability | FSRS revlog in `collection.anki2`                      | Collection only         | Identical collection state |
+| `coverage_ratio` (memory leg)         | Leaf topics with studied cards / catalog               | Derived from collection | Identical collection state |
 
 **Syncs today:** derived-only on each device; **not** in GRE bundle.
 
@@ -49,11 +49,11 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Performance (45% of readiness)
 
-| Field | Source | Sync channel | Parity requirement |
-|-------|--------|--------------|-------------------|
-| `correct`, `total`, `attempt_count` | `bl_performance_attempt` aggregates | Bundle (`attempts`) | Full bundle merge |
-| `practice_by_topic` | Same table, grouped by topic | Bundle | Full bundle merge |
-| Session FK | `bl_session` | Bundle (`sessions`) | Sessions before attempts (FK-safe order) |
+| Field                               | Source                              | Sync channel        | Parity requirement                       |
+| ----------------------------------- | ----------------------------------- | ------------------- | ---------------------------------------- |
+| `correct`, `total`, `attempt_count` | `bl_performance_attempt` aggregates | Bundle (`attempts`) | Full bundle merge                        |
+| `practice_by_topic`                 | Same table, grouped by topic        | Bundle              | Full bundle merge                        |
+| Session FK                          | `bl_session`                        | Bundle (`sessions`) | Sessions before attempts (FK-safe order) |
 
 **Syncs today:** `pull_sync_bundle` / `apply_sync_bundle` in `storage/sync_bundle.rs`; HTTP via `sync_transport.rs` and `sync/http_server/gre_atlas_sync.rs`.
 
@@ -65,10 +65,10 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Coverage (10% of readiness)
 
-| Field | Source | Sync channel | Parity requirement |
-|-------|--------|--------------|-------------------|
+| Field                                  | Source                                                            | Sync channel    | Parity requirement         |
+| -------------------------------------- | ----------------------------------------------------------------- | --------------- | -------------------------- |
 | `weighted_ratio`, `covered_leaf_count` | `compute_coverage()` over mastery topics with `studied_cards > 0` | Collection only | Identical collection state |
-| Section breakdown | GRE catalog + observed tags | Derived | Identical collection state |
+| Section breakdown                      | GRE catalog + observed tags                                       | Derived         | Identical collection state |
 
 **Syncs today:** derived-only.
 
@@ -78,11 +78,11 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Calibration
 
-| Field | Source | Sync channel | Parity requirement |
-|-------|--------|--------------|-------------------|
-| Prediction rows | `bl_readiness_prediction` | Bundle (`predictions`) | Merge by id + `mtime_secs` LWW |
-| `brier_score`, calibration curve | `compute_calibration_stats()` over synced rows | Derived after merge | Same prediction rows |
-| Outcome resolution | `resolve_pending_outcomes()` updates rows | Must bump `usn` | Upload resolved outcomes |
+| Field                            | Source                                         | Sync channel           | Parity requirement             |
+| -------------------------------- | ---------------------------------------------- | ---------------------- | ------------------------------ |
+| Prediction rows                  | `bl_readiness_prediction`                      | Bundle (`predictions`) | Merge by id + `mtime_secs` LWW |
+| `brier_score`, calibration curve | `compute_calibration_stats()` over synced rows | Derived after merge    | Same prediction rows           |
+| Outcome resolution               | `resolve_pending_outcomes()` updates rows      | Must bump `usn`        | Upload resolved outcomes       |
 
 **Syncs today:** bundle includes predictions since schema v3+.
 
@@ -94,10 +94,10 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Confidence
 
-| Field | Source | Sync channel |
-|-------|--------|--------------|
-| `confidence_level`, intervals | `compute_readiness_score()` + `apply_calibration_honesty()` | Derived |
-| Calibration downgrade | `bl_readiness_prediction` held-out Brier | Sidecar + derived |
+| Field                         | Source                                                      | Sync channel      |
+| ----------------------------- | ----------------------------------------------------------- | ----------------- |
+| `confidence_level`, intervals | `compute_readiness_score()` + `apply_calibration_honesty()` | Derived           |
+| Calibration downgrade         | `bl_readiness_prediction` held-out Brier                    | Sidecar + derived |
 
 **Classification:** **PASS** when sidecar + identical collection; **PARTIAL** on iOS without collection (memory abstention affects readiness confidence inputs).
 
@@ -105,12 +105,12 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Readiness
 
-| Input | Weight | Sync |
-|-------|--------|------|
-| Memory score | 45% | Collection |
-| Performance score | 45% | Sidecar |
-| Coverage ratio | 10% | Collection |
-| Calibration honesty | overlay | Sidecar |
+| Input               | Weight  | Sync       |
+| ------------------- | ------- | ---------- |
+| Memory score        | 45%     | Collection |
+| Performance score   | 45%     | Sidecar    |
+| Coverage ratio      | 10%     | Collection |
+| Calibration honesty | overlay | Sidecar    |
 
 **Classification:** **PARTIAL** — performance and calibration align after bundle sync; projected score still differs if memory/coverage differ across devices.
 
@@ -118,13 +118,13 @@ Signal pipeline entry point: `load_gre_atlas_signals()` in `rslib/src/gre_atlas/
 
 ### Dashboard
 
-| Slice | Primary inputs | Sync |
-|-------|----------------|------|
-| Memory / performance / readiness scores | Signals cache | Mixed |
-| Coverage panel | Collection mastery | Collection |
-| Weak / recommended topics | Mastery + practice_by_topic | Mixed |
-| Recent activity | `bl_performance_attempt` | Sidecar |
-| Estimated GRE | All of the above | Mixed |
+| Slice                                   | Primary inputs              | Sync       |
+| --------------------------------------- | --------------------------- | ---------- |
+| Memory / performance / readiness scores | Signals cache               | Mixed      |
+| Coverage panel                          | Collection mastery          | Collection |
+| Weak / recommended topics               | Mastery + practice_by_topic | Mixed      |
+| Recent activity                         | `bl_performance_attempt`    | Sidecar    |
+| Estimated GRE                           | All of the above            | Mixed      |
 
 RPC: `gre_atlas_get_dashboard`.
 
@@ -144,11 +144,11 @@ Same split as dashboard + scores; no separate backend store.
 
 ### Study plan
 
-| Slice | Primary inputs | Sync |
-|-------|----------------|------|
-| Practice daily targets | Performance + readiness signals | Sidecar |
-| Review due targets | GRE deck due counts from collection scheduler | Collection |
-| Topic recommendations | Mastery, coverage, `practice_by_topic` | Mixed |
+| Slice                  | Primary inputs                                | Sync       |
+| ---------------------- | --------------------------------------------- | ---------- |
+| Practice daily targets | Performance + readiness signals               | Sidecar    |
+| Review due targets     | GRE deck due counts from collection scheduler | Collection |
+| Topic recommendations  | Mastery, coverage, `practice_by_topic`        | Mixed      |
 
 RPC: `gre_atlas_get_study_plan`.
 
@@ -160,12 +160,12 @@ RPC: `gre_atlas_get_study_plan`.
 
 Exported incrementally by `usn > after_usn` in `storage/sync_bundle.rs`:
 
-| Table | Included | Merge strategy |
-|-------|----------|----------------|
-| `bl_session` | Yes | LWW on `mtime_secs` |
-| `bl_question` | Yes | LWW on `mtime_secs` |
-| `bl_performance_attempt` | Yes | LWW on `mtime_secs`; id collision → new insert |
-| `bl_readiness_prediction` | Yes | LWW on `mtime_secs` |
+| Table                     | Included | Merge strategy                                 |
+| ------------------------- | -------- | ---------------------------------------------- |
+| `bl_session`              | Yes      | LWW on `mtime_secs`                            |
+| `bl_question`             | Yes      | LWW on `mtime_secs`                            |
+| `bl_performance_attempt`  | Yes      | LWW on `mtime_secs`; id collision → new insert |
+| `bl_readiness_prediction` | Yes      | LWW on `mtime_secs`                            |
 
 Merge order: sessions → questions → attempts → predictions (FK safe). Stale sessions ride along with new attempts when session `usn ≤ last_pushed`.
 
@@ -192,24 +192,24 @@ Tests simulate isolated desktop and mobile profiles (`CollectionBuilder` temp di
 
 Desktop seeds 50 practice attempts (`MIN_PERFORMANCE_ATTEMPTS`); mobile starts empty; identical empty collections.
 
-| Metric | Mobile before sync | Mobile after sync | Desktop after sync | Match? |
-|--------|-------------------|-------------------|--------------------|--------|
-| `performance_attempt_count` | 0 | 50 | 50 | Yes |
-| `performance_sufficient` | false | true | true | Yes |
-| `performance_value` | None | Some | Some | Yes |
-| `recent_activity_count` | 0 | 10 | 10 | Yes |
-| `daily_practice_target` | (bootstrap) | (computed) | (computed) | Yes |
-| Full `SidecarMetricsSnapshot` | ≠ desktop | = desktop | = desktop | **PASS** |
-| `memory_studied_cards` | 0 | 0 | 0 | Yes (both empty) |
-| `coverage_observed_leaves` | 0 | 0 | 0 | Yes |
+| Metric                        | Mobile before sync | Mobile after sync | Desktop after sync | Match?           |
+| ----------------------------- | ------------------ | ----------------- | ------------------ | ---------------- |
+| `performance_attempt_count`   | 0                  | 50                | 50                 | Yes              |
+| `performance_sufficient`      | false              | true              | true               | Yes              |
+| `performance_value`           | None               | Some              | Some               | Yes              |
+| `recent_activity_count`       | 0                  | 10                | 10                 | Yes              |
+| `daily_practice_target`       | (bootstrap)        | (computed)        | (computed)         | Yes              |
+| Full `SidecarMetricsSnapshot` | ≠ desktop          | = desktop         | = desktop          | **PASS**         |
+| `memory_studied_cards`        | 0                  | 0                 | 0                  | Yes (both empty) |
+| `coverage_observed_leaves`    | 0                  | 0                 | 0                  | Yes              |
 
 ### Test: `bundle_sync_predictions_match_calibration_stats`
 
-| Metric | Mobile before | Mobile after | Match? |
-|--------|---------------|--------------|--------|
-| `calibration_total_predictions` | 0 | 1 | Yes |
-| `calibration_resolved` | 0 | 1 | Yes |
-| Full sidecar snapshot vs desktop | ≠ | = | **PASS** |
+| Metric                           | Mobile before | Mobile after | Match?   |
+| -------------------------------- | ------------- | ------------ | -------- |
+| `calibration_total_predictions`  | 0             | 1            | Yes      |
+| `calibration_resolved`           | 0             | 1            | Yes      |
+| Full sidecar snapshot vs desktop | ≠             | =            | **PASS** |
 
 ### Test: `outcome_resolution_marks_prediction_for_sync`
 

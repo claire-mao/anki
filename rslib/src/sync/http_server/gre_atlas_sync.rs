@@ -110,14 +110,10 @@ fn save_server_bundle(
 }
 
 fn filter_bundle_after_usn(
-    mut bundle: crate::gre_atlas::storage::SyncBundle,
+    bundle: crate::gre_atlas::storage::SyncBundle,
     after_usn: i32,
 ) -> crate::gre_atlas::storage::SyncBundle {
-    bundle.sessions.retain(|r| r.usn > after_usn);
-    bundle.questions.retain(|r| r.usn > after_usn);
-    bundle.attempts.retain(|r| r.usn > after_usn);
-    bundle.predictions.retain(|r| r.usn > after_usn);
-    bundle
+    bundle.filter_after_usn(after_usn)
 }
 
 fn merge_server_bundle(
@@ -190,21 +186,48 @@ fn merge_attempt_row(
     stored: &mut crate::gre_atlas::storage::SyncBundle,
     row: &crate::gre_atlas::storage::SyncAttemptRow,
 ) -> bool {
-    if row.id == 0 {
-        stored.attempts.push(row.clone());
-        return true;
-    }
-    if let Some(existing) = stored.attempts.iter_mut().find(|a| a.id == row.id) {
+    if let Some(index) = stored
+        .attempts
+        .iter()
+        .position(|existing| !crate::gre_atlas::storage::attempt_identity_differs(existing, row))
+    {
+        let existing = &stored.attempts[index];
         if row.mtime_secs.0 > existing.mtime_secs.0 {
-            *existing = row.clone();
+            let existing_id = existing.id;
+            let mut updated = row.clone();
+            updated.id = existing_id;
+            stored.attempts[index] = updated;
             true
         } else {
             false
+        }
+    } else if row.id != 0 {
+        if let Some(existing) = stored.attempts.iter().find(|a| a.id == row.id) {
+            if crate::gre_atlas::storage::attempt_identity_differs(existing, row) {
+                let mut new_row = row.clone();
+                new_row.id = next_server_attempt_id(stored);
+                stored.attempts.push(new_row);
+                true
+            } else if row.mtime_secs.0 > existing.mtime_secs.0 {
+                if let Some(existing) = stored.attempts.iter_mut().find(|a| a.id == row.id) {
+                    *existing = row.clone();
+                }
+                true
+            } else {
+                false
+            }
+        } else {
+            stored.attempts.push(row.clone());
+            true
         }
     } else {
         stored.attempts.push(row.clone());
         true
     }
+}
+
+fn next_server_attempt_id(stored: &crate::gre_atlas::storage::SyncBundle) -> i64 {
+    stored.attempts.iter().map(|a| a.id).max().unwrap_or(0) + 1
 }
 
 fn merge_prediction_row(
