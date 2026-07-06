@@ -110,8 +110,7 @@
 }
 
 .settings-number-input input,
-.settings-text input,
-.settings-select select {
+.settings-text input {
     width: 6rem;
     padding: var(--gre-space-2);
     border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
@@ -134,6 +133,39 @@
 
 .settings-page :global(.settings-actions) {
     margin-top: var(--gre-space-1);
+}
+
+.settings-verification-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    padding-top: var(--gre-space-2);
+    border-top: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+}
+
+.settings-verification-link-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.settings-verification-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--fg-link);
+    font: inherit;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.settings-verification-link:hover {
+    color: var(--fg);
 }
 
 .settings-advanced.gre-ds-panel {
@@ -178,6 +210,7 @@
     padding-bottom: var(--gre-space-3);
 }
 
-.settings-select select {
-    min-width: 10rem;
+.settings-select :global(.select-container) {
+    color: var(--fg);
+    background: var(--gre-surface-bg-inset);
 }

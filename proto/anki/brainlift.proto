@@ -19,10 +19,17 @@ service BrainLiftService {
   rpc GetDashboard(GetDashboardRequest) returns (DashboardState);
   rpc GetRecentAttempts(GetRecentAttemptsRequest)
       returns (GetRecentAttemptsResponse);
+  rpc GetPerformanceChart(GetPerformanceChartRequest)
+      returns (GetPerformanceChartResponse);
   rpc GetGreStudyStatus(generic.Empty) returns (GreStudyStatusResponse);
+  // Temporarily raise today's new-card limit on the GRE deck so students can
+  // keep building memory evidence after clearing due cards.
+  rpc StartGreExtraStudy(generic.Empty) returns (StartGreExtraStudyResponse);
   rpc GetStudyPlan(GetStudyPlanRequest) returns (StudyPlanResponse);
   rpc GetReadinessCalibration(generic.Empty)
       returns (ReadinessCalibrationResponse);
+  rpc GetPerformanceEval(generic.Empty) returns (PerformanceEvalResponse);
+  rpc GetMemoryEval(generic.Empty) returns (MemoryEvalResponse);
   rpc GenerateBrainLiftEvalReport(generic.Empty)
       returns (BrainLiftEvalReportResponse);
   rpc GenerateBrainLiftAiEvalReport(generic.Empty)
@@ -53,6 +60,13 @@ service BrainLiftService {
   // history.
   rpc PrepareDemoCollection(generic.Empty)
       returns (PrepareDemoCollectionResponse);
+  // Runtime build, sync, and feature verification for the settings panel.
+  rpc GetGreAtlasVerification(GetGreAtlasVerificationRequest)
+      returns (GreAtlasVerificationResponse);
+  // AI explanation on/off toggle (persisted in collection config).
+  rpc GetGreAtlasAiSettings(generic.Empty) returns (GreAtlasAiSettings);
+  rpc SetGreAtlasAiEnabled(SetGreAtlasAiEnabledRequest)
+      returns (GreAtlasAiSettings);
 }
 
 service BackendBrainLiftService {}
@@ -107,15 +121,48 @@ message ExplainAnswerRequest {
   string selected_answer = 2;
 }
 
+// Worked solution for the post-answer explanation panel.
+message SolutionExplanation {
+  string concept = 1;
+  string formula = 2;
+  repeated string steps = 3;
+  string final_answer = 4;
+  string common_mistake = 5;
+  repeated string key_takeaways = 6;
+  // One-line citation string (source name + section when available).
+  string citation = 7;
+  // A second solving approach when one applies (empty otherwise).
+  string alternative_method = 8;
+  // "Easy" / "Medium" / "Hard", derived from the stored difficulty.
+  string difficulty = 9;
+  // Suggested solving budget, e.g. "~1.5 min".
+  string estimated_time = 10;
+  // Related GRE topics to review next.
+  repeated string related_topics = 11;
+}
+
 // Per-choice reasoning for the post-answer explanation.
 message AnswerChoiceExplanation {
   string choice = 1;
   bool is_correct = 2;
+  // Legacy one-line tutor note; mirrors `reason` when structured fields are set.
   string reasoning = 3;
+  // MCQ letter shown in the UI (A, B, C, …).
+  string label = 4;
+  // Why this choice is correct, or why it is wrong.
+  string reason = 5;
+  string likely_misconception = 6;
+  // What flawed calculation or inference leads to this option.
+  string student_reasoning = 7;
+  string correct_reasoning = 8;
+  // How the wrong path differs from the correct approach.
+  string difference = 9;
+  // How to recognize and avoid this trap on future GRE questions.
+  string trap_recognition = 10;
 }
 
 message AnswerExplanation {
-  // Why the correct answer is correct.
+  // Short summary (legacy); mirrors the worked solution when present.
   string summary = 1;
   // Reasoning for each presented choice (correct + every distractor).
   repeated AnswerChoiceExplanation choices = 2;
@@ -130,6 +177,7 @@ message AnswerExplanation {
   // deterministic fallback.
   string provenance_note = 8;
   string model_version = 9;
+  SolutionExplanation solution = 10;
 }
 
 message ExplainAnswerResponse {
@@ -341,6 +389,37 @@ message GetRecentAttemptsResponse {
   repeated PerformanceAttempt attempts = 1;
 }
 
+enum PerformanceChartHorizon {
+  PERFORMANCE_CHART_HORIZON_UNSPECIFIED = 0;
+  PERFORMANCE_CHART_HORIZON_1D = 1;
+  PERFORMANCE_CHART_HORIZON_3D = 2;
+  PERFORMANCE_CHART_HORIZON_7D = 3;
+  PERFORMANCE_CHART_HORIZON_30D = 4;
+  PERFORMANCE_CHART_HORIZON_ALL = 5;
+}
+
+message PerformanceChartBucket {
+  string label = 1;
+  int64 start_secs = 2;
+  int64 end_secs = 3;
+  uint32 questions = 4;
+  uint32 correct = 5;
+  uint32 incorrect = 6;
+  optional float accuracy = 7;
+}
+
+message GetPerformanceChartRequest {
+  PerformanceChartHorizon horizon = 1;
+  // When set, only include attempts for matching topics (same rules as
+  // ListQuestionsRequest.topic_prefix).
+  string topic_prefix = 2;
+}
+
+message GetPerformanceChartResponse {
+  repeated PerformanceChartBucket buckets = 1;
+  bool has_any_attempts = 2;
+}
+
 message GetTopicDetailsRequest {
   string topic_id = 1;
   uint32 practice_question_limit = 2;
@@ -380,6 +459,9 @@ message TopicDetailsResponse {
   repeated PerformanceAttempt recent_attempts = 19;
   optional float global_readiness_score = 20;
   string global_readiness_summary = 21;
+  optional string flashcard_schedule_hint = 22;
+  optional uint32 flashcards_due_now = 23;
+  optional uint32 flashcards_next_due_in_days = 24;
 }
 
 message GreStudyStatusResponse {
@@ -388,6 +470,19 @@ message GreStudyStatusResponse {
   uint32 new_count = 3;
   uint32 learn_count = 4;
   uint32 review_count = 5;
+  // New cards in the GRE deck not yet introduced today (ignores daily limit).
+  uint32 available_new_count = 6;
+  // Cards unlockable right now via StartGreExtraStudy (0 when capped or none left).
+  uint32 extra_study_available = 7;
+  // Earliest scheduled review across the GRE deck when nothing is due now.
+  optional uint32 next_review_in_days = 8;
+}
+
+message StartGreExtraStudyResponse {
+  uint32 cards_unlocked = 1;
+  uint32 new_count = 2;
+  uint32 learn_count = 3;
+  uint32 review_count = 4;
 }
 
 message GetStudyPlanRequest {
@@ -402,6 +497,9 @@ message StudyPlanDailyTask {
   uint32 target_count = 4;
   optional string topic_id = 5;
   optional string topic_display_name = 6;
+  optional string flashcard_schedule_hint = 7;
+  optional uint32 flashcards_due_now = 8;
+  optional uint32 flashcards_next_due_in_days = 9;
 }
 
 message DailyStudyPlan {
@@ -459,6 +557,65 @@ message ReadinessCalibrationResponse {
   int64 computed_at_millis = 3;
 }
 
+message PerformanceConfidenceInterval {
+  float level = 1;
+  float low = 2;
+  float high = 3;
+  string method = 4;
+}
+
+message PerformanceConfusionMatrix {
+  uint32 true_positive = 1;
+  uint32 false_positive = 2;
+  uint32 true_negative = 3;
+  uint32 false_negative = 4;
+}
+
+message PerformanceTopicAccuracy {
+  string topic_id = 1;
+  string display_name = 2;
+  uint32 attempt_count = 3;
+  uint32 correct_count = 4;
+  float accuracy = 5;
+}
+
+message PerformanceEvalMetrics {
+  uint32 attempt_count = 1;
+  uint32 correct_count = 2;
+  float accuracy = 3;
+  PerformanceConfidenceInterval accuracy_ci = 4;
+  PerformanceConfusionMatrix confusion = 5;
+  repeated PerformanceTopicAccuracy topic_accuracy = 6;
+}
+
+message PerformanceEvalResponse {
+  string model_version = 1;
+  bool sufficient_data = 2;
+  string assessment = 3;
+  PerformanceEvalMetrics test = 4;
+  int64 computed_at_millis = 5;
+}
+
+message MemoryCalibrationBin {
+  float bin_low = 1;
+  float bin_high = 2;
+  float predicted_mean = 3;
+  float outcome_mean = 4;
+  uint32 count = 5;
+}
+
+message MemoryEvalResponse {
+  string model_version = 1;
+  bool fsrs_enabled = 2;
+  uint32 held_out_review_count = 3;
+  bool sufficient_data = 4;
+  optional float brier_score = 5;
+  optional float log_loss = 6;
+  string assessment = 7;
+  repeated MemoryCalibrationBin calibration_curve = 8;
+  int64 computed_at_millis = 9;
+}
+
 message BrainLiftEvalReportResponse {
   string json = 1;
   string markdown = 2;
@@ -468,6 +625,8 @@ message BrainLiftEvalReportResponse {
 message BrainLiftAiEvalReportResponse {
   string json = 1;
   string markdown = 2;
+  // Whether the optional LLM path is enabled (API key set and not disabled).
+  bool ai_enabled = 3;
 }
 
 // Syncable practice attempt row from brainlift.db.
@@ -617,4 +776,38 @@ message PrepareDemoCollectionResponse {
   uint32 due_new = 5;
   uint32 due_learn = 6;
   uint32 due_review = 7;
+}
+
+enum GreAtlasClientPlatform {
+  GRE_ATLAS_CLIENT_UNSPECIFIED = 0;
+  GRE_ATLAS_CLIENT_DESKTOP = 1;
+  GRE_ATLAS_CLIENT_MOBILE = 2;
+}
+
+message GetGreAtlasVerificationRequest {
+  GreAtlasClientPlatform client = 1;
+}
+
+message GreAtlasVerificationResponse {
+  string desktop_build = 1;
+  string mobile_build = 2;
+  string sync_status = 3;
+  string offline_queue = 4;
+  string conflict_resolution = 5;
+  string duplicate_protection = 6;
+  string commit_hash = 7;
+  string app_version = 8;
+  string rust_version = 9;
+  string ai_enabled = 10;
+}
+
+message GreAtlasAiSettings {
+  // User toggle (persisted). When false, explanations always use offline templates.
+  bool ai_enabled = 1;
+  // Whether an API key is configured on this machine, so AI can actually run.
+  bool ai_available = 2;
+}
+
+message SetGreAtlasAiEnabledRequest {
+  bool enabled = 1;
 }

@@ -33,16 +33,8 @@ enum PracticePresentation {
         return section.isEmpty ? name : "\(name) — \(section)"
     }
 
-    static func orderExplanationChoices(
-        _ choices: [GreAnswerChoiceExplanationView]
-    ) -> [GreAnswerChoiceExplanationView] {
-        choices
-            .filter { !$0.reasoning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            .sorted { lhs, rhs in
-                if lhs.isCorrect != rhs.isCorrect {
-                    return lhs.isCorrect && !rhs.isCorrect
-                }
-                return false
-            }
-    }
+    // Per-choice explanation rendering was intentionally removed: the practice
+    // reveal panel now shows only the single question-level explanation summary.
+    // Backend responses may still carry per-choice reasoning, but it is not
+    // surfaced in the presentation layer.
 }

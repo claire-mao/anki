@@ -60,6 +60,32 @@ export function filterAttemptsByHorizon(
     return attempts.filter((attempt) => attempt.answeredAtSecs >= cutoff);
 }
 
+export function sortAttemptsChronologically(
+    attempts: PerformanceAttempt[],
+): PerformanceAttempt[] {
+    return attempts
+        .map((attempt, index) => ({ attempt, index }))
+        .sort((left, right) => {
+            const timeDiff =
+                Number(left.attempt.answeredAtSecs) - Number(right.attempt.answeredAtSecs);
+            return timeDiff !== 0 ? timeDiff : left.index - right.index;
+        })
+        .map(({ attempt }) => attempt);
+}
+
+export function aggregateAccuracyTrendPointsByDay(
+    points: AccuracyTrendPoint[],
+): AccuracyTrendPoint[] {
+    const byDay = new Map<number, AccuracyTrendPoint>();
+    for (const point of points) {
+        const day = Math.floor(point.answeredAtSecs / SECONDS_PER_DAY);
+        byDay.set(day, point);
+    }
+    return [...byDay.entries()]
+        .sort(([leftDay], [rightDay]) => leftDay - rightDay)
+        .map(([, point]) => point);
+}
+
 export function rollingAccuracyTrendPoints(
     attempts: PerformanceAttempt[],
     windowSize = 5,
@@ -67,8 +93,8 @@ export function rollingAccuracyTrendPoints(
     if (attempts.length === 0) {
         return [];
     }
-    const ordered = [...attempts].reverse();
-    return ordered.map((attempt, index) => {
+    const ordered = sortAttemptsChronologically(attempts);
+    const points = ordered.map((attempt, index) => {
         const start = Math.max(0, index - windowSize + 1);
         const slice = ordered.slice(start, index + 1);
         const correct = slice.filter((item) => item.correct).length;
@@ -77,6 +103,7 @@ export function rollingAccuracyTrendPoints(
             accuracy: clampPercent((correct / slice.length) * 100),
         };
     });
+    return aggregateAccuracyTrendPointsByDay(points);
 }
 
 export function rollingAccuracySeries(

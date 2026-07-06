@@ -5,9 +5,19 @@ use std::collections::HashMap;
 
 use serde::Serialize;
 
+use anki_proto::brainlift::PerformanceConfusionMatrix as PerformanceConfusionMatrixProto;
+use anki_proto::brainlift::PerformanceEvalMetrics as PerformanceEvalMetricsProto;
+use anki_proto::brainlift::PerformanceEvalResponse;
+use anki_proto::brainlift::PerformanceTopicAccuracy as PerformanceTopicAccuracyProto;
+
+use crate::collection::Collection;
+use crate::error::Result;
+use crate::gre_atlas::domain::GreCatalog;
 use crate::gre_atlas::eval::ConfidenceInterval;
+use crate::gre_atlas::gre_atlas_storage;
 use crate::gre_atlas::readiness::wilson_ci;
 use crate::gre_atlas::storage::PerformanceAttemptEvalRow;
+use crate::prelude::TimestampMillis;
 
 pub(crate) const PERFORMANCE_MODEL_VERSION: &str = "performance_v1";
 pub(crate) const MIN_HELD_OUT_ATTEMPTS: u32 = 5;
@@ -52,6 +62,14 @@ pub struct PerformanceTrainSummary {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub struct PerformanceTopicAccuracy {
+    pub topic_id: String,
+    pub attempt_count: u32,
+    pub correct_count: u32,
+    pub accuracy: f32,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct PerformanceTestMetrics {
     pub attempt_count: u32,
     pub correct_count: u32,
@@ -62,6 +80,7 @@ pub struct PerformanceTestMetrics {
     pub f1: f32,
     pub prediction_accuracy: f32,
     pub confusion: ConfusionMatrix,
+    pub topic_accuracy: Vec<PerformanceTopicAccuracy>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -245,6 +264,108 @@ fn evaluate_test(
             true_negative,
             false_negative,
         },
+        topic_accuracy: topic_accuracy_from_test(test),
+    }
+}
+
+fn topic_accuracy_from_test(test: &[&PerformanceAttemptEvalRow]) -> Vec<PerformanceTopicAccuracy> {
+    let mut totals: HashMap<String, (u32, u32)> = HashMap::new();
+    for row in test {
+        let entry = totals.entry(row.topic.clone()).or_insert((0, 0));
+        entry.1 += 1;
+        if row.correct {
+            entry.0 += 1;
+        }
+    }
+    let mut rows: Vec<_> = totals
+        .into_iter()
+        .map(|(topic_id, (correct_count, attempt_count))| PerformanceTopicAccuracy {
+            topic_id: topic_id.clone(),
+            attempt_count,
+            correct_count,
+            accuracy: if attempt_count > 0 {
+                correct_count as f32 / attempt_count as f32 * 100.0
+            } else {
+                0.0
+            },
+        })
+        .collect();
+    rows.sort_by(|left, right| {
+        right
+            .attempt_count
+            .cmp(&left.attempt_count)
+            .then_with(|| left.topic_id.cmp(&right.topic_id))
+    });
+    rows
+}
+
+impl Collection {
+    pub fn gre_atlas_get_performance_eval(&mut self) -> Result<PerformanceEvalResponse> {
+        let storage = gre_atlas_storage(self)?;
+        let attempts = storage.list_performance_attempts_for_eval()?;
+        let performance = compute_performance_eval(&attempts);
+        Ok(performance_eval_to_proto(
+            &performance,
+            TimestampMillis::now().0,
+        ))
+    }
+}
+
+fn performance_eval_to_proto(
+    performance: &PerformanceEval,
+    computed_at_millis: i64,
+) -> PerformanceEvalResponse {
+    PerformanceEvalResponse {
+        model_version: performance.model_version.clone(),
+        sufficient_data: performance.sufficient_data,
+        assessment: performance.assessment.clone(),
+        test: Some(performance_test_metrics_to_proto(&performance.test)),
+        computed_at_millis,
+    }
+}
+
+fn performance_test_metrics_to_proto(metrics: &PerformanceTestMetrics) -> PerformanceEvalMetricsProto {
+    PerformanceEvalMetricsProto {
+        attempt_count: metrics.attempt_count,
+        correct_count: metrics.correct_count,
+        accuracy: metrics.accuracy,
+        accuracy_ci: Some(confidence_interval_to_proto(&metrics.accuracy_ci)),
+        confusion: Some(confusion_matrix_to_proto(&metrics.confusion)),
+        topic_accuracy: metrics
+            .topic_accuracy
+            .iter()
+            .map(topic_accuracy_to_proto)
+            .collect(),
+    }
+}
+
+fn confidence_interval_to_proto(
+    interval: &ConfidenceInterval,
+) -> anki_proto::brainlift::PerformanceConfidenceInterval {
+    anki_proto::brainlift::PerformanceConfidenceInterval {
+        level: interval.level,
+        low: interval.low,
+        high: interval.high,
+        method: interval.method.clone(),
+    }
+}
+
+fn confusion_matrix_to_proto(matrix: &ConfusionMatrix) -> PerformanceConfusionMatrixProto {
+    PerformanceConfusionMatrixProto {
+        true_positive: matrix.true_positive,
+        false_positive: matrix.false_positive,
+        true_negative: matrix.true_negative,
+        false_negative: matrix.false_negative,
+    }
+}
+
+fn topic_accuracy_to_proto(row: &PerformanceTopicAccuracy) -> PerformanceTopicAccuracyProto {
+    PerformanceTopicAccuracyProto {
+        topic_id: row.topic_id.clone(),
+        display_name: GreCatalog::display_name_for_tag(&row.topic_id),
+        attempt_count: row.attempt_count,
+        correct_count: row.correct_count,
+        accuracy: row.accuracy,
     }
 }
 
@@ -396,6 +517,22 @@ fn append_performance_eval_body(out: &mut String, performance: &PerformanceEval)
         "| Actual incorrect | {} (FP) | {} (TN) |\n\n",
         performance.test.confusion.false_positive, performance.test.confusion.true_negative
     ));
+
+    if !performance.test.topic_accuracy.is_empty() {
+        out.push_str("### Accuracy by topic (held-out only)\n\n");
+        out.push_str("| Topic | Attempts | Correct | Accuracy |\n");
+        out.push_str("| --- | ---: | ---: | ---: |\n");
+        for row in &performance.test.topic_accuracy {
+            out.push_str(&format!(
+                "| {} | {} | {} | {:.1}% |\n",
+                GreCatalog::display_name_for_tag(&row.topic_id),
+                row.attempt_count,
+                row.correct_count,
+                row.accuracy,
+            ));
+        }
+        out.push('\n');
+    }
 }
 
 #[cfg(test)]
@@ -489,6 +626,33 @@ mod test {
         let cm = &eval.test.confusion;
         let total = cm.true_positive + cm.false_positive + cm.true_negative + cm.false_negative;
         assert_eq!(total, eval.test.attempt_count);
+    }
+
+    #[test]
+    fn topic_accuracy_is_computed_from_held_out_attempts_only() {
+        let attempts = vec![
+            attempt(1, "gre::quant::algebra", true),
+            attempt(2, "gre::quant::algebra", true),
+            attempt(3, "gre::verbal::text_completion", false),
+            attempt(4, "gre::verbal::text_completion", true),
+            attempt(5, "gre::quant::algebra", false),
+            attempt(10, "gre::quant::algebra", true),
+            attempt(15, "gre::verbal::text_completion", true),
+            attempt(20, "gre::quant::algebra", false),
+            attempt(25, "gre::verbal::text_completion", true),
+            attempt(30, "gre::quant::algebra", true),
+        ];
+        let eval = compute_performance_eval(&attempts);
+        assert!(eval.sufficient_data);
+        assert_eq!(eval.test.topic_accuracy.len(), 2);
+        let algebra = eval
+            .test
+            .topic_accuracy
+            .iter()
+            .find(|row| row.topic_id == "gre::quant::algebra")
+            .unwrap();
+        assert_eq!(algebra.attempt_count, 4);
+        assert_eq!(algebra.correct_count, 2);
     }
 
     #[test]

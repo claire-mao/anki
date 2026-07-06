@@ -10,8 +10,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     } from "@generated/anki/brainlift_pb";
 
     import DailyMissionTask from "./DailyMissionTask.svelte";
-    import { missionIntro } from "./daily-mission";
-    import { runGreNavAction } from "./gre-navigation";
+    import {
+        dailyMissionComplete,
+        missionIntro,
+        type DailyMissionProgressContext,
+        startOfLocalDaySecs,
+    } from "./daily-mission";
+    import { runGreNavAction, studyPlanNavAction } from "./gre-navigation";
+    import GreButton from "./ui/GreButton.svelte";
     import GreIcon from "./GreIcon.svelte";
     import GreText from "./ui/GreText.svelte";
 
@@ -21,6 +27,13 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     export let compact = false;
     export let primary = false;
     export let hideHeader = false;
+
+    $: progressContext = {
+        studyStatus,
+        recentAttempts,
+        dayStartSecs: startOfLocalDaySecs(),
+    } satisfies DailyMissionProgressContext;
+    $: missionComplete = dailyMissionComplete(plan, progressContext);
 </script>
 
 <section
@@ -49,23 +62,23 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         {/each}
     </div>
 
-    {#if compact && !primary}
-        <p class="daily-mission-more daily-mission-more-compact">
-            <a
-                href="/study-plan"
-                on:click={(event) =>
-                    runGreNavAction(
-                        {
-                            label: "Study plan",
-                            bridge: "greOpenStudyPlan",
-                            href: "/study-plan",
-                        },
-                        event,
-                    )}
-            >
-                View full study plan
-            </a>
-        </p>
+    {#if missionComplete}
+        <div class="daily-mission-complete" aria-live="polite">
+            <p class="daily-mission-complete-title">Today's mission complete</p>
+            <p class="daily-mission-complete-copy">
+                You finished every focus action for today. Come back tomorrow for a fresh set.
+            </p>
+            {#if !primary}
+                <GreButton
+                    variant="secondary"
+                    size="sm"
+                    className="daily-mission-complete-action"
+                    on:click={(event) => runGreNavAction(studyPlanNavAction("Back to dashboard"), event)}
+                >
+                    Back to dashboard
+                </GreButton>
+            {/if}
+        </div>
     {/if}
 </section>
 
@@ -95,25 +108,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         gap: var(--gre-space-2);
     }
 
-    .daily-mission-more {
-        margin: var(--gre-space-4) 0 0;
-    }
-
-    .daily-mission-more-compact {
-        margin-top: var(--gre-space-3);
-        margin-bottom: 0;
-    }
-
-    .daily-mission-more a {
-        color: var(--fg-link);
-        font-weight: var(--gre-weight-label);
-        text-decoration: none;
-    }
-
-    .daily-mission-more a:hover {
-        text-decoration: underline;
-    }
-
     .daily-mission-primary .daily-mission-grid {
         grid-template-columns: 1fr;
     }
@@ -122,5 +116,35 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     .daily-mission-primary :global(.gre-ds-recommendation-card) {
         border-color: color-mix(in srgb, var(--gre-accent) 18%, var(--border));
         background: color-mix(in srgb, var(--gre-accent-soft) 65%, var(--canvas));
+    }
+
+    .daily-mission-complete {
+        display: flex;
+        flex-direction: column;
+        gap: var(--gre-space-2);
+        margin-top: var(--gre-space-3);
+        padding: var(--gre-space-3);
+        border-radius: var(--gre-radius-md);
+        border: 1px solid color-mix(in srgb, var(--gre-success) 24%, var(--border));
+        background: color-mix(in srgb, var(--gre-success) 8%, var(--canvas));
+    }
+
+    .daily-mission-complete-title {
+        margin: 0;
+        font-size: var(--gre-font-h3);
+        font-weight: var(--gre-weight-h3);
+        line-height: var(--gre-lh-h3);
+        color: var(--fg);
+    }
+
+    .daily-mission-complete-copy {
+        margin: 0;
+        font-size: var(--gre-font-caption);
+        line-height: var(--gre-lh-caption);
+        color: var(--fg-subtle);
+    }
+
+    .daily-mission-complete :global(.daily-mission-complete-action) {
+        align-self: flex-start;
     }
 </style>

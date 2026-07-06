@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,11 @@ random.seed(42)
 
 SOURCE = "GRE Atlas Practice Bank"
 OUT_DIR = Path(__file__).resolve().parents[1] / "rslib/src/gre_atlas/questions"
+
+MIN_FOUNDATION_QUANT = 100
+MIN_FOUNDATION_VERBAL = 100
+MIN_FOUNDATION_AWA = 50
+MIN_FOUNDATION_PER_TOPIC = 8
 
 
 # 30% easy, 50% medium, 20% hard (325 total)
@@ -82,10 +88,95 @@ def pick_diff(i: int) -> float:
     return DIFF_SCHEDULE[i % len(DIFF_SCHEDULE)]
 
 
+def norm_choice(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip().lower())
+
+
+def pick_distractors(correct: str, candidates: list[str], count: int = 3) -> list[str]:
+    """Return `count` unique distractors, none matching `correct` (normalized)."""
+    seen = {norm_choice(correct)}
+    out: list[str] = []
+    for candidate in candidates:
+        key = norm_choice(candidate)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(candidate)
+        if len(out) == count:
+            break
+    if len(out) != count:
+        raise ValueError(
+            f"need {count} unique distractors for {correct!r}, got {out!r} from {candidates!r}"
+        )
+    return out
+
+
 def four_choices(correct: str, wrong: list[str]) -> list[str]:
-    choices = [correct] + wrong[:3]
+    distractors = pick_distractors(correct, wrong)
+    choices = [correct, *distractors]
     random.shuffle(choices)
     return choices
+
+
+def circle_circumference_distractors(r: int) -> list[str]:
+    return pick_distractors(
+        f"{2 * r}π",
+        [
+            f"{r}π",
+            f"{r**2}π",
+            f"{2 * r + 2}π",
+            f"{2 * r - 2}π",
+            f"{(r + 1) ** 2}π",
+            f"{4 * r}π",
+        ],
+    )
+
+
+def circle_area_distractors(r: int) -> list[str]:
+    return pick_distractors(
+        f"{r**2}π",
+        [
+            f"{2 * r}π",
+            f"{r}π",
+            f"{(r + 1) ** 2}π",
+            f"{(r - 1) ** 2}π",
+            f"{r**2 + r}π",
+            f"{4 * r}π",
+        ],
+    )
+
+
+def triangle_hypotenuse_distractors(a: int, b: int, c: int) -> list[str]:
+    return pick_distractors(
+        str(c),
+        [str(c + 1), str(c + 2), str(c - 1), str(c - 2), str(a + b), str(abs(a - b))],
+    )
+
+
+def data_analysis_distractors(stat: str, ans: str) -> list[str]:
+    if stat == "mean":
+        value = float(ans)
+        return pick_distractors(
+            ans,
+            [
+                str(round(value + 1, 1)),
+                str(round(value - 1, 1)),
+                str(round(value + 2, 1)),
+                str(round(value - 2, 1)),
+                str(round(value + 0.5, 1)),
+            ],
+        )
+    numeric = int(float(ans))
+    return pick_distractors(
+        ans,
+        [
+            str(numeric + 2),
+            str(numeric - 2),
+            str(numeric + 5),
+            str(numeric - 5),
+            str(numeric + 1),
+        ],
+    )
 
 
 def gen_quant() -> list[dict[str, Any]]:
@@ -290,7 +381,7 @@ def gen_quant() -> list[dict[str, Any]]:
                 "gre::quant::geometry::triangles",
                 "quant",
                 f"A right triangle has legs {a} and {b}. What is the length of the hypotenuse?",
-                four_choices(str(c), [str(c + 2), str(c - 1), str(a + b)]),
+                four_choices(str(c), triangle_hypotenuse_distractors(a, b, c)),
                 str(c),
                 expl,
                 subtopic="pythagorean",
@@ -341,11 +432,11 @@ def gen_quant() -> list[dict[str, Any]]:
         if i % 2 == 0:
             stem = f"A circle has radius {r}. What is its circumference?"
             ans, expl = circ, f"C = 2πr = 2π({r}) = {circ}."
-            wrong = [f"{r}π", f"{2 * r}π", f"{r**2}π"]
+            wrong = circle_circumference_distractors(r)
         else:
             stem = f"A circle has radius {r}. What is its area?"
             ans, expl = area, f"A = πr² = π({r})² = {area}."
-            wrong = [f"{2 * r}π", f"{r}π", f"{4 * r}π"]
+            wrong = circle_area_distractors(r)
         out.append(
             q(
                 f"gre-foundation-quant-cir-{i + 1:03d}",
@@ -406,7 +497,10 @@ def gen_quant() -> list[dict[str, Any]]:
                 "gre::quant::data_interpretation",
                 "quant",
                 f"Sales by period — {table}. What is the percent change from {period}?",
-                four_choices(ans, ["15%", "25%", "40%", "50%"]),
+                four_choices(
+                    ans,
+                    [pct for pct in ["15%", "25%", "40%", "50%"] if pct != ans],
+                ),
                 ans,
                 expl,
                 subtopic="percent_change_table",
@@ -478,22 +572,7 @@ def gen_quant() -> list[dict[str, Any]]:
                 "gre::quant::statistics::data_analysis",
                 "quant",
                 f"What is the {stat} of the data set {', '.join(map(str, data))}?",
-                four_choices(
-                    ans,
-                    [
-                        str(float(ans.replace(".8", "")) + 2)
-                        if stat == "mean"
-                        else "10",
-                        "4",
-                        "12",
-                    ][:3]
-                    if stat != "mean"
-                    else [
-                        str(round(float(ans) + 1, 1)),
-                        str(round(float(ans) - 1, 1)),
-                        "5.0",
-                    ],
-                ),
+                four_choices(ans, data_analysis_distractors(stat, ans)),
                 ans,
                 expl,
                 subtopic=stat,
@@ -637,7 +716,7 @@ def gen_quant() -> list[dict[str, Any]]:
         )
         idx += 1
 
-    assert len(out) >= 150, len(out)
+    assert len(out) >= MIN_FOUNDATION_QUANT, len(out)
     return out[:150] if len(out) > 150 else out
 
 
@@ -1764,7 +1843,7 @@ def gen_verbal() -> list[dict[str, Any]]:
         )
         idx += 1
 
-    assert len(out) >= 150, len(out)
+    assert len(out) >= MIN_FOUNDATION_VERBAL, len(out)
     return out[:150]
 
 
@@ -1840,6 +1919,204 @@ def gen_awa() -> list[dict[str, Any]]:
         ),
     ]
 
+    extra_issue_prompts = [
+        (
+            "People should always follow tradition rather than seek innovation.",
+            "Tradition alone cannot address novel problems that require new solutions.",
+            "Tradition and innovation can coexist; rejecting all change is too rigid.",
+        ),
+        (
+            "Remote work makes employees less committed to their organizations.",
+            "Commitment depends on culture and management, not location alone.",
+            "Remote arrangements can increase autonomy without reducing loyalty.",
+        ),
+        (
+            "A nation's primary measure of progress should be economic growth alone.",
+            "GDP growth ignores inequality, health, and environmental costs.",
+            "Progress has social and ecological dimensions beyond output.",
+        ),
+        (
+            "Children learn best when education emphasizes memorization over critical thinking.",
+            "Critical thinking builds transferable skills that memorization alone cannot.",
+            "Rote recall and reasoning both matter, but the claim overstates one side.",
+        ),
+        (
+            "Privacy should always yield to national security concerns.",
+            "Unchecked surveillance can erode civil liberties without improving safety.",
+            "Security and privacy require balanced limits, not automatic tradeoffs.",
+        ),
+        (
+            "Artificial intelligence will inevitably eliminate the need for human creativity.",
+            "Human judgment, context, and originality remain essential in many domains.",
+            "Tools augment creators; they do not replace all creative agency.",
+        ),
+        (
+            "Charitable giving is less effective than government programs at solving social problems.",
+            "Philanthropy and public programs can complement each other.",
+            "Neither sector alone addresses every scale of need.",
+        ),
+        (
+            "Travel abroad is necessary to develop a mature worldview.",
+            "Perspective can grow through diverse local experiences and study, not travel alone.",
+            "Travel helps some people but is neither necessary nor sufficient for maturity.",
+        ),
+        (
+            "Democracies always produce better policy outcomes than other systems.",
+            "Institutional quality and information matter as much as the label of democracy.",
+            "Democratic processes vary widely in effectiveness.",
+        ),
+        (
+            "People should prioritize career advancement over work-life balance.",
+            "Burnout and health costs can undermine long-term career success.",
+            "Balance and advancement are not mutually exclusive priorities.",
+        ),
+        (
+            "Standardized testing is the fairest way to evaluate all students.",
+            "Tests can reflect preparation gaps and bias rather than pure ability.",
+            "Fair assessment may require multiple measures beyond one exam format.",
+        ),
+        (
+            "Urban density always improves quality of life.",
+            "Congestion, housing costs, and infrastructure strain can reduce livability.",
+            "Density brings benefits and tradeoffs depending on planning and investment.",
+        ),
+        (
+            "Scientific consensus should never be questioned by non-experts.",
+            "Skeptical scrutiny and replication are part of science itself.",
+            "Distinguish informed questioning from denial of overwhelming evidence.",
+        ),
+    ]
+
+    more_issue_prompts = [
+        (
+            "Corporations should prioritize shareholder returns over employee welfare.",
+            "Long-term value often depends on skilled, motivated workers, not short-term cuts.",
+            "Shareholder and employee interests can align when firms invest in stability.",
+        ),
+        (
+            "Social media does more harm than good to society.",
+            "Social media also enables organizing, education, and marginalized voices.",
+            "Net effects depend on design, moderation, and how platforms are used.",
+        ),
+        (
+            "Free college tuition should be available to all students regardless of need.",
+            "Universal tuition may subsidize families who could pay, reducing funds for need-based aid.",
+            "Affordability goals can be met with targeted support rather than blanket subsidies.",
+        ),
+        (
+            "Nations should open borders completely to improve global prosperity.",
+            "Rapid open borders can strain housing, wages, and public services without transition plans.",
+            "Managed migration and integration policy matter alongside openness.",
+        ),
+        (
+            "Meritocracy is the fairest way to organize society.",
+            "Starting advantages and bias can shape who is labeled meritorious.",
+            "Fair systems require equal opportunity, not just competition on uneven footing.",
+        ),
+        (
+            "Wealth inequality is an inevitable and acceptable feature of progress.",
+            "Extreme inequality can undermine mobility, health, and democratic participation.",
+            "Growth and equity are not always tradeoffs; policy choices matter.",
+        ),
+        (
+            "Violent content in media directly causes violent behavior.",
+            "Violence stems from many social factors; media is one influence among many.",
+            "Correlation with exposure does not prove media alone causes aggression.",
+        ),
+        (
+            "Professional athletes are overpaid relative to their social contribution.",
+            "Market demand and scarce talent explain high pay in entertainment industries.",
+            "Pay reflects revenue generation, not a moral ledger of social worth.",
+        ),
+        (
+            "Governments should ban advertising directed at children.",
+            "Parents and educators also shape consumption; bans alone may not change habits.",
+            "Child-directed marketing raises concerns, but policy must weigh speech and enforcement.",
+        ),
+        (
+            "Human nature is fundamentally selfish and cannot be changed.",
+            "Cooperation and altruism appear across cultures and contexts.",
+            "Behavior is shaped by institutions and incentives, not fixed traits alone.",
+        ),
+        (
+            "Religious beliefs should guide public policy decisions.",
+            "Plural societies require reasons accessible to citizens of many faiths.",
+            "Secular law can protect religious freedom without enshrining one doctrine.",
+        ),
+        (
+            "The best leaders are those who never change their minds.",
+            "Updating beliefs in light of evidence is a strength, not weakness.",
+            "Consistency matters, but rigidity can ignore new information.",
+        ),
+        (
+            "Speed is more important than accuracy in decision-making.",
+            "Hasty decisions can create costly errors that slow progress overall.",
+            "Good decisions balance urgency with adequate analysis.",
+        ),
+        (
+            "An ideal society requires everyone to pursue the same definition of success.",
+            "Diverse talents and values enrich communities beyond one career template.",
+            "Shared norms need not mean identical life paths.",
+        ),
+        (
+            "Genetic testing should be mandatory before having children.",
+            "Mandatory testing raises privacy, coercion, and disability-rights concerns.",
+            "Informed choice differs from state-mandated reproductive screening.",
+        ),
+        (
+            "Urban sprawl is preferable to concentrated city growth.",
+            "Sprawl increases car dependence, infrastructure cost, and emissions.",
+            "Compact development can improve access and environmental outcomes.",
+        ),
+        (
+            "Every citizen should be required to perform national service.",
+            "Mandatory service may conflict with individual liberty and opportunity costs.",
+            "Voluntary service can meet civic goals without compulsion.",
+        ),
+        (
+            "Technological unemployment makes retraining programs unnecessary.",
+            "Displaced workers often need new skills to re-enter growing fields.",
+            "Automation shifts demand; training helps workers adapt.",
+        ),
+        (
+            "Museums and libraries are luxuries governments can eliminate first.",
+            "Cultural institutions support literacy, research, and civic life.",
+            "Public access to knowledge is infrastructure, not a frill.",
+        ),
+        (
+            "Moral progress is impossible; human values never change.",
+            "Legal and social norms have shifted on slavery, suffrage, and civil rights.",
+            "Change is uneven, but values and practices do evolve over time.",
+        ),
+        (
+            "Patriotism requires uncritical support of one's government.",
+            "Loyalty to a country can include holding its policies to account.",
+            "Dissent and reform are part of many patriotic traditions.",
+        ),
+        (
+            "Corporate mergers always benefit consumers through efficiency.",
+            "Consolidation can reduce competition and raise prices.",
+            "Efficiency gains are not guaranteed; regulators weigh harms.",
+        ),
+        (
+            "Bilingual education slows student integration and should be phased out.",
+            "Bilingual programs can build literacy in two languages while students integrate.",
+            "Language support and integration can proceed together.",
+        ),
+        (
+            "Happiness is primarily determined by income level.",
+            "Relationships, health, and purpose strongly affect well-being beyond income.",
+            "Money helps up to a point but does not solely define happiness.",
+        ),
+        (
+            "Criminal punishment should focus solely on rehabilitation, never deterrence.",
+            "Deterrence and public safety are legitimate aims alongside rehabilitation.",
+            "Effective justice systems balance multiple goals.",
+        ),
+    ]
+
+    issue_prompts = issue_prompts + extra_issue_prompts + more_issue_prompts
+
     argument_prompts = [
         (
             "Our café's revenue rose 20% after we added vegan options, so vegan options caused the increase.",
@@ -1903,6 +2180,204 @@ def gen_awa() -> list[dict[str, Any]]:
         ),
     ]
 
+    extra_argument_prompts = [
+        (
+            "Complaints dropped after we extended store hours, so longer hours improved service quality.",
+            "Fewer complaints may reflect fewer shoppers or changed reporting, not better service.",
+            "The metric may track volume of feedback rather than quality.",
+        ),
+        (
+            "Graduates from our program earn higher salaries, proving our curriculum is the best available.",
+            "Self-selection and labor market conditions may explain earnings gaps.",
+            "Outcome differences do not isolate curriculum effects.",
+        ),
+        (
+            "Bike lane usage rose after installation, so every street should add lanes immediately.",
+            "One corridor's results may not generalize to all street contexts.",
+            "Infrastructure decisions need site-specific analysis.",
+        ),
+        (
+            "Our newsletter open rate is high, so readers must agree with our editorial stance.",
+            "Opening an email does not show agreement with its content.",
+            "Engagement metrics differ from opinion metrics.",
+        ),
+        (
+            "Defect rates fell after a new supplier was chosen, so the supplier caused the improvement.",
+            "Process changes or inspection standards may have changed at the same time.",
+            "Concurrent operational changes confound attribution.",
+        ),
+        (
+            "Two executives who read the same book both increased revenue, so the book causes business success.",
+            "A sample of two successes cannot establish a general causal rule.",
+            "Anecdotes lack controls and sufficient size.",
+        ),
+        (
+            "Wait times decreased after hiring more staff, so staffing alone fixed the bottleneck.",
+            "Demand fluctuations or workflow changes could also explain shorter waits.",
+            "Staffing is one variable among many in service systems.",
+        ),
+        (
+            "Students who use our tutoring app score higher, so the app guarantees admission to top programs.",
+            "Higher scores do not ensure admission outcomes.",
+            "The argument jumps from test performance to admission certainty.",
+        ),
+        (
+            "Energy use fell after thermostat setbacks, so aggressive setbacks should be mandated everywhere.",
+            "Building types and climates differ; one policy may not fit all.",
+            "Pilot savings do not justify universal mandates without analysis.",
+        ),
+        (
+            "Social media mentions increased after the campaign, so brand loyalty must have improved.",
+            "Mentions may reflect controversy or curiosity rather than loyalty.",
+            "Visibility is not the same as positive attachment.",
+        ),
+        (
+            "Returns fell after we added live chat support, so chat alone eliminated product dissatisfaction.",
+            "Seasonal demand or product fixes may have changed at the same time.",
+            "Support channels are one factor among many in satisfaction.",
+        ),
+        (
+            "Volunteer sign-ups doubled after a celebrity endorsement, so celebrity endorsements always sustain nonprofits.",
+            "Initial spikes may fade without ongoing engagement or mission fit.",
+            "Short-term attention does not guarantee long-term volunteering.",
+        ),
+        (
+            "Water quality scores improved after a filter was installed, so every household should use the same filter.",
+            "Source water and plumbing conditions vary; one device may not fit all homes.",
+            "Local conditions matter for infrastructure recommendations.",
+        ),
+    ]
+
+    more_argument_prompts = [
+        (
+            "Website traffic doubled after the redesign, so the redesign caused the growth.",
+            "Marketing spend or seasonality could also explain the traffic increase.",
+            "Post hoc traffic gains do not isolate design effects.",
+        ),
+        (
+            "Employee retention improved after flexible hours, so rigid schedules always harm retention.",
+            "Other policy changes or labor market shifts may coincide with flexibility.",
+            "One firm's experience does not prove a universal rule.",
+        ),
+        (
+            "Town A lowered taxes and grew faster than Town B, so low taxes always drive growth.",
+            "Industry mix, demographics, and investment differ between towns.",
+            "Comparing two places ignores confounding local factors.",
+        ),
+        (
+            "Patient satisfaction scores rose after free parking, so parking availability cures medical outcomes.",
+            "Parking convenience may affect surveys without changing clinical care.",
+            "Satisfaction scores measure experience, not treatment efficacy.",
+        ),
+        (
+            "The team won every game after changing mascots, so the mascot change caused winning.",
+            "Roster changes or schedule strength may explain the winning streak.",
+            "Superstition and coincidence are weak causal evidence.",
+        ),
+        (
+            "More people enrolled after tuition was cut, proving affordability alone drives quality education.",
+            "Enrollment growth does not measure learning outcomes or completion.",
+            "Quantity of students differs from quality of education.",
+        ),
+        (
+            "Crime fell in districts with more cameras, so surveillance alone eliminates crime.",
+            "Policing levels and reporting practices may change alongside cameras.",
+            "Multiple safety policies often shift together.",
+        ),
+        (
+            "Our product has five-star reviews online, so it must be the highest-quality option.",
+            "Reviewers may be biased, incentivized, or unrepresentative of all buyers.",
+            "Online ratings are not controlled comparisons.",
+        ),
+        (
+            "Sales increased in stores that played classical music, so music choice drives all retail success.",
+            "Store location, inventory, and promotions may differ from competitors.",
+            "Ambient music is one variable in a complex retail environment.",
+        ),
+        (
+            "Volunteer hours rose after recognition awards, so awards alone sustain long-term volunteering.",
+            "Initial recognition may fade without meaningful roles or leadership.",
+            "Motivation depends on more than one-time awards.",
+        ),
+        (
+            "Defect complaints fell after a training video, so the video alone fixed manufacturing quality.",
+            "Equipment upgrades or inspection changes may have occurred simultaneously.",
+            "Training is one part of a quality system.",
+        ),
+        (
+            "Public transit ridership rose after fare discounts, so fares are the only barrier to ridership.",
+            "Service frequency and route coverage also affect ridership.",
+            "Price is one factor in transportation choices.",
+        ),
+        (
+            "The herb garden thrived after organic fertilizer was added, so organic fertilizer always beats other methods.",
+            "Soil, weather, and watering may differ across gardens.",
+            "One garden's success does not generalize to all conditions.",
+        ),
+        (
+            "Customer churn fell after a loyalty program launch, so the program alone retained every at-risk customer.",
+            "Competitor pricing or product improvements may have changed at the same time.",
+            "Retention shifts rarely have a single cause.",
+        ),
+        (
+            "Literacy rates improved after library hours extended, so longer hours alone solve literacy gaps.",
+            "School programs and community outreach may have changed concurrently.",
+            "Access to libraries helps but is not the only literacy intervention.",
+        ),
+        (
+            "Energy bills dropped after insulation upgrades, so insulation alone explains every efficiency gain.",
+            "Weather, usage habits, and rate changes also affect bills.",
+            "Building efficiency has multiple drivers.",
+        ),
+        (
+            "Our pilot clinic reduced readmissions, so the protocol should replace all care standards nationwide.",
+            "Patient mix and staffing at the pilot may differ from other hospitals.",
+            "Pilot success requires replication before universal adoption.",
+        ),
+        (
+            "Applicants who submitted early were accepted more often, so earlier submission causes admission.",
+            "Stronger applicants may simply apply earlier.",
+            "Self-selection confounds timing and admission outcomes.",
+        ),
+        (
+            "After the CEO appeared in ads, brand awareness rose, so executive visibility alone builds brand equity.",
+            "Ad spend and product launches may have increased at the same time.",
+            "Awareness campaigns bundle many tactics beyond one spokesperson.",
+        ),
+        (
+            "Student attendance improved after free breakfast, so nutrition programs alone raise academic achievement.",
+            "Other school reforms or family support may have changed simultaneously.",
+            "Attendance gains do not prove learning gains.",
+        ),
+        (
+            "Returns dropped after clearer sizing charts, so sizing information alone eliminates product dissatisfaction.",
+            "Product quality or fit improvements may have occurred at the same time.",
+            "Sizing clarity helps but does not address every return reason.",
+        ),
+        (
+            "Fish populations recovered after a fishing ban, so bans alone restore every depleted fishery.",
+            "Habitat restoration and climate conditions also affect recovery.",
+            "Fishery management requires multiple interventions.",
+        ),
+        (
+            "Productivity rose after standing desks were installed, so standing desks alone maximize worker output.",
+            "Team changes or project mix may explain productivity shifts.",
+            "Ergonomics is one factor in workplace performance.",
+        ),
+        (
+            "Donations increased after a matching campaign, so matching gifts alone sustain nonprofit funding.",
+            "Donor fatigue or economic conditions may change after campaigns end.",
+            "Matching drives spikes but not guaranteed long-term revenue.",
+        ),
+        (
+            "Noise complaints fell after sound barriers were built, so barriers alone solve all urban noise problems.",
+            "Traffic patterns and zoning may also change over time.",
+            "Noise reduction often needs multiple engineering and policy tools.",
+        ),
+    ]
+
+    argument_prompts = argument_prompts + extra_argument_prompts + more_argument_prompts
+
     for i, (prompt, critique, expl) in enumerate(issue_prompts):
         out.append(
             q(
@@ -1957,14 +2432,53 @@ def gen_awa() -> list[dict[str, Any]]:
         )
         idx += 1
 
-    assert len(out) >= 25, len(out)
+    assert len(out) >= MIN_FOUNDATION_AWA, len(out)
     return out
+
+
+def validate_mcq_row(row: dict[str, Any]) -> None:
+    if row.get("format") == "essay_prompt" or row.get("question_type", "").startswith(
+        "awa_"
+    ):
+        return
+    choices = row.get("answer_choices") or row.get("choices") or []
+    if not choices:
+        return
+    correct = row["correct_answer"]
+    normed = [norm_choice(choice) for choice in choices]
+    assert len(set(normed)) == len(normed), (
+        f"{row['id']}: duplicate choices {choices!r}"
+    )
+    matches = sum(1 for choice in choices if norm_choice(choice) == norm_choice(correct))
+    assert matches == 1, (
+        f"{row['id']}: expected one correct match, got {matches} for {correct!r} in {choices!r}"
+    )
+
+
+def validate_foundation_bank(
+    quant: list[dict[str, Any]],
+    verbal: list[dict[str, Any]],
+    awa: list[dict[str, Any]],
+) -> None:
+    assert len(quant) >= MIN_FOUNDATION_QUANT, f"quant: {len(quant)}"
+    assert len(verbal) >= MIN_FOUNDATION_VERBAL, f"verbal: {len(verbal)}"
+    assert len(awa) >= MIN_FOUNDATION_AWA, f"awa: {len(awa)}"
+    for section_name, rows in ("quant", quant), ("verbal", verbal), ("awa", awa):
+        counts: dict[str, int] = {}
+        for row in rows:
+            counts[row["topic"]] = counts.get(row["topic"], 0) + 1
+            validate_mcq_row(row)
+        for topic, count in counts.items():
+            assert count >= MIN_FOUNDATION_PER_TOPIC, (
+                f"{section_name} {topic}: {count} < {MIN_FOUNDATION_PER_TOPIC}"
+            )
 
 
 def main() -> None:
     quant = gen_quant()
     verbal = gen_verbal()
     awa = gen_awa()
+    validate_foundation_bank(quant, verbal, awa)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for name, data in [
         ("seed_gre_quant.json", quant),

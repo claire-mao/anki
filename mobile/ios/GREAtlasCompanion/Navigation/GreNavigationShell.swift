@@ -21,7 +21,7 @@ struct GreNavigationShell: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             DemoStatusBanner()
         }
-        .tint(.accentColor)
+        .tint(GreTheme.accent)
         .task {
             await engine.bootstrapIfNeeded()
         }

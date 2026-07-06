@@ -7,8 +7,12 @@ import { describe, expect, test } from "vitest";
 import {
     attemptMatchesTopic,
     countAttemptsSince,
+    dailyMissionComplete,
+    flashcardScheduleFromTask,
+    focusPracticeProgress,
     missionProgress,
     missionProgressCounts,
+    missionTaskComplete,
     parseReviewBaselineDue,
     startOfLocalDaySecs,
 } from "./daily-mission";
@@ -235,5 +239,99 @@ describe("missionProgress", () => {
 
         expect(progress.value).toBe(100);
         expect(progress.label).toBe("All caught up");
+    });
+});
+
+describe("flashcardScheduleFromTask", () => {
+    test("returns backend schedule hint when present", () => {
+        expect(
+            flashcardScheduleFromTask(
+                task({
+                    id: "focus_topic",
+                    title: "Practice Linear equations",
+                    flashcardScheduleHint: "3 flashcards ready now in Study · next batch in 1 day",
+                }),
+            ),
+        ).toContain("next batch in 1 day");
+    });
+});
+
+describe("mission completion", () => {
+    test("marks focus practice complete when daily target is met", () => {
+        const focus = task({
+            id: "focus_topic",
+            title: "Practice Analyze an Argument",
+            topicId: "gre::verbal::awa::analyze_argument",
+            targetCount: 3,
+        });
+        const progress = focusPracticeProgress(
+            focus,
+            [
+                performanceAttempt({
+                    questionId: "q1",
+                    topic: focus.topicId!,
+                    answeredAtSecs: startOfLocalDaySecs() + 60,
+                    answer: "A",
+                    correct: true,
+                    responseTimeMs: 1000,
+                }),
+            ],
+            2,
+            focus.topicId,
+        );
+
+        expect(progress?.complete).toBe(true);
+    });
+
+    test("detects when every mission task is complete", () => {
+        const complete = dailyMissionComplete(
+            {
+                headline: "",
+                rationale: "",
+                tasks: [
+                    task({
+                        id: "review_cards",
+                        title: "Review GRE flashcards",
+                        targetCount: 0,
+                    }),
+                    task({
+                        id: "practice_questions",
+                        title: "GRE practice questions",
+                        targetCount: 2,
+                    }),
+                ],
+            } as never,
+            {
+                recentAttempts: [
+                    performanceAttempt({
+                        questionId: "q1",
+                        topic: "gre::quant::algebra",
+                        answeredAtSecs: startOfLocalDaySecs() + 10,
+                        answer: "A",
+                        correct: true,
+                        responseTimeMs: 1000,
+                    }),
+                    performanceAttempt({
+                        questionId: "q2",
+                        topic: "gre::quant::algebra",
+                        answeredAtSecs: startOfLocalDaySecs() + 20,
+                        answer: "B",
+                        correct: false,
+                        responseTimeMs: 1000,
+                    }),
+                ],
+            },
+        );
+
+        expect(complete).toBe(true);
+        expect(
+            missionTaskComplete(
+                task({
+                    id: "review_cards",
+                    title: "Review GRE flashcards",
+                    targetCount: 0,
+                }),
+            ),
+        ).toBe(true);
     });
 });

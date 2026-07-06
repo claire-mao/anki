@@ -43,14 +43,16 @@ final class StudySession: ObservableObject {
         error = nil
     }
 
-    func start(using engine: AnkiMobileEngine) async {
+    func start(using engine: AnkiMobileEngine, extra: Bool = false) async {
         starting = true
         error = nil
         showingAnswer = false
         defer { starting = false }
 
         do {
-            let next = try await engine.startStudyReview()
+            let next = try await (
+                extra ? engine.startExtraStudyReview() : engine.startStudyReview()
+            )
             review = next
             cardStartedAt = Date()
         } catch {

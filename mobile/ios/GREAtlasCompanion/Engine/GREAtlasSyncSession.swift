@@ -7,6 +7,7 @@ import Foundation
 final class GREAtlasSyncSession: ObservableObject {
     @Published private(set) var status: GREAtlasSyncStatusView?
     @Published private(set) var lastResult: GREAtlasPerformSyncView?
+    @Published private(set) var collectionResult: GRECollectionSyncView?
     @Published private(set) var loadingStatus = false
     @Published private(set) var syncing = false
     @Published var error: String?
@@ -43,24 +44,70 @@ final class GREAtlasSyncSession: ObservableObject {
             return
         }
 
+        let auth = GREAtlasSyncAuthInput(
+            hkey: credentials.hkey,
+            endpoint: credentials.endpoint,
+            ioTimeoutSecs: credentials.ioTimeoutSecs
+        )
+
         do {
-            let result = try await engine.performGREAtlasSync(
-                auth: GREAtlasSyncAuthInput(
-                    hkey: credentials.hkey,
-                    endpoint: credentials.endpoint,
-                    ioTimeoutSecs: credentials.ioTimeoutSecs
-                )
-            )
+            // 1. Real collection sync: cards, notes, revlog, FSRS scheduling,
+            //    and statistics converge with the desktop.
+            let collection = try await engine.syncCollection(auth: auth)
+            collectionResult = collection
+
+            // 2. Practice/calibration sidecar sync (question attempts, readiness).
+            let result = try await engine.performGREAtlasSync(auth: auth)
             lastResult = result
             status = try await engine.loadGREAtlasSyncStatus()
+
+            // Refresh every surface so freshly-synced review state is visible.
+            await engine.refreshStudy()
             await engine.refreshProgress()
             await engine.refreshDashboard()
 
-            if result.success {
+            if collection.fullSyncRequired {
+                error = "This device needs a full sync. Choose upload or download to continue."
+            } else if !collection.success {
+                error = collection.serverMessage.isEmpty
+                    ? "Collection sync failed."
+                    : collection.serverMessage
+            } else if result.success {
                 error = nil
             } else {
-                error = result.message.isEmpty ? "Sync failed." : result.message
+                error = result.message.isEmpty ? "Practice sync failed." : result.message
             }
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
+    /// Resolve an ambiguous full sync by explicitly choosing a direction.
+    func resolveFullSync(
+        using engine: AnkiMobileEngine,
+        credentials: GreAtlasSyncCredentials,
+        upload: Bool
+    ) async {
+        guard !syncing else { return }
+        syncing = true
+        error = nil
+        defer { syncing = false }
+
+        let auth = GREAtlasSyncAuthInput(
+            hkey: credentials.hkey,
+            endpoint: credentials.endpoint,
+            ioTimeoutSecs: credentials.ioTimeoutSecs
+        )
+        do {
+            let collection = try await engine.syncCollection(
+                auth: auth,
+                fullSyncChoice: upload ? "upload" : "download"
+            )
+            collectionResult = collection
+            await engine.refreshStudy()
+            await engine.refreshProgress()
+            await engine.refreshDashboard()
+            error = collection.success ? nil : collection.serverMessage
         } catch {
             self.error = error.localizedDescription
         }

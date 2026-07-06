@@ -93,46 +93,79 @@
     gap: var(--gre-space-3);
 }
 
-.progress-charts-advanced {
+.progress-group-caption {
+    margin: calc(-1 * var(--gre-space-1)) 0 var(--gre-space-3);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.progress-group-explanation {
+    margin: 0 0 var(--gre-space-2);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+    max-width: 42rem;
+}
+
+.progress-charts-mastery {
     grid-template-columns: 1fr;
     gap: var(--gre-space-4);
 }
 
-.progress-charts-advanced :global(.progress-chart-extra-tall .progress-chart) {
-    max-height: 30rem;
-    min-height: 22rem;
+.progress-charts-mastery :global(.progress-chart-wide) {
+    width: 100%;
+    grid-column: 1 / -1;
 }
 
-.progress-charts-advanced :global(.progress-chart-card) {
-    --gre-chart-font-tick: 11px;
-    --gre-chart-font-caption: 11px;
-    --gre-chart-font-label: 14px;
-    --gre-chart-font-empty: 12px;
+.progress-charts-mastery :global(.progress-chart-wide .progress-chart-card) {
+    width: 100%;
+    max-width: none;
 }
 
-.progress-advanced {
-    padding: var(--gre-space-3) var(--gre-space-4);
-    border-radius: var(--gre-radius-md);
-    background: var(--gre-surface-bg-muted);
+.progress-charts-mastery :global(.progress-chart-fluid) {
+    min-width: 100%;
 }
 
-.progress-advanced-summary {
-    cursor: pointer;
-    font-size: var(--gre-font-caption);
-    font-weight: var(--gre-weight-label);
-    color: var(--fg-subtle);
-    list-style: none;
+.progress-charts-mastery :global(.progress-chart-extra-tall .progress-chart) {
+    max-height: none;
+    min-height: 0;
 }
 
-.progress-advanced-summary::-webkit-details-marker {
-    display: none;
+.progress-charts-mastery :global(.progress-chart-scrollable .progress-chart-body) {
+    max-height: 36rem;
 }
 
-.progress-advanced-body {
-    margin: var(--gre-space-2) 0 var(--gre-space-3);
+.progress-charts-mastery :global(.progress-chart-card) {
+    --gre-chart-font-tick: 13px;
+    --gre-chart-font-caption: 12px;
+    --gre-chart-font-label: 15px;
+    --gre-chart-font-empty: 13px;
+}
+
+.progress-topic-mastery :global(.progress-chart-card) {
+    margin: 0;
+}
+
+.progress-topic-mastery :global(.progress-chart-body-fluid) {
+    width: 100%;
+}
+
+.progress-topic-mastery :global(.progress-chart .label) {
+    fill: var(--fg);
+}
+
+.progress-topic-mastery :global(.progress-chart .value-studied) {
+    fill: var(--fg);
+}
+
+.progress-group-cluster-note {
+    margin: var(--gre-space-1) 0 var(--gre-space-3);
     font-size: var(--gre-font-caption);
     line-height: var(--gre-lh-caption);
     color: var(--fg-subtle);
+    font-style: italic;
+    max-width: 42rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

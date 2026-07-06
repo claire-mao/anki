@@ -70,7 +70,14 @@ class GreDashboard:
     def _shortcutKeys(self) -> list[tuple[str, Callable]]:
         return [
             ("s", self.mw.onStudyKey),
+            ("Meta+Shift+s", self._toggleSubmissionMode),
+            ("Ctrl+Shift+s", self._toggleSubmissionMode),
         ]
+
+    def _toggleSubmissionMode(self) -> None:
+        self.web.eval(
+            "window.dispatchEvent(new CustomEvent('gre-toggle-submission-mode'));"
+        )
 
     def _hide_anki_chrome(self) -> None:
         "GRE pages provide their own header navigation; hide duplicate Anki toolbars."

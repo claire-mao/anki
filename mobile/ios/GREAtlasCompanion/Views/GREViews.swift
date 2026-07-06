@@ -3,18 +3,61 @@
 
 import SwiftUI
 
+/// Shared design tokens mirroring the desktop GRE Atlas design system
+/// (`ts/routes/(gre)/design-system/tokens.scss` + `learning-theme.scss`) so the
+/// companion reads as BrainLift on a smaller screen rather than a separate app.
 enum GreTheme {
-    static let cardRadius: CGFloat = 12
-    static let sectionSpacing: CGFloat = 12
-    static let pagePadding: CGFloat = 12
-    static let cardPadding: CGFloat = 12
+    // MARK: Brand palette (fixed across light/dark, matching desktop)
+    /// `--gre-accent` #15803d
+    static let accent = Color(red: 21 / 255, green: 128 / 255, blue: 61 / 255)
+    /// `--gre-accent-hover` #166534
+    static let accentHover = Color(red: 22 / 255, green: 101 / 255, blue: 52 / 255)
+    /// Soft accent surface used for tinted panels/mission cards.
+    static let accentSoft = Color(red: 21 / 255, green: 128 / 255, blue: 61 / 255)
+        .opacity(0.12)
+    /// `--gre-success` #15803d / `--gre-error` #b91c1c
+    static let success = Color(red: 21 / 255, green: 128 / 255, blue: 61 / 255)
+    static let error = Color(red: 185 / 255, green: 28 / 255, blue: 28 / 255)
+
+    // MARK: Card queue/status colors (`--state-new/learn/review`)
+    static let stateNew = Color(red: 34 / 255, green: 197 / 255, blue: 94 / 255) // #22c55e
+    static let stateLearn = Color(red: 22 / 255, green: 163 / 255, blue: 74 / 255) // #16a34a
+    static let stateReview = Color(red: 21 / 255, green: 128 / 255, blue: 61 / 255) // #15803d
+
+    // MARK: Spacing scale (`--gre-space-*`)
+    static let space1: CGFloat = 4
+    static let space2: CGFloat = 8
+    static let space3: CGFloat = 12
+    static let space4: CGFloat = 16
+    static let space5: CGFloat = 20
+    static let space6: CGFloat = 24
+
+    // MARK: Radius (`--gre-radius-*`)
+    static let radiusSm: CGFloat = 6
+    static let radiusMd: CGFloat = 12
+    static let radiusLg: CGFloat = 16
+
+    // MARK: Legacy aliases (kept for existing call sites)
+    static let cardRadius: CGFloat = radiusMd
+    static let sectionSpacing: CGFloat = space3
+    static let pagePadding: CGFloat = space3
+    static let cardPadding: CGFloat = space3
     static let minTapTarget: CGFloat = 44
-    static let scrollBottomInset: CGFloat = 8
+    static let scrollBottomInset: CGFloat = space2
 
     static func cardBackground() -> some View {
         RoundedRectangle(cornerRadius: cardRadius, style: .continuous)
             .fill(Color(.secondarySystemBackground))
             .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
+    }
+
+    /// Color for a card queue kind ("new"/"learning"/"review").
+    static func queueColor(_ queue: String) -> Color {
+        switch queue {
+        case "new": return stateNew
+        case "learning": return stateLearn
+        default: return stateReview
+        }
     }
 }
 
@@ -677,7 +720,7 @@ struct DashboardView: View {
                 .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.accentColor.opacity(0.10))
+                        .fill(GreTheme.accentSoft)
                 )
             }
 
@@ -1048,7 +1091,7 @@ struct PracticeView: View {
                             .foregroundStyle(.secondary)
                     }
                     ProgressView(value: Double(session.progressPercent), total: 100)
-                        .tint(.accentColor)
+                        .tint(GreTheme.accent)
                 }
             }
 
@@ -1061,7 +1104,7 @@ struct PracticeView: View {
                             }
                         }
                         .buttonStyle(.bordered)
-                        .tint(session.sectionFilter == filter ? .accentColor : .secondary)
+                        .tint(session.sectionFilter == filter ? GreTheme.accent : .secondary)
                         .frame(maxWidth: .infinity)
                         .frame(minHeight: GreTheme.minTapTarget)
                     }
@@ -1170,7 +1213,7 @@ struct PracticeView: View {
                             .frame(maxWidth: .infinity, minHeight: GreTheme.minTapTarget, alignment: .leading)
                             .background(
                                 RoundedRectangle(cornerRadius: GreTheme.cardRadius, style: .continuous)
-                                    .fill(session.selectedAnswer == choice ? Color.accentColor.opacity(0.12) : Color.secondary.opacity(0.08))
+                                    .fill(session.selectedAnswer == choice ? GreTheme.accentSoft : Color.secondary.opacity(0.08))
                             )
                         }
                         .buttonStyle(.plain)
@@ -1201,19 +1244,6 @@ struct PracticeView: View {
         result: GreRecordAttemptResultView
     ) -> some View {
         let explanation = session.structuredExplanation
-        let choiceRows = explanation.map { PracticePresentation.orderExplanationChoices($0.choices) } ?? []
-        let citation = explanation.flatMap {
-            PracticePresentation.formatExplanationCitation(
-                sourceName: $0.citationSourceName,
-                sourceSection: $0.citationSourceSection
-            )
-        }
-        let provenanceNote = explanation.flatMap {
-            PracticePresentation.resolveExplanationProvenanceNote(
-                provenance: $0.provenance,
-                provenanceNote: $0.provenanceNote
-            )
-        }
         let correctChoice: String? = {
             guard !result.correct else { return nil }
             guard let answer = explanation?.correctAnswer.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -1237,47 +1267,6 @@ struct PracticeView: View {
                 Text(explanation.summary)
                     .font(.body)
                     .fixedSize(horizontal: false, vertical: true)
-
-                if !choiceRows.isEmpty {
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(choiceRows, id: \.choice) { row in
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                                    Text(row.choice)
-                                        .font(.subheadline.weight(.semibold))
-                                    if row.isCorrect {
-                                        Text("Correct")
-                                            .font(.caption2.weight(.semibold))
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(
-                                                Capsule(style: .continuous)
-                                                    .fill(Color.green.opacity(0.15))
-                                            )
-                                    }
-                                }
-                                Text(row.reasoning)
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                    }
-                }
-
-                if let citation {
-                    Text("Source: \(citation)")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                if let provenanceNote {
-                    Text(provenanceNote)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
             } else {
                 Text(result.explanation)
                     .font(.body)
@@ -1505,12 +1494,16 @@ struct StudyView: View {
             weakTopic: engine.dashboard?.weakTopic,
             recommendedTopics: engine.dashboard?.recommendedTopics ?? [],
             dueTotal: view.dueTotal,
-            studiedCards: engine.dashboard?.memoryStudiedCards ?? 0
+            studiedCards: engine.dashboard?.memoryStudiedCards ?? 0,
+            extraStudyAvailable: view.extraStudyAvailable,
+            nextReviewInDays: view.nextReviewInDays
         )
         SessionCompletePanel(
             summary: summary,
             onPrimary: {
-                if summary.nextActionLabel == "View study plan" {
+                if summary.usesExtraStudy {
+                    Task { await session.start(using: engine, extra: true) }
+                } else if summary.nextActionLabel == "View study plan" {
                     tabRouter.openStudyPlan()
                 } else {
                     tabRouter.open(.practice)
@@ -1607,6 +1600,9 @@ struct SettingsView: View {
     @State private var syncEndpoint = ""
     @State private var syncHkey = ""
     @State private var credentialsMessage: String?
+    @State private var verification: GreVerificationView?
+    @State private var verificationLoading = false
+    @State private var verificationError: String?
 
     var body: some View {
         NavigationStack {
@@ -1767,6 +1763,46 @@ struct SettingsView: View {
                         }
                     }
 
+                    GreSectionPanel(title: "Verification", icon: "checkmark.shield") {
+                        Text("Build, sync, and feature state from the shared GRE Atlas backend.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+
+                        if let verification {
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(verification.rows.indices, id: \.self) { index in
+                                    let row = verification.rows[index]
+                                    GreInlineMetricRow(
+                                        label: row.label,
+                                        value: row.value,
+                                        detail: nil
+                                    )
+                                }
+                            }
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Documentation")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                ForEach(verification.docLinks.indices, id: \.self) { index in
+                                    Text(verification.docLinks[index].label)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Text("Open linked docs from desktop GRE Atlas settings.")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.top, 4)
+                        } else if verificationLoading {
+                            ProgressView("Loading verification…")
+                        } else if let verificationError {
+                            Text(verificationError)
+                                .font(.footnote)
+                                .foregroundStyle(.red)
+                        }
+                    }
+
                     DisclosureGroup {
                         VStack(alignment: .leading, spacing: 10) {
                             if let progress = engine.progress {
@@ -1823,11 +1859,13 @@ struct SettingsView: View {
                 await engine.refreshStudy()
                 await engine.refreshPractice()
                 await engine.refreshProgress()
+                await refreshVerification()
             }
             .task {
                 loadSyncCredentials()
                 await syncSession.refreshStatus(using: engine)
                 await syncSession.autoSyncIfConfigured(using: engine)
+                await refreshVerification()
                 if engine.study == nil && !engine.studyLoading {
                     await engine.refreshStudy()
                 }
@@ -1845,6 +1883,19 @@ struct SettingsView: View {
         guard let credentials = GreAtlasSyncCredentials.load() else { return }
         syncEndpoint = credentials.endpoint ?? ""
         syncHkey = credentials.hkey
+    }
+
+    @MainActor
+    private func refreshVerification() async {
+        verificationLoading = true
+        verificationError = nil
+        defer { verificationLoading = false }
+        do {
+            verification = try engine.loadVerification()
+        } catch {
+            verification = nil
+            verificationError = error.localizedDescription
+        }
     }
 
     private func resolvedSyncCredentials() -> GreAtlasSyncCredentials? {

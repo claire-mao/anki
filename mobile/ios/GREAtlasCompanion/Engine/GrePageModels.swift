@@ -250,6 +250,9 @@ struct GreStudyView: Codable, Equatable {
     let dueLearn: UInt
     let dueReview: UInt
     let dueTotal: UInt
+    let availableNewCount: UInt
+    let extraStudyAvailable: UInt
+    let nextReviewInDays: UInt?
 }
 
 struct GreStudyGradeButtonView: Codable, Equatable {
@@ -353,6 +356,24 @@ struct GREAtlasPerformSyncView: Codable, Equatable {
     let status: GREAtlasSyncStatusView?
 }
 
+/// Input for a real Anki collection sync (cards, notes, revlog, scheduling).
+struct GRECollectionSyncInput: Codable, Equatable {
+    let auth: GREAtlasSyncAuthInput
+    /// "upload" or "download"; only needed when the server reports FULL_SYNC.
+    let fullSyncChoice: String?
+}
+
+struct GRECollectionSyncView: Codable, Equatable {
+    let success: Bool
+    /// "noChanges", "normalSync", "fullUpload", "fullDownload", "fullSyncRequired".
+    let outcome: String
+    let fullSyncRequired: Bool
+    /// When true, a full up/download ran and the collection must be reopened.
+    let reopenRequired: Bool
+    let serverMessage: String
+    let hostNumber: UInt
+}
+
 struct GrePageBundle: Equatable {
     let dashboard: GreDashboardView
     let progress: GreProgressView
@@ -369,4 +390,20 @@ struct GreDemoCollectionView: Codable, Equatable {
     let dueLearn: UInt
     let dueReview: UInt
     let dueTotal: UInt
+}
+
+struct GreVerificationDocLinkView: Codable, Equatable {
+    let id: String
+    let label: String
+    let relativePath: String
+}
+
+struct GreVerificationRowView: Codable, Equatable {
+    let label: String
+    let value: String
+}
+
+struct GreVerificationView: Codable, Equatable {
+    let rows: [GreVerificationRowView]
+    let docLinks: [GreVerificationDocLinkView]
 }

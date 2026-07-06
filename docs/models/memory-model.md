@@ -16,7 +16,7 @@ The memory model estimates how well GRE flashcard knowledge is retained in long-
 | Studied cards          | GRE deck search (`deck:"GRE Atlas"`)   | Cards with at least one review (`min_reviews` default 1)         |
 | Overall retrievability | Per-card FSRS `current_retrievability` | Unweighted mean across studied cards (0–1)                       |
 | Topic mastery entries  | GRE topic tags (`gre::…`)              | Per-topic studied counts and retrievability CIs                  |
-| Coverage ratio         | GRE catalog (`compute_coverage`)       | Exam-weighted share of catalog leaf topics with studied evidence |
+| Coverage ratio         | GRE catalog (`compute_coverage`)       | Section-weighted share of catalog leaf topics with studied evidence |
 
 Topic tags are mapped to the GRE catalog via `GreCatalog::nearest_topic_for_tag`. Retrievability uses the same FSRS parameters as live scheduling.
 
@@ -30,7 +30,7 @@ When abstention requirements are met, the model returns:
 | -------------------------- | ---------------------------------------------------------------------------------------------- |
 | `value`                    | Overall retrievability × 100 (0–100)                                                           |
 | `value_low` / `value_high` | 95%-style interval from topic-level retrievability bounds, weighted by studied cards per topic |
-| `coverage_ratio`           | Exam-weighted catalog coverage (0–1), also used downstream by readiness                        |
+| `coverage_ratio`           | Section-weighted catalog coverage (0–1), also used downstream by readiness                        |
 | `studied_cards`            | Count of reviewed GRE cards in scope                                                           |
 | `detail`                   | Human-readable summary (studied cards, coverage %, leaf topics with data)                      |
 | `abstention_requirements`  | Structured checklist of evidence gates                                                         |
@@ -57,7 +57,7 @@ Memory abstains unless **all** requirements are met (`rslib/src/gre_atlas/absten
 | ----------------- | ---------------------------------------- |
 | FSRS scheduling   | FSRS enabled on the collection           |
 | Studied GRE cards | ≥ 50 cards with at least one review      |
-| Topic coverage    | ≥ 50% exam-weighted GRE catalog coverage |
+| Topic coverage    | ≥ 50% section-weighted GRE catalog coverage |
 
 If any gate fails, `sufficient_data = false` and the UI should show requirements and `next_step` guidance rather than a numeric score.
 

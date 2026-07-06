@@ -1,0 +1,111 @@
+// Presentation styling for GRE Atlas submission / demo mode.
+
+.gre-shell.gre-submission-mode {
+    --gre-page-max: 80rem;
+    --gre-font-hero: clamp(2rem, 4.5vw, 2.75rem);
+    --gre-font-h1: clamp(1.85rem, 3vw, 2.35rem);
+    --gre-font-h2: 1.25rem;
+    --gre-font-h3: 0.9375rem;
+    --gre-font-body: 1.0625rem;
+    --gre-font-body-lg: 1.125rem;
+    --gre-font-caption: 0.9375rem;
+    --gre-font-kpi: clamp(1.5rem, 2.5vw, 2rem);
+    --gre-font-display: clamp(3rem, 7vw, 4rem);
+    --gre-font-display-sm: clamp(2.35rem, 5.5vw, 3.25rem);
+    --gre-font-prompt: clamp(1.25rem, 3vw, 1.5rem);
+    --gre-font-brand: 1.25rem;
+    --gre-chart-font-tick: 13px;
+    --gre-chart-font-caption: 12px;
+    --gre-chart-font-label: 15px;
+    --gre-chart-font-title: 18px;
+    --gre-chart-font-empty: 13px;
+}
+
+.gre-submission-mode .gre-main {
+    max-width: min(100%, var(--gre-page-max));
+}
+
+.gre-submission-mode .gre-header {
+    padding-inline: var(--gre-space-8);
+}
+
+.gre-submission-mode .gre-nav {
+    gap: var(--gre-space-2);
+}
+
+.gre-submission-mode .nav-link {
+    font-size: var(--gre-font-body);
+    padding-inline: var(--gre-space-4);
+}
+
+.gre-submission-mode .gre-submission-badge {
+    display: inline-flex;
+}
+
+// Hide developer tooling and session debug controls.
+
+.gre-submission-mode .gre-dev-tools,
+.gre-submission-mode :global(.gre-metric-change) {
+    display: none !important;
+}
+
+// Full-width charts for projector-friendly demos.
+
+.gre-submission-mode :global(.progress-dashboard),
+.gre-submission-mode :global(.progress-charts),
+.gre-submission-mode :global(.progress-charts-mastery),
+.gre-submission-mode :global(.evidence-charts) {
+    width: 100%;
+}
+
+.gre-submission-mode :global(.progress-chart-card),
+.gre-submission-mode :global(.progress-chart-wide),
+.gre-submission-mode :global(.progress-chart-fluid),
+.gre-submission-mode :global(.progress-performance-chart),
+.gre-submission-mode :global(.progress-topic-mastery) {
+    width: 100%;
+    max-width: none;
+}
+
+.gre-submission-mode :global(.progress-chart-card .progress-chart),
+.gre-submission-mode :global(.progress-chart-tall .progress-chart),
+.gre-submission-mode :global(.progress-chart-extra-tall .progress-chart) {
+    max-height: none;
+    min-height: 18rem;
+}
+
+.gre-submission-mode :global(.progress-chart-scrollable .progress-chart-body) {
+    max-height: 42rem;
+}
+
+.gre-submission-mode :global(.progress-kpi-row) {
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.gre-submission-mode :global(.documentation-page) {
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+}
+
+.gre-submission-mode :global(.documentation-content) {
+    max-width: none;
+}
+
+.gre-submission-mode-indicator {
+    display: none;
+}
+
+.gre-submission-mode .gre-submission-mode-indicator {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: var(--gre-space-3);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--gre-radius-full);
+    border: 1px solid color-mix(in srgb, var(--gre-accent) 28%, var(--border));
+    background: var(--gre-accent-soft);
+    color: var(--gre-accent);
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}

@@ -1,7 +1,7 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type { GreStudyStatusResponse, PerformanceAttempt, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
+import type { DailyStudyPlan, GreStudyStatusResponse, PerformanceAttempt, StudyPlanDailyTask } from "@generated/anki/brainlift_pb";
 
 import {
     GRE_CTA_PRACTICE,
@@ -277,8 +277,8 @@ export function missionAction(task: StudyPlanDailyTask): MissionAction {
     if (task.id === "review_cards") {
         return {
             label: task.targetCount > 0 ? GRE_CTA_REVIEW : GRE_CTA_STUDY_PLAN,
-            bridge: task.targetCount > 0 ? "greStartReview" : "greOpenStudyPlan",
-            href: task.targetCount > 0 ? "/review" : "/study-plan",
+            bridge: task.targetCount > 0 ? "greStartReview" : "greOpenDashboard",
+            href: task.targetCount > 0 ? "/review" : "/home",
         };
     }
 
@@ -326,4 +326,55 @@ export function missionIntro(taskCount: number): string {
         return "One focused action to move your score today.";
     }
     return `${taskCount} focused actions to move your score today.`;
+}
+
+export function missionTaskComplete(
+    task: StudyPlanDailyTask,
+    context?: DailyMissionProgressContext,
+): boolean {
+    if (task.id === "review_cards" && task.targetCount === 0) {
+        return true;
+    }
+    const counts = missionProgressCounts(task, context);
+    if (!counts) {
+        return false;
+    }
+    return counts.current >= counts.target;
+}
+
+export function dailyMissionComplete(
+    plan: DailyStudyPlan,
+    context?: DailyMissionProgressContext,
+): boolean {
+    return plan.tasks.length > 0 && plan.tasks.every((task) => missionTaskComplete(task, context));
+}
+
+export function flashcardScheduleFromTask(task: StudyPlanDailyTask): string | undefined {
+    const hint = task.flashcardScheduleHint?.trim();
+    return hint && hint.length > 0 ? hint : undefined;
+}
+
+export function focusPracticeProgress(
+    focusTask: StudyPlanDailyTask | undefined,
+    recentAttempts: PerformanceAttempt[] | undefined,
+    sessionAttemptCount: number,
+    topicId?: string,
+): { current: number; target: number; complete: boolean } | null {
+    if (!focusTask || focusTask.id !== "focus_topic" || !topicId) {
+        return null;
+    }
+    if (
+        !focusTask.title.startsWith("Practice")
+        && !focusTask.title.startsWith("Cover")
+    ) {
+        return null;
+    }
+    const dayStart = startOfLocalDaySecs();
+    const prior = countAttemptsSince(recentAttempts, dayStart, topicId);
+    const current = prior + sessionAttemptCount;
+    return {
+        current,
+        target: focusTask.targetCount,
+        complete: current >= focusTask.targetCount,
+    };
 }

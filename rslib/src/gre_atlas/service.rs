@@ -3,6 +3,7 @@
 
 use anki_proto::brainlift::CreateSessionResponse;
 use anki_proto::brainlift::DashboardState;
+use anki_proto::brainlift::GetPerformanceChartResponse;
 use anki_proto::brainlift::GetRecentAttemptsResponse;
 use anki_proto::brainlift::GreStudyStatusResponse;
 use anki_proto::brainlift::ListQuestionsResponse;
@@ -26,7 +27,7 @@ impl crate::services::BrainLiftService for Collection {
         let limit = if input.limit == 0 { 10 } else { input.limit };
         let storage = gre_atlas_storage(self)?;
         let questions = storage
-            .list_questions(&input.topic_prefix, limit)?
+            .list_practice_bank_questions(&input.topic_prefix, limit)?
             .into_iter()
             .map(stored_question_to_proto)
             .collect();
@@ -76,6 +77,10 @@ impl crate::services::BrainLiftService for Collection {
             input.confidence,
             input.session_id.as_deref(),
         )?;
+        crate::gre_atlas::topic_flashcard_release::gre_atlas_on_practice_attempt(
+            self,
+            &question.topic,
+        )?;
         Ok(RecordAttemptResponse {
             correct,
             explanation: question.explanation,
@@ -108,6 +113,13 @@ impl crate::services::BrainLiftService for Collection {
         Ok(GetRecentAttemptsResponse { attempts })
     }
 
+    fn get_performance_chart(
+        &mut self,
+        input: anki_proto::brainlift::GetPerformanceChartRequest,
+    ) -> error::Result<GetPerformanceChartResponse> {
+        self.gre_atlas_get_performance_chart(input)
+    }
+
     fn get_gre_study_status(&mut self) -> error::Result<GreStudyStatusResponse> {
         let deck_id = crate::gre_atlas::gre_deck_id(self)?;
         let deck_exists = deck_id.is_some();
@@ -124,13 +136,22 @@ impl crate::services::BrainLiftService for Collection {
                 review_count = counts.review;
             }
         }
-        Ok(GreStudyStatusResponse {
+        let status = GreStudyStatusResponse {
             deck_name: GRE_DECK_NAME.into(),
             deck_exists,
             new_count,
             learn_count,
             review_count,
-        })
+            ..Default::default()
+        };
+        crate::gre_atlas::topic_flashcard_release::gre_atlas_process_flashcard_schedule(self)?;
+        crate::gre_atlas::extra_study::enrich_gre_study_status(self, status)
+    }
+
+    fn start_gre_extra_study(
+        &mut self,
+    ) -> error::Result<anki_proto::brainlift::StartGreExtraStudyResponse> {
+        crate::gre_atlas::extra_study::gre_atlas_start_extra_study(self)
     }
 
     fn get_study_plan(
@@ -144,6 +165,18 @@ impl crate::services::BrainLiftService for Collection {
         &mut self,
     ) -> error::Result<anki_proto::brainlift::ReadinessCalibrationResponse> {
         self.gre_atlas_get_readiness_calibration()
+    }
+
+    fn get_performance_eval(
+        &mut self,
+    ) -> error::Result<anki_proto::brainlift::PerformanceEvalResponse> {
+        self.gre_atlas_get_performance_eval()
+    }
+
+    fn get_memory_eval(
+        &mut self,
+    ) -> error::Result<anki_proto::brainlift::MemoryEvalResponse> {
+        self.gre_atlas_get_memory_eval()
     }
 
     fn generate_brain_lift_eval_report(
@@ -160,8 +193,14 @@ impl crate::services::BrainLiftService for Collection {
     fn generate_brain_lift_ai_eval_report(
         &mut self,
     ) -> error::Result<anki_proto::brainlift::BrainLiftAiEvalReportResponse> {
+        use crate::gre_atlas::questions::llm::GreAtlasAiConfig;
+
         let (json, markdown) = self.gre_atlas_generate_ai_eval_report()?;
-        Ok(anki_proto::brainlift::BrainLiftAiEvalReportResponse { json, markdown })
+        Ok(anki_proto::brainlift::BrainLiftAiEvalReportResponse {
+            json,
+            markdown,
+            ai_enabled: GreAtlasAiConfig::from_env().is_some(),
+        })
     }
 
     fn generate_question(
@@ -247,5 +286,36 @@ impl crate::services::BrainLiftService for Collection {
         &mut self,
     ) -> error::Result<anki_proto::brainlift::PrepareDemoCollectionResponse> {
         self.gre_atlas_prepare_demo_collection()
+    }
+
+    fn get_gre_atlas_verification(
+        &mut self,
+        input: anki_proto::brainlift::GetGreAtlasVerificationRequest,
+    ) -> error::Result<anki_proto::brainlift::GreAtlasVerificationResponse> {
+        self.gre_atlas_get_verification(input.client())
+    }
+
+    fn get_gre_atlas_ai_settings(
+        &mut self,
+    ) -> error::Result<anki_proto::brainlift::GreAtlasAiSettings> {
+        Ok(anki_proto::brainlift::GreAtlasAiSettings {
+            ai_enabled: crate::gre_atlas::questions::gre_atlas_ai_enabled(self),
+            ai_available: crate::gre_atlas::questions::gre_atlas_ai_available(),
+        })
+    }
+
+    fn set_gre_atlas_ai_enabled(
+        &mut self,
+        input: anki_proto::brainlift::SetGreAtlasAiEnabledRequest,
+    ) -> error::Result<anki_proto::brainlift::GreAtlasAiSettings> {
+        self.set_config_json(
+            crate::gre_atlas::questions::GRE_ATLAS_AI_ENABLED_KEY,
+            &input.enabled,
+            true,
+        )?;
+        Ok(anki_proto::brainlift::GreAtlasAiSettings {
+            ai_enabled: input.enabled,
+            ai_available: crate::gre_atlas::questions::gre_atlas_ai_available(),
+        })
     }
 }

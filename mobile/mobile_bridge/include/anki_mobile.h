@@ -85,7 +85,17 @@ int anki_mobile_gre_study_json(
     uint8_t **out_bytes,
     size_t *out_len);
 
+int anki_mobile_gre_verification_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
 int anki_mobile_gre_study_review_json(
+    AnkiMobileBackend *backend,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+int anki_mobile_gre_study_extra_review_json(
     AnkiMobileBackend *backend,
     uint8_t **out_bytes,
     size_t *out_len);
@@ -122,6 +132,18 @@ int anki_mobile_brainlift_sync_push_json(
     size_t *out_len);
 
 int anki_mobile_brainlift_sync_perform_json(
+    AnkiMobileBackend *backend,
+    const uint8_t *input,
+    size_t input_len,
+    uint8_t **out_bytes,
+    size_t *out_len);
+
+/* Real Anki collection sync (cards, notes, revlog, scheduling, statistics).
+ * Input JSON: { "auth": { "hkey": "...", "endpoint": "...?" },
+ *               "fullSyncChoice": "upload" | "download" | null }.
+ * When the response has "reopenRequired": true (a full up/download ran), the
+ * caller must reopen the collection via anki_mobile_open_collection. */
+int anki_mobile_sync_collection_json(
     AnkiMobileBackend *backend,
     const uint8_t *input,
     size_t input_len,

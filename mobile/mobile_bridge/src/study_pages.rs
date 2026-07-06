@@ -74,11 +74,35 @@ pub struct GreStudyAnswerInput {
 }
 
 pub fn load_study_review(backend: &Backend) -> Result<GreStudyReviewView, Vec<u8>> {
+    load_study_review_inner(backend, false)
+}
+
+pub fn load_study_extra_review(backend: &Backend) -> Result<GreStudyReviewView, Vec<u8>> {
+    load_study_review_inner(backend, true)
+}
+
+fn load_study_review_inner(
+    backend: &Backend,
+    unlock_extra: bool,
+) -> Result<GreStudyReviewView, Vec<u8>> {
     let status = fetch_gre_study_status(backend)?;
     if !status.deck_exists {
         return Ok(GreStudyReviewView::idle(status, false, true));
     }
     ensure_gre_deck_selected(backend)?;
+    if unlock_extra {
+        invoke(
+            backend,
+            GRE_ATLAS_SERVICE,
+            "start_gre_extra_study",
+            &Empty::default().encode_to_vec(),
+        )?;
+    }
+    let status = if unlock_extra {
+        fetch_gre_study_status(backend)?
+    } else {
+        status
+    };
     build_study_review_view(backend, status, true)
 }
 

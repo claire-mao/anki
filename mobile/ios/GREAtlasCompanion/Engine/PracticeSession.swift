@@ -5,7 +5,7 @@ import Foundation
 
 private enum PracticeSessionLimits {
     /// Matches `DAILY_PRACTICE_TARGET` in `rslib/src/gre_atlas/study_plan.rs`.
-    static let topicSessionSize = 5
+    static let topicSessionSize = 8
 }
 
 enum PracticeSectionFilter: String, CaseIterable, Identifiable {

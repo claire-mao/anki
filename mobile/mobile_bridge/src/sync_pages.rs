@@ -11,7 +11,11 @@ use anki_proto::brainlift::BrainLiftSyncStatus;
 use anki_proto::brainlift::PerformGreAtlasSyncRequest;
 use anki_proto::brainlift::PerformGreAtlasSyncResponse;
 use anki_proto::generic::Empty;
+use anki_proto::sync::sync_collection_response::ChangesRequired;
+use anki_proto::sync::FullUploadOrDownloadRequest;
 use anki_proto::sync::SyncAuth;
+use anki_proto::sync::SyncCollectionRequest;
+use anki_proto::sync::SyncCollectionResponse;
 use prost::Message;
 use serde::Deserialize;
 use serde::Serialize;
@@ -19,6 +23,7 @@ use serde::Serialize;
 use crate::backend_method::invoke_proto;
 
 const GRE_ATLAS_SERVICE: &str = "BackendBrainLiftService";
+const SYNC_SERVICE: &str = "BackendSyncService";
 
 const DEFAULT_PULL_LIMIT: u32 = 500;
 
@@ -113,6 +118,131 @@ pub struct GreAtlasPerformSyncView {
     pub applied_count: u32,
     pub conflicts: Vec<GreAtlasSyncConflictView>,
     pub status: Option<GreAtlasSyncStatusView>,
+}
+
+/// Input for a real Anki collection sync (cards, notes, revlog, scheduling).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GreCollectionSyncInput {
+    pub auth: GreAtlasSyncAuthView,
+    /// Required only when the server reports an ambiguous FULL_SYNC: the caller
+    /// must pick "upload" or "download". Forced full up/downloads ignore this.
+    pub full_sync_choice: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreCollectionSyncView {
+    /// True when the collection is fully in sync after this call.
+    pub success: bool,
+    /// One of: "noChanges", "normalSync", "fullUpload", "fullDownload",
+    /// "fullSyncRequired".
+    pub outcome: String,
+    /// Set when the server needs the user to choose a full-sync direction.
+    pub full_sync_required: bool,
+    /// True when a full up/download ran (collection must be reopened after).
+    pub reopen_required: bool,
+    pub server_message: String,
+    pub host_number: u32,
+}
+
+fn to_sync_auth(auth: GreAtlasSyncAuthView) -> SyncAuth {
+    SyncAuth {
+        hkey: auth.hkey,
+        endpoint: auth.endpoint,
+        io_timeout_secs: auth.io_timeout_secs,
+    }
+}
+
+/// Perform a real collection sync via the backend `BackendSyncService`.
+///
+/// This reuses the exact scheduler/review-log sync the desktop uses, so cards,
+/// notes, revlog, FSRS scheduling, and statistics converge across devices. A
+/// normal sync is applied in place; a full up/download closes the collection,
+/// so the caller must reopen it (`anki_mobile_open_collection`) when
+/// `reopen_required` is true.
+pub fn perform_collection_sync(
+    backend: &Backend,
+    input: GreCollectionSyncInput,
+) -> Result<GreCollectionSyncView, Vec<u8>> {
+    let mut auth = to_sync_auth(input.auth);
+    let response = invoke_proto::<SyncCollectionResponse>(
+        backend,
+        SYNC_SERVICE,
+        "sync_collection",
+        &SyncCollectionRequest {
+            auth: Some(auth.clone()),
+            sync_media: true,
+        }
+        .encode_to_vec(),
+    )?;
+
+    // The server may redirect us to a shard endpoint for the full transfer.
+    if let Some(new_endpoint) = response.new_endpoint.clone() {
+        auth.endpoint = Some(new_endpoint);
+    }
+    let server_media_usn = response.server_media_usn;
+    let required = ChangesRequired::try_from(response.required).unwrap_or(ChangesRequired::NoChanges);
+
+    let upload = match required {
+        ChangesRequired::NoChanges | ChangesRequired::NormalSync => {
+            // Normal sync already applied by the backend; nothing more to do.
+            return Ok(GreCollectionSyncView {
+                success: true,
+                outcome: if required == ChangesRequired::NoChanges {
+                    "noChanges".into()
+                } else {
+                    "normalSync".into()
+                },
+                full_sync_required: false,
+                reopen_required: false,
+                server_message: response.server_message,
+                host_number: response.host_number,
+            });
+        }
+        ChangesRequired::FullUpload => true,
+        ChangesRequired::FullDownload => false,
+        ChangesRequired::FullSync => match input.full_sync_choice.as_deref() {
+            Some("upload") => true,
+            Some("download") => false,
+            _ => {
+                // Ambiguous: the caller must choose a direction to avoid data loss.
+                return Ok(GreCollectionSyncView {
+                    success: false,
+                    outcome: "fullSyncRequired".into(),
+                    full_sync_required: true,
+                    reopen_required: false,
+                    server_message: response.server_message,
+                    host_number: response.host_number,
+                });
+            }
+        },
+    };
+
+    invoke_proto::<Empty>(
+        backend,
+        SYNC_SERVICE,
+        "full_upload_or_download",
+        &FullUploadOrDownloadRequest {
+            auth: Some(auth),
+            upload,
+            server_usn: Some(server_media_usn),
+        }
+        .encode_to_vec(),
+    )?;
+
+    Ok(GreCollectionSyncView {
+        success: true,
+        outcome: if upload {
+            "fullUpload".into()
+        } else {
+            "fullDownload".into()
+        },
+        full_sync_required: false,
+        reopen_required: true,
+        server_message: response.server_message,
+        host_number: response.host_number,
+    })
 }
 
 pub fn load_sync_status(backend: &Backend) -> Result<GreAtlasSyncStatusView, Vec<u8>> {

@@ -15,14 +15,27 @@ pub mod variants;
 
 use anki_proto::brainlift::AnswerChoiceExplanation;
 use anki_proto::brainlift::AnswerExplanation;
+use anki_proto::brainlift::SolutionExplanation;
 use anki_proto::brainlift::ExplainAnswerResponse;
 use anki_proto::brainlift::GenerateQuestionResponse;
 use anki_proto::brainlift::Question;
 use anki_proto::brainlift::QuestionAttribution;
+pub use bank::assert_practice_bank_listable;
 pub use bank::ensure_exam_length_bank;
+pub use bank::ensure_foundation_questions_present;
 pub use bank::exam_bank_question_count;
+pub use bank::load_practice_bank;
+pub use bank::MIN_PRACTICE_BANK_PER_TOPIC;
+pub use bank::PRACTICE_BANK_QUESTION_TOTAL;
+pub use bank::PRACTICE_QUESTION_LIST_LIMIT;
+pub use bank::TARGET_PRACTICE_BANK_AWA;
+pub use bank::TARGET_PRACTICE_BANK_QUANT;
+pub use bank::TARGET_PRACTICE_BANK_VERBAL;
+pub use bank::practice_bank_ids;
 pub use bank::purge_invalid_questions;
+pub use bank::repair_sync_question_stubs;
 pub use bank::target_count_for_topic;
+pub use bank::validate_practice_bank;
 
 use crate::collection::Collection;
 use crate::error::OrInvalid;
@@ -32,6 +45,8 @@ use crate::gre_atlas::questions::ai_gen::load_gold_eval_set;
 use crate::gre_atlas::questions::eval_pipeline::normalize_stem;
 use crate::gre_atlas::questions::explanation::build_answer_explanation;
 use crate::gre_atlas::questions::explanation::AnswerExplanationData;
+use crate::gre_atlas::questions::explanation::ChoiceExplanation;
+use crate::gre_atlas::questions::explanation::SolutionExplanationData;
 use crate::gre_atlas::questions::generator::generate_with_fallback;
 use crate::gre_atlas::questions::generator::GeneratedQuestion;
 use crate::gre_atlas::questions::llm::GreAtlasAiConfig;
@@ -82,7 +97,7 @@ impl Collection {
     ) -> Result<GenerateQuestionResponse> {
         let now = TimestampSecs::now();
         // Optional, env-gated AI client. `None` (default) => deterministic path.
-        let ai_client = build_ai_client();
+        let ai_client = build_ai_client(self);
         let gold = load_gold_eval_set()?;
 
         // Existing normalized stems power the duplicate-rejection gate.
@@ -144,22 +159,84 @@ impl Collection {
         question_id: &str,
         selected_answer: &str,
     ) -> Result<ExplainAnswerResponse> {
-        let ai_client = build_ai_client();
+        let ai_client = build_ai_client(self);
         let storage = gre_atlas_storage(self)?;
         let question = storage
             .get_question(question_id)?
             .or_invalid("question not found")?;
         let data = build_answer_explanation(&question, selected_answer, ai_client.as_deref());
+        let mut explanation = answer_explanation_to_proto(data);
+        enrich_answer_explanation(&question, &mut explanation);
         Ok(ExplainAnswerResponse {
-            explanation: Some(answer_explanation_to_proto(data)),
+            explanation: Some(explanation),
         })
+    }
+}
+
+/// Fill grounded, stored-data-derived fields the deterministic generator does
+/// not already set: per-choice trap recognition and the solution's difficulty,
+/// estimated time, related topics, and alternative method. Idempotent — only
+/// fills values that are still empty (so an AI response can supply its own).
+fn enrich_answer_explanation(
+    question: &crate::gre_atlas::storage::StoredQuestion,
+    explanation: &mut AnswerExplanation,
+) {
+    use crate::gre_atlas::questions::explanation::{
+        alternative_method_for, concept_from_topic, difficulty_label, estimated_time_label,
+        generic_trap_recognition, related_topics_for,
+    };
+
+    let concept = explanation
+        .solution
+        .as_ref()
+        .map(|s| s.concept.clone())
+        .filter(|c| !c.is_empty())
+        .unwrap_or_else(|| concept_from_topic(&question.topic));
+
+    if let Some(solution) = explanation.solution.as_mut() {
+        if solution.difficulty.is_empty() {
+            solution.difficulty = difficulty_label(question.difficulty);
+        }
+        if solution.estimated_time.is_empty() {
+            solution.estimated_time = estimated_time_label(question);
+        }
+        if solution.related_topics.is_empty() {
+            solution.related_topics = related_topics_for(&question.topic);
+        }
+        if solution.alternative_method.is_empty() {
+            solution.alternative_method = alternative_method_for(&solution.concept);
+        }
+    }
+
+    for choice in explanation.choices.iter_mut() {
+        if !choice.is_correct && choice.trap_recognition.is_empty() {
+            choice.trap_recognition = generic_trap_recognition(&concept);
+        }
     }
 }
 
 /// Construct the optional LLM client from the environment. Returns `None`
 /// (feature disabled) unless `GRE_ATLAS_OPENAI_API_KEY` is set — this is what
 /// keeps the default build/test path fully offline.
-fn build_ai_client() -> Option<Box<dyn LlmClient>> {
+/// Collection-config key persisting the user's AI explanation toggle.
+pub(crate) const GRE_ATLAS_AI_ENABLED_KEY: &str = "gre_atlas_ai_enabled";
+
+/// User toggle for AI explanations (defaults on). Independent of whether an API
+/// key is actually configured.
+pub(crate) fn gre_atlas_ai_enabled(col: &Collection) -> bool {
+    col.get_config_optional::<bool, _>(GRE_ATLAS_AI_ENABLED_KEY)
+        .unwrap_or(true)
+}
+
+/// Whether an API key is configured so AI can run on this machine.
+pub(crate) fn gre_atlas_ai_available() -> bool {
+    GreAtlasAiConfig::from_env().is_some()
+}
+
+fn build_ai_client(col: &Collection) -> Option<Box<dyn LlmClient>> {
+    if !gre_atlas_ai_enabled(col) {
+        return None;
+    }
     GreAtlasAiConfig::from_env()
         .map(|config| Box::new(OpenAiLlmClient::new(config)) as Box<dyn LlmClient>)
 }
@@ -226,15 +303,7 @@ fn generated_question_response(question: GeneratedQuestion) -> GenerateQuestionR
 fn answer_explanation_to_proto(data: AnswerExplanationData) -> AnswerExplanation {
     AnswerExplanation {
         summary: data.summary,
-        choices: data
-            .choices
-            .into_iter()
-            .map(|c| AnswerChoiceExplanation {
-                choice: c.choice,
-                is_correct: c.is_correct,
-                reasoning: c.reasoning,
-            })
-            .collect(),
+        choices: data.choices.into_iter().map(choice_explanation_to_proto).collect(),
         correct_answer: data.correct_answer,
         citation_source_name: data.citation_source_name,
         citation_source_section: data.citation_source_section,
@@ -242,6 +311,40 @@ fn answer_explanation_to_proto(data: AnswerExplanationData) -> AnswerExplanation
         provenance: data.provenance.as_str().to_string(),
         provenance_note: data.provenance_note,
         model_version: data.model_version,
+        solution: data.solution.map(solution_explanation_to_proto),
+    }
+}
+
+fn choice_explanation_to_proto(c: ChoiceExplanation) -> AnswerChoiceExplanation {
+    AnswerChoiceExplanation {
+        choice: c.choice,
+        is_correct: c.is_correct,
+        reasoning: c.reasoning,
+        label: c.label,
+        reason: c.reason,
+        likely_misconception: c.likely_misconception,
+        student_reasoning: c.student_reasoning,
+        correct_reasoning: c.correct_reasoning,
+        difference: c.difference,
+        // Filled by enrich_answer_explanation (needs the question for grounding).
+        trap_recognition: String::new(),
+    }
+}
+
+fn solution_explanation_to_proto(s: SolutionExplanationData) -> SolutionExplanation {
+    SolutionExplanation {
+        concept: s.concept,
+        formula: s.formula,
+        steps: s.steps,
+        final_answer: s.final_answer,
+        common_mistake: s.common_mistake,
+        key_takeaways: s.key_takeaways,
+        citation: s.citation,
+        // Filled by enrich_answer_explanation from the stored question.
+        alternative_method: String::new(),
+        difficulty: String::new(),
+        estimated_time: String::new(),
+        related_topics: Vec::new(),
     }
 }
 

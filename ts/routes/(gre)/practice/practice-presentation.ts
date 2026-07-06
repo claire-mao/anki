@@ -135,33 +135,36 @@ export function formatPracticeSourceLine(
 export function progressQuestionNumber(input: {
     questionsCompleted: number;
     queueLength: number;
+    progressTotal: number;
     sessionComplete: boolean;
 }): number {
     if (input.sessionComplete || input.queueLength === 0) {
-        return input.queueLength;
+        return input.progressTotal;
     }
-    return Math.min(input.questionsCompleted + 1, input.queueLength);
+    return Math.min(input.questionsCompleted + 1, input.progressTotal);
 }
 
 export function progressPercentForSession(input: {
     questionsCompleted: number;
     queueLength: number;
+    progressTotal: number;
     sessionComplete: boolean;
 }): number {
-    if (input.queueLength === 0) {
+    if (input.progressTotal === 0 || input.queueLength === 0) {
         return 0;
     }
     if (input.sessionComplete) {
         return 100;
     }
     return Math.round(
-        (progressQuestionNumber(input) / input.queueLength) * 100,
+        (progressQuestionNumber(input) / input.progressTotal) * 100,
     );
 }
 
 export function progressLabelForSession(input: {
     questionsCompleted: number;
     queueLength: number;
+    progressTotal: number;
     sessionComplete: boolean;
     emptyLabel: string;
 }): string {
@@ -172,7 +175,7 @@ export function progressLabelForSession(input: {
         return "Session complete";
     }
     const number = progressQuestionNumber(input);
-    return `Question ${number} of ${input.queueLength}`;
+    return `Question ${number} of ${input.progressTotal}`;
 }
 
 export function formatPracticeTopicLabel(topicId: string): string {
@@ -208,7 +211,7 @@ export function computeSessionAccuracy(attempts: SessionAttemptRecord[]): number
 
 export function formatSessionAccuracy(attempts: SessionAttemptRecord[]): string {
     const accuracy = computeSessionAccuracy(attempts);
-    return accuracy === null ? "—" : formatPercent(accuracy);
+    return accuracy === null ? "n/a" : formatPercent(accuracy);
 }
 
 /**
@@ -346,23 +349,7 @@ export function formatExplanationCitation(
     return section ? `${name} — ${section}` : name;
 }
 
-export type ExplanationChoiceRow = {
-    choice: string;
-    isCorrect: boolean;
-    reasoning: string;
-};
-
-/**
- * Order the per-choice reasoning so the correct answer appears first, matching
- * how learners scan the result panel. Filters out entries without reasoning.
- */
-export function orderExplanationChoices(
-    choices: ExplanationChoiceRow[] | undefined,
-): ExplanationChoiceRow[] {
-    if (!choices?.length) {
-        return [];
-    }
-    return [...choices]
-        .filter((row) => row.reasoning.trim().length > 0)
-        .sort((left, right) => Number(right.isCorrect) - Number(left.isCorrect));
-}
+// Per-choice explanation rendering was intentionally removed: the practice
+// reveal panel now shows only the single question-level explanation summary.
+// Backend responses may still carry per-choice reasoning, but it is not
+// surfaced in the presentation layer.

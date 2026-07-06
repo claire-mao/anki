@@ -424,6 +424,9 @@ def is_sveltekit_page(path: str) -> bool:
         "graphs",
         "readiness",
         "methodology",
+        "documentation",
+        "evidence",
+        "study-feature-experiment",
         "congrats",
         "card-info",
         "change-notetype",
@@ -737,12 +740,19 @@ exposed_backend_list = [
     # CollectionService
     "latest_progress",
     "get_custom_colours",
+    # Undo/redo for the in-page GRE Atlas reviewer (existing RPCs; no
+    # scheduler/grading logic changes — the web reviewer mirrors the desktop
+    # and mobile flows).
+    "undo",
+    "redo",
+    "get_undo_status",
     # ConfigService
     "get_preferences",
     "set_preferences",
     # DeckService
     "get_deck_names",
     "get_deck_id_by_name",
+    "set_current_deck",
     # I18nService
     "i18n_resources",
     # ImportExportService
@@ -754,6 +764,8 @@ exposed_backend_list = [
     # NotetypesService
     "get_notetype_names",
     "get_change_notetype_info",
+    # CardRenderingService (renders GRE flashcard fronts/backs in-page)
+    "render_existing_card",
     # StatsService
     "card_stats",
     "get_review_logs",
@@ -769,10 +781,19 @@ exposed_backend_list = [
     "get_scores",
     "get_dashboard",
     "get_recent_attempts",
+    "get_performance_chart",
     "get_gre_study_status",
+    "start_gre_extra_study",
     "prepare_demo_collection",
     "get_study_plan",
     "get_readiness_calibration",
+    "get_performance_eval",
+    "get_memory_eval",
+    "generate_brain_lift_eval_report",
+    "generate_brain_lift_ai_eval_report",
+    "get_gre_atlas_verification",
+    "get_gre_atlas_ai_settings",
+    "set_gre_atlas_ai_enabled",
     "get_topic_details",
     "explain_answer",
     "get_brain_lift_sync_status",
@@ -797,6 +818,12 @@ exposed_backend_list = [
     "get_optimal_retention_parameters",
     "simulate_fsrs_review",
     "simulate_fsrs_workload",
+    # In-page GRE Atlas reviewer: fetch the next due card, describe the FSRS
+    # next-interval labels, and record the grade. These are the same scheduler
+    # RPCs the desktop Qt reviewer and mobile app already use.
+    "get_queued_cards",
+    "answer_card",
+    "describe_next_states",
     # DeckConfigService
     "get_ignored_before_count",
     "get_retention_workload",
@@ -868,6 +895,17 @@ def _check_dynamic_request_permissions():
         "/_anki/i18nResources",
         "/_anki/congratsInfo",
         "/_anki/topicMastery",
+        # In-page GRE Atlas reviewer (mirrors the desktop/mobile study flow
+        # using existing scheduler + card-rendering + undo RPCs).
+        "/_anki/setCurrentDeck",
+        "/_anki/getQueuedCards",
+        "/_anki/answerCard",
+        "/_anki/describeNextStates",
+        "/_anki/renderExistingCard",
+        "/_anki/startGreExtraStudy",
+        "/_anki/undo",
+        "/_anki/redo",
+        "/_anki/getUndoStatus",
         "/_anki/listQuestions",
         "/_anki/getQuestion",
         "/_anki/createSession",
@@ -876,7 +914,15 @@ def _check_dynamic_request_permissions():
         "/_anki/getDashboard",
         "/_anki/getStudyPlan",
         "/_anki/getReadinessCalibration",
+        "/_anki/getPerformanceEval",
+        "/_anki/getMemoryEval",
+        "/_anki/generateBrainLiftEvalReport",
+        "/_anki/generateBrainLiftAiEvalReport",
+        "/_anki/getGreAtlasVerification",
+        "/_anki/getGreAtlasAiSettings",
+        "/_anki/setGreAtlasAiEnabled",
         "/_anki/getRecentAttempts",
+        "/_anki/getPerformanceChart",
         "/_anki/getGreStudyStatus",
         "/_anki/prepareDemoCollection",
         "/_anki/getTopicDetails",

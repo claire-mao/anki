@@ -16,6 +16,7 @@ use super::GreAtlasStorage;
 use super::SyncAttemptRow;
 use super::SyncConflict;
 use super::SyncFkContext;
+use super::is_sync_question_stub_stem;
 use crate::error::Result;
 use crate::timestamp::TimestampSecs;
 
@@ -530,7 +531,11 @@ impl GreAtlasStorage {
                 )?;
                 Ok(true)
             }
-            Some(local_mtime) if row.mtime_secs.0 > local_mtime => {
+            Some(local_mtime) if is_sync_question_stub_stem(&row.stem) => Ok(false),
+            Some(local_mtime)
+                if self.question_stem_is_sync_stub(&row.id)?
+                    || row.mtime_secs.0 > local_mtime =>
+            {
                 let usn = self.next_usn()?;
                 sync_execute(
                     &self.db,

@@ -138,6 +138,7 @@ fn topic_mastery_inner(
     let mut unique_studied = 0u32;
     let mut unique_mastered = 0u32;
     let mut overall_retrievability = OnlineStats::default();
+    let mut seen_in_topic: HashMap<String, HashSet<CardId>> = HashMap::new();
 
     for entry in &cards {
         let card = &entry.card;
@@ -167,6 +168,10 @@ fn topic_mastery_inner(
                 studied_tags.insert(tag.clone());
             }
             let bucket = topic_bucket_id(tag);
+            let seen = seen_in_topic.entry(bucket.clone()).or_default();
+            if !seen.insert(card.id) {
+                continue;
+            }
             let acc = topics.entry(bucket).or_default();
             acc.total_cards += 1;
             if is_studied {
@@ -185,7 +190,14 @@ fn topic_mastery_inner(
     let studied_tag_refs: Vec<&str> = studied_tags.iter().map(String::as_str).collect();
     let catalog_coverage = compute_coverage(&studied_tag_refs);
 
-    let topic_entries = build_topic_entries(&topics, &topic_prefix);
+    let mut topic_entries = build_topic_entries(&topics, &topic_prefix);
+    if let Ok(storage) = crate::gre_atlas::gre_atlas_storage(col) {
+        let _ = crate::gre_atlas::topic_mastery_display::enrich_topic_mastery_entries(
+            &mut topic_entries,
+            storage,
+        );
+    }
+    let topics_studied = count_catalog_topics_studied(&topic_entries);
     let (overall_avg, _, _) = overall_retrievability.mean_and_ci();
     let (sufficient_data, abstain_reason) = sufficient_data_and_reason(
         fsrs_enabled,
@@ -204,10 +216,26 @@ fn topic_mastery_inner(
             coverage_ratio: catalog_coverage.weighted_ratio,
             sufficient_data,
             abstain_reason,
+            topics_studied,
         }),
         computed_at_millis: TimestampMillis::now().0,
         fsrs_enabled,
     })
+}
+
+/// Catalog leaf topics with at least one reviewed flashcard.
+fn count_catalog_topics_studied(entries: &[anki_proto::stats::TopicMasteryEntry]) -> u32 {
+    let by_id: HashMap<&str, &anki_proto::stats::TopicMasteryEntry> = entries
+        .iter()
+        .map(|entry| (entry.topic_id.as_str(), entry))
+        .collect();
+    GreCatalog::leaf_topics()
+        .filter(|leaf| {
+            by_id
+                .get(leaf.id)
+                .is_some_and(|entry| entry.studied_cards > 0)
+        })
+        .count() as u32
 }
 
 fn topic_bucket_id(tag: &str) -> String {
@@ -271,6 +299,10 @@ fn topic_entry_from_accumulator(
         avg_retrievability_low: low,
         avg_retrievability_high: high,
         total_reviews: acc.total_reviews,
+        display_mastery: 0.0,
+        practice_attempts: 0,
+        // Multi-evidence fields filled by enrich_topic_mastery_entries.
+        ..Default::default()
     }
 }
 
@@ -290,6 +322,7 @@ mod test {
     use std::time::Instant;
 
     use super::*;
+    use crate::collection::CollectionBuilder;
     use crate::gre_atlas::GreSection;
     use crate::scheduler::answering::test_helpers::PostAnswerState;
     use crate::scheduler::answering::CardAnswer;
@@ -347,6 +380,64 @@ mod test {
         assert!(!summary.sufficient_data);
         assert!(!summary.abstain_reason.is_empty());
         assert_eq!(summary.coverage_ratio, 0.0);
+        Ok(())
+    }
+
+    #[test]
+    fn duplicate_topic_tags_count_card_once() -> Result<()> {
+        let mut col = Collection::new();
+        col.set_config_bool(BoolKey::Fsrs, true, false)?;
+        add_tagged_note(
+            &mut col,
+            &[
+                "gre::quant::algebra::linear",
+                "gre::quant::algebra::linear::flashcard",
+            ],
+            DeckId(1),
+        )?;
+        graduate_card(&mut col)?;
+
+        let resp = col.compute_topic_mastery(Default::default())?;
+        let topic = resp
+            .topics
+            .iter()
+            .find(|t| t.topic_id == "gre::quant::algebra::linear")
+            .unwrap();
+        assert_eq!(topic.total_cards, 1);
+        assert_eq!(topic.studied_cards, 1);
+        Ok(())
+    }
+
+    #[test]
+    fn per_topic_mastery_is_independent() -> Result<()> {
+        let mut col = Collection::new();
+        col.set_config_bool(BoolKey::Fsrs, true, false)?;
+        add_tagged_note(&mut col, &["gre::quant::algebra::linear"], DeckId(1))?;
+        add_tagged_note(&mut col, &["gre::quant::algebra::linear"], DeckId(1))?;
+        add_tagged_note(&mut col, &["gre::quant::geometry::triangles"], DeckId(1))?;
+        graduate_card(&mut col)?;
+        graduate_card(&mut col)?;
+
+        let resp = col.compute_topic_mastery(Default::default())?;
+        let algebra = resp
+            .topics
+            .iter()
+            .find(|t| t.topic_id == "gre::quant::algebra::linear")
+            .unwrap();
+        let geometry = resp
+            .topics
+            .iter()
+            .find(|t| t.topic_id == "gre::quant::geometry::triangles")
+            .unwrap();
+        assert_eq!(algebra.studied_cards, 1);
+        assert_eq!(geometry.studied_cards, 0);
+        assert!(algebra.avg_retrievability > 0.0);
+        assert_eq!(geometry.avg_retrievability, 0.0);
+        let summary = resp.summary.unwrap();
+        assert!(
+            (algebra.avg_retrievability - summary.overall_avg_retrievability).abs() < 0.001,
+            "single reviewed topic should match overall mean when only one topic has data",
+        );
         Ok(())
     }
 
@@ -446,6 +537,77 @@ mod test {
             .find(|t| t.topic_id == "gre::quant::geometry")
             .unwrap();
         assert_eq!(geometry.mastered_cards, 0);
+        Ok(())
+    }
+
+    #[test]
+    fn topics_studied_counts_catalog_leaves_with_reviewed_cards() -> Result<()> {
+        let mut col = Collection::new();
+        col.set_config_bool(BoolKey::Fsrs, true, false)?;
+        for tag in [
+            "gre::quant::algebra::linear",
+            "gre::verbal::text_completion",
+        ] {
+            add_tagged_note(&mut col, &[tag], DeckId(1))?;
+            graduate_card(&mut col)?;
+        }
+
+        let resp = col.compute_topic_mastery(Default::default())?;
+        let summary = resp.summary.unwrap();
+        assert_eq!(summary.topics_studied, 2);
+        assert!(summary.topics_studied <= summary.topic_count);
+        Ok(())
+    }
+
+    #[test]
+    fn topics_studied_ignores_practice_only_topics() -> Result<()> {
+        let dir = tempfile::tempdir().map_err(|e| crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(e.to_string()),
+        })?;
+        let mut col = CollectionBuilder::new(dir.path().join("test.anki2")).build()?;
+        let storage = crate::gre_atlas::gre_atlas_storage(&mut col)?;
+        let draft = crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft {
+            id: "q-tc".into(),
+            topic: "gre::verbal::text_completion".into(),
+            section: "verbal".into(),
+            format: "mcq".into(),
+            stem: "Stem".into(),
+            choices: vec!["A".into(), "B".into()],
+            correct_answer: "A".into(),
+            explanation: "Because.\n\n<!-- meta: {\"question_type\":\"text_completion\"} -->"
+                .into(),
+            difficulty: Some(0.5),
+            confidence: 0.8,
+            attribution: crate::gre_atlas::questions::ai_gen::QuestionAttribution {
+                source_name: "GRE Atlas Practice Bank".into(),
+                source_section: "Text completion".into(),
+                generated_at_secs: 1,
+            },
+        };
+        storage.insert_generated_question_with_meta(
+            &draft,
+            &crate::gre_atlas::questions::metadata::QuestionMetadata {
+                provenance: crate::gre_atlas::questions::metadata::Provenance::OfflineTemplate,
+                model_version: "template_v1".into(),
+                source_document: String::new(),
+                evaluation_status:
+                    crate::gre_atlas::questions::metadata::EvaluationStatus::Approved,
+            },
+        )?;
+        storage.record_attempt(
+            "q-tc",
+            "gre::verbal::text_completion",
+            Some(0.5),
+            "A",
+            true,
+            1000,
+            None,
+            None,
+        )?;
+
+        let resp = col.compute_topic_mastery(Default::default())?;
+        let summary = resp.summary.unwrap();
+        assert_eq!(summary.topics_studied, 0);
         Ok(())
     }
 

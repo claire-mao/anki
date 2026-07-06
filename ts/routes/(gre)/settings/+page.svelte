@@ -5,17 +5,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import type { Preferences } from "@generated/anki/config_pb";
     import { Preferences_Scheduling_NewReviewMix } from "@generated/anki/config_pb";
+    import { setGreAtlasAiEnabled } from "@generated/backend";
     import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
     import { syncGreAtlasPractice } from "../gre-sync";
 
     import GrePageHeader from "../GrePageHeader.svelte";
-    import { greDeckOptionsAction, runGreNavAction } from "../gre-navigation";
+    import { documentationNavAction, greDeckOptionsAction, runGreNavAction } from "../gre-navigation";
     import { formatPercent } from "../score-format";
     import { fsrsStatus } from "../summary-metrics";
     import GreButton from "../ui/GreButton.svelte";
     import GreButtonRow from "../ui/GreButtonRow.svelte";
     import GreMetricRow from "../ui/GreMetricRow.svelte";
     import GreText from "../ui/GreText.svelte";
+    import { newReviewMixOptions } from "./settings-controls";
     import SettingsNumber from "./SettingsNumber.svelte";
     import SettingsSection from "./SettingsSection.svelte";
     import SettingsSelect from "./SettingsSelect.svelte";
@@ -29,6 +31,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     export let data: PageData;
 
+    $: loadError = data.loadError;
     const preferences: Preferences = data.preferences;
 
     $: memory = data.scores.memory!;
@@ -39,6 +42,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     )?.config?.config;
     $: fsrsLabel = fsrsStatus(memory.abstentionRequirements);
     $: canOpenDeckOptions = data.studyStatus.deckExists && data.deckId !== null;
+
+    let aiEnabled = data.aiSettings?.aiEnabled ?? true;
+    const aiAvailable = data.aiSettings?.aiAvailable ?? false;
+
+    async function saveAiEnabled(): Promise<void> {
+        try {
+            await setGreAtlasAiEnabled({ enabled: aiEnabled });
+        } catch {
+            // Revert the toggle if the backend rejected the change.
+            aiEnabled = !aiEnabled;
+        }
+    }
 
     let rollover = preferences.scheduling?.rollover ?? 4;
     let learnAheadMins = Math.round(
@@ -56,21 +71,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         preferences.scheduling?.newReviewMix ??
             Preferences_Scheduling_NewReviewMix.DISTRIBUTE,
     );
-
-    const newReviewMixOptions = [
-        {
-            value: String(Preferences_Scheduling_NewReviewMix.DISTRIBUTE),
-            label: "Mix new and review cards",
-        },
-        {
-            value: String(Preferences_Scheduling_NewReviewMix.REVIEWS_FIRST),
-            label: "Show review cards first",
-        },
-        {
-            value: String(Preferences_Scheduling_NewReviewMix.NEW_FIRST),
-            label: "Show new cards first",
-        },
-    ];
 
     function persist(): void {
         queuePreferencesSave(preferences);
@@ -152,6 +152,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             bridgeCommand(command);
         }
     }
+
 </script>
 
 <GrePageHeader
@@ -160,6 +161,14 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     subtitle="Review rhythm, practice sessions, and sync."
 />
 
+{#if loadError}
+    <div class="settings-page">
+        <SettingsSection
+            title="Could not load settings"
+            description="GRE Atlas could not reach the study backend. Quit Anki completely, then run just run and try again."
+        />
+    </div>
+{:else}
 <div class="settings-page">
     <SettingsSection
         title="Study"
@@ -247,6 +256,22 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </GreButtonRow>
     </SettingsSection>
 
+    <SettingsSection
+        title="Documentation"
+        description="Architecture, model specs, and submission reference."
+    >
+        <GreText variant="body">
+            Browse GRE Atlas documentation inside the app, including architecture diagrams,
+            memory / performance / readiness models, AI generation notes, and the submission
+            summary.
+        </GreText>
+        <GreButtonRow className="settings-actions">
+            <GreButton on:click={() => runGreNavAction(documentationNavAction())}>
+                Open documentation
+            </GreButton>
+        </GreButtonRow>
+    </SettingsSection>
+
     <SettingsSection title="Account" description="Cloud sync and sign-in.">
         <GreText variant="body">
             Sign in to sync your GRE Atlas collection across devices.
@@ -260,6 +285,20 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 Sync & account details
             </GreButton>
         </GreButtonRow>
+    </SettingsSection>
+
+    <SettingsSection
+        title="AI explanations"
+        description="Use AI to write richer answer explanations. When off, GRE Atlas uses its built-in offline explanations."
+    >
+        <SettingsToggle
+            label="Use AI explanations"
+            description={aiAvailable
+                ? "Generates detailed per-answer explanations when you review a question."
+                : "No AI key is configured on this computer, so offline explanations are used regardless of this setting."}
+            bind:checked={aiEnabled}
+            on:change={saveAiEnabled}
+        />
     </SettingsSection>
 
     <details class="gre-ds-panel settings-advanced">
@@ -456,3 +495,4 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         </div>
     </details>
 </div>
+{/if}

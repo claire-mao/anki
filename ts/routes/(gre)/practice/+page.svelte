@@ -3,8 +3,15 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import type { AnswerExplanation, Question } from "@generated/anki/brainlift_pb";
-    import { explainAnswer, recordAttempt } from "@generated/backend";
+    import type {
+        AnswerChoiceExplanation,
+        AnswerExplanation,
+        MemoryScore,
+        PerformanceScore,
+        Question,
+        ReadinessScore,
+    } from "@generated/anki/brainlift_pb";
+    import { explainAnswer, getScores, recordAttempt } from "@generated/backend";
     import { fade, fly } from "svelte/transition";
 
     import GrePageHeader from "../GrePageHeader.svelte";
@@ -12,6 +19,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { emptyStateContent, emptyStateTitle } from "../empty-states";
     import {
         GRE_CTA_STUDY_PLAN,
+        greNavAction,
+        greNavItem,
         runGreNavAction,
         studyPlanNavAction,
     } from "../gre-navigation";
@@ -19,12 +28,17 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         buildPracticeSessionSummary,
         type SessionAttemptRecord,
     } from "../session-completion";
+    import {
+        flashcardScheduleFromTask,
+        focusPracticeProgress,
+    } from "../daily-mission";
     import GreButton from "../ui/GreButton.svelte";
     import GreButtonRow from "../ui/GreButtonRow.svelte";
     import GreChip from "../ui/GreChip.svelte";
     import GrePanel from "../ui/GrePanel.svelte";
     import GreEmptyState from "../ui/GreEmptyState.svelte";
     import GreSessionCompletePanel from "../ui/GreSessionCompletePanel.svelte";
+    import PracticeScoreStrip from "./PracticeScoreStrip.svelte";
     import type { PageData } from "./$types";
 
     import { scheduleGreAtlasAutoSync } from "../gre-sync";
@@ -32,20 +46,18 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         buildPracticeRevealRows,
         computeSessionStreak,
         displayQuestionStem,
-        formatExplanationCitation,
         formatPracticeMetadataLine,
         formatPracticeTopicLabel,
         formatQuestionType,
         formatSessionAccuracy,
-        orderExplanationChoices,
         progressLabelForSession,
         progressPercentForSession,
         resolveCorrectChoice,
-        resolveExplanationProvenanceNote,
     } from "./practice-presentation";
     import {
         buildQuestionQueue,
         formatSectionLabel,
+        practiceSectionQuestionTotal,
         type PracticeSectionFilter,
     } from "./practice-session";
 
@@ -58,6 +70,13 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     const sessionId = data.sessionId;
     const questionBank = data.questions;
     const topicFilter = data.topicFilter;
+    const focusTask = data.focusTask;
+    const recentAttempts = data.recentAttempts;
+
+    // Live scores update in place after each answer — no navigation required.
+    let liveMemory: MemoryScore = data.memory;
+    let livePerformance: PerformanceScore = data.performance;
+    let liveReadiness: ReadinessScore = data.readiness;
 
     $: practiceTitle = topicFilter ? formatPracticeTopicLabel(topicFilter) : "Practice";
     $: practiceSubtitle =
@@ -101,28 +120,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
               format: result.format,
           })
         : [];
-    $: explanationChoices = explanation
-        ? orderExplanationChoices(
-              explanation.choices.map((choice) => ({
-                  choice: choice.choice,
-                  isCorrect: choice.isCorrect,
-                  reasoning: choice.reasoning,
-              })),
-          )
-        : [];
-    $: explanationCitation = explanation
-        ? formatExplanationCitation({
-              sourceName: explanation.citationSourceName,
-              sourceSection: explanation.citationSourceSection,
-              excerpt: explanation.citationExcerpt,
-          })
-        : null;
-    $: explanationNote = explanation
-        ? resolveExplanationProvenanceNote({
-              provenance: explanation.provenance,
-              provenanceNote: explanation.provenanceNote,
-          })
-        : null;
     $: practiceMetadata = currentQuestion
         ? formatPracticeMetadataLine(
               currentQuestion.topic,
@@ -131,14 +128,19 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
           )
         : null;
 
+    $: progressTotal = topicFilter
+        ? queue.length
+        : practiceSectionQuestionTotal(sectionFilter);
     $: progressPercent = progressPercentForSession({
         questionsCompleted,
         queueLength: queue.length,
+        progressTotal,
         sessionComplete,
     });
     $: progressLabel = progressLabelForSession({
         questionsCompleted,
         queueLength: queue.length,
+        progressTotal,
         sessionComplete,
         emptyLabel: emptyStateTitle("noQuestionsFilter"),
     });
@@ -225,10 +227,31 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             // server-side (deterministic fallback); a transport failure here
             // simply leaves the plain explanation from recordAttempt in place.
             void loadExplanation(currentQuestion.id, selected);
+
+            // Refresh the on-page scores so Memory/Performance/Readiness reflect
+            // this attempt without leaving the session.
+            void refreshScores();
         } catch {
             submitError = "Could not record this attempt. Please try again.";
         } finally {
             submitting = false;
+        }
+    }
+
+    async function refreshScores(): Promise<void> {
+        try {
+            const scores = await getScores({});
+            if (scores.memory) {
+                liveMemory = scores.memory;
+            }
+            if (scores.performance) {
+                livePerformance = scores.performance;
+            }
+            if (scores.readiness) {
+                liveReadiness = scores.readiness;
+            }
+        } catch {
+            // Non-critical: leave the last known scores in place.
         }
     }
 
@@ -258,8 +281,33 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         return result?.correctChoice === choice;
     }
 
+    // Per-choice explanations shown in the question's presented order.
+    $: orderedChoices = explanation && currentQuestion
+        ? currentQuestion.choices
+              .map((choiceText) =>
+                  explanation!.choices.find(
+                      (c) => c.choice.trim() === choiceText.trim(),
+                  ),
+              )
+              .filter((c): c is AnswerChoiceExplanation => Boolean(c))
+        : [];
+
     $: isLastQuestion = questionIndex + 1 >= queue.length;
-    $: practiceSummary = buildPracticeSessionSummary(sessionAttempts);
+    $: focusProgress = focusPracticeProgress(
+        focusTask,
+        recentAttempts,
+        sessionAttempts.length,
+        topicFilter || undefined,
+    );
+    $: focusComplete = focusProgress?.complete ?? false;
+    $: flashcardScheduleHint = focusTask
+        ? flashcardScheduleFromTask(focusTask)
+        : undefined;
+    $: practiceSummary = buildPracticeSessionSummary(sessionAttempts, {
+        focusTopicName: focusTask?.topicDisplayName ?? practiceTitle,
+        focusComplete: Boolean(topicFilter && focusComplete),
+        flashcardScheduleHint,
+    });
     $: motionFade = greMotionDuration(160);
     $: motionFly = greMotionDuration(140);
 
@@ -288,11 +336,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {:else}
                 <GreSessionCompletePanel
                     summary={practiceSummary}
-                    secondaryLabel={practiceSummary.nextAction.label ===
-                    "Practice again"
-                        ? GRE_CTA_STUDY_PLAN
-                        : "Practice again"}
+                    secondaryLabel={practiceSummary.headline === "Focus complete"
+                        ? "Practice again"
+                        : practiceSummary.nextAction.label === "Practice again"
+                          ? GRE_CTA_STUDY_PLAN
+                          : "Practice again"}
                     onSecondary={() => {
+                        if (practiceSummary.headline === "Focus complete") {
+                            applySectionFilter(sectionFilter);
+                            return;
+                        }
                         if (practiceSummary.nextAction.label === "Practice again") {
                             runGreNavAction(studyPlanNavAction());
                             return;
@@ -308,6 +361,16 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         on:click={() => applySectionFilter("all")}
                     >
                         Show all sections
+                    </GreButton>
+                </GreButtonRow>
+            {:else}
+                <GreButtonRow className="practice-actions">
+                    <GreButton
+                        variant="ghost"
+                        on:click={(event) =>
+                            runGreNavAction(greNavAction(greNavItem("progress")), event)}
+                    >
+                        View progress
                     </GreButton>
                 </GreButtonRow>
             {/if}
@@ -355,6 +418,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 </div>
             {/if}
         </header>
+
+        <PracticeScoreStrip
+            memory={liveMemory}
+            performance={livePerformance}
+            readiness={liveReadiness}
+        />
 
         {#key questionIndex}
             <section
@@ -436,35 +505,123 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
                         {#if explanation}
                             <p class="result-explanation">{explanation.summary}</p>
-                            {#if explanationChoices.length}
-                                <ul class="result-choice-breakdown">
-                                    {#each explanationChoices as row}
-                                        <li class:breakdown-correct={row.isCorrect}>
-                                            <span class="breakdown-choice">
-                                                {row.choice}
-                                                {#if row.isCorrect}
-                                                    <span class="breakdown-tag">
-                                                        Correct
-                                                    </span>
-                                                {/if}
-                                            </span>
-                                            <span class="breakdown-reasoning">
-                                                {row.reasoning}
-                                            </span>
-                                        </li>
-                                    {/each}
-                                </ul>
-                            {/if}
-                            {#if explanationCitation}
-                                <p class="result-citation">
-                                    Source: {explanationCitation}
-                                </p>
-                            {/if}
-                            {#if explanationNote}
-                                <p class="result-provenance-note">{explanationNote}</p>
-                            {/if}
                         {:else}
                             <p class="result-explanation">{result.explanation}</p>
+                        {/if}
+
+                        {#if explanation?.solution}
+                            {@const sol = explanation.solution}
+                            <div class="result-solution">
+                                <div class="result-solution-header">
+                                    {#if sol.concept}
+                                        <span class="result-solution-concept">{sol.concept}</span>
+                                    {/if}
+                                    {#if sol.difficulty}
+                                        <span class="result-solution-tag">{sol.difficulty}</span>
+                                    {/if}
+                                    {#if sol.estimatedTime}
+                                        <span class="result-solution-tag">{sol.estimatedTime}</span>
+                                    {/if}
+                                </div>
+                                {#if sol.formula}
+                                    <p class="result-solution-line">
+                                        <strong>Formula:</strong> {sol.formula}
+                                    </p>
+                                {/if}
+                                {#if sol.steps.length > 0}
+                                    <ol class="result-solution-steps">
+                                        {#each sol.steps as step}
+                                            <li>{step}</li>
+                                        {/each}
+                                    </ol>
+                                {/if}
+                                {#if sol.finalAnswer}
+                                    <p class="result-solution-line">
+                                        <strong>Answer:</strong> {sol.finalAnswer}
+                                    </p>
+                                {/if}
+                                {#if sol.alternativeMethod}
+                                    <p class="result-solution-line">
+                                        <strong>Alternative method:</strong> {sol.alternativeMethod}
+                                    </p>
+                                {/if}
+                                {#if sol.commonMistake}
+                                    <p class="result-solution-line result-solution-mistake">
+                                        <strong>Common mistake:</strong> {sol.commonMistake}
+                                    </p>
+                                {/if}
+                                {#if sol.keyTakeaways.length > 0}
+                                    <div class="result-solution-takeaways">
+                                        <span class="result-solution-takeaways-title">Key takeaways</span>
+                                        <ul>
+                                            {#each sol.keyTakeaways as takeaway}
+                                                <li>{takeaway}</li>
+                                            {/each}
+                                        </ul>
+                                    </div>
+                                {/if}
+                                {#if sol.relatedTopics.length > 0}
+                                    <p class="result-solution-line result-solution-related">
+                                        <strong>Related topics:</strong> {sol.relatedTopics.join(", ")}
+                                    </p>
+                                {/if}
+                            </div>
+                        {/if}
+
+                        {#if orderedChoices.length > 0}
+                            <ul class="result-choice-breakdown">
+                                {#each orderedChoices as choiceExplanation}
+                                    <li
+                                        class="breakdown-item"
+                                        class:breakdown-correct={choiceExplanation.isCorrect}
+                                        class:breakdown-incorrect={!choiceExplanation.isCorrect}
+                                    >
+                                        <p class="breakdown-head">
+                                            <span class="breakdown-label">
+                                                {choiceExplanation.label}. {choiceExplanation.choice}
+                                            </span>
+                                            <span class="breakdown-verdict">
+                                                {choiceExplanation.isCorrect
+                                                    ? "Correct"
+                                                    : "Incorrect"}
+                                            </span>
+                                        </p>
+                                        {#if choiceExplanation.reason}
+                                            <p class="breakdown-reason">{choiceExplanation.reason}</p>
+                                        {/if}
+                                        {#if !choiceExplanation.isCorrect}
+                                            {#if choiceExplanation.studentReasoning}
+                                                <p class="breakdown-line">
+                                                    <strong>Why students pick it:</strong>
+                                                    {choiceExplanation.studentReasoning}
+                                                </p>
+                                            {/if}
+                                            {#if choiceExplanation.likelyMisconception}
+                                                <p class="breakdown-line">
+                                                    <strong>Misconception:</strong>
+                                                    {choiceExplanation.likelyMisconception}
+                                                </p>
+                                            {/if}
+                                            {#if choiceExplanation.difference}
+                                                <p class="breakdown-line">
+                                                    <strong>Where it fails:</strong>
+                                                    {choiceExplanation.difference}
+                                                </p>
+                                            {/if}
+                                            {#if choiceExplanation.trapRecognition}
+                                                <p class="breakdown-line">
+                                                    <strong>Spot the trap:</strong>
+                                                    {choiceExplanation.trapRecognition}
+                                                </p>
+                                            {/if}
+                                        {/if}
+                                    </li>
+                                {/each}
+                            </ul>
+                        {/if}
+
+                        {#if flashcardScheduleHint}
+                            <p class="result-flashcard-schedule">{flashcardScheduleHint}</p>
                         {/if}
 
                         <dl class="result-details">
@@ -483,7 +640,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         className="practice-cta"
                         on:click={nextQuestion}
                     >
-                        {isLastQuestion ? "Finish session" : "Next question"}
+                        {isLastQuestion && focusComplete
+                            ? "Finish & return to dashboard"
+                            : isLastQuestion
+                              ? "Finish session"
+                              : "Next question"}
                     </GreButton>
                 {:else}
                     <div class="practice-actions-block">

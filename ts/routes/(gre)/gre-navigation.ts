@@ -6,19 +6,36 @@ import { bridgeCommand, bridgeCommandsAvailable } from "@tslib/bridgecommand";
 
 export type GreNavId =
     | "dashboard"
-    | "studyPlan"
     | "study"
     | "practice"
     | "progress"
+    | "evidence"
     | "settings";
 
 export type GreNavIcon =
     | "dashboard"
-    | "calendar"
     | "study"
     | "practice"
     | "progress"
+    | "readiness"
+    | "info"
     | "settings";
+
+export type GreSubmissionNavId =
+    | "evidence"
+    | "analytics"
+    | "readiness"
+    | "practice"
+    | "study"
+    | "documentation";
+
+export type GreSubmissionNavItem = {
+    id: GreSubmissionNavId;
+    label: string;
+    page: string;
+    bridge: string;
+    icon: GreNavIcon;
+};
 
 export type GreNavItem = {
     id: GreNavId;
@@ -36,13 +53,6 @@ const greNavById: Record<GreNavId, GreNavItem> = {
         page: "home",
         bridge: "greOpenDashboard",
         icon: "dashboard",
-    },
-    studyPlan: {
-        id: "studyPlan",
-        label: "Study plan",
-        page: "study-plan",
-        bridge: "greOpenStudyPlan",
-        icon: "calendar",
     },
     study: {
         id: "study",
@@ -65,6 +75,13 @@ const greNavById: Record<GreNavId, GreNavItem> = {
         bridge: "greOpenProgress",
         icon: "progress",
     },
+    evidence: {
+        id: "evidence",
+        label: "Evidence",
+        page: "evidence",
+        bridge: "greOpenEvidence",
+        icon: "info",
+    },
     settings: {
         id: "settings",
         label: "Settings",
@@ -77,18 +94,70 @@ const greNavById: Record<GreNavId, GreNavItem> = {
 /** Primary workflow nav; settings stays accessible but off the main learning path. */
 export const grePrimaryNavItems: GreNavItem[] = [
     greNavById.dashboard,
-    greNavById.studyPlan,
     greNavById.study,
     greNavById.practice,
     greNavById.progress,
 ];
 
-export const greUtilityNavItems: GreNavItem[] = [greNavById.settings];
+export const greUtilityNavItems: GreNavItem[] = [
+    greNavById.evidence,
+    greNavById.settings,
+];
 
 /** All nav items (primary + utility). */
 export const greNavItems: GreNavItem[] = [
     ...grePrimaryNavItems,
     ...greUtilityNavItems,
+];
+
+/**
+ * Grader/demo navigation shown in submission mode, ordered as the intended
+ * review journey: Evidence → Documentation → Practice → Analytics → Readiness.
+ * Study is kept at the end (not part of the core grader flow).
+ */
+export const greSubmissionNavItems: GreSubmissionNavItem[] = [
+    {
+        id: "evidence",
+        label: "Evidence",
+        page: "evidence",
+        bridge: "greOpenEvidence",
+        icon: "info",
+    },
+    {
+        id: "documentation",
+        label: "Documentation",
+        page: "documentation",
+        bridge: "greOpenDocumentation",
+        icon: "study",
+    },
+    {
+        id: "practice",
+        label: "Practice",
+        page: "practice",
+        bridge: "greOpenPractice",
+        icon: "practice",
+    },
+    {
+        id: "analytics",
+        label: "Analytics",
+        page: "progress",
+        bridge: "greOpenProgress",
+        icon: "progress",
+    },
+    {
+        id: "readiness",
+        label: "Readiness",
+        page: "readiness",
+        bridge: "greOpenReadiness",
+        icon: "readiness",
+    },
+    {
+        id: "study",
+        label: "Study",
+        page: "review",
+        bridge: "greOpenStudy",
+        icon: "study",
+    },
 ];
 
 export function greNavItem(id: GreNavId): GreNavItem {
@@ -107,6 +176,22 @@ export function isGreNavActive(item: GreNavItem, pathname: string): boolean {
     return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+export function isGreSubmissionNavActive(
+    item: GreSubmissionNavItem,
+    pathname: string,
+): boolean {
+    const href = `/${item.page}`;
+    return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export function greSubmissionNavAction(item: GreSubmissionNavItem): GreNavAction {
+    return {
+        label: item.label,
+        bridge: item.bridge,
+        href: `/${item.page}`,
+    };
+}
+
 export type GreNavAction = {
     label: string;
     bridge?: string;
@@ -115,8 +200,9 @@ export type GreNavAction = {
 
 /** Standard primary-action labels — keep wording consistent across GRE Atlas. */
 export const GRE_CTA_REVIEW = "Review flashcards";
+export const GRE_CTA_STUDY_AHEAD = "Study ahead";
 export const GRE_CTA_PRACTICE = "Practice questions";
-export const GRE_CTA_STUDY_PLAN = "View study plan";
+export const GRE_CTA_STUDY_PLAN = "View dashboard";
 export const GRE_CTA_STUDY_TOPIC = "Study topic";
 export const GRE_CTA_PRACTICE_TOPIC = "Practice topic";
 export const GRE_CTA_BROWSE_DECK = "Browse GRE deck";
@@ -135,9 +221,8 @@ export function settingsNavAction(): GreNavAction {
 
 export function studyPlanNavAction(label = GRE_CTA_STUDY_PLAN): GreNavAction {
     return {
+        ...greNavAction(greNavById.dashboard),
         label,
-        bridge: greNavById.studyPlan.bridge,
-        href: greNavHref(greNavById.studyPlan),
     };
 }
 
@@ -152,6 +237,40 @@ export function greBrowseDeckAction(label = GRE_CTA_BROWSE_DECK): GreNavAction {
     return {
         label,
         bridge: "greBrowseGreDeck",
+    };
+}
+
+export function methodologyNavAction(label = "How GRE Atlas estimates your score"): GreNavAction {
+    return {
+        label,
+        bridge: "greOpenMethodology",
+        href: "/methodology",
+    };
+}
+
+export function documentationNavAction(label = "Documentation"): GreNavAction {
+    return {
+        label,
+        bridge: "greOpenDocumentation",
+        href: "/documentation",
+    };
+}
+
+export function studyFeatureExperimentNavAction(
+    label = "Study Feature Experiment",
+): GreNavAction {
+    return {
+        label,
+        bridge: "greOpenStudyFeatureExperiment",
+        href: "/study-feature-experiment",
+    };
+}
+
+export function readinessNavAction(label = "Readiness score details"): GreNavAction {
+    return {
+        label,
+        bridge: "greOpenReadiness",
+        href: "/readiness",
     };
 }
 

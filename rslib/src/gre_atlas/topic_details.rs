@@ -20,6 +20,7 @@ use crate::gre_atlas::signals::is_leaf_covered;
 use crate::gre_atlas::signals::mastery_map;
 use crate::gre_atlas::signals::observed_tags_from_mastery;
 use crate::gre_atlas::signals::practice_stats_for_topic;
+use crate::gre_atlas::topic_flashcard_release::topic_flashcard_schedule_for_topic;
 use crate::gre_atlas::GreCatalog;
 use crate::gre_atlas::TopicDef;
 use crate::invalid_input;
@@ -103,6 +104,8 @@ impl Collection {
             &signals.readiness,
         );
 
+        let flashcard_schedule = topic_flashcard_schedule_for_topic(self, topic_id).ok();
+
         Ok(TopicDetailsResponse {
             topic_id: topic_id.to_string(),
             display_name: topic_def.display_name.to_string(),
@@ -143,6 +146,13 @@ impl Collection {
             recent_attempts,
             global_readiness_score: signals.readiness.projected_score,
             global_readiness_summary: signals.readiness.evidence_summary,
+            flashcard_schedule_hint: flashcard_schedule
+                .as_ref()
+                .map(|schedule| schedule.hint())
+                .filter(|hint| !hint.is_empty()),
+            flashcards_due_now: flashcard_schedule.as_ref().map(|schedule| schedule.due_now),
+            flashcards_next_due_in_days: flashcard_schedule
+                .and_then(|schedule| schedule.next_batch_in_days.or(schedule.next_due_in_days)),
         })
     }
 }
@@ -380,6 +390,7 @@ mod test {
             avg_retrievability_low: 0.75,
             avg_retrievability_high: 0.85,
             total_reviews: 100,
+            ..Default::default()
         };
         let contribution = compute_topic_readiness_contribution(
             topic,

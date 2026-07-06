@@ -8,10 +8,13 @@ mod calibration;
 mod coverage_report;
 mod dashboard;
 mod demo;
+mod extra_study;
+pub mod flashcards;
 pub mod domain;
 mod estimated_gre;
 mod eval;
 mod memory_eval;
+mod performance_chart;
 mod performance_eval;
 pub mod questions;
 mod readiness;
@@ -27,7 +30,11 @@ mod sync_http;
 mod sync_parity;
 pub mod sync_transport;
 mod topic_details;
+mod topic_flashcard_release;
+mod topic_flashcard_schedule;
 mod topic_insights;
+pub(crate) mod topic_mastery_display;
+mod verification;
 
 use std::sync::LazyLock;
 

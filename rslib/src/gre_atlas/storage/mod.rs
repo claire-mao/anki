@@ -13,12 +13,21 @@ use rusqlite::OptionalExtension;
 use crate::error::Result;
 use crate::timestamp::TimestampSecs;
 
+/// Placeholder stem written by `ensure_question_for_attempt` when a synced
+/// attempt arrives before its question row. These rows must never be served in
+/// practice; merge/repair replaces them when the real question is available.
+pub(crate) const SYNC_QUESTION_STUB_STEM: &str = "[synced practice row]";
+
+pub(crate) fn is_sync_question_stub_stem(stem: &str) -> bool {
+    stem == SYNC_QUESTION_STUB_STEM
+}
+
 mod sync_write;
 
 pub(crate) use sync_write::sync_execute;
 pub(crate) use sync_write::SyncFkContext;
 
-pub(crate) const SCHEMA_VERSION: u32 = 5;
+pub(crate) const SCHEMA_VERSION: u32 = 6;
 
 /// Sidecar SQLite filename beside the collection profile (GRE Atlas practice
 /// data).
@@ -35,6 +44,29 @@ pub use sync_bundle::SyncPredictionRow;
 pub use sync_bundle::SyncQuestionRow;
 pub use sync_bundle::SyncSessionRow;
 pub use sync_bundle::META_LAST_DOWNLOADED_USN;
+
+#[derive(Debug, Clone)]
+pub struct StoredTopicFlashcardBatch {
+    pub topic: String,
+    pub batch_index: u32,
+    pub release_at_secs: TimestampSecs,
+    pub card_ids: Vec<crate::card::CardId>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PendingTopicFlashcardSummary {
+    pub pending_batches: u32,
+    pub next_batch_in_days: Option<u32>,
+}
+
+fn decode_card_ids_json(card_ids_json: &str) -> Result<Vec<crate::card::CardId>> {
+    let raw: Vec<i64> = serde_json::from_str(card_ids_json).map_err(|err| {
+        crate::error::AnkiError::InvalidInput {
+            source: snafu::FromString::without_source(format!("card_ids_json: {err}")),
+        }
+    })?;
+    Ok(raw.into_iter().map(crate::card::CardId).collect())
+}
 
 #[derive(Debug, Clone)]
 pub struct StoredQuestion {
@@ -87,6 +119,12 @@ pub struct PerformanceAttemptRow {
     pub response_time_ms: u32,
     pub confidence: Option<u32>,
     pub session_id: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct PerformanceAttemptChartRow {
+    pub answered_at_secs: TimestampSecs,
+    pub correct: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -192,8 +230,11 @@ impl GreAtlasStorage {
         let storage = Self { db };
         storage.migrate(collection_path)?;
         storage.seed_questions_if_empty()?;
+        crate::gre_atlas::questions::ensure_foundation_questions_present(&storage)?;
         crate::gre_atlas::questions::purge_invalid_questions(&storage)?;
+        crate::gre_atlas::questions::repair_sync_question_stubs(&storage)?;
         crate::gre_atlas::questions::ensure_exam_length_bank(&storage)?;
+        crate::gre_atlas::questions::assert_practice_bank_listable(&storage)?;
         Ok(storage)
     }
 
@@ -236,6 +277,9 @@ impl GreAtlasStorage {
         if ver < 5 {
             self.db.execute_batch(include_str!("upgrade_4_to_5.sql"))?;
         }
+        if ver < 6 {
+            self.db.execute_batch(include_str!("upgrade_5_to_6.sql"))?;
+        }
         Ok(())
     }
 
@@ -255,32 +299,42 @@ impl GreAtlasStorage {
             return Ok(());
         }
 
-        let foundation = crate::gre_atlas::questions::foundation::load_foundation_bank();
-        let now = TimestampSecs::now().0;
-        for q in foundation {
-            let choices = q.choice_list();
-            self.db.execute(
-                "INSERT INTO bl_question
-                (id, topic, section, format, stem, choices_json, correct_answer, explanation,
-                 difficulty, source_name, source_section, usn, mtime_secs)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
-                params![
-                    q.id,
-                    q.topic,
-                    q.section,
-                    q.format,
-                    q.stem_text(),
-                    serde_json::to_string(choices).unwrap(),
-                    q.correct_answer,
-                    q.stored_explanation(),
-                    q.difficulty,
-                    q.source_name(),
-                    q.subtopic.as_deref().unwrap_or("foundation"),
-                    now,
-                ],
-            )?;
+        for question in crate::gre_atlas::questions::foundation::load_foundation_bank() {
+            self.insert_foundation_question_if_missing(&question)?;
         }
         Ok(())
+    }
+
+    pub(crate) fn insert_foundation_question_if_missing(
+        &self,
+        question: &crate::gre_atlas::questions::foundation::FoundationQuestion,
+    ) -> Result<bool> {
+        if self.question_exists(&question.id)? {
+            return Ok(false);
+        }
+        let choices = question.choice_list();
+        let now = TimestampSecs::now().0;
+        self.db.execute(
+            "INSERT INTO bl_question
+            (id, topic, section, format, stem, choices_json, correct_answer, explanation,
+             difficulty, source_name, source_section, usn, mtime_secs)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)",
+            params![
+                question.id,
+                question.topic,
+                question.section,
+                question.format,
+                question.stem_text(),
+                serde_json::to_string(choices).unwrap(),
+                question.correct_answer,
+                question.stored_explanation(),
+                question.difficulty,
+                question.source_name(),
+                question.subtopic.as_deref().unwrap_or("foundation"),
+                now,
+            ],
+        )?;
+        Ok(true)
     }
 
     pub fn create_session(&self, source: &str) -> Result<PracticeSession> {
@@ -328,6 +382,18 @@ impl GreAtlasStorage {
             .map_err(Into::into)
     }
 
+    pub(crate) fn question_stem_is_sync_stub(&self, question_id: &str) -> Result<bool> {
+        Ok(self
+            .db
+            .query_row(
+                "SELECT stem FROM bl_question WHERE id = ?",
+                [question_id],
+                |row| row.get::<_, String>(0),
+            )
+            .optional()?
+            .is_some_and(|stem| is_sync_question_stub_stem(&stem)))
+    }
+
     pub fn session_count(&self) -> Result<u64> {
         let count: i64 = self
             .db
@@ -353,6 +419,7 @@ impl GreAtlasStorage {
                  GROUP BY question_id
              ) a ON a.question_id = q.id
              WHERE (?1 = '' OR q.topic = ?1 OR q.topic LIKE ?1 || '::%')
+               AND q.stem != ?3
                -- Rejected AI candidates must never reach learners; legacy/
                -- foundation/approved rows have NULL or non-'rejected' status.
                AND (q.evaluation_status IS NULL OR q.evaluation_status NOT LIKE 'rejected%')
@@ -364,10 +431,28 @@ impl GreAtlasStorage {
              LIMIT ?2",
         )?;
 
-        let rows = stmt.query_map(params![topic_prefix, limit], row_to_stored_question)?;
+        let rows = stmt.query_map(
+            params![topic_prefix, limit, SYNC_QUESTION_STUB_STEM],
+            row_to_stored_question,
+        )?;
 
         rows.collect::<std::result::Result<Vec<_>, _>>()
             .map_err(Into::into)
+    }
+
+    /// List canonical practice-bank questions (exactly 260 offline items).
+    pub fn list_practice_bank_questions(
+        &self,
+        topic_prefix: &str,
+        limit: u32,
+    ) -> Result<Vec<StoredQuestion>> {
+        let ids = crate::gre_atlas::questions::practice_bank_ids();
+        Ok(self
+            .list_questions(topic_prefix, u32::MAX)?
+            .into_iter()
+            .filter(|question| ids.contains(&question.id))
+            .take(limit.max(1) as usize)
+            .collect())
     }
 
     pub fn get_question(&self, question_id: &str) -> Result<Option<StoredQuestion>> {
@@ -393,14 +478,230 @@ impl GreAtlasStorage {
     }
 
     pub fn question_counts_by_topic(&self) -> Result<HashMap<String, u32>> {
-        let mut stmt = self
-            .db
-            .prepare_cached("SELECT topic, COUNT(*) FROM bl_question GROUP BY topic")?;
-        let rows = stmt.query_map([], |row| {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT topic, COUNT(*) FROM bl_question
+             WHERE stem != ?1
+             GROUP BY topic",
+        )?;
+        let rows = stmt.query_map([SYNC_QUESTION_STUB_STEM], |row| {
             Ok((row.get::<_, String>(0)?, row.get::<_, u32>(1)?))
         })?;
         rows.collect::<std::result::Result<HashMap<_, _>, _>>()
             .map_err(Into::into)
+    }
+
+    pub fn topic_attempt_count(&self, topic_id: &str) -> Result<u32> {
+        self.db
+            .query_row(
+                "SELECT COUNT(*) FROM bl_performance_attempt WHERE topic = ?",
+                [topic_id],
+                |row| row.get(0),
+            )
+            .map_err(Into::into)
+    }
+
+    pub fn topic_flashcard_batches_exist(&self, topic_id: &str) -> Result<bool> {
+        let count: i64 = self.db.query_row(
+            "SELECT COUNT(*) FROM bl_topic_flashcard_batch WHERE topic = ?",
+            [topic_id],
+            |row| row.get(0),
+        )?;
+        Ok(count > 0)
+    }
+
+    pub fn insert_topic_flashcard_batch(
+        &self,
+        topic_id: &str,
+        batch_index: u32,
+        release_at_secs: TimestampSecs,
+        card_ids: &[crate::card::CardId],
+        released: bool,
+    ) -> Result<()> {
+        let card_ids_json = serde_json::to_string(
+            &card_ids
+                .iter()
+                .map(|id| id.0)
+                .collect::<Vec<_>>(),
+        )
+        .unwrap();
+        let now = TimestampSecs::now().0;
+        self.db.execute(
+            "INSERT INTO bl_topic_flashcard_batch
+             (topic, batch_index, release_at_secs, card_ids_json, released, usn, mtime_secs)
+             VALUES (?, ?, ?, ?, ?, 0, ?)",
+            params![
+                topic_id,
+                batch_index,
+                release_at_secs.0,
+                card_ids_json,
+                released as i32,
+                now,
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Pull forward unreleased batches that were scheduled with a longer interval.
+    pub fn reconcile_flashcard_batch_intervals(&self, interval_days: u32) -> Result<()> {
+        let interval_secs = (interval_days as i64) * 86_400;
+        if interval_secs <= 0 {
+            return Ok(());
+        }
+        let mut stmt = self.db.prepare_cached(
+            "SELECT topic FROM bl_topic_flashcard_batch
+             WHERE released = 0
+             GROUP BY topic",
+        )?;
+        let topics = stmt
+            .query_map([], |row| row.get::<_, String>(0))?
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        for topic in topics {
+            let anchor: Option<i64> = self
+                .db
+                .query_row(
+                    "SELECT MIN(release_at_secs) FROM bl_topic_flashcard_batch
+                     WHERE topic = ? AND batch_index = 0",
+                    [&topic],
+                    |row| row.get(0),
+                )
+                .optional()?
+                .flatten();
+            let Some(anchor) = anchor else {
+                continue;
+            };
+            self.db.execute(
+                "UPDATE bl_topic_flashcard_batch
+                 SET release_at_secs = ? + (? * batch_index),
+                     mtime_secs = ?
+                 WHERE topic = ? AND released = 0 AND batch_index > 0
+                   AND release_at_secs > ? + (? * batch_index)",
+                params![
+                    anchor,
+                    interval_secs,
+                    TimestampSecs::now().0,
+                    topic,
+                    anchor,
+                    interval_secs,
+                ],
+            )?;
+        }
+        Ok(())
+    }
+
+    pub fn pending_topic_flashcard_batches(
+        &self,
+        now: TimestampSecs,
+    ) -> Result<Vec<StoredTopicFlashcardBatch>> {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT topic, batch_index, release_at_secs, card_ids_json
+             FROM bl_topic_flashcard_batch
+             WHERE released = 0 AND release_at_secs <= ?
+             ORDER BY release_at_secs, batch_index",
+        )?;
+        let rows = stmt.query_map([now.0], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, u32>(1)?,
+                row.get::<_, i64>(2)?,
+                row.get::<_, String>(3)?,
+            ))
+        })?;
+        rows.into_iter()
+            .map(|row| {
+                let (topic, batch_index, release_at_secs, card_ids_json) = row?;
+                Ok(StoredTopicFlashcardBatch {
+                    topic,
+                    batch_index,
+                    release_at_secs: TimestampSecs(release_at_secs),
+                    card_ids: decode_card_ids_json(&card_ids_json)?,
+                })
+            })
+            .collect()
+    }
+
+    pub fn pending_topic_flashcard_batch_summary(
+        &self,
+        topic_id: &str,
+        now: TimestampSecs,
+    ) -> Result<PendingTopicFlashcardSummary> {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT release_at_secs FROM bl_topic_flashcard_batch
+             WHERE topic = ? AND released = 0 AND release_at_secs > ?
+             ORDER BY release_at_secs
+             LIMIT 1",
+        )?;
+        let pending_batches: u32 = self.db.query_row(
+            "SELECT COUNT(*) FROM bl_topic_flashcard_batch
+             WHERE topic = ? AND released = 0 AND release_at_secs > ?",
+            params![topic_id, now.0],
+            |row| row.get(0),
+        )?;
+        let next_release_at: Option<i64> = stmt
+            .query_row(params![topic_id, now.0], |row| row.get(0))
+            .optional()?;
+        let next_batch_in_days = next_release_at.map(|release_at| {
+            ((release_at - now.0).max(0) as u32).div_ceil(86_400)
+        });
+        Ok(PendingTopicFlashcardSummary {
+            pending_batches,
+            next_batch_in_days,
+        })
+    }
+
+    pub fn mark_topic_flashcard_batch_released(
+        &self,
+        topic_id: &str,
+        batch_index: u32,
+    ) -> Result<()> {
+        let now = TimestampSecs::now().0;
+        self.db.execute(
+            "UPDATE bl_topic_flashcard_batch
+             SET released = 1, mtime_secs = ?
+             WHERE topic = ? AND batch_index = ?",
+            params![now, topic_id, batch_index],
+        )?;
+        Ok(())
+    }
+
+    pub(crate) fn list_sync_question_stub_ids(&self) -> Result<Vec<String>> {
+        let mut stmt = self
+            .db
+            .prepare_cached("SELECT id FROM bl_question WHERE stem = ?")?;
+        let rows = stmt.query_map([SYNC_QUESTION_STUB_STEM], |row| row.get(0))?;
+        rows.collect::<Result<Vec<_>, _>>().map_err(Into::into)
+    }
+
+    pub(crate) fn replace_sync_question_stub_from_foundation(
+        &self,
+        question: &crate::gre_atlas::questions::foundation::FoundationQuestion,
+    ) -> Result<bool> {
+        let choices = question.choice_list();
+        let usn = self.next_usn()?;
+        let now = TimestampSecs::now().0;
+        let updated = self.db.execute(
+            "UPDATE bl_question
+             SET topic = ?, section = ?, format = ?, stem = ?, choices_json = ?,
+                 correct_answer = ?, explanation = ?, difficulty = ?,
+                 source_name = ?, source_section = ?, usn = ?, mtime_secs = ?
+             WHERE id = ? AND stem = ?",
+            params![
+                question.topic,
+                question.section,
+                question.format,
+                question.stem_text(),
+                serde_json::to_string(choices).unwrap(),
+                question.correct_answer,
+                question.stored_explanation(),
+                question.difficulty,
+                question.source_name(),
+                question.subtopic.as_deref().unwrap_or("foundation"),
+                usn,
+                now,
+                question.id,
+                SYNC_QUESTION_STUB_STEM,
+            ],
+        )?;
+        Ok(updated > 0)
     }
 
     pub fn insert_generated_question_if_new(
@@ -736,10 +1037,11 @@ impl GreAtlasStorage {
             "INSERT INTO bl_question
             (id, topic, section, format, stem, choices_json, correct_answer, explanation,
              difficulty, usn, mtime_secs)
-            VALUES (?, ?, 'sync', 'mcq', '[synced practice row]', '[]', ?, '', ?, ?, ?)",
+            VALUES (?, ?, 'sync', 'mcq', ?, '[]', ?, '', ?, ?, ?)",
             params![
                 row.question_id,
                 row.topic,
+                SYNC_QUESTION_STUB_STEM,
                 row.answer,
                 row.difficulty,
                 usn,
@@ -954,6 +1256,38 @@ impl GreAtlasStorage {
         Ok(self.performance_stats()?.0)
     }
 
+    /// Practice accuracy grouped by attempt topic and resolved question type.
+    #[allow(clippy::type_complexity)]
+    pub(crate) fn performance_stats_by_topic_question_type(
+        &self,
+    ) -> Result<HashMap<(String, String), (u32, u32)>> {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT a.topic, q.format, q.explanation, COALESCE(SUM(a.correct), 0), COUNT(*)
+             FROM bl_performance_attempt a
+             JOIN bl_question q ON q.id = a.question_id
+             GROUP BY a.topic, q.format, q.explanation",
+        )?;
+        let mut stats = HashMap::new();
+        let rows = stmt.query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+                row.get::<_, i64>(3)? as u32,
+                row.get::<_, i64>(4)? as u32,
+            ))
+        })?;
+        for row in rows {
+            let (topic, format, explanation, correct, total) = row?;
+            let question_type =
+                crate::gre_atlas::questions::explanation::question_type_key(&format, &explanation);
+            let entry = stats.entry((topic, question_type)).or_insert((0, 0));
+            entry.0 += correct;
+            entry.1 += total;
+        }
+        Ok(stats)
+    }
+
     /// Single pass over practice attempts for totals and per-topic aggregates.
     #[allow(clippy::type_complexity)]
     pub fn performance_stats(&self) -> Result<((u32, u32), HashMap<String, (u32, u32)>)> {
@@ -1038,6 +1372,49 @@ impl GreAtlasStorage {
             })
         })?;
 
+        rows.collect::<std::result::Result<Vec<_>, _>>()
+            .map_err(Into::into)
+    }
+
+    pub fn has_performance_attempts(&self, topic_prefix: &str) -> Result<bool> {
+        let count: i64 = self.db.query_row(
+            "SELECT COUNT(*) FROM bl_performance_attempt
+             WHERE (?1 = '' OR topic = ?1 OR topic LIKE ?1 || '::%')",
+            [topic_prefix],
+            |row| row.get(0),
+        )?;
+        Ok(count > 0)
+    }
+
+    pub fn earliest_attempt_secs(&self, topic_prefix: &str) -> Result<Option<TimestampSecs>> {
+        let value: Option<i64> = self.db.query_row(
+            "SELECT MIN(answered_at_secs) FROM bl_performance_attempt
+             WHERE (?1 = '' OR topic = ?1 OR topic LIKE ?1 || '::%')",
+            [topic_prefix],
+            |row| row.get(0),
+        )?;
+        Ok(value.map(TimestampSecs))
+    }
+
+    pub fn attempts_in_range(
+        &self,
+        since: TimestampSecs,
+        until: TimestampSecs,
+        topic_prefix: &str,
+    ) -> Result<Vec<PerformanceAttemptChartRow>> {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT answered_at_secs, correct
+             FROM bl_performance_attempt
+             WHERE answered_at_secs >= ?1 AND answered_at_secs < ?2
+               AND (?3 = '' OR topic = ?3 OR topic LIKE ?3 || '::%')
+             ORDER BY answered_at_secs ASC, id ASC",
+        )?;
+        let rows = stmt.query_map(params![since.0, until.0, topic_prefix], |row| {
+            Ok(PerformanceAttemptChartRow {
+                answered_at_secs: TimestampSecs(row.get(0)?),
+                correct: row.get::<_, i32>(1)? != 0,
+            })
+        })?;
         rows.collect::<std::result::Result<Vec<_>, _>>()
             .map_err(Into::into)
     }
@@ -1430,14 +1807,30 @@ mod test {
         let col_path = dir.path().join("test.anki2");
         CollectionBuilder::new(&col_path).build()?;
         let storage = GreAtlasStorage::open(&col_path)?;
-        let questions = storage.list_questions("", 100)?;
-        assert!(
-            questions.len() >= crate::gre_atlas::questions::exam_bank_question_count() as usize,
-            "question bank should reach exam length"
+        let questions = storage.list_practice_bank_questions(
+            "",
+            crate::gre_atlas::questions::PRACTICE_QUESTION_LIST_LIMIT,
+        )?;
+        assert_eq!(
+            questions.len(),
+            crate::gre_atlas::questions::PRACTICE_BANK_QUESTION_TOTAL as usize
         );
-        assert!(questions.iter().any(|q| q.section == "quant"));
-        assert!(questions.iter().any(|q| q.section == "verbal"));
-        assert!(questions.iter().any(|q| q.section == "awa"));
+        let quant = questions.iter().filter(|q| q.section == "quant").count();
+        let verbal = questions.iter().filter(|q| q.section == "verbal").count();
+        let awa = questions.iter().filter(|q| q.section == "awa").count();
+        assert_eq!(
+            quant,
+            crate::gre_atlas::questions::TARGET_PRACTICE_BANK_QUANT as usize
+        );
+        assert_eq!(
+            verbal,
+            crate::gre_atlas::questions::TARGET_PRACTICE_BANK_VERBAL as usize
+        );
+        assert_eq!(
+            awa,
+            crate::gre_atlas::questions::TARGET_PRACTICE_BANK_AWA as usize
+        );
+        assert_eq!(quant + verbal + awa, questions.len());
         Ok(())
     }
 

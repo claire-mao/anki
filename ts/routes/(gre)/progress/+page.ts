@@ -4,26 +4,26 @@
 import {
     getDashboard,
     getGreStudyStatus,
+    getPerformanceChart,
     getReadinessCalibration,
-    getRecentAttempts,
     getScores,
     topicMastery,
 } from "@generated/backend";
+import { PerformanceChartHorizon } from "@generated/anki/brainlift_pb";
 
 import type { PageLoad } from "./$types";
 
 const GRE_DECK_NAME = "GRE Atlas";
-const PERFORMANCE_ATTEMPTS_LIMIT = 500;
 
 export const load = (async () => {
-    const [scores, dashboard, recentAttempts, mastery, calibration, status] = await Promise.all([
+    const [scores, dashboard, performanceChart, mastery, calibration, status] = await Promise.all([
         getScores({}),
         getDashboard({
             recentActivityLimit: 5,
             topicInsightLimit: 8,
         }),
-        getRecentAttempts({
-            limit: PERFORMANCE_ATTEMPTS_LIMIT,
+        getPerformanceChart({
+            horizon: PerformanceChartHorizon.PERFORMANCE_CHART_HORIZON_30D,
             topicPrefix: "",
         }),
         topicMastery({
@@ -38,7 +38,7 @@ export const load = (async () => {
     return {
         scores,
         dashboard,
-        recentAttempts: recentAttempts.attempts,
+        performanceChart,
         mastery,
         readinessCalibration: calibration,
         status,

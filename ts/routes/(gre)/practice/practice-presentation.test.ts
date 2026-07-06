@@ -4,6 +4,7 @@
 import { describe, expect, test } from "vitest";
 
 import type { SessionAttemptRecord } from "../session-completion";
+import * as practicePresentation from "./practice-presentation";
 import {
     buildPracticeRevealRows,
     computeSessionAccuracy,
@@ -16,7 +17,6 @@ import {
     formatQuestionType,
     isOfflineTemplateProvenance,
     OFFLINE_TEMPLATE_NOTE,
-    orderExplanationChoices,
     progressLabelForSession,
     resolveCorrectChoice,
     resolveExplanationProvenanceNote,
@@ -82,19 +82,51 @@ describe("practice presentation", () => {
         expect(
             progressLabelForSession({
                 questionsCompleted: 0,
-                queueLength: 59,
+                queueLength: 100,
+                progressTotal: 100,
                 sessionComplete: false,
                 emptyLabel: "Empty",
             }),
-        ).toBe("Question 1 of 59");
+        ).toBe("Question 1 of 100");
         expect(
             progressLabelForSession({
                 questionsCompleted: 1,
-                queueLength: 59,
+                queueLength: 100,
+                progressTotal: 100,
                 sessionComplete: false,
                 emptyLabel: "Empty",
             }),
-        ).toBe("Question 2 of 59");
+        ).toBe("Question 2 of 100");
+    });
+
+    test("uses canonical section totals for full-bank progress labels", () => {
+        expect(
+            progressLabelForSession({
+                questionsCompleted: 0,
+                queueLength: 100,
+                progressTotal: 100,
+                sessionComplete: false,
+                emptyLabel: "Empty",
+            }),
+        ).toBe("Question 1 of 100");
+        expect(
+            progressLabelForSession({
+                questionsCompleted: 0,
+                queueLength: 60,
+                progressTotal: 60,
+                sessionComplete: false,
+                emptyLabel: "Empty",
+            }),
+        ).toBe("Question 1 of 60");
+        expect(
+            progressLabelForSession({
+                questionsCompleted: 0,
+                queueLength: 260,
+                progressTotal: 260,
+                sessionComplete: false,
+                emptyLabel: "Empty",
+            }),
+        ).toBe("Question 1 of 260");
     });
 
     test("humanizes topic ids with catalog labels when known", () => {
@@ -205,12 +237,15 @@ describe("explanation presentation", () => {
         ).toBeNull();
     });
 
-    test("orders choice reasoning with the correct answer first", () => {
-        const ordered = orderExplanationChoices([
-            { choice: "A", isCorrect: false, reasoning: "wrong because…" },
-            { choice: "B", isCorrect: true, reasoning: "correct because…" },
-            { choice: "C", isCorrect: false, reasoning: "" },
-        ]);
-        expect(ordered.map((row) => row.choice)).toEqual(["B", "A"]);
+    test("exposes only the question explanation, not a per-choice breakdown", () => {
+        // The reveal panel intentionally renders only the single question-level
+        // summary. The presentation layer must not surface per-choice reasoning
+        // helpers, so no per-choice explanation list is built for the UI.
+        expect(
+            (practicePresentation as Record<string, unknown>).orderExplanationChoices,
+        ).toBeUndefined();
+        expect(
+            (practicePresentation as Record<string, unknown>).explanationChoicesInQuestionOrder,
+        ).toBeUndefined();
     });
 });

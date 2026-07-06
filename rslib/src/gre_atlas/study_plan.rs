@@ -26,6 +26,7 @@ use crate::gre_atlas::topic_insights::HIGH_EXAM_WEIGHT;
 use crate::gre_atlas::topic_insights::LOW_MEMORY_RETRIEVABILITY;
 use crate::gre_atlas::topic_insights::LOW_PRACTICE_ACCURACY;
 use crate::gre_atlas::topic_insights::MIN_PRACTICE_ATTEMPTS_FOR_WEAK;
+use crate::gre_atlas::topic_flashcard_release::topic_flashcard_schedule_for_topic;
 use crate::gre_atlas::GreCatalog;
 
 const DEFAULT_STUDY_PLAN_LIMIT: u32 = 10;
@@ -105,8 +106,14 @@ impl Collection {
             all_study_recommendations(&mastery_by_id, &observed_refs, &signals.practice_by_topic);
 
         let (new_due, learn_due, review_due) = gre_deck_due_counts(self)?;
-        let daily_plan =
-            build_daily_study_plan(&signals, &recommendations, new_due, learn_due, review_due);
+        let daily_plan = build_daily_study_plan(
+            self,
+            &signals,
+            &recommendations,
+            new_due,
+            learn_due,
+            review_due,
+        );
 
         recommendations.truncate(limit as usize);
 
@@ -156,6 +163,7 @@ fn gre_deck_due_counts(col: &mut Collection) -> Result<(u32, u32, u32)> {
 }
 
 fn build_daily_study_plan(
+    col: &mut Collection,
     signals: &GreAtlasSignals,
     recommendations: &[StudyPlanRecommendation],
     new_due: u32,
@@ -184,6 +192,9 @@ fn build_daily_study_plan(
             target_count: review_target,
             topic_id: None,
             topic_display_name: None,
+            flashcard_schedule_hint: None,
+            flashcards_due_now: None,
+            flashcards_next_due_in_days: None,
         });
     } else {
         tasks.push(StudyPlanDailyTask {
@@ -195,6 +206,9 @@ fn build_daily_study_plan(
             target_count: 0,
             topic_id: None,
             topic_display_name: None,
+            flashcard_schedule_hint: None,
+            flashcards_due_now: None,
+            flashcards_next_due_in_days: None,
         });
     }
 
@@ -212,13 +226,26 @@ fn build_daily_study_plan(
         target_count: practice_target,
         topic_id: None,
         topic_display_name: None,
+        flashcard_schedule_hint: None,
+        flashcards_due_now: None,
+        flashcards_next_due_in_days: None,
     });
 
     for recommendation in recommendations
         .iter()
         .take(DAILY_FOCUS_TOPIC_COUNT as usize)
     {
-        tasks.push(focus_topic_task(recommendation));
+        let mut task = focus_topic_task(recommendation);
+        if let Some(topic_id) = &task.topic_id {
+            if let Ok(schedule) = topic_flashcard_schedule_for_topic(col, topic_id) {
+                task.flashcard_schedule_hint = Some(schedule.hint());
+                task.flashcards_due_now = Some(schedule.due_now);
+                task.flashcards_next_due_in_days = schedule
+                    .next_batch_in_days
+                    .or(schedule.next_due_in_days);
+            }
+        }
+        tasks.push(task);
     }
 
     let headline = build_daily_headline(
@@ -277,6 +304,9 @@ fn focus_topic_task(recommendation: &StudyPlanRecommendation) -> StudyPlanDailyT
             target_count: FOCUS_ADD_CARDS_TARGET,
             topic_id: Some(recommendation.topic_id.clone()),
             topic_display_name: Some(recommendation.display_name.clone()),
+            flashcard_schedule_hint: None,
+            flashcards_due_now: None,
+            flashcards_next_due_in_days: None,
         };
     }
 
@@ -294,6 +324,9 @@ fn focus_topic_task(recommendation: &StudyPlanRecommendation) -> StudyPlanDailyT
             target_count: review_target,
             topic_id: Some(recommendation.topic_id.clone()),
             topic_display_name: Some(recommendation.display_name.clone()),
+            flashcard_schedule_hint: None,
+            flashcards_due_now: None,
+            flashcards_next_due_in_days: None,
         };
     }
 
@@ -312,6 +345,9 @@ fn focus_topic_task(recommendation: &StudyPlanRecommendation) -> StudyPlanDailyT
         target_count: practice_target,
         topic_id: Some(recommendation.topic_id.clone()),
         topic_display_name: Some(recommendation.display_name.clone()),
+        flashcard_schedule_hint: None,
+        flashcards_due_now: None,
+        flashcards_next_due_in_days: None,
     }
 }
 
@@ -517,6 +553,7 @@ mod test {
                 avg_retrievability_low: 0.3,
                 avg_retrievability_high: 0.5,
                 total_reviews: 10,
+                ..Default::default()
             },
         )]);
         let observed = vec!["gre::quant::algebra::linear"];
@@ -558,6 +595,7 @@ mod test {
                 avg_retrievability_low: 0.88,
                 avg_retrievability_high: 0.95,
                 total_reviews: 20,
+                ..Default::default()
             },
         )]);
         let observed = vec!["gre::quant::algebra::linear"];

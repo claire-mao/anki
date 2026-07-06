@@ -46,7 +46,7 @@ GRE tabs use page loaders in `mobile/mobile_bridge/src/gre_pages.rs`:
 | -------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | Dashboard      | `anki_mobile_gre_dashboard_json`                                          | `getDashboard(5,1)`, `getStudyPlan(3)`, `getGreStudyStatus`                 |
 | Progress       | `anki_mobile_gre_progress_json`                                           | `getScores`, `getDashboard(5,8)`, `topicMastery`, `getReadinessCalibration` |
-| Practice       | `anki_mobile_gre_practice_bootstrap_json`                                 | `createSession`, `listQuestions(200)`, `getScores`                          |
+| Practice       | `anki_mobile_gre_practice_bootstrap_json`                                 | `createSession`, `listQuestions(260)`, `getScores`                          |
 | Study          | `anki_mobile_gre_study_json`                                              | `getGreStudyStatus`                                                         |
 | Study review   | `anki_mobile_gre_study_review_json` / `anki_mobile_gre_study_answer_json` | `SchedulerService` + card rendering                                         |
 | GRE Atlas sync | `anki_mobile_brainlift_sync_*_json`                                       | `GetBrainLiftSyncStatus`, `PullBrainLiftChanges`, `PushBrainLiftChanges`    |

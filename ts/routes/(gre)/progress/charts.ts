@@ -1,14 +1,36 @@
 // Copyright: Ankitects Pty Ltd and contributors
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import type { EstimatedGreScore, ReadinessCalibrationBin } from "@generated/anki/brainlift_pb";
+import type { EstimatedGreScore, PerformanceChartBucket, ReadinessCalibrationBin } from "@generated/anki/brainlift_pb";
 import type { TopicMasteryEntry } from "@generated/anki/stats_pb";
-import { axisBottom, axisLeft, line, max, scaleBand, scaleLinear, scaleTime, select, timeFormat } from "d3";
+import {
+    axisBottom,
+    axisLeft,
+    curveMonotoneX,
+    line,
+    max,
+    scaleBand,
+    scaleLinear,
+    scalePoint,
+    select,
+} from "d3";
 
 import type { GraphBounds } from "../../graphs/graph-helpers";
 import { setDataAvailable } from "../../graphs/graph-helpers";
 import { chartEmptyLabel } from "../empty-states";
-import type { AccuracyTrendPoint } from "../indicator-utils";
+import {
+    performanceChartAccuracyPercent,
+    performanceChartAxisLabel,
+    performanceChartHasData,
+    performanceChartLineSegments,
+    performanceChartTooltip,
+} from "./performance-chart-presentation";
+import {
+    isTopicMasteryStarted,
+    topicDisplayMasteryPercent,
+    topicMasteryConfidenceLabel,
+    topicMasteryRowTooltip,
+} from "./topic-mastery-presentation";
 
 export interface ScoreBarDatum {
     label: string;
@@ -195,19 +217,19 @@ export function renderEstimatedGreScore(
     }
 }
 
-export function renderAccuracyTrendChart(
+export function renderPerformanceChart(
     svg: SVGElement,
     bounds: GraphBounds,
-    points: AccuracyTrendPoint[],
+    buckets: PerformanceChartBucket[],
 ): void {
     clearChart(svg);
     const area = chartArea(bounds);
     const g = rootGroup(svg, bounds);
-    const rows = points.filter((point) => point.answeredAtSecs > 0);
+    const hasData = performanceChartHasData(buckets);
 
-    setDataAvailable(select(svg), rows.length >= 2);
+    setDataAvailable(select(svg), hasData);
 
-    if (rows.length < 2) {
+    if (!hasData || buckets.length === 0) {
         g.append("text")
             .attr("x", area.width / 2)
             .attr("y", area.height / 2)
@@ -217,17 +239,45 @@ export function renderAccuracyTrendChart(
         return;
     }
 
-    const dates = rows.map((point) => new Date(point.answeredAtSecs * 1000));
-    const x = scaleTime()
-        .domain([dates[0]!, dates[dates.length - 1]!])
-        .range([0, area.width]);
+    const labels = buckets.map((bucket) => bucket.label);
+    const axisLabelByBucket = new Map(
+        buckets.map((bucket) => [
+            bucket.label,
+            performanceChartAxisLabel(bucket, buckets.length),
+        ]),
+    );
+    const x = scalePoint<string>()
+        .domain(labels)
+        .range([0, area.width])
+        .padding(0.5);
     const y = scaleLinear().domain([0, 100]).range([area.height, 0]).nice();
-    const tickCount = Math.min(5, rows.length);
-    const dateFormat = timeFormat("%b %d");
+    // Responsive tick thinning: fit roughly one label per 46px (92px for the
+    // longer weekly/monthly labels), always keeping the most recent period.
+    const longLabels = buckets.some(
+        (bucket) => (axisLabelByBucket.get(bucket.label) ?? "").length > 6,
+    );
+    const maxTicks = Math.max(4, Math.floor(area.width / (longLabels ? 92 : 46)));
+    const step = Math.max(1, Math.ceil(buckets.length / maxTicks));
+    const tickLabels =
+        step === 1
+            ? labels
+            : labels.filter(
+                  (_label, index) => index % step === 0 || index === labels.length - 1,
+              );
+    const rotateLabels = longLabels;
 
     g.append("g")
         .attr("transform", `translate(0, ${area.height})`)
-        .call(axisBottom(x).ticks(tickCount).tickFormat((value) => dateFormat(value as Date)));
+        .call(
+            axisBottom(x)
+                .tickValues(tickLabels)
+                .tickFormat((value) => axisLabelByBucket.get(String(value)) ?? String(value)),
+        )
+        .selectAll("text")
+        .attr("transform", rotateLabels ? "rotate(-35)" : null)
+        .attr("text-anchor", rotateLabels ? "end" : "middle")
+        .attr("dx", rotateLabels ? "-0.4em" : null)
+        .attr("dy", rotateLabels ? "0.2em" : null);
 
     g.append("g").call(axisLeft(y).ticks(5).tickFormat((value) => `${value}%`));
 
@@ -246,33 +296,60 @@ export function renderAccuracyTrendChart(
         .attr("class", "chart-axis-label")
         .text("Practice over time");
 
-    const trendLine = line<AccuracyTrendPoint>()
-        .x((point) => x(new Date(point.answeredAtSecs * 1000)))
-        .y((point) => y(point.accuracy));
+    const trendLine = line<PerformanceChartBucket>()
+        .defined(
+            (bucket) => bucket.questions > 0 && bucket.accuracy !== undefined,
+        )
+        .x((bucket) => x(bucket.label)!)
+        .y((bucket) => y(performanceChartAccuracyPercent(bucket)))
+        .curve(curveMonotoneX);
 
-    g.append("path")
-        .datum(rows)
-        .attr("d", trendLine)
-        .attr("fill", "none")
-        .attr("stroke", "var(--fg-link)")
-        .attr("stroke-width", 2.5);
+    for (const segment of performanceChartLineSegments(buckets)) {
+        g.append("path")
+            .datum(segment)
+            .attr("d", trendLine)
+            .attr("fill", "none")
+            .attr("stroke", "var(--fg-link)")
+            .attr("stroke-width", 2.5);
+    }
+
+    const plotted = buckets.filter(
+        (bucket) => bucket.questions > 0 && bucket.accuracy !== undefined,
+    );
 
     g.selectAll("circle.point")
-        .data(rows)
+        .data(plotted)
         .join("circle")
         .attr("class", "point")
-        .attr("cx", (point) => x(new Date(point.answeredAtSecs * 1000)))
-        .attr("cy", (point) => y(point.accuracy))
-        .attr("r", 3.5)
-        .attr("fill", "var(--fg-link)");
+        .attr("cx", (bucket) => x(bucket.label)!)
+        .attr("cy", (bucket) => y(performanceChartAccuracyPercent(bucket)))
+        .attr("r", 4)
+        .attr("fill", "var(--fg-link)")
+        .append("title")
+        .text((bucket) => performanceChartTooltip(bucket));
+
+    // Show review counts with each point when they won't overlap; otherwise the
+    // count stays available in the hover tooltip.
+    if (plotted.length > 0 && plotted.length <= 10) {
+        g.selectAll("text.point-count")
+            .data(plotted)
+            .join("text")
+            .attr("class", "point-count")
+            .attr("x", (bucket) => x(bucket.label)!)
+            .attr("y", (bucket) => y(performanceChartAccuracyPercent(bucket)) - 9)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "10px")
+            .attr("fill", "var(--fg-subtle)")
+            .text((bucket) => `n=${bucket.questions}`);
+    }
 }
 
 export function studiedTopicEntries(topics: TopicMasteryEntry[]): TopicMasteryEntry[] {
-    return topics.filter((topic) => topic.studiedCards > 0);
+    return catalogLeafTopics(topics).filter((topic) => isStudiedTopic(topic));
 }
 
 export function isStudiedTopic(topic: TopicMasteryEntry): boolean {
-    return topic.studiedCards > 0;
+    return isTopicMasteryStarted(topic);
 }
 
 /** Catalog leaves only — parent organizer nodes are excluded from the chart. */
@@ -293,36 +370,58 @@ export function topicMasteryChartRows(topics: TopicMasteryEntry[]): TopicMastery
     const leaves = catalogLeafTopics(topics);
     const studied = leaves
         .filter(isStudiedTopic)
-        .sort(
-            (a, b) =>
-                b.avgRetrievability - a.avgRetrievability
-                || a.displayName.localeCompare(b.displayName),
-        );
+        .sort((a, b) => {
+            const left = topicDisplayMasteryPercent(a) ?? 0;
+            const right = topicDisplayMasteryPercent(b) ?? 0;
+            return right - left || a.displayName.localeCompare(b.displayName);
+        });
     const unstudied = leaves
         .filter((topic) => !isStudiedTopic(topic))
         .sort((a, b) => a.displayName.localeCompare(b.displayName));
     return [...studied, ...unstudied];
 }
 
-const TOPIC_MASTERY_ROW_HEIGHT = 22;
-const TOPIC_MASTERY_CHART_VERTICAL_PADDING = 56;
+const TOPIC_MASTERY_ROW_HEIGHT = 34;
+const TOPIC_MASTERY_CHART_VERTICAL_PADDING = 16;
+export const TOPIC_MASTERY_PERCENT_WIDTH = 52;
+const TOPIC_MASTERY_ROW_GAP = 6;
+const TOPIC_MASTERY_LABEL_MIN_WIDTH = 132;
+const TOPIC_MASTERY_LABEL_MAX_WIDTH = 220;
+
+export function topicMasteryLabelWidth(chartWidth: number): number {
+    return Math.min(
+        Math.max(Math.round(chartWidth * 0.26), TOPIC_MASTERY_LABEL_MIN_WIDTH),
+        TOPIC_MASTERY_LABEL_MAX_WIDTH,
+    );
+}
+
+export function topicMasteryBarAreaWidth(chartWidth: number): number {
+    const labelWidth = topicMasteryLabelWidth(chartWidth);
+    return Math.max(
+        chartWidth - labelWidth - TOPIC_MASTERY_PERCENT_WIDTH,
+        120,
+    );
+}
 
 export function topicMasteryChartHeight(rowCount: number): number {
     if (rowCount === 0) {
-        return 200;
+        return 240;
     }
-    return rowCount * TOPIC_MASTERY_ROW_HEIGHT + TOPIC_MASTERY_CHART_VERTICAL_PADDING;
+    return rowCount * (TOPIC_MASTERY_ROW_HEIGHT + TOPIC_MASTERY_ROW_GAP)
+        + TOPIC_MASTERY_CHART_VERTICAL_PADDING;
 }
 
 export function topicMasteryChartSubtitle(
     catalogTopicCount: number,
     topics: TopicMasteryEntry[],
+    topicsStudied?: number,
 ): string {
-    const studiedCount = studiedTopicEntries(topics).length;
-    if (studiedCount === 0) {
+    const studiedCount = topicsStudied ?? studiedTopicEntries(topics).length;
+    const boundedStudiedCount = Math.min(studiedCount, catalogTopicCount);
+    if (boundedStudiedCount === 0) {
         return `${catalogTopicCount} GRE topics in catalog`;
     }
-    return `${studiedCount} of ${catalogTopicCount} topics studied`;
+    return `${boundedStudiedCount} of ${catalogTopicCount} topics studied`;
 }
 
 export function renderTopicMasteryChart(
@@ -349,69 +448,100 @@ export function renderTopicMasteryChart(
         return;
     }
 
+    const barX = topicMasteryLabelWidth(area.width);
+    const barWidth = topicMasteryBarAreaWidth(area.width);
+    const percentX = barX + barWidth;
+
     const y = scaleBand<string>()
-        .domain(rows.map((row) => row.displayName))
-        .range([0, area.height - 10])
-        .padding(0.18);
+        .domain(rows.map((row) => row.topicId))
+        .range([0, area.height])
+        .paddingInner(TOPIC_MASTERY_ROW_GAP / TOPIC_MASTERY_ROW_HEIGHT)
+        .paddingOuter(0.05);
 
-    const x = scaleLinear()
-        .domain([0, 100])
-        .range([0, area.width - 120])
-        .nice();
+    const x = scaleLinear().domain([0, 100]).range([0, barWidth]).nice();
+    const rowTooltip = (row: TopicMasteryEntry): string => topicMasteryRowTooltip(row);
 
-    g.append("g")
-        .call(axisLeft(y).tickSize(0))
-        .selectAll("text")
-        .attr("font-size", "12px")
-        .attr("text-anchor", "end")
-        .attr("x", -8);
-
-    g.append("g")
-        .attr("transform", `translate(0, ${area.height})`)
-        .call(axisBottom(x).ticks(5).tickFormat((d) => `${d}%`));
+    g.selectAll("text.label")
+        .data(rows)
+        .join("text")
+        .attr("class", "label")
+        .attr("x", 0)
+        .attr("y", (row) => y(row.topicId)! + y.bandwidth() / 2 + 5)
+        .attr("text-anchor", "start")
+        .attr("font-size", "14px")
+        .text((row) => row.displayName)
+        .style("cursor", onTopicClick ? "pointer" : "default")
+        .on("click", (_event, row) => {
+            onTopicClick?.(row.topicId);
+        })
+        .append("title")
+        .text(rowTooltip);
 
     g.selectAll("rect.track")
         .data(rows)
         .join("rect")
         .attr("class", "track")
-        .attr("x", 0)
-        .attr("y", (row) => y(row.displayName)!)
-        .attr("width", area.width - 120)
+        .attr("x", barX)
+        .attr("y", (row) => y(row.topicId)!)
+        .attr("width", barWidth)
         .attr("height", y.bandwidth())
-        .attr("rx", 6)
+        .attr("rx", 8)
         .attr("fill", "var(--border)")
         .attr("opacity", (row) => (isStudiedTopic(row) ? 0 : 0.35))
         .style("cursor", onTopicClick ? "pointer" : "default")
         .on("click", (_event, row) => {
             onTopicClick?.(row.topicId);
-        });
+        })
+        .append("title")
+        .text(rowTooltip);
 
     g.selectAll("rect.bar")
         .data(rows)
         .join("rect")
         .attr("class", (row) => (isStudiedTopic(row) ? "bar bar-studied" : "bar bar-unstudied"))
-        .attr("x", 0)
-        .attr("y", (row) => y(row.displayName)!)
+        .attr("x", barX)
+        .attr("y", (row) => y(row.topicId)!)
         .attr(
             "width",
-            (row) => isStudiedTopic(row) ? x(row.avgRetrievability * 100) : Math.max(y.bandwidth() * 0.35, 3),
+            (row) => {
+                const percent = topicDisplayMasteryPercent(row);
+                if (percent === undefined) {
+                    return Math.max(y.bandwidth() * 0.35, 3);
+                }
+                return x(percent);
+            },
         )
         .attr("height", y.bandwidth())
-        .attr("rx", 6)
+        .attr("rx", 8)
         .attr("fill", (row) => (isStudiedTopic(row) ? "var(--state-learn)" : "var(--fg-subtle)"))
         .attr("opacity", (row) => (isStudiedTopic(row) ? 1 : 0.55))
         .style("cursor", onTopicClick ? "pointer" : "default")
         .on("click", (_event, row) => {
             onTopicClick?.(row.topicId);
-        });
+        })
+        .append("title")
+        .text(rowTooltip);
 
     g.selectAll("text.value")
         .data(rows)
         .join("text")
-        .attr("class", (row) => isStudiedTopic(row) ? "value value-studied" : "value value-unstudied")
-        .attr("x", (row) => isStudiedTopic(row) ? x(row.avgRetrievability * 100) + 6 : 8)
-        .attr("y", (row) => y(row.displayName)! + y.bandwidth() / 2 + 4)
-        .text((row) => isStudiedTopic(row) ? `${Math.round(row.avgRetrievability * 100)}%` : "Not started");
+        .attr("class", (row) => (isStudiedTopic(row) ? "value value-studied" : "value value-unstudied"))
+        .attr("x", percentX)
+        .attr("y", (row) => y(row.topicId)! + y.bandwidth() / 2 + 5)
+        .attr("text-anchor", "end")
+        .attr("font-size", "13px")
+        .text((row) => {
+            const percent = topicDisplayMasteryPercent(row);
+            if (percent === undefined) {
+                return "Not started";
+            }
+            const confidence = topicMasteryConfidenceLabel(row);
+            return confidence
+                ? `${Math.round(percent)}% · ${confidence}`
+                : `${Math.round(percent)}%`;
+        })
+        .append("title")
+        .text(rowTooltip);
 }
 
 export function renderCalibrationCurve(

@@ -3,6 +3,8 @@
 
 //! Parameterized template variants derived from the seed question patterns.
 
+use std::collections::HashSet;
+
 use crate::gre_atlas::domain::GreSection;
 use crate::gre_atlas::questions::ai_gen::GeneratedQuestionDraft;
 use crate::gre_atlas::questions::ai_gen::QuestionAttribution;
@@ -94,6 +96,7 @@ pub(crate) fn build_variant_draft(
                 (3, 5, 24, 40, "24 boys represent 3 parts, so one part is 8. Five parts of girls gives 40."),
                 (2, 3, 6, 9, "6 cups of flour equal 2 parts, so 1 part is 3 cups. Sugar is 3 parts = 9 cups."),
                 (4, 7, 20, 35, "20 is 4 parts, so one part is 5. Seven parts gives 35."),
+                (5, 8, 15, 24, "15 is 5 parts, so one part is 3. Eight parts gives 24."),
             ];
             let (a, b, given, answer, explanation) =
                 scenarios[(variant as usize) % scenarios.len()];
@@ -143,6 +146,13 @@ pub(crate) fn build_variant_draft(
                     6,
                     "Solve the linear equation: divide both sides by 5, x − 2 = 4, so the variable x = 6.",
                 ),
+                (
+                    6,
+                    4,
+                    34,
+                    5,
+                    "Solve the linear equation: subtract 4 from both sides, 6x = 30, divide by 6 to isolate the variable x = 5.",
+                ),
             ];
             let (a, b, c, answer, explanation) = scenarios[(variant as usize) % scenarios.len()];
             mcq(
@@ -189,6 +199,12 @@ pub(crate) fn build_variant_draft(
                     "3",
                     "x² = 9, so x = 3 or x = −3; the positive root is 3.",
                 ),
+                (
+                    "What is the positive root of x² − 5x + 6 = 0?",
+                    vec!["2", "3", "4", "6"],
+                    "3",
+                    "Factor: (x − 2)(x − 3) = 0. Roots are 2 and 3; the positive root is 3.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -211,6 +227,7 @@ pub(crate) fn build_variant_draft(
                 (6, 8, 10, "√(6² + 8²) = √100 = 10."),
                 (9, 12, 15, "√(9² + 12²) = √225 = 15."),
                 (8, 15, 17, "√(8² + 15²) = √289 = 17."),
+                (7, 24, 25, "√(7² + 24²) = √625 = 25."),
             ];
             let (a, b, answer, explanation) = scenarios[(variant as usize) % scenarios.len()];
             mcq(
@@ -255,6 +272,12 @@ pub(crate) fn build_variant_draft(
                     "10π",
                     "Circumference = πd = π(10) = 10π.",
                 ),
+                (
+                    "A circle has radius 6. What is its circumference?",
+                    vec!["10π", "11π", "12π", "14π"],
+                    "12π",
+                    "Circumference = 2πr = 2π(6) = 12π.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -296,6 +319,12 @@ pub(crate) fn build_variant_draft(
                     vec!["Company A", "Company B", "Both equally", "Cannot determine"],
                     "Company A",
                     "Comparing percent increases, 25% exceeds 20%, so Company A grew faster.",
+                ),
+                (
+                    "A table shows expenses of $40K, $55K, and $65K over three quarters. What is the total?",
+                    vec!["$140K", "$150K", "$160K", "$170K"],
+                    "$160K",
+                    "Add the table values: 40 + 55 + 65 = 160, so $160K.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -339,6 +368,12 @@ pub(crate) fn build_variant_draft(
                     "2/5",
                     "2 favorable outcomes out of 5 total → 2/5.",
                 ),
+                (
+                    "A spinner has 5 equal sections numbered 1 through 5. What is the probability of landing on an odd number?",
+                    vec!["1/5", "2/5", "3/5", "4/5"],
+                    "3/5",
+                    "Odd outcomes 1, 3, and 5 are three of five equally likely sections.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -380,6 +415,12 @@ pub(crate) fn build_variant_draft(
                     vec!["2", "3", "5", "7"],
                     "3",
                     "The mode is the value that appears most often, which is 3.",
+                ),
+                (
+                    "What is the range of 5, 8, 12, 12, and 20?",
+                    vec!["8", "12", "15", "20"],
+                    "15",
+                    "Range is maximum minus minimum: 20 − 5 = 15.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -423,6 +464,12 @@ pub(crate) fn build_variant_draft(
                     "60 mph",
                     "Speed = 180 / 3 = 60 mph.",
                 ),
+                (
+                    "Worker A completes a job in 6 hours and Worker B in 3 hours. How long do they take working together?",
+                    vec!["1 hour", "2 hours", "3 hours", "4 hours"],
+                    "2 hours",
+                    "Combined rate is 1/6 + 1/3 = 1/2 job per hour, so the job takes 2 hours.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -464,6 +511,12 @@ pub(crate) fn build_variant_draft(
                     vec!["51", "53", "55", "57"],
                     "53",
                     "53 has no factors other than 1 and itself.",
+                ),
+                (
+                    "How many positive divisors does 36 have?",
+                    vec!["6", "7", "8", "9"],
+                    "9",
+                    "36 = 2² × 3², so it has (2+1)(2+1) = 9 positive divisors.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -558,6 +611,12 @@ pub(crate) fn build_variant_draft(
                     "succinct",
                     "Concise is an equivalent synonym for succinct wording.",
                 ),
+                (
+                    "Select two equivalent words: the diplomat's remarks were deliberately ______, leaving room for later negotiation.",
+                    vec!["explicit", "ambiguous", "vague", "precise", "candid", "evasive"],
+                    "ambiguous",
+                    "Vague is an equivalent synonym for ambiguous wording in diplomacy.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -610,6 +669,28 @@ pub(crate) fn build_variant_draft(
                     "Convenience may trade off with affordability.",
                     "The passage contrasts commute benefits with higher housing costs.",
                 ),
+                (
+                    "Passage: After the library extended evening hours, attendance rose but wait times for study rooms increased. Which inference is best supported?",
+                    vec![
+                        "Longer hours always eliminate crowding.",
+                        "Higher use can create new bottlenecks.",
+                        "Attendance is unrelated to hours.",
+                        "Study rooms are unnecessary.",
+                    ],
+                    "Higher use can create new bottlenecks.",
+                    "More attendance paired with longer waits suggests demand can outpace capacity.",
+                ),
+                (
+                    "Passage: A drought-resistant crop failed in one region because soil chemistry differed from test plots. Which is best inferred?",
+                    vec![
+                        "The crop works everywhere equally.",
+                        "Local conditions can limit generalizations from trials.",
+                        "Soil chemistry never matters.",
+                        "Test plots are always representative.",
+                    ],
+                    "Local conditions can limit generalizations from trials.",
+                    "Failure outside test conditions suggests results may not transfer directly.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -661,6 +742,28 @@ pub(crate) fn build_variant_draft(
                     "Climate change is forcing conservation strategies to adapt.",
                     "The passage moves from habitat protection to forced relocation.",
                 ),
+                (
+                    "Passage: Historians once treated letters as private artifacts, but digitization now lets scholars search thousands at once. What is the main idea?",
+                    vec![
+                        "Letters were never useful to historians.",
+                        "Digital tools are changing how historians access primary sources.",
+                        "Digitization destroys original documents.",
+                        "Scholars no longer read individual letters.",
+                    ],
+                    "Digital tools are changing how historians access primary sources.",
+                    "The passage contrasts old limits with searchable archives.",
+                ),
+                (
+                    "Passage: Startups tout flexible schedules, yet many employees report longer total hours once commutes are replaced by always-on messaging. What is the main idea?",
+                    vec![
+                        "Flexible schedules always reduce work hours.",
+                        "Remote flexibility can blur boundaries between work and personal time.",
+                        "Commutes have no effect on productivity.",
+                        "Messaging tools eliminate the need for schedules.",
+                    ],
+                    "Remote flexibility can blur boundaries between work and personal time.",
+                    "The passage contrasts promised flexibility with longer effective hours.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -696,6 +799,18 @@ pub(crate) fn build_variant_draft(
                     vec!["120", "160", "180", "240"],
                     "180",
                     "The passage explicitly states 180 patients.",
+                ),
+                (
+                    "Passage: The contract requires delivery within thirty days of signing. What is the delivery window?",
+                    vec!["ten days", "twenty days", "thirty days", "forty days"],
+                    "thirty days",
+                    "The passage explicitly states thirty days.",
+                ),
+                (
+                    "Passage: The orchestra performed three encores after the scheduled program ended. How many encores were performed?",
+                    vec!["one", "two", "three", "four"],
+                    "three",
+                    "The passage explicitly states three encores.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -759,6 +874,17 @@ pub(crate) fn build_variant_draft(
                     "It qualifies the optimistic claim in sentence 1.",
                     "\"Still\" signals a remaining obstacle despite progress.",
                 ),
+                (
+                    "Passage: (1) The museum expanded its hours. (2) For example, it now opens on Mondays. What is the function of sentence 2?",
+                    vec![
+                        "It illustrates the claim made in sentence 1.",
+                        "It contradicts sentence 1.",
+                        "It introduces an unrelated topic.",
+                        "It summarizes the entire passage.",
+                    ],
+                    "It illustrates the claim made in sentence 1.",
+                    "\"For example\" introduces supporting detail for the expansion claim.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -795,6 +921,18 @@ pub(crate) fn build_variant_draft(
                     "new",
                     "A novel approach is a new or original one.",
                 ),
+                (
+                    "In the sentence \"The speaker's tone was unexpectedly genial,\" \"genial\" most nearly means:",
+                    vec!["hostile", "friendly", "formal", "confused"],
+                    "friendly",
+                    "An unexpectedly pleasant manner indicates a friendly tone.",
+                ),
+                (
+                    "In the sentence \"Skeptics remained unconvinced by the laudatory review,\" \"laudatory\" most nearly means:",
+                    vec!["critical", "praising", "neutral", "technical"],
+                    "praising",
+                    "Skeptics doubting praise implies the review was laudatory.",
+                ),
             ];
             let idx = (variant as usize) % scenarios.len();
             let (stem, choices, answer, explanation) = &scenarios[idx];
@@ -830,6 +968,18 @@ pub(crate) fn build_variant_draft(
                     vec!["talkative", "silent", "angry", "generous"],
                     "talkative",
                     "Garrulous is advanced vocabulary describing someone who talks a great deal.",
+                ),
+                (
+                    "Advanced vocabulary: \"obdurate\" most nearly means:",
+                    vec!["stubborn", "flexible", "cheerful", "timid"],
+                    "stubborn",
+                    "Obdurate describes someone who refuses to change their mind.",
+                ),
+                (
+                    "Advanced vocabulary: \"sanguine\" most nearly means:",
+                    vec!["optimistic", "bleak", "angry", "confused"],
+                    "optimistic",
+                    "Sanguine describes a confidently optimistic outlook.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -870,6 +1020,39 @@ pub(crate) fn build_variant_draft(
                     ],
                     "Prevention and technological innovation can complement each other.",
                     "The best critique notes a false dichotomy.",
+                ),
+                (
+                    "Issue: \"Universities should eliminate grades and adopt pass/fail systems only.\" What is the strongest critique?",
+                    vec![
+                        "Pass/fail may reduce unhealthy competition but can blur meaningful distinctions.",
+                        "Grades are always perfectly fair.",
+                        "Students never respond to incentives.",
+                        "Universities should not evaluate learning.",
+                    ],
+                    "Pass/fail may reduce unhealthy competition but can blur meaningful distinctions.",
+                    "The best critique notes tradeoffs rather than an absolute choice.",
+                ),
+                (
+                    "Issue: \"Technology in classrooms always improves learning outcomes.\" What is the strongest critique?",
+                    vec![
+                        "Effects depend on how technology is used, not technology alone.",
+                        "Technology never belongs in classrooms.",
+                        "Learning outcomes cannot be measured.",
+                        "Classrooms should avoid all change.",
+                    ],
+                    "Effects depend on how technology is used, not technology alone.",
+                    "The claim overstates a tool's impact without considering implementation.",
+                ),
+                (
+                    "Issue: \"Governments should never regulate businesses because regulation stifles innovation.\" What is the strongest critique?",
+                    vec![
+                        "Both individual action and sensible regulation can be necessary at scale.",
+                        "Innovation never requires rules.",
+                        "All regulation is identical.",
+                        "Businesses should never face external constraints.",
+                    ],
+                    "Both individual action and sensible regulation can be necessary at scale.",
+                    "The claim sets up a false either-or between freedom and oversight.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -921,6 +1104,28 @@ pub(crate) fn build_variant_draft(
                     ],
                     "Website visitors may not be a representative sample of all customers.",
                     "The argument generalizes from a possibly biased sample.",
+                ),
+                (
+                    "Argument: \"Membership grew after we raised prices, so higher prices must attract members.\" What is the main flaw?",
+                    vec![
+                        "Other factors such as marketing or seasonality could explain the growth.",
+                        "Higher prices always increase membership.",
+                        "Membership cannot be measured.",
+                        "Prices never affect demand.",
+                    ],
+                    "Other factors such as marketing or seasonality could explain the growth.",
+                    "The argument assumes price caused the increase without ruling out alternatives.",
+                ),
+                (
+                    "Argument: \"Employee training attendance rose, so skills must have improved.\" What is the strongest objection?",
+                    vec![
+                        "Attendance does not guarantee learning or skill transfer.",
+                        "Training is impossible to measure.",
+                        "Skills never improve after training.",
+                        "Employees always attend voluntarily.",
+                    ],
+                    "Attendance does not guarantee learning or skill transfer.",
+                    "The argument equates showing up with mastering the material.",
                 ),
             ];
             let idx = (variant as usize) % scenarios.len();
@@ -981,6 +1186,7 @@ fn mcq(
     difficulty: f32,
     attribution: QuestionAttribution,
 ) -> GeneratedQuestionDraft {
+    validate_mcq_choices("generated variant", correct, &choices);
     debug_assert!(
         correct_answer_in_choices(correct, &choices),
         "correct answer {correct:?} missing from choices {choices:?}"
@@ -1002,7 +1208,38 @@ fn mcq(
 
 /// Whether the trimmed correct answer appears among the presented choices.
 pub(crate) fn correct_answer_in_choices(correct: &str, choices: &[String]) -> bool {
-    choices.iter().any(|choice| choice.trim() == correct.trim())
+    choices
+        .iter()
+        .any(|choice| normalize_choice(choice) == normalize_choice(correct))
+}
+
+/// Case-insensitive, whitespace-collapsed choice key for uniqueness checks.
+pub(crate) fn normalize_choice(choice: &str) -> String {
+    choice.split_whitespace().collect::<Vec<_>>().join(" ").to_lowercase()
+}
+
+/// Fail loudly when MCQ choices duplicate or the correct answer is ambiguous.
+pub(crate) fn validate_mcq_choices(question_id: &str, correct: &str, choices: &[String]) {
+    assert!(
+        !choices.is_empty(),
+        "{question_id}: MCQ has no choices"
+    );
+    let mut seen = HashSet::new();
+    for choice in choices {
+        let key = normalize_choice(choice);
+        assert!(
+            seen.insert(key),
+            "{question_id}: duplicate choice {choice:?} among {choices:?}"
+        );
+    }
+    let matches = choices
+        .iter()
+        .filter(|choice| normalize_choice(choice) == normalize_choice(correct))
+        .count();
+    assert_eq!(
+        matches, 1,
+        "{question_id}: expected exactly one correct choice for {correct:?}, got {matches} in {choices:?}"
+    );
 }
 
 fn str_choices(choices: &[&str]) -> Vec<String> {
@@ -1010,10 +1247,23 @@ fn str_choices(choices: &[&str]) -> Vec<String> {
 }
 
 fn four_choices(correct: &str, distractors: &[String]) -> Vec<String> {
-    let mut out = distractors.to_vec();
-    if !correct_answer_in_choices(correct, &out) {
+    let mut out = Vec::with_capacity(4);
+    let mut seen = HashSet::new();
+    let correct_key = normalize_choice(correct);
+    for distractor in distractors {
+        let key = normalize_choice(distractor);
+        if key == correct_key || !seen.insert(key) {
+            continue;
+        }
+        out.push(distractor.clone());
+        if out.len() == 3 {
+            break;
+        }
+    }
+    if out.len() < 3 || !correct_answer_in_choices(correct, &out) {
         out.push(correct.to_string());
     }
+    validate_mcq_choices("template four_choices", correct, &out);
     out
 }
 
@@ -1041,7 +1291,30 @@ fn new_generated_id(topic_id: &str, variant: u32, now: TimestampSecs) -> String 
 mod test {
     use super::*;
     use crate::gre_atlas::domain::GreCatalog;
+    use crate::gre_atlas::questions::bank::MIN_PRACTICE_BANK_PER_TOPIC;
     use crate::gre_atlas::questions::source::source_section_for_topic;
+
+    #[test]
+    fn first_five_variants_have_unique_stems_per_topic() {
+        use std::collections::HashSet;
+
+        let now = TimestampSecs(1_700_000_000);
+        for leaf in GreCatalog::leaf_topics() {
+            let Some(source) = source_section_for_topic(leaf.id) else {
+                continue;
+            };
+            let mut stems = HashSet::new();
+            for variant in 0..MIN_PRACTICE_BANK_PER_TOPIC {
+                let draft = build_variant_draft(leaf.id, leaf.section, source, variant, now);
+                assert!(
+                    stems.insert(draft.stem.clone()),
+                    "{} variant {variant} repeats stem {:?}",
+                    leaf.id,
+                    draft.stem
+                );
+            }
+        }
+    }
 
     #[test]
     fn all_variant_drafts_include_correct_choice() {
@@ -1064,7 +1337,22 @@ mod test {
                     "{} variant {variant} has no choices",
                     leaf.id
                 );
+                validate_mcq_choices(&draft.id, &draft.correct_answer, &draft.choices);
             }
         }
+    }
+
+    #[test]
+    fn validate_mcq_choices_rejects_duplicates() {
+        let choices = vec![
+            "12π".into(),
+            "12π".into(),
+            "6π".into(),
+            "36π".into(),
+        ];
+        let result = std::panic::catch_unwind(|| {
+            validate_mcq_choices("test-q", "12π", &choices);
+        });
+        assert!(result.is_err());
     }
 }

@@ -1,3 +1,5 @@
+@use "../design-system/progress" as *;
+
 .study-guide-title {
     margin: 0 0 var(--gre-space-2);
     font-size: var(--gre-font-h2);
@@ -131,8 +133,321 @@
     flex-wrap: wrap;
 }
 
+.study-guide-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gre-space-2);
+}
+
+/* --- In-page reviewer (matches Practice layout/tokens) --- */
+
+.study-topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--gre-space-2) var(--gre-space-4);
+    max-width: 52rem;
+    margin: 0 auto var(--gre-space-3);
+    width: 100%;
+}
+
+.study-progress {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+}
+
+.study-progress-track {
+    @include gre-progress-track;
+}
+
+.study-progress-fill {
+    @include gre-progress-fill;
+}
+
+.study-progress-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+}
+
+.study-progress-label {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--fg);
+}
+
+.study-progress-count {
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.study-metrics {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--gre-space-2);
+    max-width: 52rem;
+    margin: 0 auto var(--gre-space-3);
+    width: 100%;
+}
+
+.study-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: var(--gre-space-2) var(--gre-space-3);
+    border-radius: var(--gre-radius-md);
+    border: 1px solid var(--border);
+    background: var(--gre-surface-bg-muted);
+}
+
+.study-metric-value {
+    font-size: var(--gre-font-h2);
+    font-weight: var(--gre-weight-h2);
+    line-height: 1.1;
+    color: var(--fg);
+}
+
+.study-metric-label {
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.study-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    gap: var(--gre-space-3);
+    max-width: 52rem;
+    margin: 0 auto;
+    width: 100%;
+    align-items: start;
+}
+
+.study-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-4);
+    padding: var(--gre-card-padding);
+    border-radius: var(--gre-radius-lg);
+    border: 1px solid var(--border);
+    background: var(--canvas);
+    box-shadow: var(--gre-shadow-sm);
+    min-width: 0;
+}
+
+.study-card-badge {
+    align-self: flex-start;
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--gre-radius-pill, 999px);
+    font-size: 0.72rem;
+    font-weight: var(--gre-weight-label);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.study-card-badge-new {
+    background: color-mix(in srgb, var(--state-new) 18%, var(--canvas));
+    color: var(--state-new);
+}
+
+.study-card-badge-learning {
+    background: color-mix(in srgb, var(--state-learn) 18%, var(--canvas));
+    color: var(--state-learn);
+}
+
+.study-card-badge-review {
+    background: color-mix(in srgb, var(--state-review) 18%, var(--canvas));
+    color: var(--state-review);
+}
+
+/* Rendered card content is Anki-authored HTML; keep it readable in-theme
+   without letting card CSS restyle the surrounding BrainLift chrome. */
+.study-card-render {
+    font-size: var(--gre-font-prompt);
+    line-height: 1.5;
+    color: var(--fg);
+    text-align: center;
+    word-break: break-word;
+}
+
+.study-card-render :global(img) {
+    max-width: 100%;
+    height: auto;
+}
+
+.study-card-render :global(hr) {
+    margin: var(--gre-space-3) 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+}
+
+.study-card :global(.study-reveal) {
+    align-self: center;
+    min-width: 12rem;
+}
+
+.study-hint {
+    margin: 0;
+    text-align: center;
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.study-grades {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    gap: var(--gre-space-2);
+}
+
+.study-grade {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: var(--gre-space-3) var(--gre-space-2);
+    border-radius: var(--gre-radius-md);
+    border: 1px solid var(--border);
+    background: var(--canvas);
+    color: var(--fg);
+    cursor: pointer;
+    transition: transform var(--gre-motion-fast, 120ms) ease,
+        background var(--gre-motion-fast, 120ms) ease,
+        border-color var(--gre-motion-fast, 120ms) ease;
+}
+
+.study-grade:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.study-grade:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.study-grade-name {
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-h3);
+    line-height: 1.2;
+}
+
+.study-grade-interval {
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+    font-variant-numeric: tabular-nums;
+}
+
+.study-grade-key {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.45rem;
+    font-size: 0.68rem;
+    font-weight: var(--gre-weight-label);
+    color: var(--fg-subtle);
+    opacity: 0.7;
+}
+
+.study-grade-again {
+    border-color: color-mix(in srgb, var(--gre-error) 45%, var(--border));
+}
+
+.study-grade-again:hover:not(:disabled) {
+    background: var(--gre-error-soft);
+    border-color: var(--gre-error);
+}
+
+.study-grade-hard:hover:not(:disabled) {
+    background: var(--gre-surface-bg-muted);
+}
+
+.study-grade-good {
+    border-color: color-mix(in srgb, var(--gre-accent) 45%, var(--border));
+}
+
+.study-grade-good:hover:not(:disabled) {
+    background: var(--gre-accent-soft);
+    border-color: var(--gre-accent);
+}
+
+.study-grade-easy:hover:not(:disabled) {
+    background: var(--gre-surface-bg-muted);
+}
+
+.study-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    padding: var(--gre-card-padding);
+    border-radius: var(--gre-radius-lg);
+    border: 1px solid var(--border);
+    background: var(--gre-surface-bg-muted);
+}
+
+.study-sidebar-title {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-subtle);
+}
+
+.study-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-1);
+    margin: 0;
+}
+
+.study-sidebar-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+}
+
+.study-sidebar-row dt {
+    font-size: var(--gre-font-caption);
+    color: var(--fg-subtle);
+}
+
+.study-sidebar-row dd {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--fg);
+}
+
+.study-sidebar-tip {
+    margin: var(--gre-space-1) 0 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+@media (max-width: 860px) {
+    .study-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .study-sidebar {
+        order: -1;
+    }
+
+    .study-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .study-caught-up :global(.session-complete) {
         animation: none !important;
+    }
+
+    .study-grade:hover:not(:disabled) {
+        transform: none;
     }
 }

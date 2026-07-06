@@ -10,8 +10,12 @@ import {
     type GreNavAction,
     greNavAction,
     greNavItem,
-    studyPlanNavAction,
 } from "./gre-navigation";
+import {
+    extraStudyActionLabel,
+    extraStudyDetail,
+    nextReviewScheduleLabel,
+} from "./review/extra-study";
 import { formatPercent } from "./score-format";
 
 export type SessionAttemptRecord = {
@@ -28,8 +32,8 @@ export type SessionCompletionSummary = {
     headline: string;
     subline: string;
     rows: SessionCompletionRow[];
-    nextAction: GreNavAction;
-    nextActionDetail: string;
+    nextAction?: GreNavAction;
+    nextActionDetail?: string;
     secondaryAction?: GreNavAction;
 };
 
@@ -127,8 +131,15 @@ function lacksGreFlashcardEvidence(studiedCards: number, coveredLeafCount: numbe
     return studiedCards === 0 && coveredLeafCount === 0;
 }
 
+export type PracticeSessionSummaryOptions = {
+    focusTopicName?: string;
+    focusComplete?: boolean;
+    flashcardScheduleHint?: string;
+};
+
 export function buildPracticeSessionSummary(
     attempts: SessionAttemptRecord[],
+    options?: PracticeSessionSummaryOptions,
 ): SessionCompletionSummary {
     const total = attempts.length;
     const correct = attempts.filter((attempt) => attempt.correct).length;
@@ -156,6 +167,27 @@ export function buildPracticeSessionSummary(
         rows.push({ label: "Focus next", value: weakest });
     }
 
+    if (options?.focusComplete) {
+        const topic = options.focusTopicName ?? "this topic";
+        if (options.flashcardScheduleHint) {
+            rows.push({ label: "Flashcard review", value: options.flashcardScheduleHint });
+        }
+        const dashboardAction = greNavAction(greNavItem("dashboard"));
+        dashboardAction.label = GRE_CTA_STUDY_PLAN;
+        const practiceAction = greNavAction(greNavItem("practice"));
+        practiceAction.label = "Practice again";
+        return {
+            headline: "Focus complete",
+            subline: `You finished today's mission for ${topic}.`,
+            rows,
+            nextAction: dashboardAction,
+            nextActionDetail: options.flashcardScheduleHint
+                ? `${options.flashcardScheduleHint}. Head back to your dashboard for what's next.`
+                : "Head back to your dashboard for what's next.",
+            secondaryAction: practiceAction,
+        };
+    }
+
     let nextAction = greNavAction(greNavItem("practice"));
     nextAction.label = "Practice again";
     let nextActionDetail = "Run another short set while this material is fresh.";
@@ -174,7 +206,7 @@ export function buildPracticeSessionSummary(
         rows,
         nextAction,
         nextActionDetail,
-        secondaryAction: greNavAction(greNavItem("studyPlan")),
+        secondaryAction: greNavAction(greNavItem("dashboard")),
     };
 }
 
@@ -185,6 +217,9 @@ export function buildStudyCaughtUpSummary(input: {
     deckName: string;
     studiedCards: number;
     coveredLeafCount: number;
+    extraStudyAvailable?: number;
+    availableNewCount?: number;
+    nextReviewInDays?: number;
 }): SessionCompletionSummary {
     if (lacksGreFlashcardEvidence(input.studiedCards, input.coveredLeafCount)) {
         const startStudy = greNavAction(greNavItem("study"));
@@ -235,17 +270,31 @@ export function buildStudyCaughtUpSummary(input: {
         });
     }
 
-    const nextAction = studyPlanNavAction(GRE_CTA_STUDY_PLAN);
-    let nextActionDetail = "Nothing due right now. Open your study plan to see what to add or review next.";
-
-    if (weakest) {
-        nextActionDetail = `Nothing due right now. Your study plan suggests more flashcards on ${weakest}.`;
-    } else if (input.studiedCards > 0) {
-        nextActionDetail = "You're caught up for now. Check your study plan for what to work on next.";
+    const scheduleLabel = nextReviewScheduleLabel(input.nextReviewInDays);
+    if (input.dueTotal === 0 && scheduleLabel && (input.extraStudyAvailable ?? 0) === 0) {
+        rows.push({ label: "Next flashcard review", value: scheduleLabel });
     }
 
-    const secondaryAction = greNavAction(greNavItem("practice"));
-    secondaryAction.label = GRE_CTA_PRACTICE;
+    const extraAvailable = input.extraStudyAvailable ?? 0;
+    if (extraAvailable > 0) {
+        const studyAhead: GreNavAction = {
+            label: extraStudyActionLabel(extraAvailable),
+            bridge: "greStartExtraReview",
+            href: "/review",
+        };
+        const practiceAction = greNavAction(greNavItem("practice"));
+        practiceAction.label = GRE_CTA_PRACTICE;
+        return {
+            headline: input.dueTotal === 0 ? "Review complete" : "Session complete",
+            subline: input.dueTotal === 0
+                ? "You're caught up on flashcards due right now."
+                : "Nice pause point — you can pick up remaining cards later.",
+            rows,
+            nextAction: studyAhead,
+            nextActionDetail: extraStudyDetail(extraAvailable),
+            secondaryAction: practiceAction,
+        };
+    }
 
     return {
         headline: input.dueTotal === 0 ? "Review complete" : "Session complete",
@@ -253,8 +302,5 @@ export function buildStudyCaughtUpSummary(input: {
             ? "You're caught up on flashcards due right now."
             : "Nice pause point — you can pick up remaining cards later.",
         rows,
-        nextAction,
-        nextActionDetail,
-        secondaryAction,
     };
 }

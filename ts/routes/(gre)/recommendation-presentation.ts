@@ -29,6 +29,7 @@ export type StudyRecommendationPresentation = {
     action: StudyRecommendationAction;
     topicId?: string;
     progress?: StudyRecommendationProgress;
+    flashcardScheduleHint?: string;
 };
 
 const FACTOR_PRIORITY = [
@@ -219,5 +220,6 @@ export function presentDailyFocusTask(
         action,
         topicId: task.topicId,
         progress,
+        flashcardScheduleHint: task.flashcardScheduleHint?.trim() || undefined,
     };
 }

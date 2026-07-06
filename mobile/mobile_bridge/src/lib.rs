@@ -374,6 +374,26 @@ pub unsafe extern "C" fn anki_mobile_gre_study_json(
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn anki_mobile_gre_verification_json(
+    backend: *mut AnkiMobileBackend,
+    out_bytes: *mut *mut u8,
+    out_len: *mut usize,
+) -> c_int {
+    if out_bytes.is_null() || out_len.is_null() {
+        return ANKI_MOBILE_INVALID_INPUT;
+    }
+    with_backend(backend, |backend| {
+        match gre_pages::load_verification_page(backend) {
+            Ok(view) => write_json(&view, out_bytes, out_len),
+            Err(err_bytes) => {
+                write_bytes(err_bytes, out_bytes, out_len);
+                ANKI_MOBILE_BACKEND_ERROR
+            }
+        }
+    })
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn anki_mobile_gre_study_review_json(
     backend: *mut AnkiMobileBackend,
     out_bytes: *mut *mut u8,
@@ -384,6 +404,26 @@ pub unsafe extern "C" fn anki_mobile_gre_study_review_json(
     }
     with_backend(backend, |backend| {
         match study_pages::load_study_review(backend) {
+            Ok(view) => write_json(&view, out_bytes, out_len),
+            Err(err_bytes) => {
+                write_bytes(err_bytes, out_bytes, out_len);
+                ANKI_MOBILE_BACKEND_ERROR
+            }
+        }
+    })
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn anki_mobile_gre_study_extra_review_json(
+    backend: *mut AnkiMobileBackend,
+    out_bytes: *mut *mut u8,
+    out_len: *mut usize,
+) -> c_int {
+    if out_bytes.is_null() || out_len.is_null() {
+        return ANKI_MOBILE_INVALID_INPUT;
+    }
+    with_backend(backend, |backend| {
+        match study_pages::load_study_extra_review(backend) {
             Ok(view) => write_json(&view, out_bytes, out_len),
             Err(err_bytes) => {
                 write_bytes(err_bytes, out_bytes, out_len);
@@ -534,6 +574,34 @@ pub unsafe extern "C" fn anki_mobile_brainlift_sync_perform_json(
     with_backend(
         backend,
         |backend| match sync_pages::perform_gre_atlas_sync(backend, request) {
+            Ok(view) => write_json(&view, out_bytes, out_len),
+            Err(err_bytes) => {
+                write_bytes(err_bytes, out_bytes, out_len);
+                ANKI_MOBILE_BACKEND_ERROR
+            }
+        },
+    )
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn anki_mobile_sync_collection_json(
+    backend: *mut AnkiMobileBackend,
+    input: *const u8,
+    input_len: usize,
+    out_bytes: *mut *mut u8,
+    out_len: *mut usize,
+) -> c_int {
+    if backend.is_null() || input.is_null() || out_bytes.is_null() || out_len.is_null() {
+        return ANKI_MOBILE_INVALID_INPUT;
+    }
+    let input_bytes = slice::from_raw_parts(input, input_len);
+    let request: sync_pages::GreCollectionSyncInput = match serde_json::from_slice(input_bytes) {
+        Ok(value) => value,
+        Err(_) => return ANKI_MOBILE_INVALID_INPUT,
+    };
+    with_backend(
+        backend,
+        |backend| match sync_pages::perform_collection_sync(backend, request) {
             Ok(view) => write_json(&view, out_bytes, out_len),
             Err(err_bytes) => {
                 write_bytes(err_bytes, out_bytes, out_len);

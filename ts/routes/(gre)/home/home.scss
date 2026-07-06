@@ -12,7 +12,7 @@
     min-width: 0;
 }
 
-.home-primary-cta {
+.home-mission {
     display: flex;
     flex-direction: column;
     gap: var(--gre-space-3);
@@ -23,8 +23,8 @@
     box-shadow: var(--gre-shadow-sm);
 }
 
-.home-primary-cta :global(.daily-mission-intro) {
-    display: none;
+.home-coverage {
+    min-width: 0;
 }
 
 .home-improving-empty {
@@ -58,10 +58,25 @@
 }
 
 .dashboard-hero-metric {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto minmax(6.5rem, auto) 1fr;
     gap: var(--gre-space-2);
+    align-items: start;
+    justify-items: center;
     min-width: 0;
+    height: 100%;
+    text-align: center;
+}
+
+.dashboard-hero-metric-estimate {
+    grid-template-rows: auto minmax(6.5rem, auto) auto auto;
+}
+
+.dashboard-hero-label-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gre-space-1);
+    justify-self: center;
 }
 
 .dashboard-hero-label {
@@ -74,6 +89,16 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--fg-subtle);
+}
+
+.dashboard-hero-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gre-space-2);
+    width: 100%;
+    min-height: 6.5rem;
 }
 
 .dashboard-hero-value {
@@ -90,15 +115,47 @@
     color: var(--fg-subtle);
 }
 
-.dashboard-hero-metric-readiness {
-    align-items: flex-start;
+.dashboard-hero-hint {
+    align-self: stretch;
+    min-height: 4.5rem;
+    max-width: 18rem;
+    margin-inline: auto;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
 }
 
-.dashboard-hero-readiness-visual {
+.dashboard-hero-hint-compact {
+    min-height: 0;
+}
+
+.dashboard-hero-stats {
+    align-self: stretch;
+    max-width: 18rem;
+    margin-inline: auto;
+    list-style: none;
+    padding: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    text-align: left;
+}
+
+.dashboard-hero-stat {
+    display: flex;
     align-items: center;
-    gap: var(--gre-space-3);
+    gap: var(--gre-space-2);
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.dashboard-hero-stat-met {
+    color: var(--fg);
+}
+
+.dashboard-hero-stat-met :global(.gre-icon) {
+    color: var(--gre-success);
 }
 
 @media (max-width: 767px) {

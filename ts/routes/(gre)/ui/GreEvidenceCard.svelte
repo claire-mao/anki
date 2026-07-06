@@ -12,7 +12,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
     import { COVERAGE_EXPLANATION } from "../coverage-presentation";
     import { buildEvidenceItems, buildEvidenceSummary } from "../evidence-presentation";
-    import { runGreNavAction } from "../gre-navigation";
+    import { methodologyNavAction, runGreNavAction } from "../gre-navigation";
     import { METHODOLOGY_PAGE_TITLE } from "../methodology-presentation";
     import GreIcon from "../GreIcon.svelte";
 
@@ -42,11 +42,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     }
 
     function learnMore(): void {
-        runGreNavAction({
-            label: METHODOLOGY_PAGE_TITLE,
-            bridge: "greOpenMethodology",
-            href: "/methodology",
-        });
+        runGreNavAction(methodologyNavAction(METHODOLOGY_PAGE_TITLE));
     }
 </script>
 

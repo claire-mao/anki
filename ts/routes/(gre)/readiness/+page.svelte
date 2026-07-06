@@ -5,14 +5,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <script lang="ts">
     import GrePageHeader from "../GrePageHeader.svelte";
     import GreSection from "../ui/GreSection.svelte";
-    import GreButton from "../ui/GreButton.svelte";
-    import GreButtonRow from "../ui/GreButtonRow.svelte";
-    import {
-        greNavAction,
-        greNavItem,
-        GRE_CTA_PRACTICE,
-        GRE_CTA_REVIEW,
-    } from "../gre-navigation";
     import { presentReadinessPage } from "../readiness-page-presentation";
     import ReadinessEstimatePanel from "./ReadinessEstimatePanel.svelte";
     import type { PageData } from "./$types";
@@ -42,26 +34,9 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 <GrePageHeader
     title="Readiness"
     icon="readiness"
-    subtitle="Score estimate details — study first, inspect when curious."
+    subtitle="Score estimate details. Study first, inspect when curious."
 />
 
 <GreSection>
-    <section class="readiness-launch">
-        <GreButtonRow>
-            <GreButton variant="primary" navAction={greNavAction(greNavItem("study"))}>
-                {GRE_CTA_REVIEW}
-            </GreButton>
-            <GreButton navAction={greNavAction(greNavItem("practice"))}>
-                {GRE_CTA_PRACTICE}
-            </GreButton>
-        </GreButtonRow>
-    </section>
-
     <ReadinessEstimatePanel {model} />
 </GreSection>
-
-<style lang="scss">
-    .readiness-launch {
-        margin-bottom: var(--gre-space-4);
-    }
-</style>

@@ -88,3 +88,15 @@ CREATE TABLE IF NOT EXISTS bl_generation_eval (
 );
 CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_status ON bl_generation_eval(STATUS);
 CREATE INDEX IF NOT EXISTS ix_bl_generation_eval_time ON bl_generation_eval(evaluated_at_secs);
+CREATE TABLE IF NOT EXISTS bl_topic_flashcard_batch (
+  topic TEXT NOT NULL,
+  batch_index INTEGER NOT NULL,
+  release_at_secs INTEGER NOT NULL,
+  card_ids_json TEXT NOT NULL,
+  released INTEGER NOT NULL DEFAULT 0,
+  usn INTEGER NOT NULL DEFAULT 0,
+  mtime_secs INTEGER NOT NULL,
+  PRIMARY KEY (topic, batch_index)
+);
+CREATE INDEX IF NOT EXISTS ix_bl_topic_flashcard_batch_release
+  ON bl_topic_flashcard_batch(released, release_at_secs);

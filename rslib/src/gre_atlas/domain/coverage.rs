@@ -77,7 +77,7 @@ pub fn compute_coverage(observed_tags: &[&str]) -> GreCoverage {
         };
         let covered_exam_weight: f32 = covered_leaves.iter().map(|leaf| leaf.exam_weight).sum();
         let section_weight = section.official_section_weight();
-        let weighted_contribution = section_weight * covered_exam_weight;
+        let weighted_contribution = section_weight * leaf_coverage_ratio;
         weighted_sum += weighted_contribution;
 
         total_leaves += catalog_leaf_count;
@@ -173,18 +173,74 @@ mod test {
     }
 
     #[test]
-    fn weighted_coverage_uses_exam_weights() {
+    fn weighted_coverage_uses_leaf_topic_ratios() {
         let report = compute_coverage(&["gre::quant::data_interpretation"]);
         let quant = report
             .sections
             .iter()
             .find(|s| s.section == GreSection::QuantitativeReasoning)
             .unwrap();
-        let leaf = GreCatalog::topic_by_id("gre::quant::data_interpretation").unwrap();
-        let expected =
-            GreSection::QuantitativeReasoning.official_section_weight() * leaf.exam_weight;
-        assert!((quant.weighted_contribution - expected).abs() < 0.001);
-        assert!((report.weighted_ratio - expected).abs() < 0.001);
+        let catalog_leaf_count = quant.catalog_leaf_count as f32;
+        let expected_ratio = 1.0 / catalog_leaf_count;
+        let expected = GreSection::QuantitativeReasoning.official_section_weight() * expected_ratio;
+        assert!((quant.leaf_coverage_ratio - expected_ratio).abs() < 0.0001);
+        assert!((quant.weighted_contribution - expected).abs() < 0.0001);
+        assert!((report.weighted_ratio - expected).abs() < 0.0001);
+    }
+
+    #[test]
+    fn weighted_coverage_regression_8_of_21_topics() {
+        // Mirrors dashboard fixture: 4/11 quant, 3/8 verbal, 1/2 awa (8/21 overall).
+        let observed = [
+            "gre::quant::arithmetic::percent",
+            "gre::quant::algebra::linear",
+            "gre::quant::data_interpretation",
+            "gre::quant::geometry::triangles",
+            "gre::verbal::text_completion",
+            "gre::verbal::reading::inference",
+            "gre::verbal::sentence_equivalence",
+            "gre::awa::issue",
+        ];
+        let report = compute_coverage(&observed);
+        assert_eq!(report.covered_leaf_count, 8);
+        assert_eq!(report.catalog_leaf_count, 21);
+
+        let quant = report
+            .sections
+            .iter()
+            .find(|s| s.section == GreSection::QuantitativeReasoning)
+            .unwrap();
+        let verbal = report
+            .sections
+            .iter()
+            .find(|s| s.section == GreSection::VerbalReasoning)
+            .unwrap();
+        let awa = report
+            .sections
+            .iter()
+            .find(|s| s.section == GreSection::AnalyticalWriting)
+            .unwrap();
+
+        assert_eq!(quant.covered_leaf_count, 4);
+        assert_eq!(quant.catalog_leaf_count, 11);
+        assert_eq!(verbal.covered_leaf_count, 3);
+        assert_eq!(verbal.catalog_leaf_count, 8);
+        assert_eq!(awa.covered_leaf_count, 1);
+        assert_eq!(awa.catalog_leaf_count, 2);
+
+        let expected_weighted = GreSection::QuantitativeReasoning.official_section_weight()
+            * (4.0 / 11.0)
+            + GreSection::VerbalReasoning.official_section_weight() * (3.0 / 8.0)
+            + GreSection::AnalyticalWriting.official_section_weight() * (1.0 / 2.0);
+        assert!((report.weighted_ratio - expected_weighted).abs() < 0.0001);
+        assert!((report.unweighted_ratio - (8.0 / 21.0)).abs() < 0.0001);
+
+        let contribution_sum: f32 = report
+            .sections
+            .iter()
+            .map(|section| section.weighted_contribution)
+            .sum();
+        assert!((contribution_sum - report.weighted_ratio).abs() < 0.0001);
     }
 
     #[test]

@@ -863,6 +863,7 @@ mod test {
                 held_out_review_count: 0,
                 sufficient_data: false,
                 brier_score: None,
+                log_loss: None,
                 brier_score_ci: None,
                 reliability_bins: Vec::new(),
                 calibration_curve: Vec::new(),

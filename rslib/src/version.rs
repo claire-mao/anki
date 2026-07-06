@@ -12,6 +12,12 @@ pub fn buildhash() -> &'static str {
     option_env!("BUILDHASH").unwrap_or("dev").trim()
 }
 
+pub fn rust_toolchain_channel() -> &'static str {
+    option_env!("RUST_TOOLCHAIN_CHANNEL")
+        .unwrap_or("Unknown")
+        .trim()
+}
+
 pub(crate) fn sync_client_version() -> &'static str {
     static VER: LazyLock<String> = LazyLock::new(|| {
         format!(

@@ -10,6 +10,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { runGreNavAction } from "../gre-navigation";
 
     export let summary: SessionCompletionSummary;
+    export let showNextSteps = true;
     export let onSecondary: (() => void) | undefined = undefined;
     export let secondaryLabel: string | undefined = undefined;
 
@@ -33,28 +34,32 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         {/each}
     </dl>
 
-    <p class="session-complete-next">{summary.nextActionDetail}</p>
+    {#if showNextSteps && summary.nextActionDetail}
+        <p class="session-complete-next">{summary.nextActionDetail}</p>
+    {/if}
 
-    <GreButtonRow className="session-complete-actions">
-        <GreButton
-            variant="primary"
-            size="lg"
-            on:click={(event) => runAction(summary.nextAction, event)}
-        >
-            {summary.nextAction.label}
-        </GreButton>
-        {#if summary.secondaryAction && secondaryLabel}
+    {#if showNextSteps && summary.nextAction}
+        <GreButtonRow className="session-complete-actions">
             <GreButton
-                on:click={(event) => {
-                    if (onSecondary) {
-                        onSecondary();
-                        return;
-                    }
-                    runAction(summary.secondaryAction!, event);
-                }}
+                variant="primary"
+                size="lg"
+                on:click={(event) => runAction(summary.nextAction!, event)}
             >
-                {secondaryLabel}
+                {summary.nextAction.label}
             </GreButton>
-        {/if}
-    </GreButtonRow>
+            {#if summary.secondaryAction && secondaryLabel}
+                <GreButton
+                    on:click={(event) => {
+                        if (onSecondary) {
+                            onSecondary();
+                            return;
+                        }
+                        runAction(summary.secondaryAction!, event);
+                    }}
+                >
+                    {secondaryLabel}
+                </GreButton>
+            {/if}
+        </GreButtonRow>
+    {/if}
 </section>

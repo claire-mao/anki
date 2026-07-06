@@ -85,6 +85,11 @@ actor GreBridgeLoader {
         return try client.loadStudy()
     }
 
+    func loadVerification() throws -> GreVerificationView {
+        try ensureReady()
+        return try client.loadVerification()
+    }
+
     func loadStudyReview() throws -> GreStudyReviewView {
         try ensureReady()
         return try client.loadStudyReview()
@@ -113,6 +118,22 @@ actor GreBridgeLoader {
     func performGREAtlasSync(_ input: GREAtlasPerformSyncInput) throws -> GREAtlasPerformSyncView {
         try ensureReady()
         return try client.performGREAtlasSync(input)
+    }
+
+    func syncCollection(_ input: GRECollectionSyncInput) throws -> GRECollectionSyncView {
+        try ensureReady()
+        let result = try client.syncCollection(input)
+        // A full up/download closes the collection; reopen it in place so the
+        // freshly-synced review state is visible without restarting the app.
+        if result.reopenRequired {
+            let paths = CollectionPaths.default
+            try client.openCollection(
+                collectionPath: paths.collectionPath,
+                mediaFolderPath: paths.mediaFolderPath,
+                mediaDbPath: paths.mediaDbPath
+            )
+        }
+        return result
     }
 
     func prepareDemoCollection() throws -> GreDemoCollectionView {
@@ -254,6 +275,10 @@ final class AnkiMobileEngine: ObservableObject {
         try await loader.loadStudyReview()
     }
 
+    func startExtraStudyReview() async throws -> GreStudyReviewView {
+        try await loader.loadStudyExtraReview()
+    }
+
     func answerStudyCard(
         cardId: Int64,
         rating: UInt,
@@ -286,6 +311,15 @@ final class AnkiMobileEngine: ObservableObject {
 
     func performGREAtlasSync(auth: GREAtlasSyncAuthInput?) async throws -> GREAtlasPerformSyncView {
         try await loader.performGREAtlasSync(GREAtlasPerformSyncInput(auth: auth))
+    }
+
+    func syncCollection(
+        auth: GREAtlasSyncAuthInput,
+        fullSyncChoice: String? = nil
+    ) async throws -> GRECollectionSyncView {
+        try await loader.syncCollection(
+            GRECollectionSyncInput(auth: auth, fullSyncChoice: fullSyncChoice)
+        )
     }
 
     func reloadDemoCollection() async {

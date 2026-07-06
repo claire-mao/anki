@@ -56,6 +56,49 @@ describe("accuracy trend horizons", () => {
         expect(rollingAccuracySeries(attempts, 2)).toEqual([0, 50, 100]);
     });
 
+    test("sorts attempts chronologically before building the trend line", () => {
+        const attempts = [
+            attempt(NOW_SECS - 2 * 86_400, true),
+            attempt(NOW_SECS - 4 * 86_400, false),
+            attempt(NOW_SECS - 86_400, true),
+            attempt(NOW_SECS - 3 * 86_400, true),
+        ];
+        const points = rollingAccuracyTrendPoints(attempts, 2);
+
+        expect(points.map((point) => point.answeredAtSecs)).toEqual([
+            NOW_SECS - 4 * 86_400,
+            NOW_SECS - 3 * 86_400,
+            NOW_SECS - 2 * 86_400,
+            NOW_SECS - 86_400,
+        ]);
+        for (let index = 1; index < points.length; index++) {
+            expect(points[index]!.answeredAtSecs).toBeGreaterThan(
+                points[index - 1]!.answeredAtSecs,
+            );
+        }
+    });
+
+    test("aggregates same-day attempts to one point per day", () => {
+        const day = NOW_SECS - 86_400;
+        const attempts = [
+            attempt(day + 300, false),
+            attempt(day + 200, true),
+            attempt(day + 100, true),
+            attempt(NOW_SECS - 2 * 86_400, false),
+        ];
+        const points = rollingAccuracyTrendPoints(attempts, 2);
+
+        expect(points).toHaveLength(2);
+        expect(points[0]).toEqual({
+            answeredAtSecs: NOW_SECS - 2 * 86_400,
+            accuracy: 0,
+        });
+        expect(points[1]).toEqual({
+            answeredAtSecs: day + 300,
+            accuracy: 50,
+        });
+    });
+
     test("labels horizons for the performance footer", () => {
         expect(accuracyHorizonLabel("1d")).toBe("Last 1 day accuracy");
         expect(accuracyHorizonLabel("3d")).toBe("Last 3 days accuracy");

@@ -115,8 +115,16 @@ final class MobileBridgeClient {
         try loadJSON(anki_mobile_gre_study_json, as: GreStudyView.self)
     }
 
+    func loadVerification() throws -> GreVerificationView {
+        try loadJSON(anki_mobile_gre_verification_json, as: GreVerificationView.self)
+    }
+
     func loadStudyReview() throws -> GreStudyReviewView {
         try loadJSON(anki_mobile_gre_study_review_json, as: GreStudyReviewView.self)
+    }
+
+    func loadStudyExtraReview() throws -> GreStudyReviewView {
+        try loadJSON(anki_mobile_gre_study_extra_review_json, as: GreStudyReviewView.self)
     }
 
     func answerStudyCard(_ input: GreStudyAnswerInput) throws -> GreStudyReviewView {
@@ -167,6 +175,18 @@ final class MobileBridgeClient {
                 payload.count,
                 anki_mobile_brainlift_sync_perform_json,
                 as: GREAtlasPerformSyncView.self
+            )
+        }
+    }
+
+    func syncCollection(_ input: GRECollectionSyncInput) throws -> GRECollectionSyncView {
+        let payload = try JSONEncoder().encode(input)
+        return try payload.withUnsafeBytes { raw in
+            try loadJSONWithInput(
+                raw.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                payload.count,
+                anki_mobile_sync_collection_json,
+                as: GRECollectionSyncView.self
             )
         }
     }
@@ -350,6 +370,13 @@ func anki_mobile_gre_study_json(
     _ outLen: UnsafeMutablePointer<Int>?
 ) -> Int32
 
+@_silgen_name("anki_mobile_gre_verification_json")
+func anki_mobile_gre_verification_json(
+    _ backend: OpaquePointer?,
+    _ outBytes: UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>?,
+    _ outLen: UnsafeMutablePointer<Int>?
+) -> Int32
+
 @_silgen_name("anki_mobile_gre_study_review_json")
 func anki_mobile_gre_study_review_json(
     _ backend: OpaquePointer?,
@@ -400,6 +427,15 @@ func anki_mobile_brainlift_sync_push_json(
 
 @_silgen_name("anki_mobile_brainlift_sync_perform_json")
 func anki_mobile_brainlift_sync_perform_json(
+    _ backend: OpaquePointer?,
+    _ input: UnsafePointer<UInt8>?,
+    _ inputLen: Int,
+    _ outBytes: UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>?,
+    _ outLen: UnsafeMutablePointer<Int>?
+) -> Int32
+
+@_silgen_name("anki_mobile_sync_collection_json")
+func anki_mobile_sync_collection_json(
     _ backend: OpaquePointer?,
     _ input: UnsafePointer<UInt8>?,
     _ inputLen: Int,

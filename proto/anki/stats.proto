@@ -273,6 +273,22 @@ message TopicMasteryEntry {
   float avg_retrievability_low = 7;
   float avg_retrievability_high = 8;
   uint32 total_reviews = 9;
+  // Weighted multi-evidence mastery (0–1): FSRS recall + practice accuracy +
+  // recent trend, blended over whichever signals have data.
+  float display_mastery = 10;
+  uint32 practice_attempts = 11;
+  // Confidence in `display_mastery` (0–1), driven by sample size, FSRS CI
+  // width, and cross-signal agreement. Never high when evidence is sparse.
+  float mastery_confidence = 12;
+  // "Low" / "Moderate" / "High".
+  string confidence_label = 13;
+  // Uncertainty band around `display_mastery`; wide with sparse evidence.
+  float mastery_low = 14;
+  float mastery_high = 15;
+  // Total evidence items considered (reviews + practice attempts).
+  uint32 evidence_count = 16;
+  // Practice-question accuracy for this topic (0–1); 0 when no attempts.
+  float practice_accuracy = 17;
 }
 
 message TopicMasterySummary {
@@ -284,4 +300,6 @@ message TopicMasterySummary {
   float coverage_ratio = 6;
   bool sufficient_data = 7;
   string abstain_reason = 8;
+  // Catalog leaf topics with at least one reviewed flashcard.
+  uint32 topics_studied = 9;
 }

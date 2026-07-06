@@ -97,6 +97,18 @@ def get_recent_attempts(
     return resp
 
 
+def get_performance_chart(
+    col: Collection,
+    *,
+    horizon: brainlift_pb2.PerformanceChartHorizon.ValueType,
+    topic_prefix: str = "",
+) -> brainlift_pb2.GetPerformanceChartResponse:
+    return col._backend.get_performance_chart(
+        horizon=horizon,
+        topic_prefix=topic_prefix,
+    )
+
+
 def get_gre_study_status(col: Collection) -> brainlift_pb2.GreStudyStatusResponse:
     return col._backend.get_gre_study_status()
 
@@ -133,6 +145,18 @@ def get_readiness_calibration(
     col: Collection,
 ) -> brainlift_pb2.ReadinessCalibrationResponse:
     return col._backend.get_readiness_calibration()
+
+
+def get_performance_eval(
+    col: Collection,
+) -> brainlift_pb2.PerformanceEvalResponse:
+    return col._backend.get_performance_eval()
+
+
+def get_memory_eval(
+    col: Collection,
+) -> brainlift_pb2.MemoryEvalResponse:
+    return col._backend.get_memory_eval()
 
 
 def generate_gre_atlas_eval_report(

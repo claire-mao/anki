@@ -312,49 +312,160 @@
     color: var(--fg);
 }
 
-.result-choice-breakdown {
-    display: grid;
-    gap: var(--gre-space-2);
+.result-flashcard-schedule {
     margin: 0;
-    padding: 0;
-    list-style: none;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
 }
 
-.result-choice-breakdown li {
-    display: grid;
-    gap: 2px;
-    padding: var(--gre-space-2);
-    border-radius: var(--gre-radius-sm, 8px);
-    background: color-mix(in srgb, var(--canvas) 60%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-}
-
-.result-choice-breakdown li.breakdown-correct {
-    border-color: color-mix(in srgb, var(--gre-success, #2e7d32) 55%, transparent);
-    background: color-mix(in srgb, var(--gre-success, #2e7d32) 12%, transparent);
-}
-
-.breakdown-choice {
+/* --- Expanded worked solution --- */
+.result-solution {
     display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+    padding: var(--gre-space-3);
+    border-radius: var(--gre-radius-md);
+    background: var(--gre-surface-bg-muted);
+}
+
+.result-solution-header {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--gre-space-2);
-    font-weight: var(--gre-weight-label);
-    font-size: var(--gre-font-caption);
+}
+
+.result-solution-concept {
+    font-size: var(--gre-font-body);
+    font-weight: var(--gre-weight-h3);
     color: var(--fg);
 }
 
-.breakdown-tag {
+.result-solution-tag {
+    font-size: 0.72rem;
+    font-weight: var(--gre-weight-label);
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--gre-radius-full, 999px);
+    background: color-mix(in srgb, var(--fg-link) 12%, var(--canvas));
+    color: var(--fg-link);
+}
+
+.result-solution-line {
+    margin: 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.result-solution-mistake {
+    color: color-mix(in srgb, var(--gre-error) 85%, var(--fg));
+}
+
+.result-solution-steps {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.result-solution-takeaways-title {
     font-size: var(--gre-font-caption);
     font-weight: var(--gre-weight-label);
-    color: var(--gre-success, #2e7d32);
+    color: var(--fg);
+}
+
+.result-solution-takeaways ul {
+    margin: 0.25rem 0 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg-subtle);
+}
+
+.result-solution-related {
+    color: var(--fg-subtle);
+}
+
+/* --- Per-choice breakdown --- */
+.result-choice-breakdown {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-2);
+}
+
+.breakdown-item {
+    padding: var(--gre-space-3);
+    border-radius: var(--gre-radius-md);
+    border: 1px solid var(--border);
+    background: var(--canvas);
+}
+
+.breakdown-correct {
+    border-color: color-mix(in srgb, var(--gre-success) 45%, var(--border));
+    background: color-mix(in srgb, var(--gre-success-soft) 40%, var(--canvas));
+}
+
+.breakdown-incorrect {
+    border-color: color-mix(in srgb, var(--gre-error) 30%, var(--border));
+}
+
+.breakdown-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gre-space-2);
+    margin: 0 0 var(--gre-space-1);
+}
+
+.breakdown-label {
+    font-size: var(--gre-font-caption);
+    font-weight: var(--gre-weight-label);
+    color: var(--fg);
+}
+
+.breakdown-verdict {
+    font-size: 0.72rem;
+    font-weight: var(--gre-weight-label);
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
-.breakdown-reasoning {
+.breakdown-correct .breakdown-verdict {
+    color: var(--gre-success);
+}
+
+.breakdown-incorrect .breakdown-verdict {
+    color: var(--gre-error);
+}
+
+.breakdown-reason {
+    margin: 0 0 var(--gre-space-1);
     font-size: var(--gre-font-caption);
-    line-height: var(--gre-lh-body);
+    line-height: var(--gre-lh-caption);
+    color: var(--fg);
+}
+
+.breakdown-line {
+    margin: 0.2rem 0 0;
+    font-size: var(--gre-font-caption);
+    line-height: var(--gre-lh-caption);
     color: var(--fg-subtle);
+}
+
+.breakdown-line strong {
+    color: var(--fg);
 }
 
 .result-citation {

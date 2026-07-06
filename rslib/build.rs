@@ -14,9 +14,24 @@ fn main() -> Result<()> {
     let buildhash = fs::read_to_string("../out/buildhash").unwrap_or_default();
     println!("cargo:rustc-env=BUILDHASH={buildhash}");
 
+    println!("cargo:rerun-if-changed=../rust-toolchain.toml");
+    let rust_version = rust_toolchain_channel("../rust-toolchain.toml");
+    println!("cargo:rustc-env=RUST_TOOLCHAIN_CHANNEL={rust_version}");
+
     let descriptors_path = descriptors_path();
     println!("cargo:rerun-if-changed={}", descriptors_path.display());
     let pool = DescriptorPool::decode(std::fs::read(descriptors_path)?.as_ref())?;
     rust_interface::write_rust_interface(&pool)?;
     Ok(())
+}
+
+fn rust_toolchain_channel(path: &str) -> String {
+    let contents = fs::read_to_string(path).unwrap_or_default();
+    for line in contents.lines() {
+        let line = line.trim();
+        if let Some(channel) = line.strip_prefix("channel = ") {
+            return channel.trim_matches('"').to_string();
+        }
+    }
+    "Unknown".into()
 }

@@ -326,7 +326,7 @@ fn mobile_bridge_topic_mastery_matches_direct_backend() {
 fn mobile_bridge_list_questions_matches_direct_backend() {
     let harness = unsafe { ParityHarness::new("questions") };
     let req = ListQuestionsRequest {
-        limit: 200,
+        limit: anki::gre_atlas::questions::PRACTICE_QUESTION_LIST_LIMIT,
         topic_prefix: String::new(),
     }
     .encode_to_vec();

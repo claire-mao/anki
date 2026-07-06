@@ -2,6 +2,7 @@
 // License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 use anki::backend::Backend;
+use anki::gre_atlas::questions::PRACTICE_QUESTION_LIST_LIMIT;
 use anki_proto::brainlift::AbstentionRequirement;
 use anki_proto::brainlift::AnswerExplanation;
 use anki_proto::brainlift::CreateSessionRequest;
@@ -12,6 +13,9 @@ use anki_proto::brainlift::DashboardTopicInsight;
 use anki_proto::brainlift::ExplainAnswerRequest;
 use anki_proto::brainlift::ExplainAnswerResponse;
 use anki_proto::brainlift::GetDashboardRequest;
+use anki_proto::brainlift::GetGreAtlasVerificationRequest;
+use anki_proto::brainlift::GreAtlasClientPlatform;
+use anki_proto::brainlift::GreAtlasVerificationResponse;
 use anki_proto::brainlift::GetScoresResponse;
 use anki_proto::brainlift::GetStudyPlanRequest;
 use anki_proto::brainlift::GreStudyStatusResponse;
@@ -48,7 +52,6 @@ const HOME_RECENT_ACTIVITY_LIMIT: u32 = 5;
 const HOME_TOPIC_INSIGHT_LIMIT: u32 = 3;
 const HOME_STUDY_PLAN_LIMIT: u32 = 3;
 const PROGRESS_TOPIC_INSIGHT_LIMIT: u32 = 8;
-const PRACTICE_QUESTION_LIMIT: u32 = 200;
 const PRACTICE_TREND_WINDOW: usize = 5;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -333,6 +336,9 @@ pub struct GreStudyView {
     pub due_learn: u32,
     pub due_review: u32,
     pub due_total: u32,
+    pub available_new_count: u32,
+    pub extra_study_available: u32,
+    pub next_review_in_days: Option<u32>,
 }
 
 pub fn open_collection(
@@ -398,7 +404,7 @@ pub fn load_practice_bootstrap(backend: &Backend) -> Result<GrePracticeBootstrap
         GRE_ATLAS_SERVICE,
         "list_questions",
         &ListQuestionsRequest {
-            limit: PRACTICE_QUESTION_LIMIT,
+            limit: PRACTICE_QUESTION_LIST_LIMIT,
             topic_prefix: String::new(),
         }
         .encode_to_vec(),
@@ -544,9 +550,17 @@ fn coverage_view(coverage: DashboardCoverage) -> GreCoverageView {
         sections: coverage
             .sections
             .into_iter()
-            .map(|section| GreCoverageSectionView {
-                label: section.label,
-                percent: (section.covered_exam_weight * 100.0).round() as u32,
+            .map(|section| {
+                let percent = if section.catalog_leaf_count > 0 {
+                    (section.covered_leaf_count as f32 / section.catalog_leaf_count as f32 * 100.0)
+                        .round() as u32
+                } else {
+                    0
+                };
+                GreCoverageSectionView {
+                    label: section.label,
+                    percent,
+                }
             })
             .collect(),
         uncovered_study_labels: coverage
@@ -676,7 +690,7 @@ fn rolling_accuracy_series(attempts: &[PerformanceAttempt], window_size: usize) 
         .collect()
 }
 
-fn build_question_queue(questions: &[Question]) -> Vec<String> {
+fn shuffle_question_ids(questions: &[Question]) -> Vec<String> {
     let mut ids: Vec<_> = questions
         .iter()
         .map(|question| question.id.clone())
@@ -685,30 +699,20 @@ fn build_question_queue(questions: &[Question]) -> Vec<String> {
     ids
 }
 
+fn section_question_ids(questions: &[Question], section: &str) -> Vec<String> {
+    questions
+        .iter()
+        .filter(|question| question.section == section)
+        .map(|question| question.id.clone())
+        .collect()
+}
+
 fn build_section_queues(questions: &[Question]) -> GrePracticeQueuesView {
     GrePracticeQueuesView {
-        all: build_question_queue(questions),
-        quant: build_question_queue(
-            &questions
-                .iter()
-                .filter(|question| question.section == "quant")
-                .cloned()
-                .collect::<Vec<_>>(),
-        ),
-        verbal: build_question_queue(
-            &questions
-                .iter()
-                .filter(|question| question.section == "verbal")
-                .cloned()
-                .collect::<Vec<_>>(),
-        ),
-        awa: build_question_queue(
-            &questions
-                .iter()
-                .filter(|question| question.section == "awa")
-                .cloned()
-                .collect::<Vec<_>>(),
-        ),
+        all: shuffle_question_ids(questions),
+        quant: section_question_ids(questions, "quant"),
+        verbal: section_question_ids(questions, "verbal"),
+        awa: section_question_ids(questions, "awa"),
     }
 }
 
@@ -982,7 +986,110 @@ impl GreStudyView {
             due_learn: status.learn_count,
             due_review: status.review_count,
             due_total,
+            available_new_count: status.available_new_count,
+            extra_study_available: status.extra_study_available,
+            next_review_in_days: status.next_review_in_days,
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreVerificationDocLinkView {
+    pub id: String,
+    pub label: String,
+    pub relative_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreVerificationRowView {
+    pub label: String,
+    pub value: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct GreVerificationView {
+    pub rows: Vec<GreVerificationRowView>,
+    pub doc_links: Vec<GreVerificationDocLinkView>,
+}
+
+pub fn load_verification_page(backend: &Backend) -> Result<GreVerificationView, Vec<u8>> {
+    let response = invoke_proto::<GreAtlasVerificationResponse>(
+        backend,
+        GRE_ATLAS_SERVICE,
+        "get_gre_atlas_verification",
+        &GetGreAtlasVerificationRequest {
+            client: GreAtlasClientPlatform::GreAtlasClientMobile as i32,
+        }
+        .encode_to_vec(),
+    )?;
+    Ok(verification_view_from_proto(response))
+}
+
+fn verification_view_from_proto(response: GreAtlasVerificationResponse) -> GreVerificationView {
+    GreVerificationView {
+        rows: vec![
+            verification_row("Desktop build", response.desktop_build),
+            verification_row("Mobile build", response.mobile_build),
+            verification_row("Sync status", response.sync_status),
+            verification_row("Offline queue", response.offline_queue),
+            verification_row("Conflict resolution", response.conflict_resolution),
+            verification_row("Duplicate protection", response.duplicate_protection),
+            verification_row("Commit hash", response.commit_hash),
+            verification_row("App version", response.app_version),
+            verification_row("Rust version", response.rust_version),
+            verification_row("AI enabled/disabled", response.ai_enabled),
+        ],
+        doc_links: verification_doc_links(),
+    }
+}
+
+fn verification_row(label: &str, value: String) -> GreVerificationRowView {
+    GreVerificationRowView {
+        label: label.into(),
+        value: present_verification_field(value),
+    }
+}
+
+fn present_verification_field(value: String) -> String {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        "Unknown".into()
+    } else {
+        trimmed.to_string()
+    }
+}
+
+fn verification_doc_links() -> Vec<GreVerificationDocLinkView> {
+    vec![
+        doc_link("architecture", "Architecture", "docs/gre-atlas-submission/ARCHITECTURE.md"),
+        doc_link("submission", "Submission", "docs/gre-atlas-submission/SUBMISSION.md"),
+        doc_link("memory-model", "Memory Model", "docs/models/memory-model.md"),
+        doc_link(
+            "performance-model",
+            "Performance Model",
+            "docs/models/performance-model.md",
+        ),
+        doc_link(
+            "ai-report",
+            "AI Report",
+            "docs/gre-atlas-submission/results/gre-atlas-ai-eval.md",
+        ),
+        doc_link(
+            "benchmark-report",
+            "Benchmark Report",
+            "docs/gre-atlas-submission/results/gre-atlas-benchmark.md",
+        ),
+    ]
+}
+
+fn doc_link(id: &str, label: &str, relative_path: &str) -> GreVerificationDocLinkView {
+    GreVerificationDocLinkView {
+        id: id.into(),
+        label: label.into(),
+        relative_path: relative_path.into(),
     }
 }
 

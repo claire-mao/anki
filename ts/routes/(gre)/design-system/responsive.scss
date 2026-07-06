@@ -37,7 +37,8 @@
 .home-dashboard,
 .practice-page,
 .settings-page,
-.progress-dashboard {
+.progress-dashboard,
+.documentation-page {
     min-width: 0;
     max-width: 100%;
 }
@@ -191,7 +192,7 @@
         grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
-    .progress-charts:not(.progress-charts-advanced) {
+    .progress-charts:not(.progress-charts-advanced):not(.progress-charts-mastery) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -201,7 +202,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .progress-charts:not(.progress-charts-advanced) {
+    .progress-charts:not(.progress-charts-advanced):not(.progress-charts-mastery) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -349,9 +350,10 @@
 
     .settings-number-input,
     .settings-text input,
-    .settings-select select {
+    .settings-select :global(.settings-select-control) {
         width: 100%;
         min-width: 0;
+        max-width: none;
     }
 
     .settings-number-input input {

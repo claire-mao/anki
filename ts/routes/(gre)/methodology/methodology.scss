@@ -1,20 +1,17 @@
 .methodology {
     display: flex;
     flex-direction: column;
-    gap: var(--gre-space-4);
+    gap: var(--gre-space-6);
 }
 
 .methodology-intro {
     margin: 0;
     font-size: var(--gre-font-body);
-    line-height: var(--gre-lh-body);
+    line-height: var(--gre-lh-relaxed, var(--gre-lh-body));
     color: var(--fg-subtle);
 }
 
 .methodology-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gre-space-2);
     padding: var(--gre-card-padding);
     border-radius: var(--gre-radius-lg);
     background: var(--gre-surface-bg-muted);
@@ -37,10 +34,22 @@
     color: var(--fg-link);
 }
 
+.methodology-card[open] .methodology-heading {
+    margin-bottom: var(--gre-space-2);
+}
+
+.methodology-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gre-space-5);
+    padding-top: var(--gre-space-2);
+}
+
+.methodology-paragraph,
 .methodology-card p {
     margin: 0;
     font-size: var(--gre-font-body);
-    line-height: var(--gre-lh-body);
+    line-height: var(--gre-lh-relaxed, 1.65);
     color: var(--fg);
 }
 
@@ -49,8 +58,17 @@
     padding-left: var(--gre-space-4);
     display: flex;
     flex-direction: column;
-    gap: var(--gre-space-1);
+    gap: var(--gre-space-3);
     color: var(--fg);
     font-size: var(--gre-font-body);
-    line-height: var(--gre-lh-body);
+    line-height: var(--gre-lh-relaxed, 1.65);
+}
+
+.methodology-card summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.methodology-card summary::-webkit-details-marker {
+    display: none;
 }

@@ -307,6 +307,31 @@ def test_get_readiness_calibration_reports_honest_stats() -> None:
     )
 
 
+def test_get_performance_eval_reports_honest_stats() -> None:
+    from anki.gre_atlas import get_performance_eval
+
+    col = isolated_col()
+    response = get_performance_eval(col)
+    assert isinstance(response, brainlift_pb2.PerformanceEvalResponse)
+    assert response.model_version
+    assert response.assessment
+    assert not response.sufficient_data
+    assert response.test is not None
+    assert response.test.attempt_count == 0
+
+
+def test_get_memory_eval_reports_honest_stats() -> None:
+    from anki.gre_atlas import get_memory_eval
+
+    col = isolated_col()
+    response = get_memory_eval(col)
+    assert isinstance(response, brainlift_pb2.MemoryEvalResponse)
+    assert response.model_version
+    assert response.assessment
+    assert not response.sufficient_data
+    assert response.held_out_review_count == 0
+
+
 def test_generate_gre_atlas_eval_report_is_read_only_snapshot() -> None:
     from anki.gre_atlas import generate_gre_atlas_eval_report
 

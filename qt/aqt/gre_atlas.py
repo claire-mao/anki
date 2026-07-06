@@ -3,12 +3,15 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import aqt
 from anki.decks import DeckId
 from anki.gre_atlas import GRE_DECK_NAME, LEGACY_GRE_DECK_NAME
 from aqt.qt import *
 from aqt.utils import (
     disable_help_button,
+    openLink,
     restoreGeom,
     saveGeom,
     showWarning,
@@ -16,6 +19,23 @@ from aqt.utils import (
     tr,
 )
 from aqt.webview import AnkiWebView, AnkiWebViewKind
+
+
+_GRE_VERIFICATION_DOCS: dict[str, str] = {
+    "architecture": "docs/gre-atlas-submission/ARCHITECTURE.md",
+    "submission": "docs/gre-atlas-submission/SUBMISSION.md",
+    "memory-model": "docs/models/memory-model.md",
+    "performance-model": "docs/models/performance-model.md",
+    "ai-report": "docs/gre-atlas-submission/results/gre-atlas-ai-eval.md",
+    "benchmark-report": "docs/gre-atlas-submission/results/gre-atlas-benchmark.md",
+    "build": "docs/gre-atlas-submission/BUILD.md",
+    "sync-verification": "docs/gre-atlas-submission/SYNC-VERIFICATION.md",
+    "evaluation": "docs/gre-atlas-submission/EVALUATION.md",
+}
+
+
+def _gre_repo_root() -> Path:
+    return Path(__file__).resolve().parents[2]
 
 
 def open_gre_page(mw: aqt.main.AnkiQt, path: str) -> None:
@@ -29,6 +49,9 @@ def open_gre_page(mw: aqt.main.AnkiQt, path: str) -> None:
 def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa: PLR0911
     if cmd == "greStartReview":
         start_gre_review(mw)
+        return True
+    if cmd == "greStartExtraReview":
+        start_gre_extra_review(mw)
         return True
     if cmd == "greBrowseGreDeck":
         browse_gre_deck(mw)
@@ -46,19 +69,28 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
         open_gre_page(mw, "practice")
         return True
     if cmd == "greOpenStudyPlan":
-        open_gre_page(mw, "study-plan")
+        open_gre_page(mw, "home")
         return True
     if cmd == "greOpenReadiness":
-        open_gre_atlas(mw, path="readiness")
+        open_gre_page(mw, "readiness")
         return True
     if cmd == "greOpenProgress":
         open_gre_page(mw, "progress")
+        return True
+    if cmd == "greOpenEvidence":
+        open_gre_page(mw, "evidence")
         return True
     if cmd == "greOpenSettings":
         open_gre_page(mw, "settings")
         return True
     if cmd == "greOpenMethodology":
         open_gre_page(mw, "methodology")
+        return True
+    if cmd == "greOpenDocumentation":
+        open_gre_page(mw, "documentation")
+        return True
+    if cmd == "greOpenStudyFeatureExperiment":
+        open_gre_page(mw, "study-feature-experiment")
         return True
     if cmd == "greOpenDeckOptions":
         _gre_open_deck_options(mw)
@@ -75,6 +107,9 @@ def handle_gre_atlas_bridge_cmd(mw: aqt.main.AnkiQt, cmd: str) -> bool:  # noqa:
     if cmd == "grePerformGreAtlasSync":
         _gre_perform_gre_atlas_sync(mw)
         return True
+    if cmd.startswith("greOpenGreDoc:"):
+        _gre_open_gre_doc(mw, cmd.split(":", 1)[1])
+        return True
     return False
 
 
@@ -89,6 +124,18 @@ def _gre_open_deck_options(mw: aqt.main.AnkiQt) -> None:
         )
         return
     display_options_for_deck_id(deck_id)
+
+
+def _gre_open_gre_doc(mw: aqt.main.AnkiQt, doc_id: str) -> None:
+    relative_path = _GRE_VERIFICATION_DOCS.get(doc_id)
+    if relative_path is None:
+        showWarning(f"Unknown GRE Atlas document: {doc_id}", parent=mw)
+        return
+    path = _gre_repo_root() / relative_path
+    if not path.is_file():
+        showWarning(f"Document not found: {relative_path}", parent=mw)
+        return
+    openLink(QUrl.fromLocalFile(str(path)))
 
 
 def _gre_sync_login(mw: aqt.main.AnkiQt) -> None:
@@ -175,6 +222,28 @@ def start_gre_review(mw: aqt.main.AnkiQt) -> None:
     if mw.state != "review":
         tooltip(tr.studying_no_cards_are_due_yet())
         mw.gre_review_pending_dashboard_refresh = False  # type: ignore[attr-defined]
+
+
+def start_gre_extra_review(mw: aqt.main.AnkiQt) -> None:
+    deck_id = ensure_gre_study_deck(mw)
+    if deck_id is None:
+        showWarning(
+            "GRE Atlas couldn't load your study deck. Try opening Study again.",
+            parent=mw,
+        )
+        return
+
+    try:
+        response = mw.col._backend.start_gre_extra_study()
+    except Exception as err:
+        showWarning(str(err), parent=mw)
+        return
+
+    if response.cards_unlocked == 0:
+        tooltip("No extra GRE flashcards available right now.")
+        return
+
+    start_gre_review(mw)
 
 
 def browse_gre_deck(mw: aqt.main.AnkiQt) -> None:

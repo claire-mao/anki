@@ -8,5 +8,5 @@ import { prepareDemoCollection } from "@generated/backend";
  * deck is empty, and ensures starter practice history exists.
  */
 export async function ensureGreAtlasStudyDeck(): Promise<void> {
-    await prepareDemoCollection({});
+    await prepareDemoCollection({}, { alertOnError: false }).catch(() => undefined);
 }

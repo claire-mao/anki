@@ -3,13 +3,13 @@ Copyright: Ankitects Pty Ltd and contributors
 License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 -->
 <script lang="ts">
-    import { COVERAGE_EXPLANATION } from "../coverage-presentation";
     import type { ReadinessPagePresentation } from "../readiness-page-presentation";
     import { runGreNavAction } from "../gre-navigation";
     import GreButton from "../ui/GreButton.svelte";
     import GreConfidenceIndicator from "../ui/GreConfidenceIndicator.svelte";
     import GreMetricRow from "../ui/GreMetricRow.svelte";
     import GreText from "../ui/GreText.svelte";
+    import ReadinessModelExplainPanel from "./ReadinessModelExplainPanel.svelte";
 
     export let model: ReadinessPagePresentation;
 </script>
@@ -64,11 +64,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         >
             <GreConfidenceIndicator confidence={model.confidenceLevel} />
         </GreMetricRow>
-        <GreMetricRow
-            label="Coverage"
-            structuredValue={model.coverage}
-            hint={COVERAGE_EXPLANATION}
-        />
         <GreMetricRow
             label="Memory"
             structuredValue={model.memory}
@@ -143,6 +138,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             {/if}
         </section>
     </div>
+
+    <ReadinessModelExplainPanel model={model.modelExplanation} />
 
     <div class="readiness-estimate-action">
         <span class="readiness-estimate-label">Next best action</span>

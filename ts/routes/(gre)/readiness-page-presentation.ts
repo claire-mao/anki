@@ -15,12 +15,15 @@ import {
     coverageAwareReadinessUnlocked,
     coverageBlocksReadiness,
     coverageReadinessReason,
-    presentCoverageSummary,
 } from "./coverage-presentation";
 import { studyPlanNavAction } from "./gre-navigation";
 import { buildReadinessExplainability } from "./prediction-explainability";
 import type { PredictionAction } from "./prediction-presentation";
 import { readinessNextAction } from "./prediction-presentation";
+import {
+    presentReadinessModelExplanation,
+    type ReadinessModelExplanation,
+} from "./readiness-model-presentation";
 import { formatGreScoreRange, formatPercent, formatRange, formatRatio } from "./score-format";
 import { capitalizeLabel, estimatedGreHero, memoryHero, performanceHero, unmetRequirements } from "./summary-metrics";
 import type { GreMetricStructuredValue } from "./ui/metric-value";
@@ -43,11 +46,11 @@ export type ReadinessPagePresentation = {
     confidenceLevel: string;
     evidenceUsed: ReadinessEvidenceLine[];
     evidenceMissing: ReadinessEvidenceLine[];
-    coverage: GreMetricStructuredValue;
     memory: GreMetricStructuredValue;
     performance: GreMetricStructuredValue;
     lastUpdated: string;
     nextAction: PredictionAction;
+    modelExplanation: ReadinessModelExplanation;
 };
 
 function formatTimestampMillis(millis: bigint): string {
@@ -103,18 +106,6 @@ function confidenceLevelPresentation(
         return capitalizeLabel(readiness.confidenceLevel);
     }
     return "Medium";
-}
-
-function coveragePresentation(coverage: DashboardCoverage): GreMetricStructuredValue {
-    const summary = presentCoverageSummary(coverage);
-    const sectionDetails = summary.sections.map(
-        (section) => `${section.label} ${section.percent}%`,
-    );
-    return {
-        headline: `${summary.totalPercent}% weighted`,
-        details: sectionDetails.length > 0 ? sectionDetails : undefined,
-        detailLayout: sectionDetails.length > 0 ? "chips" : undefined,
-    };
 }
 
 function memoryPresentation(memory: MemoryScore): GreMetricStructuredValue {
@@ -293,6 +284,15 @@ export function presentReadinessPage(input: {
     const unavailable = unavailableReason(input.readiness, input.coverage);
     const estimatedGreAvailable = available && input.estimatedGre.combinedScore !== undefined;
     const estimated = estimatedGrePresentation(input.estimatedGre, available);
+    const evidenceUsed = available
+        ? evidenceUsedLines(
+            input.memory,
+            input.performance,
+            input.readiness,
+            input.weakTopics ?? [],
+            input.calibration,
+        )
+        : [];
 
     return {
         available,
@@ -307,13 +307,7 @@ export function presentReadinessPage(input: {
         estimatedGreDetail: estimated.detail,
         confidenceInterval: confidenceIntervalPresentation(available, input.readiness),
         confidenceLevel: confidenceLevelPresentation(available, input.readiness),
-        evidenceUsed: evidenceUsedLines(
-            input.memory,
-            input.performance,
-            input.readiness,
-            input.weakTopics ?? [],
-            input.calibration,
-        ),
+        evidenceUsed,
         evidenceMissing: available
             ? []
             : evidenceMissingLines(
@@ -324,12 +318,18 @@ export function presentReadinessPage(input: {
                 input.weakTopics ?? [],
                 input.calibration,
             ),
-        coverage: coveragePresentation(input.coverage),
         memory: memoryPresentation(input.memory),
         performance: performancePresentation(input.performance),
         lastUpdated: formatTimestampMillis(
             input.readiness.lastUpdatedMillis || input.computedAtMillis,
         ),
         nextAction: nextActionForPage(available, input.readiness, input.coverage),
+        modelExplanation: presentReadinessModelExplanation({
+            memory: input.memory,
+            performance: input.performance,
+            readiness: input.readiness,
+            calibration: input.calibration,
+            evidenceUsed,
+        }),
     };
 }

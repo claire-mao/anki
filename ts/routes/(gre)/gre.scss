@@ -3,6 +3,7 @@
 @use "design-system/motion" as gre-motion;
 @import "ui/indicators.scss";
 @import "ui/empty-state.scss";
+@import "submission-mode.scss";
 
 .gre-shell {
     @include learning-theme.gre-learning-theme;
@@ -138,9 +139,8 @@
 
 .gre-shell :where(
     .topic-measurement,
-    .progress-advanced,
-    .study-plan-recommendations,
-    .study-plan-coverage,
+    .progress-topic-mastery,
+    .home-coverage,
     .gre-evidence-card,
     .methodology-card,
     .settings-advanced,

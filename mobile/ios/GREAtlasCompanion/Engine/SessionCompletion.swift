@@ -21,6 +21,7 @@ struct SessionCompletionSummary: Equatable {
     let nextActionDetail: String
     let nextActionTab: GreNavTab?
     let nextActionTopicId: String?
+    let usesExtraStudy: Bool
     let secondaryActionLabel: String
     let secondaryActionTab: GreNavTab
 }
@@ -73,6 +74,7 @@ enum SessionCompletionBuilder {
             nextActionDetail: nextActionDetail,
             nextActionTab: nextActionTab,
             nextActionTopicId: nextActionTopicId,
+            usesExtraStudy: false,
             secondaryActionLabel: nextActionLabel == "Practice again" ? "View study plan" : "Practice again",
             secondaryActionTab: nextActionLabel == "Practice again" ? .dashboard : .practice
         )
@@ -82,7 +84,9 @@ enum SessionCompletionBuilder {
         weakTopic: GreTopicInsightView?,
         recommendedTopics: [GreTopicInsightView],
         dueTotal: UInt,
-        studiedCards: UInt
+        studiedCards: UInt,
+        extraStudyAvailable: UInt = 0,
+        nextReviewInDays: UInt? = nil
     ) -> SessionCompletionSummary {
         let weakest = weakTopic?.displayName
         let strongest = strongestDashboardTopic(recommendedTopics: recommendedTopics, weakTopic: weakTopic)
@@ -96,6 +100,35 @@ enum SessionCompletionBuilder {
         }
         if let weakest {
             rows.append(SessionCompletionRow(label: "Focus next", value: weakest))
+        }
+        if dueTotal == 0, extraStudyAvailable == 0, let nextReviewInDays {
+            rows.append(
+                SessionCompletionRow(
+                    label: "Next flashcard review",
+                    value: nextReviewScheduleLabel(days: nextReviewInDays)
+                )
+            )
+        }
+
+        if extraStudyAvailable > 0 {
+            let label = extraStudyAvailable == 1
+                ? "Study 1 more card"
+                : "Study \(extraStudyAvailable) more cards"
+            return SessionCompletionSummary(
+                headline: dueTotal == 0 ? "Review complete" : "Session complete",
+                subline: dueTotal == 0
+                    ? "You're caught up on flashcards due right now."
+                    : "Nice pause point — you can pick up remaining cards later.",
+                rows: rows,
+                nextActionLabel: label,
+                nextActionDetail:
+                    "Unlock up to \(extraStudyAvailable) new flashcard\(extraStudyAvailable == 1 ? "" : "s") today (20 max per day) to build memory evidence without cramming.",
+                nextActionTab: .study,
+                nextActionTopicId: nil,
+                usesExtraStudy: true,
+                secondaryActionLabel: "Practice questions",
+                secondaryActionTab: .practice
+            )
         }
 
         var nextActionLabel = "Practice questions"
@@ -123,9 +156,21 @@ enum SessionCompletionBuilder {
             nextActionDetail: nextActionDetail,
             nextActionTab: nextActionTab,
             nextActionTopicId: nextActionTopicId,
+            usesExtraStudy: false,
             secondaryActionLabel: "View study plan",
             secondaryActionTab: .dashboard
         )
+    }
+
+    private static func nextReviewScheduleLabel(days: UInt) -> String {
+        switch days {
+        case 0:
+            return "Flashcards due today"
+        case 1:
+            return "Flashcards due tomorrow"
+        default:
+            return "Flashcards due in \(days) days"
+        }
     }
 
     private static func topicStats(from attempts: [PracticeAttemptRecord]) -> [String: (correct: Int, total: Int)] {

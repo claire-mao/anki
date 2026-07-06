@@ -302,6 +302,7 @@ mod test {
             avg_retrievability_low: low,
             avg_retrievability_high: high,
             total_reviews: studied,
+            ..Default::default()
         }
     }
 

@@ -8,6 +8,9 @@ use fsrs::FSRS;
 use itertools::Itertools;
 use serde::Serialize;
 
+use anki_proto::brainlift::MemoryCalibrationBin as MemoryCalibrationBinProto;
+use anki_proto::brainlift::MemoryEvalResponse;
+
 use crate::card::CardId;
 use crate::collection::Collection;
 use crate::config::BoolKey;
@@ -38,6 +41,7 @@ pub struct MemoryEval {
     pub held_out_review_count: u32,
     pub sufficient_data: bool,
     pub brier_score: Option<f32>,
+    pub log_loss: Option<f32>,
     pub brier_score_ci: Option<ConfidenceInterval>,
     pub reliability_bins: Vec<MemoryCalibrationBin>,
     pub calibration_curve: Vec<MemoryCalibrationBin>,
@@ -102,6 +106,7 @@ pub(crate) fn compute_memory_eval(col: &mut Collection) -> Result<MemoryEval> {
             held_out_review_count: 0,
             sufficient_data: false,
             brier_score: None,
+            log_loss: None,
             brier_score_ci: None,
             reliability_bins: Vec::new(),
             calibration_curve: Vec::new(),
@@ -145,6 +150,11 @@ pub(crate) fn compute_memory_eval(col: &mut Collection) -> Result<MemoryEval> {
     } else {
         Some(brier_score(&pairs))
     };
+    let log_loss = if pairs.is_empty() {
+        None
+    } else {
+        Some(log_loss(&pairs))
+    };
     let brier_score_ci = brier_score.and_then(|brier| {
         let squared_errors: Vec<f32> = pairs
             .iter()
@@ -164,11 +174,47 @@ pub(crate) fn compute_memory_eval(col: &mut Collection) -> Result<MemoryEval> {
         held_out_review_count,
         sufficient_data,
         brier_score,
+        log_loss,
         brier_score_ci,
         reliability_bins: bins.clone(),
         calibration_curve: bins,
         assessment,
     })
+}
+
+impl Collection {
+    pub fn gre_atlas_get_memory_eval(&mut self) -> Result<MemoryEvalResponse> {
+        let memory = compute_memory_eval(self)?;
+        Ok(memory_eval_to_proto(&memory, TimestampMillis::now().0))
+    }
+}
+
+fn memory_eval_to_proto(memory: &MemoryEval, computed_at_millis: i64) -> MemoryEvalResponse {
+    MemoryEvalResponse {
+        model_version: memory.model_version.clone(),
+        fsrs_enabled: memory.fsrs_enabled,
+        held_out_review_count: memory.held_out_review_count,
+        sufficient_data: memory.sufficient_data,
+        brier_score: memory.brier_score,
+        log_loss: memory.log_loss,
+        assessment: memory.assessment.clone(),
+        calibration_curve: memory
+            .calibration_curve
+            .iter()
+            .map(memory_calibration_bin_to_proto)
+            .collect(),
+        computed_at_millis,
+    }
+}
+
+fn memory_calibration_bin_to_proto(bin: &MemoryCalibrationBin) -> MemoryCalibrationBinProto {
+    MemoryCalibrationBinProto {
+        bin_low: bin.bin_low,
+        bin_high: bin.bin_high,
+        predicted_mean: bin.predicted_mean,
+        outcome_mean: bin.outcome_mean,
+        count: bin.count,
+    }
 }
 
 fn fsrs_context_for_card(
@@ -260,6 +306,22 @@ fn brier_score(pairs: &[(f32, f32)]) -> f32 {
     pairs
         .iter()
         .map(|(predicted, outcome)| (predicted - outcome).powi(2))
+        .sum::<f32>()
+        / pairs.len() as f32
+}
+
+fn log_loss(pairs: &[(f32, f32)]) -> f32 {
+    const EPS: f32 = 1e-15;
+    pairs
+        .iter()
+        .map(|(predicted, outcome)| {
+            let probability = predicted.clamp(EPS, 1.0 - EPS);
+            if *outcome >= 0.5 {
+                -probability.ln()
+            } else {
+                -(1.0 - probability).ln()
+            }
+        })
         .sum::<f32>()
         / pairs.len() as f32
 }
@@ -356,6 +418,11 @@ pub(crate) fn render_memory_markdown(memory: &MemoryEval) -> String {
     } else {
         out.push_str("- Brier score: n/a\n");
     }
+    if let Some(log_loss) = memory.log_loss {
+        out.push_str(&format!("- Log loss: {log_loss:.4}\n"));
+    } else {
+        out.push_str("- Log loss: n/a\n");
+    }
     out.push_str(&format!("- Assessment: {}\n\n", memory.assessment));
 
     out.push_str("### Methodology\n\n");
@@ -446,6 +513,13 @@ mod test {
     fn brier_score_perfect_when_predictions_match() {
         let pairs = vec![(0.8, 1.0), (0.2, 0.0)];
         assert!((brier_score(&pairs) - 0.04).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn log_loss_matches_binary_cross_entropy() {
+        let pairs = vec![(0.8, 1.0), (0.2, 0.0)];
+        let expected = (-0.8f32.ln() - (1.0f32 - 0.2f32).ln()) / 2.0;
+        assert!((log_loss(&pairs) - expected).abs() < 1e-5);
     }
 
     #[test]

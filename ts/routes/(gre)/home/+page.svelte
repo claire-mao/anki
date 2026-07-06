@@ -10,7 +10,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { commitMetricSnapshot } from "../metric-change";
     import { presentOnboarding } from "../onboarding-presentation";
     import GreOnboardingPanel from "../ui/GreOnboardingPanel.svelte";
-    import GreEvidenceCard from "../ui/GreEvidenceCard.svelte";
+    import GreCoverageSummary from "../ui/GreCoverageSummary.svelte";
     import GrePageHeader from "../GrePageHeader.svelte";
     import DashboardHero from "./DashboardHero.svelte";
     import type { PageData } from "./$types";
@@ -81,25 +81,25 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     {#if onboarding.active}
         <GreOnboardingPanel model={onboarding} />
     {:else}
-        <DashboardHero estimate={estimatedGre} {readiness} {coverage} />
+        <DashboardHero
+            estimate={estimatedGre}
+            {readiness}
+            {memory}
+            {performance}
+            {coverage}
+        />
 
-        <section class="home-primary-cta" aria-label="Daily study plan">
+        <section class="home-mission" aria-label="Today's mission">
             <DailyStudyPlan
                 plan={dailyPlan}
                 studyStatus={status}
                 recentAttempts={dashboard.recentActivity}
-                compact
                 primary
-                hideHeader
             />
         </section>
 
-        <GreEvidenceCard
-            {memory}
-            {performance}
-            {coverage}
-            calibration={readinessCalibration.calibration}
-            computedAtMillis={dashboard.computedAtMillis}
-        />
+        <section class="home-coverage" aria-label="Topic coverage">
+            <GreCoverageSummary {coverage} showReadinessGate />
+        </section>
     {/if}
 </div>

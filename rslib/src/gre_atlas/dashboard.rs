@@ -102,6 +102,7 @@ mod test {
                         avg_retrievability_low: 0.3,
                         avg_retrievability_high: 0.5,
                         total_reviews: 10,
+                        ..Default::default()
                     },
                 )]),
                 &["gre::quant::algebra::linear"],

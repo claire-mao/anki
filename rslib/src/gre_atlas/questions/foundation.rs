@@ -105,16 +105,36 @@ pub fn load_foundation_bank() -> Vec<FoundationQuestion> {
     all
 }
 
+/// Lookup a bundled foundation question by stable id.
+pub fn foundation_question_by_id(id: &str) -> Option<FoundationQuestion> {
+    load_foundation_bank()
+        .into_iter()
+        .find(|question| question.id == id)
+}
+
 fn parse_foundation_file(json: &str) -> Vec<FoundationQuestion> {
-    serde_json::from_str(json).unwrap_or_else(|err| {
+    let questions: Vec<FoundationQuestion> = serde_json::from_str(json).unwrap_or_else(|err| {
         panic!("foundation seed parse error: {err}");
-    })
+    });
+    for question in &questions {
+        let choices = question.choice_list();
+        if !choices.is_empty() {
+            crate::gre_atlas::questions::variants::validate_mcq_choices(
+                &question.id,
+                &question.correct_answer,
+                choices,
+            );
+        }
+    }
+    questions
 }
 
 /// Minimum counts for the manually authored foundation bank.
-pub const MIN_FOUNDATION_VERBAL: usize = 150;
-pub const MIN_FOUNDATION_QUANT: usize = 150;
-pub const MIN_FOUNDATION_AWA: usize = 25;
+pub const MIN_FOUNDATION_QUANT: usize = 100;
+pub const MIN_FOUNDATION_VERBAL: usize = 100;
+pub const MIN_FOUNDATION_AWA: usize = 50;
+/// Minimum foundation prompts per catalog leaf topic.
+pub const MIN_FOUNDATION_PER_LEAF_TOPIC: usize = 8;
 
 /// Return manually authored exemplars for a catalog leaf topic.
 /// Future LLM generation should condition on these rows rather than invent
@@ -156,6 +176,7 @@ mod test {
     use super::*;
     use crate::gre_atlas::domain::GreCatalog;
     use crate::gre_atlas::questions::variants::correct_answer_in_choices;
+    use crate::gre_atlas::questions::variants::validate_mcq_choices;
 
     #[test]
     fn foundation_bank_meets_minimum_counts() {
@@ -194,6 +215,7 @@ mod test {
                 "{}: correct_answer not in choices",
                 q.id
             );
+            validate_mcq_choices(&q.id, &q.correct_answer, choices);
             assert!(
                 GreCatalog::topic_by_id(&q.topic).is_some(),
                 "{}: unknown topic {}",
@@ -213,6 +235,44 @@ mod test {
                 leaf.id
             );
         }
+    }
+
+    #[test]
+    fn foundation_meets_per_topic_minimum() {
+        let bank = load_foundation_bank();
+        for leaf in GreCatalog::leaf_topics() {
+            let count = bank.iter().filter(|q| q.topic == leaf.id).count();
+            assert!(
+                count >= MIN_FOUNDATION_PER_LEAF_TOPIC,
+                "{} has {count}, want at least {}",
+                leaf.id,
+                MIN_FOUNDATION_PER_LEAF_TOPIC
+            );
+        }
+    }
+
+    #[test]
+    fn foundation_meets_practice_bank_section_targets() {
+        use crate::gre_atlas::questions::bank::TARGET_PRACTICE_BANK_AWA;
+        use crate::gre_atlas::questions::bank::TARGET_PRACTICE_BANK_QUANT;
+        use crate::gre_atlas::questions::bank::TARGET_PRACTICE_BANK_VERBAL;
+
+        let bank = load_foundation_bank();
+        let quant = bank.iter().filter(|q| q.section == "quant").count();
+        let verbal = bank.iter().filter(|q| q.section == "verbal").count();
+        let awa = bank.iter().filter(|q| q.section == "awa").count();
+        assert!(
+            quant >= TARGET_PRACTICE_BANK_QUANT as usize,
+            "quant foundation: {quant}"
+        );
+        assert!(
+            verbal >= TARGET_PRACTICE_BANK_VERBAL as usize,
+            "verbal foundation: {verbal}"
+        );
+        assert!(
+            awa >= TARGET_PRACTICE_BANK_AWA as usize,
+            "awa foundation: {awa}"
+        );
     }
 
     #[test]

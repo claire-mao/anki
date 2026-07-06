@@ -6,6 +6,8 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";
+    import { getPerformanceChart } from "@generated/backend";
+    import type { PerformanceChartBucket } from "@generated/anki/brainlift_pb";
     import type { GraphBounds } from "../../graphs/graph-helpers";
     import { defaultGraphBounds } from "../../graphs/graph-helpers";
     import GrePageHeader from "../GrePageHeader.svelte";
@@ -18,12 +20,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     import ProgressChart from "./ProgressChart.svelte";
     import { commitMetricSnapshot, type MetricChanges } from "../metric-change";
     import { presentOnboarding } from "../onboarding-presentation";
-    import {
-        filterAttemptsByHorizon,
-        rollingAccuracySeries,
-        rollingAccuracyTrendPoints,
-        type AccuracyTrendHorizon,
-    } from "../indicator-utils";
+    import { type AccuracyTrendHorizon } from "../indicator-utils";
     import {
         greNavAction,
         greNavItem,
@@ -32,12 +29,20 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     } from "../gre-navigation";
     import { topicDetailsPath } from "../topic-link";
     import {
-        renderAccuracyTrendChart,
+        renderPerformanceChart,
         renderTopicMasteryChart,
         topicMasteryChartHeight,
         topicMasteryChartRows,
         topicMasteryChartSubtitle,
     } from "./charts";
+    import {
+        performanceChartHasData,
+        performanceChartHorizonProto,
+    } from "./performance-chart-presentation";
+    import {
+        topicMasteryClusterNote,
+        topicMasterySectionExplanation,
+    } from "./topic-mastery-presentation";
     import type { PageData } from "./$types";
 
     import "../gre.scss";
@@ -70,15 +75,38 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         marginBottom: 48,
     };
     $: topicMasteryRows = topicMasteryChartRows(mastery.topics);
-    $: advancedMasteryBounds = {
+    $: topicMasteryBounds = {
         ...defaultGraphBounds(),
+        width: 960,
         height: topicMasteryChartHeight(topicMasteryRows.length),
-        marginLeft: 148,
-        marginRight: 28,
-        marginBottom: 36,
+        marginLeft: 8,
+        marginRight: 8,
+        marginTop: 8,
+        marginBottom: 8,
     };
 
     let performanceHorizon: AccuracyTrendHorizon = "30d";
+    let performanceChartBuckets: PerformanceChartBucket[] = data.performanceChart.buckets;
+    let hasPerformanceAttempts = data.performanceChart.hasAnyAttempts;
+    let loadedPerformanceHorizon: AccuracyTrendHorizon = performanceHorizon;
+
+    async function refreshPerformanceChart(horizon: AccuracyTrendHorizon): Promise<void> {
+        const response = await getPerformanceChart({
+            horizon: performanceChartHorizonProto(horizon),
+            topicPrefix: "",
+        });
+        performanceChartBuckets = response.buckets;
+        hasPerformanceAttempts = response.hasAnyAttempts;
+        loadedPerformanceHorizon = horizon;
+    }
+
+    $: if (browser && performanceHorizon !== loadedPerformanceHorizon) {
+        void refreshPerformanceChart(performanceHorizon);
+    }
+
+    $: performanceChartHasPlottedData = performanceChartHasData(performanceChartBuckets);
+    $: renderPerformanceChartView = (svg: SVGElement, bounds: GraphBounds) =>
+        renderPerformanceChart(svg, bounds, performanceChartBuckets);
 
     $: onboarding = presentOnboarding({
         deckExists: status.deckExists,
@@ -93,15 +121,6 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
         weakestTopicName: dashboard.weakTopics[0]?.displayName,
         context: "progress",
     });
-
-    $: filteredPerformanceAttempts = filterAttemptsByHorizon(
-        data.recentAttempts,
-        performanceHorizon,
-    );
-    $: accuracyTrendPoints = rollingAccuracyTrendPoints(filteredPerformanceAttempts);
-    $: accuracyTrend = rollingAccuracySeries(filteredPerformanceAttempts);
-    $: renderPerformanceChart = (svg: SVGElement, bounds: GraphBounds) =>
-        renderAccuracyTrendChart(svg, bounds, accuracyTrendPoints);
 
     let changes: MetricChanges = {};
 
@@ -124,7 +143,10 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
     $: topicMasterySubtitle = topicMasteryChartSubtitle(
         masterySummary?.topicCount ?? 0,
         mastery.topics,
+        masterySummary?.topicsStudied,
     );
+
+    $: topicMasteryClusterNoteText = topicMasteryClusterNote(mastery.topics);
 
     const renderMasteryChart = (svg: SVGElement, bounds: GraphBounds) =>
         renderTopicMasteryChart(svg, bounds, mastery.topics, (topicId) => {
@@ -177,7 +199,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
             <section class="progress-group" aria-labelledby="progress-performance">
                 <h2 class="gre-section-title" id="progress-performance">Performance</h2>
-                {#if data.recentAttempts.length > 0}
+                {#if hasPerformanceAttempts}
                     <div
                         class="progress-horizons"
                         role="group"
@@ -193,11 +215,11 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                         {/each}
                     </div>
                 {/if}
-                {#if accuracyTrend.length >= 2}
+                {#if performanceChartHasPlottedData}
                     <div class="progress-performance-chart">
                         <ProgressChart
                             ariaLabel="Accuracy trend"
-                            renderChart={renderPerformanceChart}
+                            renderChart={renderPerformanceChartView}
                             bounds={performanceChartBounds}
                             wide
                             tall
@@ -205,7 +227,7 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                     </div>
                 {:else}
                     <p class="progress-group-empty">
-                        {#if data.recentAttempts.length === 0}
+                        {#if !hasPerformanceAttempts}
                             Answer a few more practice questions to see your accuracy
                             trend.
                         {:else}
@@ -240,28 +262,28 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
                 </p>
             </section>
 
-            <details class="progress-advanced">
-                <summary class="progress-advanced-summary">
-                    Advanced measurement
-                </summary>
-                <div class="progress-advanced-body">
-                    <div class="progress-charts progress-charts-advanced gre-stagger">
-                        <ProgressChart
-                            title="Topic mastery"
-                            subtitle={topicMasterySubtitle}
-                            renderChart={renderMasteryChart}
-                            bounds={advancedMasteryBounds}
-                            wide
-                            tall
-                            extraTall
-                            scrollable
-                        />
-                    </div>
-                    <GreButton variant="ghost" size="sm" href="/readiness">
-                        Open readiness details
-                    </GreButton>
+            <section class="progress-group progress-topic-mastery" aria-labelledby="progress-topic-mastery">
+                <h2 class="gre-section-title" id="progress-topic-mastery">Topic mastery</h2>
+                <p class="progress-group-explanation">
+                    {topicMasterySectionExplanation()}
+                </p>
+                <p class="progress-group-caption">{topicMasterySubtitle}</p>
+                {#if topicMasteryClusterNoteText}
+                    <p class="progress-group-cluster-note">{topicMasteryClusterNoteText}</p>
+                {/if}
+                <div class="progress-charts progress-charts-mastery gre-stagger">
+                    <ProgressChart
+                        ariaLabel="Topic mastery"
+                        renderChart={renderMasteryChart}
+                        bounds={topicMasteryBounds}
+                        wide
+                        tall
+                        extraTall
+                        scrollable
+                        fluid
+                    />
                 </div>
-            </details>
+            </section>
         </div>
     {/if}
 </GreSection>

@@ -37,6 +37,12 @@ License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
             <dt>Expected impact</dt>
             <dd>{recommendation.expectedImpact}</dd>
         </div>
+        {#if recommendation.flashcardScheduleHint}
+            <div class="gre-study-recommendation-row">
+                <dt>Flashcard review</dt>
+                <dd>{recommendation.flashcardScheduleHint}</dd>
+            </div>
+        {/if}
     </dl>
 
     {#if recommendation.progress}

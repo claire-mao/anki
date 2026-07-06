@@ -358,6 +358,7 @@ fn topic_entry(id: &str, display_name: &str, studied_cards: u32, avg: f32) -> To
         avg_retrievability_low: (avg - 0.08).max(0.0),
         avg_retrievability_high: (avg + 0.08).min(1.0),
         total_reviews: studied_cards * 2,
+        ..Default::default()
     }
 }
 

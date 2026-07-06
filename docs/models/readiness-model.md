@@ -39,7 +39,7 @@ When all abstention requirements are met:
 | `projected_score`                                                              | Composite readiness index (0–100)                         |
 | `projected_score_low` / `projected_score_high`                                 | Interval from combined memory and performance uncertainty |
 | `confidence_level`                                                             | `high`, `medium`, or `low` (see below)                    |
-| `coverage_ratio`                                                               | Same exam-weighted catalog coverage as memory             |
+| `coverage_ratio`                                                               | Same section-weighted catalog coverage as memory             |
 | `evidence_summary`                                                             | Short text tying memory and performance evidence together |
 | `last_updated_millis`                                                          | Computation timestamp                                     |
 | `calibration_note` / `calibration_brier_score` / `calibration_well_calibrated` | Honest summary from held-out prediction calibration       |
@@ -74,7 +74,7 @@ Readiness abstains unless **every** memory **and** performance requirement is sa
 
 - FSRS enabled
 - ≥ 50 studied GRE cards
-- ≥ 50% exam-weighted catalog coverage
+- ≥ 50% section-weighted catalog coverage
 
 **Performance gates**
 

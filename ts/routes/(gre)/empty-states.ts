@@ -61,7 +61,7 @@ const emptyStateRegistry: Record<EmptyStateKey, EmptyStateContent> = {
         title: "Readiness locked",
         explanation: "Build memory and practice evidence.",
         unlockGoal: "to unlock your readiness score.",
-        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenStudyPlan", href: "/study-plan" },
+        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenDashboard", href: "/home" },
     },
     memory: {
         kicker: "Memory",
@@ -117,7 +117,7 @@ const emptyStateRegistry: Record<EmptyStateKey, EmptyStateContent> = {
         title: "No recommendations yet",
         explanation: "Coverage and scores need more data.",
         unlockGoal: "to unlock personalized focus topics.",
-        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenStudyPlan", href: "/study-plan" },
+        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenDashboard", href: "/home" },
     },
     studyPlanRecommendations: {
         title: "No recommendations yet",
@@ -159,7 +159,7 @@ const emptyStateRegistry: Record<EmptyStateKey, EmptyStateContent> = {
         title: "Questions locked",
         explanation: "Expand coverage for this topic.",
         unlockGoal: "to unlock practice questions here.",
-        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenStudyPlan", href: "/study-plan" },
+        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenDashboard", href: "/home" },
     },
     topicAttempts: {
         title: "No attempts yet",
@@ -177,13 +177,13 @@ const emptyStateRegistry: Record<EmptyStateKey, EmptyStateContent> = {
         title: "All caught up",
         explanation: "Nothing due right now.",
         unlockGoal: "to keep momentum with focus topics.",
-        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenStudyPlan", href: "/study-plan" },
+        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenDashboard", href: "/home" },
     },
     missionReviewCaughtUp: {
         title: "All caught up",
         explanation: "Nothing due right now.",
         unlockGoal: "to keep momentum with focus topics.",
-        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenStudyPlan", href: "/study-plan" },
+        action: { label: GRE_CTA_STUDY_PLAN, bridge: "greOpenDashboard", href: "/home" },
     },
     deckMissing: {
         title: "Flashcards not ready",
